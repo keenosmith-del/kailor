@@ -11,16 +11,18 @@ export type MascotState =
   | "completed";
 export function Mascot({
   state,
+  pose,
   variant = "body",
   assets = mascotAssets,
 }: {
   state: MascotState;
+  pose?: string;
   variant?: "body" | "head";
   assets?: Partial<Record<MascotState | "head", string>>;
 }) {
   const [failed, setFailed] = useState<string[]>([]);
   const reduced = useReducedMotion();
-  const source = assets[variant === "head" ? "head" : state];
+  const source = pose ?? assets[variant === "head" ? "head" : state];
   return (
     <div className={`mascot mascot-${variant}`} aria-hidden="true">
       <AnimatePresence initial={false}>

@@ -157,9 +157,36 @@ select:focus-visible,
   transform: translateY(-2px) scale(1.015);
 }
 .compact-button {
-  padding: 8px 16px;
+  padding: 6px 12px;
+  gap: 6px;
+  font-size: 11px;
+  min-height: 30px;
+}
+.discovery-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  min-height: 36px;
+  border: 1px solid #33383e;
+  border-radius: 100px;
+  background: #33383e;
+  color: var(--color-cream);
   font-size: 12px;
-  min-height: 38px;
+  line-height: 1.5;
+  transition: transform 0.25s ease;
+}
+.discovery-action:not(:disabled):hover {
+  transform: translateY(-2px) scale(1.015);
+}
+.discovery-action:not(:disabled):active,
+.view-discovery .choice:not(:has(input:disabled)):active {
+  transform: scale(0.96);
+}
+.answer-control,
+.discovery-action.answer-control {
+  transition: none;
 }
 .icon-button {
   display: inline-grid;
@@ -261,8 +288,16 @@ select:focus-visible,
 .session-navigation a[aria-current] {
   color: var(--color-charcoal);
 }
-.session-navigation a:not(.home-link):hover {
-  color: #8c755b;
+.session-navigation .session-nav-link {
+  font-size: 12px;
+}
+.session-navigation .session-nav-link:hover {
+  color: #4c4a44;
+  transform: translateY(-1px) scale(1.015);
+}
+.session-navigation .session-nav-link[aria-current],
+.session-navigation .session-nav-link[aria-current]:hover {
+  color: var(--color-charcoal);
 }
 .preview-note {
   font-size: 10px;
@@ -290,12 +325,14 @@ select:focus-visible,
   padding: 30px 0 15px;
 }
 .discovery-mascot {
-  height: min(68svh, 700px);
-  align-self: center;
-  position: sticky;
-  top: 110px;
+  height: min(68svh, calc(100svh - 190px), 700px);
+  width: min(calc((100vw - 2 * var(--space)) * 0.46), 653.2px);
+  position: fixed;
+  left: max(var(--space), calc((100vw - 1420px) / 2));
+  top: 160px;
 }
 .question-section {
+  grid-column: 2;
   max-width: 650px;
   min-width: 0;
   padding: 55px 0 15px;
@@ -326,7 +363,7 @@ select:focus-visible,
   cursor: pointer;
   min-height: 36px;
   position: relative;
-  transition: transform 0.25s;
+  transition: none;
 }
 .choice.selected {
   outline: 1px solid #cdbfa970;
@@ -352,22 +389,9 @@ select:focus-visible,
   margin: 20px 0 8px;
   color: var(--muted);
 }
-.answer-review {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 22px;
-  max-width: 600px;
-}
-.answer-review button {
-  display: block;
-  text-align: left;
-  width: 100%;
-  padding: 18px 0;
-}
-.answer-review small {
-  margin-top: 7px;
-  font-size: 11px;
-  overflow-wrap: anywhere;
+.conversation-link:hover {
+  color: #4c4a44;
+  transform: translateY(-1px) scale(1.015);
 }
 summary {
   cursor: pointer;
@@ -680,7 +704,8 @@ select:focus {
     gap: 5%;
   }
   .discovery-mascot {
-    height: 55svh;
+    height: min(55svh, calc(100svh - 190px));
+    width: calc((100vw - 2 * var(--space)) * 0.38);
   }
   .session-navigation > div {
     gap: 18px;
@@ -713,6 +738,9 @@ select:focus {
     gap: 8px;
     font-size: 11px;
   }
+  .session-navigation .session-nav-link {
+    font-size: 11px;
+  }
   .session-navigation > .compact-button {
     margin-left: auto;
   }
@@ -730,6 +758,7 @@ select:focus {
   }
   .discovery-mascot {
     position: relative;
+    left: auto;
     top: auto;
     width: 100%;
     height: 29svh;

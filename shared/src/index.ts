@@ -12,6 +12,7 @@ export type Question = {
   type: "single" | "multi" | "text";
   options?: { value: string; label: string }[];
   optional?: boolean;
+  allowNotApplicable?: boolean;
   when?: { key: string; values: string[] };
 };
 export type Evidence = {

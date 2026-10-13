@@ -62,6 +62,39 @@ describe("versioned discovery", () => {
     expect(() => validateAnswer("industry", "", true)).toThrow();
     expect(() => validateAnswer("budget", "", true)).not.toThrow();
   });
+  it("allows supporting details to be skipped and still reaches assessment", () => {
+    const a: Answers = {
+      stage: "starting",
+      kind: "professional",
+      industry: "Designer",
+      idea: "A design studio",
+      presence: ["website"],
+      problems: ["booking", "invoices", "content"],
+      goals: "Simplify the work",
+    };
+    const skipped: string[] = [];
+    let q = nextQuestion(a);
+    while (q) {
+      validateAnswer(q.id, "", true);
+      skipped.push(q.id);
+      a[q.id] = "";
+      q = nextQuestion(a);
+    }
+    expect(skipped).toEqual([
+      "progress",
+      "portfolio",
+      "website",
+      "tools",
+      "bookingDetails",
+      "invoiceDetails",
+      "contentDetails",
+      "constraints",
+      "budget",
+      "timing",
+    ]);
+    expect(nextQuestion(a)).toBeNull();
+    expect(recommend(a)).toEqual([]);
+  });
   it.each(personas)("has a complete usable regression path: $id", (p) => {
     const a: Answers = {};
     let q = nextQuestion(a);
@@ -118,6 +151,18 @@ describe("evidence and reference knowledge", () => {
     expect(recommend({ problems: ["booking", "invoices", "content"] })).toEqual(
       [],
     );
+  });
+  it("does not treat Not applicable as confirmed workflow or website detail", () => {
+    expect(
+      recommend({
+        presence: ["website"],
+        problems: ["outdated", "booking", "invoices", "content"],
+        website: "Not applicable",
+        bookingDetails: "Not applicable",
+        invoiceDetails: "Not applicable",
+        contentDetails: "Not applicable",
+      }),
+    ).toEqual([]);
   });
 });
 describe("AI boundaries", () => {

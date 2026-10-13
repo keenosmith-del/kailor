@@ -11,6 +11,10 @@ export function recommend(
 ): Recommendation[] {
   const problems = Array.isArray(a.problems) ? a.problems : [];
   const presence = Array.isArray(a.presence) ? a.presence : [];
+  const hasDetails = (key: string) =>
+    typeof a[key] === "string" &&
+    !!(a[key] as string).trim() &&
+    (a[key] as string).trim().toLowerCase() !== "not applicable";
   const selected: {
     id: string;
     problem: string;
@@ -36,26 +40,26 @@ export function recommend(
   if (
     problems.includes("outdated") &&
     presence.includes("website") &&
-    a.website
+    hasDetails("website")
   )
     selected.push({
       id: "modernization",
       problem: "Your existing website needs improvement.",
       keys: ["website", "problems"],
     });
-  if (problems.includes("booking") && a.bookingDetails)
+  if (problems.includes("booking") && hasDetails("bookingDetails"))
     selected.push({
       id: "booking",
       problem: "Your appointment workflow has confirmed friction.",
       keys: ["bookingDetails", "tools"],
     });
-  if (problems.includes("invoices") && a.invoiceDetails)
+  if (problems.includes("invoices") && hasDetails("invoiceDetails"))
     selected.push({
       id: "automation",
       problem: "Invoice preparation contains repetitive work.",
       keys: ["invoiceDetails", "tools"],
     });
-  if (problems.includes("content") && a.contentDetails)
+  if (problems.includes("content") && hasDetails("contentDetails"))
     selected.push({
       id: "publishing",
       problem: "Your research or content preparation repeats.",
