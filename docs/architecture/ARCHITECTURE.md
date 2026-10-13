@@ -29,3 +29,15 @@ Authentication uses scrypt password hashes and revocable random session tokens, 
 The app is local-first in deployment, not offline-first. Reverse proxy, TLS, backups, deployment health checks, security monitoring and distributed request throttling must be designed before public hosting. Never expose the Vite development server or PostgreSQL publicly.
 
 Version sources: [Prisma 7 upgrade guide](https://www.prisma.io/docs/guides/upgrade-prisma-orm/v7), [Cloudflare REST guide](https://developers.cloudflare.com/workers-ai/get-started/rest-api/). The initial Prisma diff command produced no SQL despite exit 0 in this environment; the checked-in relational SQL was constructed and verified by applying it to PostgreSQL and exercising the actual Prisma client.
+
+## Iteration 002: local guest preview boundary
+
+The immersive introduction is accessible without founder authentication. Its discovery actions create a real database session through `/api/guest/sessions`. Guest principals reuse the existing ownership relationship with a new `AdminUser.isGuest` flag; this is a minimal local-preview boundary, not public account registration. Their login is disabled and private authentication rejects guest principals even if a guest token is supplied under the founder cookie name.
+
+`guest.ts` exposes only an allowlist of owned-session discovery, answer, chat, evidence, assessment, canvas, report and PDF operations. A separate hashed-token `kailor_guest` cookie is HttpOnly, SameSite=Strict, scoped to `/api/guest`, and expires in 24 hours. Founder cookies are never used as guest authority. Production mode and non-loopback configured API hosts disable all guest routes. Existing origin/body validation and request limits apply, plus a 20-per-hour preview creation limit.
+
+Guest reference retrieval is restricted to public seeded definitions; reviewed founder cases are excluded. Guest chat always forces the labelled deterministic provider, so it cannot spend a Cloudflare budget. Guest sessions/reports are synthetic previews and cannot approve cases or execute the simulator. The private workspace remains at `/workspace`, with its existing login and sign-out.
+
+Guest records persist after token expiry and restarts; there is no automatic retention cleanup or public guest recovery UI. Public deployment needs a separately designed identity/retention/rate-limit boundary. `202610130003_guest_preview` adds the role flag without removing previous records.
+
+Assessment generation and report navigation are now separate frontend actions. Reports remain immutable backend revision snapshots; readiness is a current-snapshot projection, refreshed after mutations. Navigation and restarts preserve session ownership and history.

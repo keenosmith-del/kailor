@@ -1,9 +1,9 @@
-import { ArrowRight,Plus } from "lucide-react";
-import { useCallback,useEffect,useState,type FormEvent } from "react";
-import { Link,useNavigate } from "react-router";
+import { ArrowRight, Plus } from "lucide-react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { Link, useNavigate } from "react-router";
 import type { Session } from "../../shared/src/index";
 import { api } from "./api";
-import { ErrorBox,errorMessage } from "./ui";
+import { ErrorBox, errorMessage } from "./ui";
 export function Workspace() {
   const [sessions, setSessions] = useState<(Session & { updatedAt: string })[]>(
       [],
@@ -59,6 +59,21 @@ export function Workspace() {
   }
   return (
     <main className="workspace">
+      <nav className="session-navigation" aria-label="Private workspace">
+        <Link className="home-link" to="/">
+          kailor
+        </Link>
+        <button
+          className="text-link"
+          onClick={() =>
+            void api("/auth/logout", "POST").then(() =>
+              window.location.assign("/workspace"),
+            )
+          }
+        >
+          Sign out
+        </button>
+      </nav>
       <p className="eyebrow">your workspace</p>
       <h1>
         Make room for

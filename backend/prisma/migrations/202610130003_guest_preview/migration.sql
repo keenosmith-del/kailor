@@ -1,0 +1,1 @@
+ALTER TABLE "AdminUser" ADD COLUMN "isGuest" BOOLEAN NOT NULL DEFAULT false;

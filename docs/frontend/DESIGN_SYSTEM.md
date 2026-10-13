@@ -1,17 +1,35 @@
-# Design system
+# kailor experience design — iteration 002
 
-React 19, Vite, React Router, Tailwind 4, Motion and Lucide form the UI stack. `styles.css` declares Tailwind theme tokens and shared CSS variables for cream, charcoal, surfaces, muted text, lines, accent, radius and responsive spacing. Editorial typography uses system Helvetica/Arial, without external font requests.
+The public-facing journey is an immersive cream/off-white editorial composition. React, Motion, Router, Vite and Tailwind remain the existing stack. `styles.css` centralizes cream, charcoal, paper, muted text, glass, spacing and radius tokens. There are no decorative dividers, uppercase kickers, grey cards, dark panels or heavy shadows. Thin white edges and light blur belong to interactive bubbles only. System Helvetica/Arial provides Swiss-inspired typography without a remote font dependency.
 
-Screens are separate modules: Intro, Workspace, Discovery, Conversation, Canvas, Analysis; SessionPage orchestrates persistent session loading. All backend communication uses the Fetch wrapper. Mutation errors are visible, buttons show busy/disabled states and revision conflicts trigger a refresh.
+## Introduction
 
-The introduction has three vertical scenes. On desktop the mascot space is left of text; below 540px it sits above. Scenes reveal with Motion. Navigation links jump between vertical anchors. MotionConfig respects reduced-motion preferences; CSS suppresses animation and transitions under reduced motion.
+Three native snap-scroll sections use `100svh` with minimum heights for compact displays. The intro owns a keyboard-focusable vertical scroll container with `scroll-snap-type: y mandatory`, per-scene `scroll-snap-align: start`, and smooth native scrolling; below 650px viewport height it relaxes to proximity snapping so taller content stays reachable. Discovery keeps ordinary page scrolling. Elements are independently positioned rather than inside a conventional hero card. Scene one alone displays `k ᐧ ai ᐧ lor` as its primary heading and the supplied mascot head. Supporting copy directly explains discovery for building, improving, automating and launching. Scene two is a right-weighted typography composition; scene three is left-weighted with the discovery action. A single persistent top navigation shows honest, aria-disabled coming-soon account controls across all three scenes. Only scene three has the Start Discovery action; no scene has a skip button. There is no global header/footer on this story.
 
-`Mascot` accepts greeting, curious, attentive, thinking, conversation, recommendation and completed states plus an optional asset map. Without assets it renders a small labelled reserved space, not a substitute character. Supply a central asset map in a future iteration. No artwork is generated.
+Each Scene uses `useScroll` with start/end viewport offsets and `useTransform` opacity/vertical movement. The first scene stays visible on entry, then dissolves as it leaves. Following scenes enter as they approach the middle of the viewport and fade toward departure. The head has restrained independent movement. There is no JavaScript scroll interception, infinite pulse or artificial delay. CSS provides native snapping, and Motion observes the same scroll container. Reverse scrolling follows the same progress functions.
 
-Guided questions use native radio/checkbox controls with visible focus on their containing choices, semantic labels, text areas and progress. An answer review reveals prior entries. Conversation distinguishes developer mock replies, AI replies, confirmed answers and unconfirmed proposals.
+## Discovery and shared navigation
 
-Canvas separates existing presence from core, optional and future components. Evidence and dependencies expand inside each component card. This is a dependency list representation, not an editable graph editor.
+Desktop uses a left mascot and a lower-right content area. Choices are compact glass pills (12px text, 36px minimum height) matching the established button surface and transform-only hover; free text uses thin off-white input surfaces. Single-choice selection persists immediately, fades other choices during the actual request, and advances only after server acceptance. Each accepted response transitions the full discovery composition, including the mascot, question, choices, and supporting links, with a short fade and vertical movement. Exiting content is inert. Start again uses the same glass button in a compact 38px variant. Multi-choice/text require Continue. An existing selected single answer can be continued again when revisiting or retrying. Errors preserve current input. Backend definitions and option IDs remain authoritative; the first-screen labels are a presentation mapping over those IDs.
 
-Reports have seven panels, buttons, a numbered section navigator, arrow-key support when the panel is focused and touch-swipe handlers. The PDF uses the same section text. Stale snapshots are visibly labelled and can be regenerated. Horizontal overflow is not used for page navigation.
+No decorative step counters or progress bars are rendered. Back and a collapsed answer review provide editing. Minimal sentence-case contextual navigation shares the same session across guided discovery, conversation, separate canvas and analysis. Restart creates a fresh session and preserves the old one.
 
-Accessibility baseline: native controls, labelled icon buttons, visible focus, aria-live chat, progress semantics and reduced-motion support. Formal screen-reader testing, automated accessibility audits and real-device gesture testing remain iteration 002 work. Do not mistake desktop browser resizing for physical-device verification.
+Completion and assessment preparation do not redirect. Preparation shows actual processing feedback; a current snapshot enables the explicit Explore the analysis link. Any later session revision invalidates readiness. The report retains seven sections, sentence-case headings, named section controls, focus/arrow keys, touch swipe and PDF export. Content is unboxed and editorial. Canvas retains real existing/core/optional/future projections and dependency details.
+
+## Static mascot assets
+
+`mascot-assets.ts` maps only supplied files. Head: `heads/kailor-head-neutral.png`. Greeting/attentive/conversation/completed use `poses/kailor-neutral.png`; curious uses `poses/kailor-confused.png`; thinking/recommendation use `poses/kailor-pensive.png`. Discovery starts with `kailor-neutral.png` and cycles neutral → pensive → confused after accepted responses, independent of the question or loading state. Editing and skipped answers also advance the pose; simply navigating back does not. Other supplied expressions remain unused pending direction. Shared poses are intentional; there is no invented celebrating artwork.
+
+`Mascot` uses fixed contain-fit dimensions and overlapping image crossfades. Missing/unloadable assets leave clean reserved space. Images are decorative with empty alt and an aria-hidden wrapper; interaction meaning is conveyed by text. No GIF, generated artwork or spritesheet is used.
+
+## Responsive and accessible behaviour
+
+At 1000px columns tighten. Below 700px the mascot sits above questions, conversation stacks, navigation wraps and reports become one column. At 380px typography/control spacing adjusts further. Inputs remain usable with ordinary vertical scrolling and safe-area padding. Intro account controls expose unavailability through both text and aria-disabled semantics. Native radio/checkbox controls retain labels and focus indicators. Status/errors use appropriate live semantics.
+
+MotionConfig and `useReducedMotion` remove transforms for reduced-motion users; introduction scenes become immediately visible, mascot/discovery/report durations become zero. CSS also suppresses transitions. Runtime OS preference emulation and formal screen-reader auditing were not performed in this iteration. Physical-device touch/keyboard behaviour needs follow-up; browser viewport resizing is layout verification only.
+
+The browser title is exactly `kailor`. `/kailor-head.png` is an unchanged copy of the supplied neutral head and is linked as the PNG favicon in `frontend/index.html`.
+
+## Established button style
+
+Use the Start Discovery button as the shared button style until further design direction: rounded glass surface, thin white border, subtle blur and shadow, and charcoal text. Hover preserves background and text colors and applies only a slight lift and scale (`translateY(-2px) scale(1.015)`). Keep disabled and keyboard-focus states.

@@ -71,3 +71,9 @@ docs/
 ## Boundaries
 
 This is a local private initial build, not a public deployment. Estimates require consultant inputs; no market prices are invented. Synthetic assessments are never client success stories. The kai persona produces a proposal only. Live Cloudflare inference, monetary budgets, external-user auth, public hosting, final mascot assets and a fully art-directed PDF remain future work. No Git writes are performed by the application or setup scripts.
+
+## Iteration 002 experience
+
+The root page now opens a three-scene scroll story using the supplied static mascot. Start discovering or Skip to discovery enters a persisted local guest preview without founder permissions. The private founder workspace remains at `/workspace`. Assessment preparation stays in discovery until the user chooses Explore the analysis; Start again creates a new session.
+
+Run `npm run db:generate` and `npm run db:migrate` before starting an existing checkout; iteration 002 adds the guest-principal flag. Guest preview is disabled in production mode and when the configured API host is not loopback. It always uses mock chat and seed references. See [iteration 002](docs/iterations/002-immersive-experience.md) for verification, changed files and limitations.

@@ -7,6 +7,7 @@ datasource db {
   provider = "postgresql"
 }
 model AdminUser {
+  isGuest Boolean @default(false)
   id String @id @default(uuid())
   email String @unique
   passwordHash String

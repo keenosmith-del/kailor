@@ -16,6 +16,7 @@ import {
   type Pattern,
   matchCases,
   personas,
+  seededCases,
 } from "./library.js";
 import { config } from "./config.js";
 import {
@@ -356,7 +357,12 @@ export async function converse(
     fallbackReason: result.fallbackReason ?? reason,
   };
 }
-export async function referenceCases(): Promise<CaseRecord[]> {
+export async function referenceCases(adminId?: string): Promise<CaseRecord[]> {
+  if (
+    adminId &&
+    (await db.adminUser.findUnique({ where: { id: adminId } }))?.isGuest
+  )
+    return seededCases;
   const rows = await db.caseIntelligenceRecord.findMany({
     where: { reviewStatus: "approved" },
   });
@@ -365,7 +371,7 @@ export async function referenceCases(): Promise<CaseRecord[]> {
 export async function nextForSession(id: string, adminId: string) {
   const s = await getSession(id, adminId),
     a = answersOf(s),
-    matches = matchCases(a, await referenceCases());
+    matches = matchCases(a, await referenceCases(adminId));
   return {
     question: nextQuestion(a),
     active: activeQuestions(a),
@@ -381,7 +387,7 @@ export async function nextForSession(id: string, adminId: string) {
   };
 }
 export async function assess(id: string, adminId: string, revision: number) {
-  const cases = await referenceCases();
+  const cases = await referenceCases(adminId);
   const result = await db.$transaction(async (tx) => {
     const s = await lock(tx, id, adminId, revision);
     const existing = await tx.assessment.findUnique({
@@ -459,7 +465,7 @@ export async function canvas(id: string, adminId: string) {
     answersOf(s),
     s.revision,
     s.synthetic,
-    await referenceCases(),
+    await referenceCases(adminId),
   );
   return {
     revision: s.revision,

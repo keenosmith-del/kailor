@@ -22,6 +22,7 @@ import {
 import { questions, version } from "./discovery.js";
 import { personas, matchCases } from "./library.js";
 import * as sessions from "./session-service.js";
+import { guestRouter } from "./guest.js";
 import { renderPdf } from "./pdf.js";
 const idSchema = z.uuid();
 const patternSchema = z
@@ -92,6 +93,7 @@ app.post(
     res.json(await login(input.email, input.password, res));
   },
 );
+app.use("/api/guest", guestRouter);
 app.use("/api", requireAdmin, (_req, res, next) => {
   res.setHeader("Cache-Control", "no-store");
   next();

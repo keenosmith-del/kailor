@@ -1,3 +1,7 @@
+export const sessionHref = (id: string, view: string) =>
+  `${window.location.pathname.startsWith("/preview/") ? "/preview" : "/sessions"}/${id}/${view}`;
+const endpoint = (path: string) =>
+  `/api${window.location.pathname.startsWith("/preview/") && path.startsWith("/sessions") ? "/guest" : ""}${path}`;
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -11,7 +15,7 @@ export async function api<T>(
   method = "GET",
   body?: unknown,
 ): Promise<T> {
-  const response = await fetch(`/api${path}`, {
+  const response = await fetch(endpoint(path), {
     method,
     credentials: "same-origin",
     headers: body ? { "Content-Type": "application/json" } : undefined,
@@ -29,7 +33,7 @@ export async function api<T>(
   return response.status === 204 ? (undefined as T) : response.json();
 }
 export async function downloadReport(id: string) {
-  const response = await fetch(`/api/sessions/${id}/report.pdf`, {
+  const response = await fetch(endpoint(`/sessions/${id}/report.pdf`), {
     credentials: "same-origin",
   });
   if (!response.ok)

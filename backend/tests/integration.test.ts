@@ -15,6 +15,7 @@ const client = request.agent(app),
   origin = config.APP_ORIGIN;
 const adminEmail = `test-${Date.now()}@kailor.local`,
   password = "test-only-strong-password";
+const guestOwners: string[] = [];
 let adminId: string,
   id: string,
   revision = 0;
@@ -43,8 +44,9 @@ beforeAll(async () => {
       update: {},
     });
 }, 30000);
+const globalAdminId = () => adminId;
 afterAll(async () => {
-  if (adminId) {
+  for (const adminId of [globalAdminId(), ...guestOwners].filter(Boolean)) {
     await db.caseIntelligenceRecord.deleteMany({
       where: { sourceRun: { session: { adminId } } },
     });
@@ -308,6 +310,102 @@ describe("real PostgreSQL API vertical slice", () => {
     await db.subject.delete({ where: { id: subject.id } });
     await db.adminUser.delete({ where: { id: other.id } });
   });
+  it("isolates guest ownership, privileges, references and report export", async () => {
+    const guest = request.agent(app),
+      otherGuest = request.agent(app);
+    const created = await guest
+      .post("/api/guest/sessions")
+      .set("Origin", origin)
+      .send({});
+    expect(created.status).toBe(201);
+    const guestId = created.body.id;
+    guestOwners.push(
+      (await db.discoverySession.findUniqueOrThrow({ where: { id: guestId } }))
+        .adminId,
+    );
+    expect(created.body.synthetic).toBe(true);
+    expect(created.headers["set-cookie"][0]).toContain("Path=/api/guest");
+    expect((await guest.get("/api/cases")).status).toBe(401);
+    expect(
+      (
+        await guest
+          .post("/api/simulations")
+          .set("Origin", origin)
+          .send({ personaId: "kai" })
+      ).status,
+    ).toBe(401);
+    expect((await guest.get(`/api/guest/sessions/${id}`)).status).toBe(404);
+    expect(
+      (await otherGuest.get(`/api/guest/sessions/${guestId}`)).status,
+    ).toBe(401);
+    const other = await otherGuest
+      .post("/api/guest/sessions")
+      .set("Origin", origin)
+      .send({});
+    guestOwners.push(other.body.adminId);
+    expect(
+      (await otherGuest.get(`/api/guest/sessions/${guestId}`)).status,
+    ).toBe(404);
+    const cookie = created.headers["set-cookie"][0]
+      .split(";")[0]
+      .replace("kailor_guest=", "kailor_session=");
+    expect(
+      (await request(app).get("/api/cases").set("Cookie", cookie)).status,
+    ).toBe(401);
+    let current = created.body;
+    for (;;) {
+      const next = await guest.get(`/api/guest/sessions/${guestId}/next`);
+      const q = next.body.question;
+      if (!q) break;
+      const value = (personas[0].answers as Record<string, unknown>)[q.id];
+      const response = await guest
+        .put(`/api/guest/sessions/${guestId}/answers`)
+        .set("Origin", origin)
+        .send({
+          revision: current.revision,
+          questionId: q.id,
+          value: value ?? "",
+          skip: value === undefined,
+        });
+      expect(response.status).toBe(200);
+      current = response.body;
+    }
+    const chat = await guest
+      .post(`/api/guest/sessions/${guestId}/chat`)
+      .set("Origin", origin)
+      .send({ revision: current.revision, message: "What comes next?" });
+    expect(chat.body.provider).toBe("mock-development");
+    current = chat.body.session;
+    const assessment = await guest
+      .post(`/api/guest/sessions/${guestId}/assessment`)
+      .set("Origin", origin)
+      .send({ revision: current.revision });
+    expect(assessment.status).toBe(200);
+    expect(
+      assessment.body.content.matchedCases.every(
+        (c: any) => c.sourceType === "seed",
+      ),
+    ).toBe(true);
+    const pdf = await guest.get(`/api/guest/sessions/${guestId}/report.pdf`);
+    expect(pdf.body.subarray(0, 5).toString()).toBe("%PDF-");
+    const restarted = await guest
+      .post("/api/guest/sessions")
+      .set("Origin", origin)
+      .send({});
+    expect(restarted.body.id).not.toBe(guestId);
+    expect((await guest.get(`/api/guest/sessions/${guestId}`)).status).toBe(
+      200,
+    );
+    const environment = config.NODE_ENV;
+    config.NODE_ENV = "production";
+    try {
+      expect((await guest.get(`/api/guest/sessions/${guestId}`)).status).toBe(
+        404,
+      );
+    } finally {
+      config.NODE_ENV = environment;
+    }
+  }, 30000);
   it("revokes access on logout", async () => {
     expect(
       (await client.post("/api/auth/logout").set("Origin", origin)).status,

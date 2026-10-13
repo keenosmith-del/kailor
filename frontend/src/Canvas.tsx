@@ -1,9 +1,9 @@
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import type { Session } from "../../shared/src/index";
 import { api } from "./api";
-import { ErrorBox,errorMessage } from "./ui";
+import { ErrorBox, errorMessage } from "./ui";
 type CanvasData = {
   existing: string[];
   components: {
@@ -34,7 +34,6 @@ export function Canvas({
   }, [session.id, session.revision]);
   return (
     <section className="canvas">
-      <p className="eyebrow">the bigger picture</p>
       <h1>
         Connecting
         <br />

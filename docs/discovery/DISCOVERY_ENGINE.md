@@ -11,3 +11,9 @@ A guided answer is confirmed. A model or mock output is inferred until the consu
 Back/edit navigation is a UI selection over backend questions and saved answers. There is no frontend-only branching engine. Unsubmitted text is component state and is not persisted when leaving a view; submitted answers and chat history are persistent. Session version mismatch returns 409; only definition 1.0.0 ships, and future definitions require retained version handlers or a deliberate migration.
 
 Approved references supply explainable optional clarification prompts. References never populate factual answers or silently infer challenges from an industry.
+
+## Iteration 002 interaction changes
+
+Single selections auto-submit using the same IDs and definition rules; multiple selections and text retain explicit submission. Saved single answers can be continued when editing, and failed submissions retain local input. The displayed initial choices are I own a business / I have an idea / I don't know where to start / I know exactly what I want, mapped to the unchanged stage values. No discovery-definition migration is needed.
+
+Completion opens a readiness composition, not an automatic report route. Users explicitly prepare a draft and choose Explore the analysis. A changed revision invalidates that ready presentation; conversation remains available before and after preparation. Guest preview reuses these services with a separate restricted ownership cookie and seed-only reference knowledge.

@@ -1,4 +1,6 @@
-import { motion,useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useState } from "react";
+import { mascotAssets } from "./mascot-assets";
 export type MascotState =
   | "greeting"
   | "curious"
@@ -9,28 +11,32 @@ export type MascotState =
   | "completed";
 export function Mascot({
   state,
-  assets = {},
+  variant = "body",
+  assets = mascotAssets,
 }: {
   state: MascotState;
-  assets?: Partial<Record<MascotState, string>>;
+  variant?: "body" | "head";
+  assets?: Partial<Record<MascotState | "head", string>>;
 }) {
+  const [failed, setFailed] = useState<string[]>([]);
   const reduced = useReducedMotion();
+  const source = assets[variant === "head" ? "head" : state];
   return (
-    <motion.div
-      className="mascot"
-      aria-label={`Mascot space: ${state}`}
-      animate={reduced ? {} : { opacity: [0.75, 1, 0.75] }}
-      transition={{ duration: 5, repeat: Infinity }}
-    >
-      {assets[state] ? (
-        <img src={assets[state]} alt={`kailor mascot, ${state}`} />
-      ) : (
-        <div className="mascot-placeholder">
-          <span className="mascot-line" />
-          <small>space for a little personality</small>
-          <span className="mascot-state">{state}</span>
-        </div>
-      )}
-    </motion.div>
+    <div className={`mascot mascot-${variant}`} aria-hidden="true">
+      <AnimatePresence initial={false}>
+        {source && !failed.includes(source) && (
+          <motion.img
+            key={source}
+            src={source}
+            alt=""
+            onError={() => setFailed((previous) => [...previous, source])}
+            initial={{ opacity: 0, y: reduced ? 0 : 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: reduced ? 0 : -3 }}
+            transition={{ duration: reduced ? 0 : 0.35 }}
+          />
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

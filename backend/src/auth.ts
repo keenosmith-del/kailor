@@ -56,16 +56,28 @@ export async function requireAdmin(
     throw new AppError(401, "unauthorized", "Sign in to continue");
   const auth = await db.authSession.findUnique({
     where: { tokenHash: tokenHash(token) },
+    include: { admin: true },
   });
-  if (!auth || auth.expiresAt <= new Date())
+  if (!auth || auth.admin.isGuest || auth.expiresAt <= new Date())
     throw new AppError(401, "unauthorized", "Your session has expired");
   res.locals.adminId = auth.adminId;
   next();
 }
 export function sameOrigin(req: Request, _res: Response, next: NextFunction) {
+  const allowed = new Set([new URL(config.APP_ORIGIN).origin]);
+  if (config.NODE_ENV !== "production") {
+    const configured = new URL(config.APP_ORIGIN);
+    if (["localhost", "127.0.0.1", "[::1]"].includes(configured.hostname)) {
+      for (const host of ["localhost", "127.0.0.1", "[::1]"]) {
+        const local = new URL(configured);
+        local.hostname = host;
+        allowed.add(local.origin);
+      }
+    }
+  }
   if (
     !["GET", "HEAD", "OPTIONS"].includes(req.method) &&
-    req.headers.origin !== config.APP_ORIGIN
+    !allowed.has(req.headers.origin ?? "")
   )
     throw new AppError(403, "origin_rejected", "Request origin is not allowed");
   next();
@@ -73,8 +85,11 @@ export function sameOrigin(req: Request, _res: Response, next: NextFunction) {
 export async function login(email: string, password: string, res: Response) {
   const admin = await db.adminUser.findUnique({ where: { email } });
   const dummy = "00000000000000000000000000000000:" + "0".repeat(128);
-  const valid = await verifyPassword(password, admin?.passwordHash ?? dummy);
-  if (!admin || !valid)
+  const valid = await verifyPassword(
+    password,
+    admin && !admin.isGuest ? admin.passwordHash : dummy,
+  );
+  if (!admin || admin.isGuest || !valid)
     throw new AppError(
       401,
       "invalid_credentials",

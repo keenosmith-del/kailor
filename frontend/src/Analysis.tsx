@@ -1,15 +1,15 @@
 import {
-ArrowRight,
-ChevronLeft,
-ChevronRight,
-Download,
-RefreshCw,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  RefreshCw,
 } from "lucide-react";
-import { AnimatePresence,motion } from "motion/react";
-import { useEffect,useState } from "react";
-import type { Report,Session } from "../../shared/src/index";
-import { api,downloadReport } from "./api";
-import { ErrorBox,errorMessage } from "./ui";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
+import type { Report, Session } from "../../shared/src/index";
+import { api, downloadReport } from "./api";
+import { ErrorBox, errorMessage } from "./ui";
 export function Analysis({
   session,
   assess,
@@ -19,6 +19,7 @@ export function Analysis({
   assess: () => Promise<void>;
   busy: boolean;
 }) {
+  const reduced = useReducedMotion();
   const [report, setReport] = useState<{
       content: Report;
       stale: boolean;
@@ -40,7 +41,6 @@ export function Analysis({
   if (!report)
     return (
       <section className="report-empty">
-        <p className="eyebrow">your way forward</p>
         <h1>
           A little clarity
           <br />
@@ -131,10 +131,9 @@ export function Analysis({
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: reduced ? 0 : 0.2 }}
           >
-            <p className="eyebrow">0{index + 1} / your analysis</p>
-            <h1>{section.title}</h1>
+            <h1>{section.title[0] + section.title.slice(1).toLowerCase()}</h1>
             <div className="report-content">
               {section.paragraphs.map((p, i) => (
                 <p key={i}>{p}</p>
@@ -160,7 +159,7 @@ export function Analysis({
               key={s.title}
               onClick={() => setIndex(i)}
             >
-              {i + 1}
+              {s.title[0] + s.title.slice(1).toLowerCase()}
             </button>
           ))}
         </div>

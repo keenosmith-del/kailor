@@ -43,3 +43,13 @@ Example of a first answer, after session creation:
 Every successful answer/chat/confirmation mutation returns or contains the refreshed session revision. Use that revision for the next mutation. A 409 requires reload; do not blindly retry a stale write. Assessment creation is idempotent for the same revision and does not increment it. Subsequent edits preserve old reports and make them stale. PDF exports the latest stored report even when stale, with its original revision/date; regenerate explicitly if current answers should be reflected.
 
 Sessions accept no client-supplied synthetic flag. The internal simulator creates synthetic sessions deliberately. Cases are a single-consultant library; tenant-isolated case review is not implemented.
+
+## Local guest preview routes (iteration 002)
+
+`POST /api/guest/sessions` accepts `{}` and creates a synthetic persisted preview. A separate 24-hour HttpOnly guest cookie identifies its restricted owner. The frontend uses `/preview/:id/:view`; it does not redirect into the founder login.
+
+Under `/api/guest`, the following existing session operation shapes are available: `GET /sessions/:id`, `GET /sessions/:id/next`, `PUT /sessions/:id/answers`, `POST /sessions/:id/chat`, `POST /sessions/:id/evidence/:evidenceId`, `POST /sessions/:id/assessment`, `GET /sessions/:id/canvas`, `GET /sessions/:id/report`, and `GET /sessions/:id/report.pdf`. Each enforces guest ownership. No session listing, case review/retrieval, persona, simulation or admin endpoints are available through this router. Unknown preview routes return 404.
+
+The same Origin and validation rules apply. Guest chat forces development/mock mode and references are seed-only. Cookie expiry returns 401 with a restart instruction. Production mode or a configured API host outside localhost/127.0.0.1/::1 returns 404 for all preview operations. Preview creation is capped at 20 per IP/hour in the current single-process local server.
+
+Preparing an assessment returns data only; it does not mandate frontend navigation. Restarts create new sessions, leaving old reports intact. No registration endpoints were added.

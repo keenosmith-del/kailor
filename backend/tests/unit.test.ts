@@ -271,3 +271,47 @@ describe("report and authentication", () => {
     expect(await verifyPassword("wrong", hash)).toBe(false);
   });
 });
+
+import { sameOrigin } from "../src/auth.js";
+import { config } from "../src/config.js";
+it("allows loopback hostname equivalents only in development on the configured port", () => {
+  const configured = new URL(config.APP_ORIGIN);
+  const environment = config.NODE_ENV;
+  config.NODE_ENV = "development";
+  try {
+    for (const host of ["localhost", "127.0.0.1"]) {
+      const origin = new URL(configured);
+      origin.hostname = host;
+      expect(() =>
+        sameOrigin(
+          { method: "POST", headers: { origin: origin.origin } } as any,
+          {} as any,
+          () => {},
+        ),
+      ).not.toThrow();
+    }
+    expect(() =>
+      sameOrigin(
+        {
+          method: "POST",
+          headers: { origin: "http://localhost.evil.example:5173" },
+        } as any,
+        {} as any,
+        () => {},
+      ),
+    ).toThrow();
+    config.NODE_ENV = "production";
+    expect(() =>
+      sameOrigin(
+        {
+          method: "POST",
+          headers: { origin: "http://localhost.evil.example:5173" },
+        } as any,
+        {} as any,
+        () => {},
+      ),
+    ).toThrow();
+  } finally {
+    config.NODE_ENV = environment;
+  }
+});

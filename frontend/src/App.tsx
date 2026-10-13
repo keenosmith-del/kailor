@@ -1,6 +1,6 @@
-import { ArrowRight, LogOut } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, Navigate, Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import { api } from "./api";
 import { Intro } from "./Intro";
 import { SessionPage } from "./SessionPage";
@@ -13,51 +13,39 @@ export function App() {
       .then(() => setAuth(true))
       .catch(() => setAuth(false));
   }, []);
-  if (auth === null) return <div className="loading">Opening kailor…</div>;
   return (
-    <>
-      <header className="header">
-        <Link to="/" className="brand">
-          kailor
-        </Link>
-        <span className="header-caption">
-          a little clarity. a world of possibility.
-        </span>
-        {auth && (
-          <button
-            className="icon-button"
-            aria-label="Sign out"
-            onClick={() =>
-              void api("/auth/logout", "POST").then(() => setAuth(false))
-            }
-          >
-            <LogOut size={18} />
-          </button>
-        )}
-      </header>
-      <Routes>
-        <Route path="/" element={<Intro />} />
-        <Route
-          path="/workspace"
-          element={
-            auth ? <Workspace /> : <Login onLogin={() => setAuth(true)} />
-          }
-        />
-        <Route
-          path="/sessions/:id/:view"
-          element={
-            auth ? <SessionPage /> : <Login onLogin={() => setAuth(true)} />
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-      <footer>
-        thoughtfully considered. distinctly yours.
-        <span>kailor · private consultant workspace</span>
-      </footer>
-    </>
+    <Routes>
+      <Route path="/" element={<Intro />} />
+      <Route path="/preview/:id/:view" element={<SessionPage />} />
+      <Route
+        path="/workspace"
+        element={
+          auth === null ? (
+            <div className="loading">Opening workspace…</div>
+          ) : auth ? (
+            <Workspace />
+          ) : (
+            <Login onLogin={() => setAuth(true)} />
+          )
+        }
+      />
+      <Route
+        path="/sessions/:id/:view"
+        element={
+          auth === null ? (
+            <div className="loading">Opening discovery…</div>
+          ) : auth ? (
+            <SessionPage />
+          ) : (
+            <Login onLogin={() => setAuth(true)} />
+          )
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
+
 function Login({ onLogin }: { onLogin: () => void }) {
   const [email, setEmail] = useState("founder@kailor.local"),
     [password, setPassword] = useState(""),
