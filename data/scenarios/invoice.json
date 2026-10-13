@@ -1,0 +1,33 @@
+{
+  "id": "invoice",
+  "title": "Manual invoicing",
+  "industry": "cross-industry",
+  "situation": "Repeated invoice preparation and follow-up",
+  "problems": ["invoices"],
+  "tools": ["spreadsheets"],
+  "goals": ["invoices"],
+  "patterns": ["automation", "integration"],
+  "challenges": ["Potential invoices friction; confirm with the current user"],
+  "discoveryQuestions": [
+    "What actually happens today?",
+    "How often does it happen?",
+    "What outcome would justify a change?"
+  ],
+  "evidenceRequirements": [
+    "A user-confirmed problem",
+    "An example of the current workflow",
+    "Constraints and willingness to change"
+  ],
+  "assumptions": ["Reference pattern only; industry does not establish a need"],
+  "complexityConsiderations": [
+    "Existing system access",
+    "Migration effort",
+    "Ongoing ownership"
+  ],
+  "relevantServices": ["automation", "integration"],
+  "unsuitableConditions": [
+    "No confirmed problem",
+    "Existing tools already meet the goal",
+    "Maintenance or subscription commitment is unacceptable"
+  ]
+}

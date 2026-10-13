@@ -1,0 +1,36 @@
+{
+  "id": "consultant",
+  "title": "Independent consultant",
+  "industry": "consulting",
+  "situation": "Expertise and enquiries need clear presentation",
+  "problems": ["credibility", "booking"],
+  "tools": ["email"],
+  "goals": ["credibility", "booking"],
+  "patterns": ["website", "booking"],
+  "challenges": [
+    "Potential credibility friction; confirm with the current user",
+    "Potential booking friction; confirm with the current user"
+  ],
+  "discoveryQuestions": [
+    "What actually happens today?",
+    "How often does it happen?",
+    "What outcome would justify a change?"
+  ],
+  "evidenceRequirements": [
+    "A user-confirmed problem",
+    "An example of the current workflow",
+    "Constraints and willingness to change"
+  ],
+  "assumptions": ["Reference pattern only; industry does not establish a need"],
+  "complexityConsiderations": [
+    "Existing system access",
+    "Migration effort",
+    "Ongoing ownership"
+  ],
+  "relevantServices": ["website", "booking"],
+  "unsuitableConditions": [
+    "No confirmed problem",
+    "Existing tools already meet the goal",
+    "Maintenance or subscription commitment is unacceptable"
+  ]
+}

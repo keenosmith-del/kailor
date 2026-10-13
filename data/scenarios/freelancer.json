@@ -1,0 +1,36 @@
+{
+  "id": "freelancer",
+  "title": "Freelancer",
+  "industry": "freelance",
+  "situation": "Project enquiries and manual administration",
+  "problems": ["invoices", "credibility"],
+  "tools": ["spreadsheets"],
+  "goals": ["invoices", "credibility"],
+  "patterns": ["portfolio", "automation"],
+  "challenges": [
+    "Potential invoices friction; confirm with the current user",
+    "Potential credibility friction; confirm with the current user"
+  ],
+  "discoveryQuestions": [
+    "What actually happens today?",
+    "How often does it happen?",
+    "What outcome would justify a change?"
+  ],
+  "evidenceRequirements": [
+    "A user-confirmed problem",
+    "An example of the current workflow",
+    "Constraints and willingness to change"
+  ],
+  "assumptions": ["Reference pattern only; industry does not establish a need"],
+  "complexityConsiderations": [
+    "Existing system access",
+    "Migration effort",
+    "Ongoing ownership"
+  ],
+  "relevantServices": ["portfolio", "automation"],
+  "unsuitableConditions": [
+    "No confirmed problem",
+    "Existing tools already meet the goal",
+    "Maintenance or subscription commitment is unacceptable"
+  ]
+}

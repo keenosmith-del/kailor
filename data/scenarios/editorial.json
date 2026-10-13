@@ -1,0 +1,33 @@
+{
+  "id": "editorial",
+  "title": "Recurring research and content",
+  "industry": "publishing",
+  "situation": "Research and drafts recur; publication requires approval",
+  "problems": ["content"],
+  "tools": ["documents"],
+  "goals": ["content"],
+  "patterns": ["publishing", "cms", "ai"],
+  "challenges": ["Potential content friction; confirm with the current user"],
+  "discoveryQuestions": [
+    "What actually happens today?",
+    "How often does it happen?",
+    "What outcome would justify a change?"
+  ],
+  "evidenceRequirements": [
+    "A user-confirmed problem",
+    "An example of the current workflow",
+    "Constraints and willingness to change"
+  ],
+  "assumptions": ["Reference pattern only; industry does not establish a need"],
+  "complexityConsiderations": [
+    "Existing system access",
+    "Migration effort",
+    "Ongoing ownership"
+  ],
+  "relevantServices": ["publishing", "cms", "ai"],
+  "unsuitableConditions": [
+    "No confirmed problem",
+    "Existing tools already meet the goal",
+    "Maintenance or subscription commitment is unacceptable"
+  ]
+}

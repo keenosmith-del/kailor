@@ -1,0 +1,23 @@
+{
+  "id": "kai",
+  "name": "kai editorial website proposal",
+  "synthetic": true,
+  "description": "Hypothetical persona for internal evaluation; no commercial outcomes.",
+  "answers": {
+    "stage": "specific",
+    "kind": "business",
+    "presence": ["none"],
+    "tools": "No current platform",
+    "problems": ["content", "custom"],
+    "goals": "A proposed publishing workflow with source checks and human approval",
+    "constraints": "Do not implement recurring publishing in this iteration",
+    "budget": "Not established",
+    "timing": "No fixed date",
+    "industry": "kai, a proposed AI editorial website",
+    "request": "A website with a future research, draft approval and publishing workflow",
+    "contentDetails": "Recurring research from cited sources; every draft needs approval before publishing"
+  },
+  "chat": ["What would be a sensible first step?"],
+  "expectedServices": ["publishing", "webapp"],
+  "excludedServices": []
+}

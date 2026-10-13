@@ -1,0 +1,36 @@
+{
+  "id": "seller",
+  "title": "Small online seller",
+  "industry": "retail",
+  "situation": "Products sold through social messages",
+  "problems": ["credibility", "custom"],
+  "tools": ["instagram"],
+  "goals": ["credibility", "custom"],
+  "patterns": ["website", "payment"],
+  "challenges": [
+    "Potential credibility friction; confirm with the current user",
+    "Potential custom friction; confirm with the current user"
+  ],
+  "discoveryQuestions": [
+    "What actually happens today?",
+    "How often does it happen?",
+    "What outcome would justify a change?"
+  ],
+  "evidenceRequirements": [
+    "A user-confirmed problem",
+    "An example of the current workflow",
+    "Constraints and willingness to change"
+  ],
+  "assumptions": ["Reference pattern only; industry does not establish a need"],
+  "complexityConsiderations": [
+    "Existing system access",
+    "Migration effort",
+    "Ongoing ownership"
+  ],
+  "relevantServices": ["website", "payment"],
+  "unsuitableConditions": [
+    "No confirmed problem",
+    "Existing tools already meet the goal",
+    "Maintenance or subscription commitment is unacceptable"
+  ]
+}

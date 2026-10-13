@@ -1,0 +1,23 @@
+{
+  "id": "teacher",
+  "name": "Recurring lesson preparation",
+  "synthetic": true,
+  "description": "Hypothetical persona for internal evaluation; no commercial outcomes.",
+  "answers": {
+    "stage": "established",
+    "kind": "professional",
+    "presence": ["none"],
+    "tools": "Documents and approved curriculum resources",
+    "problems": ["content"],
+    "goals": "Spend less time on repeated preparation",
+    "constraints": "Limited technical knowledge",
+    "budget": "Not established",
+    "timing": "No fixed date",
+    "industry": "Teacher",
+    "portfolio": "No public portfolio required",
+    "contentDetails": "Weekly lesson research and draft plans with mandatory teacher review; no pupil data"
+  },
+  "chat": ["What would be a sensible first step?"],
+  "expectedServices": ["publishing"],
+  "excludedServices": ["website"]
+}

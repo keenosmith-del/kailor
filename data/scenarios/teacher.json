@@ -1,0 +1,33 @@
+{
+  "id": "teacher",
+  "title": "Teacher preparation",
+  "industry": "education",
+  "situation": "Recurring lesson preparation with educator review",
+  "problems": ["content"],
+  "tools": ["documents"],
+  "goals": ["content"],
+  "patterns": ["automation", "ai"],
+  "challenges": ["Potential content friction; confirm with the current user"],
+  "discoveryQuestions": [
+    "What actually happens today?",
+    "How often does it happen?",
+    "What outcome would justify a change?"
+  ],
+  "evidenceRequirements": [
+    "A user-confirmed problem",
+    "An example of the current workflow",
+    "Constraints and willingness to change"
+  ],
+  "assumptions": ["Reference pattern only; industry does not establish a need"],
+  "complexityConsiderations": [
+    "Existing system access",
+    "Migration effort",
+    "Ongoing ownership"
+  ],
+  "relevantServices": ["automation", "ai"],
+  "unsuitableConditions": [
+    "No confirmed problem",
+    "Existing tools already meet the goal",
+    "Maintenance or subscription commitment is unacceptable"
+  ]
+}

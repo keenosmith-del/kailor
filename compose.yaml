@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:17.7-alpine
+    environment:
+      POSTGRES_USER: kailor
+      POSTGRES_PASSWORD: kailor_local
+      POSTGRES_DB: kailor
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - kailor_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kailor -d kailor"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  kailor_postgres:

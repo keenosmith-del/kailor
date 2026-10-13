@@ -1,0 +1,22 @@
+{
+  "id": "professional",
+  "name": "Independent designer",
+  "synthetic": true,
+  "description": "Hypothetical persona for internal evaluation; no commercial outcomes.",
+  "answers": {
+    "stage": "established",
+    "kind": "professional",
+    "presence": ["instagram"],
+    "tools": "WhatsApp",
+    "problems": ["credibility"],
+    "goals": "A professional portfolio for prospective clients",
+    "constraints": "Limited technical knowledge",
+    "budget": "Not established",
+    "timing": "No fixed date",
+    "industry": "Freelance graphic designer",
+    "portfolio": "Selected existing projects and a clear enquiry route"
+  },
+  "chat": ["What would be a sensible first step?"],
+  "expectedServices": ["portfolio"],
+  "excludedServices": []
+}

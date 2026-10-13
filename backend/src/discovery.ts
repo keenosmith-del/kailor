@@ -1,0 +1,208 @@
+import type { Answers, Question, AnswerValue } from "../../shared/src/index.js";
+const options = (...items: string[]) =>
+  items.map((item) => {
+    const [value, label] = item.split("|");
+    return { value, label: label ?? value };
+  });
+export const version = "1.0.0";
+export const questions: Question[] = [
+  {
+    id: "stage",
+    title: "Where are you right now?",
+    hint: "There is no wrong starting point.",
+    type: "single",
+    options: options(
+      "established|I'm already established.",
+      "starting|I'm just getting started.",
+      "uncertain|I don't know where to start.",
+      "specific|I know exactly what I want.",
+    ),
+  },
+  {
+    id: "kind",
+    title: "What best describes your work?",
+    hint: "This helps us ask useful questions.",
+    type: "single",
+    options: options(
+      "business|A business",
+      "professional|An independent professional",
+      "individual|A personal project or idea",
+    ),
+  },
+  {
+    id: "industry",
+    title: "Tell us a little about what you do.",
+    hint: "Your profession, offering or idea — in your own words.",
+    type: "text",
+  },
+  {
+    id: "idea",
+    title: "What would you like to bring to life?",
+    hint: "Who is it for, and what would it help them do?",
+    type: "text",
+    when: { key: "stage", values: ["starting"] },
+  },
+  {
+    id: "progress",
+    title: "How far along are you?",
+    hint: "An idea, early customers, or something already taking shape?",
+    type: "text",
+    when: { key: "stage", values: ["starting"] },
+  },
+  {
+    id: "request",
+    title: "What do you have in mind?",
+    hint: "Describe the functionality, intended users and expected outcome.",
+    type: "text",
+    when: { key: "stage", values: ["specific"] },
+  },
+  {
+    id: "frustrations",
+    title: "What feels harder than it should?",
+    hint: "Think about repetitive work, missed opportunities or an idea you cannot quite express.",
+    type: "text",
+    when: { key: "stage", values: ["uncertain"] },
+  },
+  {
+    id: "portfolio",
+    title: "How should people experience your work?",
+    hint: "Describe your existing work, portfolio, enquiries and presentation needs.",
+    type: "text",
+    when: { key: "kind", values: ["professional"] },
+  },
+  {
+    id: "presence",
+    title: "Where can people find you today?",
+    hint: "Choose everything that applies.",
+    type: "multi",
+    options: options(
+      "instagram|Instagram / social channels",
+      "website|A website",
+      "email|Professional email",
+      "marketplace|A marketplace",
+      "none|Nowhere online yet",
+    ),
+  },
+  {
+    id: "website",
+    title: "How is your website working for you?",
+    hint: "What works, what is outdated, and what needs to improve?",
+    type: "text",
+    when: { key: "presence", values: ["website"] },
+  },
+  {
+    id: "tools",
+    title: "What tools are part of your day?",
+    hint: "For example WhatsApp, spreadsheets, accounting software or a booking platform.",
+    type: "text",
+  },
+  {
+    id: "problems",
+    title: "Where would a little help make a difference?",
+    hint: "Select the challenges you actually experience.",
+    type: "multi",
+    options: options(
+      "credibility|Presenting my work professionally",
+      "booking|Managing appointments",
+      "invoices|Preparing or following up invoices",
+      "content|Recurring content or research",
+      "outdated|An outdated website",
+      "custom|A specific tool or application",
+      "none|Still exploring",
+    ),
+  },
+  {
+    id: "bookingDetails",
+    title: "What gets in the way of a smooth booking?",
+    hint: "Current volume, missed appointments, manual steps and client preferences.",
+    type: "text",
+    when: { key: "problems", values: ["booking"] },
+  },
+  {
+    id: "invoiceDetails",
+    title: "Walk us through an invoice.",
+    hint: "Which steps repeat? Which accounting tools or approval rules must stay?",
+    type: "text",
+    when: { key: "problems", values: ["invoices"] },
+  },
+  {
+    id: "contentDetails",
+    title: "What repeats in your content or research process?",
+    hint: "Sources, cadence, review and publishing. Include what must remain under your control.",
+    type: "text",
+    when: { key: "problems", values: ["content"] },
+  },
+  {
+    id: "goals",
+    title: "What would better look like?",
+    hint: "A practical outcome matters more than a particular technology.",
+    type: "text",
+  },
+  {
+    id: "constraints",
+    title: "What should we work around?",
+    hint: "Technical comfort, existing systems, accessibility or privacy requirements.",
+    type: "text",
+    optional: true,
+  },
+  {
+    id: "budget",
+    title: "Have you thought about an investment range?",
+    hint: "“Not sure yet” is a useful answer. This is not a quotation.",
+    type: "text",
+    optional: true,
+  },
+  {
+    id: "timing",
+    title: "Is there a date that matters?",
+    hint: "A launch, a busy season, or simply when you are ready.",
+    type: "text",
+    optional: true,
+  },
+];
+export function relevant(q: Question, a: Answers) {
+  return (
+    !q.when ||
+    q.when.values.some((v) =>
+      Array.isArray(a[q.when!.key])
+        ? (a[q.when!.key] as string[]).includes(v)
+        : a[q.when!.key] === v,
+    )
+  );
+}
+export function activeQuestions(a: Answers) {
+  return questions.filter((q) => relevant(q, a));
+}
+export function nextQuestion(a: Answers) {
+  return activeQuestions(a).find((q) => !(q.id in a)) ?? null;
+}
+export function validateAnswer(id: string, value: AnswerValue, skip = false) {
+  const q = questions.find((x) => x.id === id);
+  if (!q) throw new Error("Unknown question");
+  if (skip) {
+    if (!q.optional) throw new Error("This question is required");
+    return q;
+  }
+  if (q.type === "text" && (typeof value !== "string" || !value.trim()))
+    throw new Error("Enter a response");
+  if (
+    q.type === "single" &&
+    (typeof value !== "string" || !q.options?.some((o) => o.value === value))
+  )
+    throw new Error("Choose a valid option");
+  if (
+    q.type === "multi" &&
+    (!Array.isArray(value) ||
+      !value.length ||
+      new Set(value).size !== value.length ||
+      value.some((v) => !q.options?.some((o) => o.value === v)) ||
+      (value.includes("none") && value.length > 1))
+  )
+    throw new Error("Choose valid, non-conflicting options");
+  return q;
+}
+export function pruneAnswers(a: Answers): Answers {
+  const result = { ...a };
+  for (const q of questions) if (!relevant(q, result)) delete result[q.id];
+  return result;
+}

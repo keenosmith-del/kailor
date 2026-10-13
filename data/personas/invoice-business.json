@@ -1,0 +1,23 @@
+{
+  "id": "invoice-business",
+  "name": "Manual invoice business",
+  "synthetic": true,
+  "description": "Hypothetical persona for internal evaluation; no commercial outcomes.",
+  "answers": {
+    "stage": "established",
+    "kind": "business",
+    "presence": ["website", "email"],
+    "tools": "Spreadsheets and accounting software",
+    "problems": ["invoices"],
+    "goals": "Reduce duplicate entry while retaining invoice approval",
+    "constraints": "Limited technical knowledge",
+    "budget": "Not established",
+    "timing": "No fixed date",
+    "industry": "Small maintenance business",
+    "website": "The website works well for enquiries",
+    "invoiceDetails": "I copy approved timesheet totals into invoices weekly; accounting records must stay intact"
+  },
+  "chat": ["What would be a sensible first step?"],
+  "expectedServices": ["automation"],
+  "excludedServices": ["modernization", "website"]
+}

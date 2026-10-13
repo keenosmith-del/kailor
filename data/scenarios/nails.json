@@ -1,0 +1,36 @@
+{
+  "id": "nails",
+  "title": "Independent nail services",
+  "industry": "beauty",
+  "situation": "Social portfolio with direct-message bookings",
+  "problems": ["credibility", "booking"],
+  "tools": ["instagram", "whatsapp"],
+  "goals": ["credibility", "booking"],
+  "patterns": ["website", "email", "booking"],
+  "challenges": [
+    "Potential credibility friction; confirm with the current user",
+    "Potential booking friction; confirm with the current user"
+  ],
+  "discoveryQuestions": [
+    "What actually happens today?",
+    "How often does it happen?",
+    "What outcome would justify a change?"
+  ],
+  "evidenceRequirements": [
+    "A user-confirmed problem",
+    "An example of the current workflow",
+    "Constraints and willingness to change"
+  ],
+  "assumptions": ["Reference pattern only; industry does not establish a need"],
+  "complexityConsiderations": [
+    "Existing system access",
+    "Migration effort",
+    "Ongoing ownership"
+  ],
+  "relevantServices": ["website", "email", "booking"],
+  "unsuitableConditions": [
+    "No confirmed problem",
+    "Existing tools already meet the goal",
+    "Maintenance or subscription commitment is unacceptable"
+  ]
+}

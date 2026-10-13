@@ -1,0 +1,32 @@
+{
+  "name": "@kailor/backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/backend/src/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run tests/unit.test.ts",
+    "test:integration": "vitest run tests/integration.test.ts"
+  },
+  "dependencies": {
+    "@kailor/shared": "*",
+    "@prisma/client": "7.10.0",
+    "@prisma/adapter-pg": "7.10.0",
+    "pg": "8.16.3",
+    "express": "5.1.0",
+    "zod": "4.1.12",
+    "dotenv": "17.2.3",
+    "helmet": "8.1.0",
+    "express-rate-limit": "8.7.1",
+    "pdfkit": "0.17.2"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.5",
+    "@types/pg": "8.15.6",
+    "@types/pdfkit": "0.17.3",
+    "supertest": "7.1.4",
+    "@types/supertest": "6.0.3"
+  }
+}

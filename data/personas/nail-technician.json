@@ -1,0 +1,21 @@
+{
+  "id": "nail-technician",
+  "name": "Instagram-only nail technician",
+  "synthetic": true,
+  "description": "Hypothetical persona for internal evaluation; no commercial outcomes.",
+  "answers": {
+    "stage": "established",
+    "kind": "business",
+    "presence": ["instagram"],
+    "tools": "WhatsApp",
+    "problems": ["credibility"],
+    "goals": "A credible gallery of treatments; keep WhatsApp enquiries",
+    "constraints": "Limited technical knowledge",
+    "budget": "Not established",
+    "timing": "No fixed date",
+    "industry": "Independent nail technician; I work alone"
+  },
+  "chat": ["What would be a sensible first step?"],
+  "expectedServices": ["website", "email"],
+  "excludedServices": ["booking"]
+}

@@ -1,0 +1,189 @@
+generator client {
+  provider = "prisma-client"
+  output = "../src/generated/prisma"
+  importFileExtension = "js"
+}
+datasource db {
+  provider = "postgresql"
+}
+model AdminUser {
+  id String @id @default(uuid())
+  email String @unique
+  passwordHash String
+  sessions AuthSession[]
+  discoveries DiscoverySession[]
+  createdAt DateTime @default(now())
+}
+model AuthSession {
+  tokenHash String @id
+  adminId String
+  admin AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+}
+model Subject {
+  id String @id @default(uuid())
+  name String
+  synthetic Boolean @default(false)
+  sessions DiscoverySession[]
+}
+model DiscoverySession {
+  id String @id @default(uuid())
+  adminId String
+  admin AdminUser @relation(fields: [adminId], references: [id])
+  subjectId String
+  subject Subject @relation(fields: [subjectId], references: [id])
+  definitionVersion String
+  revision Int @default(0)
+  synthetic Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  answers DiscoveryAnswer[]
+  messages ConversationMessage[]
+  evidence Evidence[]
+  assessments Assessment[]
+  simulations SimulationRun[]
+  usage AiUsageRecord[]
+}
+model DiscoveryAnswer {
+  id String @id @default(uuid())
+  sessionId String
+  session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId String
+  value Json
+  skipped Boolean @default(false)
+  updatedAt DateTime @updatedAt
+  @@unique([sessionId, questionId])
+}
+model ConversationMessage {
+  id String @id @default(uuid())
+  sessionId String
+  session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role String
+  ordinal Int
+  content String
+  provider String
+  createdAt DateTime @default(now())
+  @@unique([sessionId, ordinal])
+}
+model Evidence {
+  id String @id @default(uuid())
+  sessionId String
+  session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  key String
+  value Json
+  status String @default("inferred")
+  source String
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  @@index([sessionId, active])
+}
+model Assessment {
+  id String @id @default(uuid())
+  sessionId String
+  session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionRevision Int
+  status String @default("draft")
+  summary String
+  createdAt DateTime @default(now())
+  recommendations Recommendation[]
+  report ReportSnapshot?
+  @@unique([sessionId, sessionRevision])
+}
+model Service {
+  id String @id
+  name String
+  delivery String
+  description String
+  hoursLow Int?
+  hoursHigh Int?
+  recommendations Recommendation[]
+}
+model Recommendation {
+  id String @id @default(uuid())
+  assessmentId String
+  assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  serviceId String
+  service Service @relation(fields: [serviceId], references: [id])
+  problem String
+  solution String
+  evidence Json
+  benefits Json
+  alternatives Json
+  complexity String
+  dependencies Json
+  confidence String
+  delivery String
+  nextSteps Json
+  optional Boolean @default(false)
+  estimate CostEstimate?
+}
+model CostEstimate {
+  id String @id @default(uuid())
+  recommendationId String @unique
+  recommendation Recommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+  status String @default("manual_review")
+  currency String
+  implementationLow Float?
+  implementationHigh Float?
+  recurringStatus String @default("vendor_quote_required")
+  notes String
+}
+model ReportSnapshot {
+  id String @id @default(uuid())
+  assessmentId String @unique
+  assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  content Json
+  createdAt DateTime @default(now())
+}
+model ScenarioTemplate {
+  id String @id
+  title String
+  industry String
+  definition Json
+}
+model SimulationRun {
+  id String @id @default(uuid())
+  personaId String
+  persona Json
+  sessionId String
+  session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  discoveryPath Json
+  assessmentId String
+  evaluationNotes String
+  approvalStatus String @default("pending")
+  createdAt DateTime @default(now())
+  cases CaseIntelligenceRecord[]
+}
+model CaseIntelligenceRecord {
+  id String @id @default(uuid())
+  sourceType String
+  sourceRunId String?
+  sourceRun SimulationRun? @relation(fields: [sourceRunId], references: [id])
+  reviewStatus String @default("pending")
+  title String
+  // Sanitized reusable knowledge only; never copy private session data here.
+  pattern Json
+  reviewNotes String?
+  reviewedAt DateTime?
+  createdAt DateTime @default(now())
+}
+model AiUsageRecord {
+  id String @id @default(uuid())
+  sessionId String
+  session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  provider String
+  mode String
+  status String
+  reservedTokens Int
+  reason String?
+  createdAt DateTime @default(now())
+  @@index([createdAt, provider])
+}
+model AuditEvent {
+  id String @id @default(uuid())
+  actorId String
+  action String
+  entityId String
+  details Json
+  createdAt DateTime @default(now())
+}

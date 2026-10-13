@@ -1,0 +1,35 @@
+{
+  "id": "creative",
+  "title": "Creative professional",
+  "industry": "creative",
+  "situation": "Selected work needs a coherent showcase",
+  "problems": ["credibility"],
+  "tools": ["instagram"],
+  "goals": ["credibility"],
+  "patterns": ["portfolio"],
+  "challenges": [
+    "Potential credibility friction; confirm with the current user"
+  ],
+  "discoveryQuestions": [
+    "What actually happens today?",
+    "How often does it happen?",
+    "What outcome would justify a change?"
+  ],
+  "evidenceRequirements": [
+    "A user-confirmed problem",
+    "An example of the current workflow",
+    "Constraints and willingness to change"
+  ],
+  "assumptions": ["Reference pattern only; industry does not establish a need"],
+  "complexityConsiderations": [
+    "Existing system access",
+    "Migration effort",
+    "Ongoing ownership"
+  ],
+  "relevantServices": ["portfolio"],
+  "unsuitableConditions": [
+    "No confirmed problem",
+    "Existing tools already meet the goal",
+    "Maintenance or subscription commitment is unacceptable"
+  ]
+}

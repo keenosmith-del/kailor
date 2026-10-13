@@ -1,0 +1,33 @@
+{
+  "id": "appointments",
+  "title": "Appointment management",
+  "industry": "cross-industry",
+  "situation": "Repeated scheduling and reminder work",
+  "problems": ["booking"],
+  "tools": ["calendar"],
+  "goals": ["booking"],
+  "patterns": ["booking"],
+  "challenges": ["Potential booking friction; confirm with the current user"],
+  "discoveryQuestions": [
+    "What actually happens today?",
+    "How often does it happen?",
+    "What outcome would justify a change?"
+  ],
+  "evidenceRequirements": [
+    "A user-confirmed problem",
+    "An example of the current workflow",
+    "Constraints and willingness to change"
+  ],
+  "assumptions": ["Reference pattern only; industry does not establish a need"],
+  "complexityConsiderations": [
+    "Existing system access",
+    "Migration effort",
+    "Ongoing ownership"
+  ],
+  "relevantServices": ["booking"],
+  "unsuitableConditions": [
+    "No confirmed problem",
+    "Existing tools already meet the goal",
+    "Maintenance or subscription commitment is unacceptable"
+  ]
+}

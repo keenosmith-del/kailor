@@ -1,0 +1,33 @@
+{
+  "id": "modernize",
+  "title": "Existing website modernization",
+  "industry": "cross-industry",
+  "situation": "A website no longer meets a confirmed goal",
+  "problems": ["outdated"],
+  "tools": ["website"],
+  "goals": ["outdated"],
+  "patterns": ["modernization"],
+  "challenges": ["Potential outdated friction; confirm with the current user"],
+  "discoveryQuestions": [
+    "What actually happens today?",
+    "How often does it happen?",
+    "What outcome would justify a change?"
+  ],
+  "evidenceRequirements": [
+    "A user-confirmed problem",
+    "An example of the current workflow",
+    "Constraints and willingness to change"
+  ],
+  "assumptions": ["Reference pattern only; industry does not establish a need"],
+  "complexityConsiderations": [
+    "Existing system access",
+    "Migration effort",
+    "Ongoing ownership"
+  ],
+  "relevantServices": ["modernization"],
+  "unsuitableConditions": [
+    "No confirmed problem",
+    "Existing tools already meet the goal",
+    "Maintenance or subscription commitment is unacceptable"
+  ]
+}

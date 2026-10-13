@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+coverage/
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+.cache/
+.turbo/
+backend/storage/
+data/runtime/
+backend/src/generated/
+*.tsbuildinfo

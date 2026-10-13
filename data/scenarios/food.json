@@ -1,0 +1,36 @@
+{
+  "id": "food",
+  "title": "Home-based food business",
+  "industry": "food",
+  "situation": "Pre-orders and delivery arranged manually",
+  "problems": ["booking", "credibility"],
+  "tools": ["whatsapp"],
+  "goals": ["booking", "credibility"],
+  "patterns": ["website", "booking"],
+  "challenges": [
+    "Potential booking friction; confirm with the current user",
+    "Potential credibility friction; confirm with the current user"
+  ],
+  "discoveryQuestions": [
+    "What actually happens today?",
+    "How often does it happen?",
+    "What outcome would justify a change?"
+  ],
+  "evidenceRequirements": [
+    "A user-confirmed problem",
+    "An example of the current workflow",
+    "Constraints and willingness to change"
+  ],
+  "assumptions": ["Reference pattern only; industry does not establish a need"],
+  "complexityConsiderations": [
+    "Existing system access",
+    "Migration effort",
+    "Ongoing ownership"
+  ],
+  "relevantServices": ["website", "booking"],
+  "unsuitableConditions": [
+    "No confirmed problem",
+    "Existing tools already meet the goal",
+    "Maintenance or subscription commitment is unacceptable"
+  ]
+}
