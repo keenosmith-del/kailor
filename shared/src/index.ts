@@ -69,6 +69,9 @@ export type Report = {
     title: string;
     sourceType: string;
     reasons: string[];
+    approvalStatus?: string;
+    limitations?: string[];
+    usefulness?: string;
   }[];
 };
 export const chatOutputSchema = z
@@ -94,5 +97,77 @@ export const chatInput = mutationSchema
   .extend({
     message: z.string().trim().min(1).max(4000),
     mode: z.enum(["conversation", "analysis"]).default("conversation"),
+  })
+  .strict();
+
+export type DiscoveryContext = {
+  subjectType: string;
+  stage: string;
+  activity: string;
+  facts: {
+    key: string;
+    value: AnswerValue;
+    origin: "user-confirmed";
+    evidenceIds: string[];
+  }[];
+  preferences: { key: string; value: AnswerValue }[];
+  possibilities: {
+    key: string;
+    value: AnswerValue;
+    origin: "rule-inferred";
+    reason: string;
+    sourceKeys: string[];
+  }[];
+  pending: { key: string; value: AnswerValue; origin: string }[];
+  objectives: { key: string; value: AnswerValue }[];
+  workflows: { key: string; value: AnswerValue }[];
+  confirmedRequirements: { key: string; value: AnswerValue }[];
+  unknowns: string[];
+  directions: string[];
+  website: {
+    supplied: string;
+    syntaxValidated: boolean;
+    fetched: false;
+    inspected: false;
+  };
+  specialistReview: boolean;
+};
+export type Readiness = {
+  state:
+    | "needs_information"
+    | "preliminary"
+    | "deeper"
+    | "available_with_uncertainties";
+  canAssess: boolean;
+  reasons: string[];
+  uncertainties: string[];
+};
+export type DiscoveryPlan = {
+  revision: number;
+  plannerVersion: string;
+  question: Question | null;
+  active: Question[];
+  answered: number;
+  total: number;
+  readiness: Readiness;
+  context: DiscoveryContext;
+  ranking: { id: string; score: number; reasons: string[] }[];
+  referenceHints: { question: string; source: string; reason: string }[];
+  suggestedPrompts: string[];
+  provenance: {
+    source: "deterministic";
+    definitionVersion: string;
+    caseIds: string[];
+  };
+};
+
+export const evidenceBatchInput = mutationSchema
+  .extend({
+    ids: z
+      .array(z.uuid())
+      .min(1)
+      .max(8)
+      .refine((ids) => new Set(ids).size === ids.length),
+    accept: z.boolean(),
   })
   .strict();

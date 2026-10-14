@@ -335,7 +335,33 @@ export function Discovery({
                 <p className="question-description">
                   {ready
                     ? "I’ve put together an initial assessment based on what you’ve shared. We can keep exploring, or take a look."
-                    : "There’s enough context for an initial assessment. We can keep exploring, or prepare it when you’re ready."}
+                    : next.readiness.canAssess
+                      ? "There’s enough context for an initial assessment. We can keep exploring, or prepare it when you’re ready."
+                      : next.readiness.reasons.join(". ")}
+                </p>
+                {ready ? (
+                  <Link
+                    className="discovery-action"
+                    to={sessionHref(session.id, "report")}
+                  >
+                    Explore the analysis
+                  </Link>
+                ) : (
+                  <button
+                    className="discovery-action"
+                    disabled={busy || !next.readiness.canAssess}
+                    onClick={() => void prepare()}
+                  >
+                    Prepare the assessment
+                  </button>
+                )}
+              </div>
+            )}
+            {question && next.readiness.canAssess && (
+              <div className="readiness">
+                <p className="question-description">
+                  An initial assessment is available.{" "}
+                  {next.readiness.uncertainties.join(". ")}
                 </p>
                 {ready ? (
                   <Link
@@ -355,6 +381,22 @@ export function Discovery({
                 )}
               </div>
             )}
+            <details>
+              <summary>Review your answers</summary>
+              <div className="actions">
+                {session.answers.map((a) => (
+                  <button
+                    key={a.questionId}
+                    className="text-link"
+                    disabled={busy}
+                    onClick={() => setEditing(a.questionId)}
+                  >
+                    {next.active.find((q) => q.id === a.questionId)?.title ??
+                      a.questionId}
+                  </button>
+                ))}
+              </div>
+            </details>
             <Link
               className="conversation-link text-link"
               to={sessionHref(session.id, "conversation")}

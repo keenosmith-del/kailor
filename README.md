@@ -18,10 +18,10 @@ npm run dev
 
 Open **http://127.0.0.1:5173**. Sign in with `founder@kailor.local` and the random `ADMIN_PASSWORD` saved in the ignored root `.env`. Setup never overwrites an existing `.env`. API: `http://127.0.0.1:5050/api/health`. Keep `APP_ORIGIN` aligned with the exact frontend URL.
 
-The current workspace already has a generated local `.env`, migrated PostgreSQL, reference seeds and five saved synthetic assessments. No provider credentials are needed. Cloudflare is opt-in and disabled by default; mock replies visibly identify development behaviour.
+The current workspace already has a generated local `.env`, migrated PostgreSQL, reference seeds and saved synthetic assessments. No provider credentials are needed. Cloudflare is opt-in and disabled by default; mock replies visibly identify development behaviour.
 
 ```bash
-npm run simulate        # five reusable synthetic personas; persisted, pending review
+npm run simulate        # fourteen synthetic evaluation personas; persisted, pending review
 npm test                # deterministic unit and provider-contract suite
 npm run typecheck
 npm run build
@@ -46,7 +46,7 @@ shared/src/index.ts
 data/
   services.ts
   scenarios/     # 15 editable reference patterns
-  personas/      # 5 clearly synthetic fixtures
+  personas/      # 14 clearly synthetic fixtures
 scripts/         # setup, simulator, sample PDF, formatting helpers
 compose.yaml
 .env.example
@@ -77,3 +77,20 @@ This is a local private initial build, not a public deployment. Estimates requir
 The root page now opens a three-scene scroll story using the supplied static mascot. Start discovering or Skip to discovery enters a persisted local guest preview without founder permissions. The private founder workspace remains at `/workspace`. Assessment preparation stays in discovery until the user chooses Explore the analysis; Start again creates a new session.
 
 Run `npm run db:generate` and `npm run db:migrate` before starting an existing checkout; iteration 002 adds the guest-principal flag. Guest preview is disabled in production mode and when the configured API host is not loopback. It always uses mock chat and seed references. See [iteration 002](docs/iterations/002-immersive-experience.md) for verification, changed files and limitations.
+
+## Iteration 003 — adaptive intelligence
+
+Discovery now selects relevant questions using saved context and explainable priorities, and reports qualitative readiness without requiring form completion. Guided and conversational inputs share confirmed evidence, with grouped natural-language proposals, explicit correction/rejection and persistent plans. Approved case retrieval considers workflows, scope and constraints; custom synthetic persona/evaluation APIs support curated learning. Existing guest restrictions and immutable reports remain.
+
+```sh
+npm run db:generate
+npm run db:migrate
+npm test
+npm run evaluate
+npm run typecheck
+npm run build
+DATABASE_URL=postgresql://kailor:kailor_local@localhost:5432/kailor_test npm run test:integration
+npm run dev
+```
+
+See [iteration 003](docs/iterations/003-adaptive-intelligence.md) for migration, exact verification results, changed files and limits. Local extraction is deliberately narrow. Live Cloudflare remains unverified because credentials are absent and opt-in is disabled. No billing, public deployment or model training was enabled.

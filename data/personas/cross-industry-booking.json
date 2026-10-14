@@ -1,0 +1,33 @@
+{
+  "synthetic": true,
+  "description": "Hypothetical internal evaluation persona; no customer outcomes.",
+  "chat": [
+    "What is the smallest useful first step?"
+  ],
+  "expectedServices": [
+    "booking"
+  ],
+  "excludedServices": [
+    "webapp",
+    "ai"
+  ],
+  "id": "cross-industry-booking",
+  "name": "Personal trainer booking friction",
+  "answers": {
+    "stage": "established",
+    "kind": "business",
+    "constraints": "Affordable initial pilot; keep human approval",
+    "budget": "Unknown",
+    "timing": "No fixed date",
+    "industry": "Personal trainer",
+    "problems": [
+      "booking"
+    ],
+    "bookingDetails": "Manual appointment tracking through WhatsApp causes missed reminders",
+    "goals": "Make appointments easier to manage",
+    "tools": "WhatsApp",
+    "presence": [
+      "instagram"
+    ]
+  }
+}

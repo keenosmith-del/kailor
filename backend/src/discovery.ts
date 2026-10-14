@@ -1,3 +1,4 @@
+import { signalAnswers } from "./context-extraction.js";
 import type { Answers, Question, AnswerValue } from "../../shared/src/index.js";
 const options = (...items: string[]) =>
   items.map((item) => {
@@ -148,6 +149,37 @@ export const questions: Question[] = [
     when: { key: "problems", values: ["content"] },
   },
   {
+    id: "websiteStatus",
+    title: "Do you already have a website?",
+    hint: "This only records what you tell us; no audit is implied.",
+    type: "single",
+    optional: true,
+    options: options("existing|Yes", "absent|No", "unknown|Not sure"),
+  },
+  {
+    id: "scopeDetails",
+    title: "What must the first version do, and who will use it?",
+    hint: "Essential features, current alternatives, user roles, data/privacy, review and export needs. Native mobile may not be necessary.",
+    type: "text",
+    optional: true,
+    when: { key: "problems", values: ["custom"] },
+  },
+  {
+    id: "workflowDetails",
+    title: "Which process needs improvement?",
+    hint: "Current steps, friction, records, users and desired outcome.",
+    type: "text",
+    optional: true,
+  },
+  {
+    id: "websiteUrl",
+    title: "Would you like to share your existing website URL?",
+    hint: "We validate the address only. This does not perform an audit.",
+    type: "text",
+    optional: true,
+    when: { key: "presence", values: ["website"] },
+  },
+  {
     id: "goals",
     title: "What would better look like?",
     hint: "A practical outcome matters more than a particular technology.",
@@ -191,11 +223,34 @@ export function activeQuestions(a: Answers) {
   return questions.filter((q) => relevant(q, a));
 }
 export function nextQuestion(a: Answers) {
-  return activeQuestions(a).find((q) => !(q.id in a)) ?? null;
+  return (
+    activeQuestions(a).find(
+      (q) =>
+        ![
+          "scopeDetails",
+          "workflowDetails",
+          "websiteUrl",
+          "websiteStatus",
+        ].includes(q.id) && !(q.id in a),
+    ) ?? null
+  );
 }
 export function validateAnswer(id: string, value: AnswerValue, skip = false) {
   const q = questions.find((x) => x.id === id);
   if (!q) throw new Error("Unknown question");
+  if (id === "websiteUrl" && !skip) {
+    try {
+      const url = new URL(String(value));
+      if (
+        !["https:", "http:"].includes(url.protocol) ||
+        url.username ||
+        url.password
+      )
+        throw new Error();
+    } catch {
+      throw new Error("Enter a valid public HTTP or HTTPS URL");
+    }
+  }
   if (skip) {
     if (!q.optional) throw new Error("This question is required");
     return q;
@@ -220,6 +275,7 @@ export function validateAnswer(id: string, value: AnswerValue, skip = false) {
 }
 export function pruneAnswers(a: Answers): Answers {
   const result = { ...a };
-  for (const q of questions) if (!relevant(q, result)) delete result[q.id];
+  for (const q of questions)
+    if (!relevant(q, signalAnswers(result, false))) delete result[q.id];
   return result;
 }

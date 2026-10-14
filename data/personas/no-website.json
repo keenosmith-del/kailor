@@ -1,0 +1,34 @@
+{
+  "synthetic": true,
+  "description": "Hypothetical internal evaluation persona; no customer outcomes.",
+  "chat": [
+    "What is the smallest useful first step?"
+  ],
+  "expectedServices": [
+    "email"
+  ],
+  "excludedServices": [
+    "website",
+    "portfolio",
+    "webapp",
+    "ai"
+  ],
+  "id": "no-website",
+  "name": "Explicitly declines a website",
+  "answers": {
+    "stage": "established",
+    "kind": "business",
+    "constraints": "I do not want a website. Only a small amount initially",
+    "budget": "Unknown",
+    "timing": "No fixed date",
+    "industry": "Independent professional",
+    "problems": [
+      "credibility"
+    ],
+    "goals": "Present my work professionally",
+    "presence": [
+      "instagram"
+    ],
+    "tools": "Instagram"
+  }
+}

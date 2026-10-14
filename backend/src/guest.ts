@@ -8,6 +8,7 @@ import { AppError } from "./errors.js";
 import { tokenHash } from "./auth.js";
 import * as sessions from "./session-service.js";
 import {
+  evidenceBatchInput,
   answerInput,
   chatInput,
   mutationSchema,
@@ -138,6 +139,18 @@ guestRouter.post("/sessions/:id/evidence/:evidenceId", async (req, res) => {
       res.locals.guestId,
       id.parse(req.params.evidenceId),
       input.revision,
+      input.accept,
+    ),
+  );
+});
+guestRouter.post("/sessions/:id/evidence", async (req, res) => {
+  const input = evidenceBatchInput.parse(req.body);
+  res.json(
+    await sessions.confirmBatch(
+      id.parse(req.params.id),
+      res.locals.guestId,
+      input.revision,
+      input.ids,
       input.accept,
     ),
   );

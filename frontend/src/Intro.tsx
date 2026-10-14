@@ -125,8 +125,7 @@ export function Intro() {
               <div className="intro-copy">
                 <h1 className="intro-primary-brand">k ᐧ ai ᐧ lor</h1>
                 <p>
-                  An interactive experience for discovering what you need to
-                  build, improve, automate, or launch.
+                  Whether you're starting something new, improving your online presence, or reclaiming time from repetitive work, kailor helps identify where technology can make a meaningful difference — <strong>and what's worth doing first.</strong>
                 </p>
               </div>
               <div className="intro-mascot">

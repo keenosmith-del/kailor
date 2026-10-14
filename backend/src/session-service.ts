@@ -1,18 +1,26 @@
+import { planDiscovery } from "./discovery-planner.js";
+import { signalAnswers } from "./context-extraction.js";
 import { db } from "./db.js";
 import type { Prisma } from "./generated/prisma/client.js";
 import { AppError } from "./errors.js";
 import {
   activeQuestions,
-  nextQuestion,
   pruneAnswers,
   relevant,
   validateAnswer,
   version,
 } from "./discovery.js";
-import type { Answers, AnswerValue, Report } from "../../shared/src/index.js";
+import type {
+  Answers,
+  AnswerValue,
+  Report,
+  DiscoveryPlan,
+  Evidence,
+} from "../../shared/src/index.js";
 import { createReport } from "./assessment.js";
 import {
   type CaseRecord,
+  type SyntheticPersona,
   type Pattern,
   matchCases,
   personas,
@@ -106,7 +114,7 @@ async function writeAnswer(
 ) {
   const q = validateAnswer(key, value, skip);
   const previous = answersOf(s);
-  if (!relevant(q, previous))
+  if (!relevant(q, signalAnswers(previous)))
     throw new AppError(
       400,
       "irrelevant_question",
@@ -114,6 +122,18 @@ async function writeAnswer(
     );
   const next = pruneAnswers({ ...previous, [key]: skip ? "" : value });
   const removed = Object.keys(previous).filter((k) => !(k in next));
+  const inactiveProposals = s.evidence
+    .filter(
+      (e) =>
+        e.status === "inferred" &&
+        !activeQuestions(signalAnswers(next)).some((q) => q.id === e.key),
+    )
+    .map((e) => e.id);
+  if (inactiveProposals.length)
+    await tx.evidence.updateMany({
+      where: { id: { in: inactiveProposals } },
+      data: { active: false },
+    });
   if (removed.length)
     await tx.discoveryAnswer.deleteMany({
       where: { sessionId: s.id, questionId: { in: removed } },
@@ -146,6 +166,7 @@ async function writeAnswer(
     where: { id: s.id },
     data: { revision: { increment: 1 } },
   });
+  await persistPlan(tx, s.id);
   await tx.auditEvent.create({
     data: {
       actorId: s.adminId,
@@ -187,6 +208,7 @@ export async function submitAnswer(
         "Choose a valid option",
         "Choose valid, non-conflicting options",
         "This question is required",
+        "Enter a valid public HTTP or HTTPS URL",
       ].includes(e.message)
     )
       throw new AppError(400, "invalid_answer", e.message);
@@ -225,6 +247,7 @@ export async function confirmEvidence(
         where: { id },
         data: { revision: { increment: 1 } },
       });
+      await persistPlan(tx, id);
     }
   });
   return getSession(id, adminId);
@@ -272,10 +295,13 @@ export async function converse(
   const s = await getSession(id, adminId);
   if (s.revision !== input.revision)
     throw new AppError(409, "revision_conflict", "Refresh the changed session");
+  const guest = (
+    await db.adminUser.findUniqueOrThrow({ where: { id: adminId } })
+  ).isGuest;
   let provider = new MockProvider() as import("./ai.js").AiProvider;
   let reason: string | null = null;
   const reservation =
-    !forceMock && remoteEnabled(config)
+    !forceMock && !guest && remoteEnabled(config)
       ? await reserveUsage(id, input.mode)
       : null;
   if (reservation)
@@ -307,6 +333,9 @@ export async function converse(
     });
   await db.$transaction(async (tx) => {
     await lock(tx, id, adminId, input.revision);
+    const previousEvidence = await tx.evidence.findMany({
+      where: { sessionId: id },
+    });
     await tx.conversationMessage.createMany({
       data: [
         {
@@ -325,7 +354,24 @@ export async function converse(
         },
       ],
     });
-    for (const p of result.output.proposals)
+    for (const p of result.output.proposals) {
+      const q = validateAnswer(p.key, p.value);
+      if (!relevant(q, signalAnswers(answersOf(s)))) continue;
+      if (JSON.stringify(answersOf(s)[p.key]) === JSON.stringify(p.value))
+        continue;
+      if (
+        previousEvidence.some(
+          (e) =>
+            e.key === p.key &&
+            JSON.stringify(e.value) === JSON.stringify(p.value) &&
+            (e.status === "rejected" || (e.active && e.status === "inferred")),
+        )
+      )
+        continue;
+      await tx.evidence.updateMany({
+        where: { sessionId: id, key: p.key, status: "inferred", active: true },
+        data: { active: false },
+      });
       await tx.evidence.create({
         data: {
           sessionId: id,
@@ -335,10 +381,12 @@ export async function converse(
           source: result.provider,
         },
       });
+    }
     await tx.discoverySession.update({
       where: { id },
       data: { revision: { increment: 1 } },
     });
+    await persistPlan(tx, id);
     await tx.auditEvent.create({
       data: {
         actorId: adminId,
@@ -368,23 +416,97 @@ export async function referenceCases(adminId?: string): Promise<CaseRecord[]> {
   });
   return rows.map((r) => ({ ...r, pattern: r.pattern as unknown as Pattern }));
 }
-export async function nextForSession(id: string, adminId: string) {
-  const s = await getSession(id, adminId),
-    a = answersOf(s),
-    matches = matchCases(a, await referenceCases(adminId));
-  return {
-    question: nextQuestion(a),
-    active: activeQuestions(a),
-    answered: s.answers.length,
-    total: activeQuestions(a).length,
-    referenceHints: matches.flatMap((m) =>
-      (m.pattern.discoveryQuestions ?? []).slice(0, 1).map((question) => ({
-        question,
-        source: m.title,
-        reason: m.reasons[0],
-      })),
-    ),
-  };
+async function persistPlan(tx: Prisma.TransactionClient, id: string) {
+  const s = await tx.discoverySession.findUniqueOrThrow({
+    where: { id },
+    include,
+  });
+  const guest = (
+    await tx.adminUser.findUniqueOrThrow({ where: { id: s.adminId } })
+  ).isGuest;
+  const cases = guest
+    ? seededCases
+    : (
+        await tx.caseIntelligenceRecord.findMany({
+          where: { reviewStatus: "approved" },
+        })
+      ).map((r) => ({ ...r, pattern: r.pattern as unknown as Pattern }));
+  const plan = planDiscovery(
+    answersOf(s),
+    s.revision,
+    s.evidence as unknown as Evidence[],
+    cases,
+  );
+  await tx.discoverySession.update({
+    where: { id },
+    data: { contextState: json(plan.context), planState: json(plan) },
+  });
+  return plan;
+}
+export async function nextForSession(
+  id: string,
+  adminId: string,
+): Promise<DiscoveryPlan> {
+  const s = await getSession(id, adminId);
+  const saved = s.planState as unknown as DiscoveryPlan | null;
+  if (saved?.revision === s.revision && saved.plannerVersion === "adaptive-1")
+    return saved;
+  return db.$transaction(async (tx) => {
+    await lock(tx, id, adminId, s.revision);
+    return persistPlan(tx, id);
+  });
+}
+// Grouped confirmation stays transactional and shares the exact same answer writer as guided discovery.
+export async function confirmBatch(
+  id: string,
+  adminId: string,
+  revision: number,
+  ids: string[],
+  accept: boolean,
+) {
+  await db.$transaction(async (tx) => {
+    let s = await lock(tx, id, adminId, revision);
+    for (const evidenceId of ids) {
+      const e = s.evidence.find(
+        (e) => e.id === evidenceId && e.status === "inferred",
+      );
+      if (!e)
+        throw new AppError(404, "not_found", "Pending proposal not found");
+      if (accept)
+        await writeAnswer(
+          tx,
+          s,
+          e.key,
+          e.value as AnswerValue,
+          false,
+          "chat-confirmed",
+        );
+      else {
+        await tx.evidence.update({
+          where: { id: e.id },
+          data: { active: false, status: "rejected" },
+        });
+        await tx.discoverySession.update({
+          where: { id },
+          data: { revision: { increment: 1 } },
+        });
+      }
+      s = await tx.discoverySession.findUniqueOrThrow({
+        where: { id },
+        include,
+      });
+    }
+    await persistPlan(tx, id);
+    await tx.auditEvent.create({
+      data: {
+        actorId: adminId,
+        action: "evidence.batch-reviewed",
+        entityId: id,
+        details: json({ ids, accept }),
+      },
+    });
+  });
+  return getSession(id, adminId);
 }
 export async function assess(id: string, adminId: string, revision: number) {
   const cases = await referenceCases(adminId);
@@ -398,11 +520,11 @@ export async function assess(id: string, adminId: string, revision: number) {
     });
     if (existing) return existing;
     const a = answersOf(s);
-    if (!a.industry || !a.problems || !a.goals)
+    if (!planDiscovery(a, revision).readiness.canAssess)
       throw new AppError(
         422,
         "insufficient_evidence",
-        "Confirm your context, challenges and goals before assessment",
+        "Describe a situation and objective with enough workflow or scope evidence for a preliminary direction",
       );
     const content = createReport(a, revision, s.synthetic, cases, {
       currency: config.ESTIMATE_CURRENCY,
@@ -469,7 +591,12 @@ export async function canvas(id: string, adminId: string) {
   );
   return {
     revision: s.revision,
-    existing: (answersOf(s).presence ?? []) as string[],
+    existing: (signalAnswers(answersOf(s)).presence ?? []) as string[],
+    existingOrigin: answersOf(s).presence
+      ? "confirmed-selection"
+      : signalAnswers(answersOf(s)).presence
+        ? "described"
+        : "unknown",
     components: content.recommendations.map((r) => ({
       id: r.serviceId,
       title: r.solution,
@@ -486,12 +613,23 @@ export async function canvas(id: string, adminId: string) {
     note: "Proposed components from current confirmed evidence. No implementation is implied.",
   };
 }
-export async function simulate(adminId: string, personaId: string) {
-  const persona = personas.find((p) => p.id === personaId);
+export async function simulate(
+  adminId: string,
+  personaId: string,
+  definition?: SyntheticPersona,
+) {
+  const persona = definition ?? personas.find((p) => p.id === personaId);
   if (!persona) throw new AppError(404, "persona_missing", "Persona not found");
   let s = await createSession(adminId, persona.name, true);
-  const path: string[] = [];
-  let q = nextQuestion(answersOf(s));
+  const path: {
+    questionId: string;
+    title: string;
+    value: AnswerValue;
+    skipped: boolean;
+    revision: number;
+    source: string;
+  }[] = [];
+  let q = (await nextForSession(s.id, adminId)).question;
   while (q) {
     const value = (persona.answers as Answers)[q.id];
     if (value === undefined && !q.optional)
@@ -502,8 +640,28 @@ export async function simulate(adminId: string, personaId: string) {
       value: value ?? "",
       skip: value === undefined,
     });
-    path.push(q.id);
-    q = nextQuestion(answersOf(s));
+    path.push({
+      questionId: q.id,
+      title: q.title,
+      value: value ?? "",
+      skipped: value === undefined,
+      revision: s.revision,
+      source: "deterministic",
+    });
+    q = (await nextForSession(s.id, adminId)).question;
+  }
+  // Additional fixture details are voluntary context, not required form completion.
+  for (const [key, value] of Object.entries(persona.answers)) {
+    if (key in answersOf(s)) continue;
+    const q = activeQuestions(signalAnswers(answersOf(s))).find(
+      (q) => q.id === key,
+    );
+    if (!q) continue;
+    s = await submitAnswer(s.id, adminId, {
+      revision: s.revision,
+      questionId: key,
+      value: value as AnswerValue,
+    });
   }
   for (const message of persona.chat)
     s = (
@@ -538,9 +696,19 @@ export async function simulate(adminId: string, personaId: string) {
         title: `Synthetic reference: ${persona.name}`,
         pattern: json({
           industry: String(a.industry ?? ""),
-          problems: a.problems ?? [],
+          problems: signalAnswers(a).problems ?? [],
           tools: [],
           goals: [],
+          constraints: /affordable|limited|small/i.test(
+            String(a.constraints ?? ""),
+          )
+            ? ["affordable"]
+            : [],
+          stage: String(a.stage ?? "unknown"),
+          limitations: [
+            "Synthetic assessment; no observed customer outcome",
+            "Validate current workflow and constraints before reuse",
+          ],
           patterns: got,
           discoveryQuestions: [
             "Which part of the current workflow is actually causing friction?",

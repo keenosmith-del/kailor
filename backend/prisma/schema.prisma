@@ -35,6 +35,9 @@ model DiscoverySession {
   subject Subject @relation(fields: [subjectId], references: [id])
   definitionVersion String
   revision Int @default(0)
+  // Revision-bound derived context and stable deterministic question plan.
+  contextState Json?
+  planState Json?
   synthetic Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

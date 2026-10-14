@@ -1,0 +1,33 @@
+{
+  "synthetic": true,
+  "description": "Hypothetical internal evaluation persona; no customer outcomes.",
+  "chat": [
+    "What is the smallest useful first step?"
+  ],
+  "expectedServices": [
+    "website"
+  ],
+  "excludedServices": [
+    "ai",
+    "webapp"
+  ],
+  "id": "new-idea",
+  "name": "New business idea",
+  "answers": {
+    "stage": "starting",
+    "kind": "business",
+    "constraints": "Affordable initial pilot; keep human approval",
+    "budget": "Unknown",
+    "timing": "No fixed date",
+    "industry": "New craft business idea",
+    "idea": "A small craft studio with no existing customers or processes",
+    "problems": [
+      "credibility"
+    ],
+    "presence": [
+      "none"
+    ],
+    "goals": "A clear presentation of the offering before launch",
+    "tools": "No current tools"
+  }
+}

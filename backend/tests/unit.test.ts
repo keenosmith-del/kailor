@@ -176,10 +176,10 @@ describe("AI boundaries", () => {
     expect(result.proposals[0].value).toBe("New goal");
     expect(context.goals).toBe("Original");
   });
-  it("does not claim to extract facts from arbitrary prose", async () =>
+  it("extracts a narrow natural-language goal as an unconfirmed proposal", async () =>
     expect(
       (await new MockProvider().infer({}, "I want bookings")).proposals,
-    ).toEqual([]));
+    ).toEqual([{ key: "goals", value: "I want bookings" }]));
   it("requires credentials and explicit opt-in", () =>
     expect(
       remoteEnabled({

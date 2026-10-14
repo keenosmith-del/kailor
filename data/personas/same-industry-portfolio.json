@@ -1,0 +1,32 @@
+{
+  "synthetic": true,
+  "description": "Hypothetical internal evaluation persona; no customer outcomes.",
+  "chat": [
+    "What is the smallest useful first step?"
+  ],
+  "expectedServices": [
+    "website"
+  ],
+  "excludedServices": [
+    "booking",
+    "ai"
+  ],
+  "id": "same-industry-portfolio",
+  "name": "Nail technician portfolio only",
+  "answers": {
+    "stage": "established",
+    "kind": "business",
+    "constraints": "Affordable initial pilot; keep human approval",
+    "budget": "Unknown",
+    "timing": "No fixed date",
+    "industry": "Nail technician",
+    "problems": [
+      "credibility"
+    ],
+    "goals": "Showcase completed work; no appointment changes",
+    "tools": "I already use a booking system",
+    "presence": [
+      "instagram"
+    ]
+  }
+}

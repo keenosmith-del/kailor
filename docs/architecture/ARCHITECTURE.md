@@ -5,7 +5,7 @@ A modular monolith with npm workspaces keeps one consultant's operating burden s
 ```mermaid
 flowchart LR
   UI[React: discovery / conversation / canvas / report] --> API[Express REST + admin cookie + origin checks]
-  API --> Discovery[Versioned question rules]
+  API --> Discovery[Adaptive planner + versioned definitions]
   API --> Session[Session services + revision checks]
   Session --> PG[(PostgreSQL via Prisma 7 / pg adapter)]
   Session --> Cases[Explainable reference matching]
@@ -18,7 +18,7 @@ flowchart LR
   Simulator[Synthetic persona runner] --> Session
 ```
 
-`session-service.ts` owns mutations and orchestration. `discovery.ts`, `assessment.ts`, and `library.ts` contain testable deterministic domain logic. Provider adapters never write the database. Mutations lock the session row and compare the client revision. A conflict returns 409 and the frontend refreshes. Old branch answers are removed from the current answer set; evidence remains as inactive history. A new conversation turn also advances the revision, conservatively making an earlier report stale.
+`session-service.ts` owns mutations and orchestration. `discovery.ts`, `context-extraction.ts`, `discovery-planner.ts`, `discovery-readiness.ts`, `assessment.ts`, and `library.ts` contain testable deterministic domain logic. Provider adapters never write the database. Mutations lock the session row and compare the client revision. A conflict returns 409 and the frontend refreshes. Old branch answers are removed from the current answer set; evidence remains as inactive history. A new conversation turn also advances the revision, conservatively making an earlier report stale.
 
 Assessment and report creation are transactional and idempotent per session revision. PDF and screen render the same stored section text. Canvas is a live projection of current confirmed answers and may be newer than an existing report snapshot.
 
@@ -41,3 +41,9 @@ Guest reference retrieval is restricted to public seeded definitions; reviewed f
 Guest records persist after token expiry and restarts; there is no automatic retention cleanup or public guest recovery UI. Public deployment needs a separately designed identity/retention/rate-limit boundary. `202610130003_guest_preview` adds the role flag without removing previous records.
 
 Assessment generation and report navigation are now separate frontend actions. Reports remain immutable backend revision snapshots; readiness is a current-snapshot projection, refreshed after mutations. Navigation and restarts preserve session ownership and history.
+
+## Iteration 003: revision-bound adaptive projections
+
+`DiscoverySession.contextState` and `planState` are derived JSONB projections; answers/evidence remain authoritative relational records. Mutations rebuild projections in their existing locked transaction. Legacy sessions initialize lazily. The plan persists complete question definitions, heuristic priorities, context/source links, qualitative readiness and reference/version provenance. Stable current-revision reads do not rerun model inference. See [ADR 005](../decisions/005-adaptive-projections.md).
+
+Natural conversational extraction enters pending evidence, with individual or grouped explicit review through the same answer writer. Cloudflare receives capability-bounded context/plan; local preview has limited language rules and never routes remotely. Only approved knowledge refines priorities and next steps; industry/tools alone cannot qualify a reference. Synthetic custom personas and owner-scoped qualitative evaluation use existing simulation/case models. Historical report snapshots and PDF/Analysis structure remain intact.

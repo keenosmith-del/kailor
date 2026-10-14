@@ -6,6 +6,7 @@ import { api } from "./api";
 import { ErrorBox, errorMessage } from "./ui";
 type CanvasData = {
   existing: string[];
+  existingOrigin?: string;
   components: {
     id: string;
     title: string;
@@ -47,6 +48,12 @@ export function Canvas({
         <>
           <div className="canvas-existing">
             <p className="eyebrow">your starting point</p>
+            {canvas.existingOrigin === "described" && (
+              <p className="muted">
+                Channels described in your answers; interpretation remains open
+                to review.
+              </p>
+            )}
             {canvas.existing
               .filter((x) => x !== "none")
               .map((x) => (

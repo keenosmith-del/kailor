@@ -6,7 +6,7 @@ import { config } from "../src/config.js";
 import { hashPassword } from "../src/auth.js";
 import { services } from "../../data/services.js";
 import { seededCases, scenarios, personas } from "../src/library.js";
-import { json, reserveUsage } from "../src/session-service.js";
+import { json, reserveUsage, converse } from "../src/session-service.js";
 if (!new URL(config.DATABASE_URL).pathname.endsWith("_test"))
   throw new Error(
     "Integration tests require DATABASE_URL pointing to an isolated database ending in _test",
@@ -261,7 +261,11 @@ describe("real PostgreSQL API vertical slice", () => {
       expect(run.body.passed).toBe(true);
       expect(run.body.approvalStatus).toBe("pending");
       expect(run.body.report.synthetic).toBe(true);
-      expect(run.body.discoveryPath.length).toBeGreaterThanOrEqual(10);
+      expect(run.body.discoveryPath.length).toBeGreaterThan(0);
+      expect(
+        new Set(run.body.discoveryPath.map((step: any) => step.questionId))
+          .size,
+      ).toBe(run.body.discoveryPath.length);
       const record = await db.caseIntelligenceRecord.findFirstOrThrow({
         where: { sourceRunId: run.body.id },
       });
@@ -290,6 +294,191 @@ describe("real PostgreSQL API vertical slice", () => {
     },
     30000,
   );
+  it("persists the adaptive plan at the answer revision and replays it unchanged", async () => {
+    const created = await client
+      .post("/api/sessions")
+      .set("Origin", origin)
+      .send({ name: "Adaptive replay" });
+    const sid = created.body.id;
+    let current = created.body;
+    for (const [questionId, value] of [
+      ["stage", "established"],
+      [
+        "industry",
+        "I am a nail technician working alone. I advertise on Instagram and take appointments through WhatsApp.",
+      ],
+    ]) {
+      const r = await client
+        .put(`/api/sessions/${sid}/answers`)
+        .set("Origin", origin)
+        .send({ revision: current.revision, questionId, value });
+      expect(r.status).toBe(200);
+      current = r.body;
+    }
+    const first = await client.get(`/api/sessions/${sid}/next`);
+    expect(first.body.question.id).toBe("bookingDetails");
+    expect((await client.get(`/api/sessions/${sid}/next`)).body).toEqual(
+      first.body,
+    );
+    const saved = await db.discoverySession.findUniqueOrThrow({
+      where: { id: sid },
+    });
+    expect(saved.planState).toEqual(first.body);
+    expect(saved.contextState).toEqual(first.body.context);
+  });
+  it("confirms natural language in a group, synchronizes guided context, and suppresses dismissed repeats", async () => {
+    let current = (
+      await client
+        .post("/api/sessions")
+        .set("Origin", origin)
+        .send({ name: "Natural language confirmation" })
+    ).body;
+    const sid = current.id;
+    current = (
+      await client
+        .put(`/api/sessions/${sid}/answers`)
+        .set("Origin", origin)
+        .send({
+          revision: current.revision,
+          questionId: "stage",
+          value: "established",
+        })
+    ).body;
+    const message =
+      "I am a nail technician. I use Instagram and take bookings manually. I want a professional presence.";
+    const chat = await client
+      .post(`/api/sessions/${sid}/chat`)
+      .set("Origin", origin)
+      .send({ revision: current.revision, message });
+    expect(chat.status).toBe(200);
+    current = chat.body.session;
+    expect(current.answers.map((a: any) => a.questionId)).toEqual(["stage"]);
+    let pending = current.evidence.filter((e: any) => e.status === "inferred");
+    expect(pending.length).toBeGreaterThan(1);
+    const confirmed = await client
+      .post(`/api/sessions/${sid}/evidence`)
+      .set("Origin", origin)
+      .send({
+        revision: current.revision,
+        ids: pending.map((e: any) => e.id),
+        accept: true,
+      });
+    expect(confirmed.status).toBe(200);
+    current = confirmed.body;
+    const plan = (await client.get(`/api/sessions/${sid}/next`)).body;
+    expect(plan.question.id).toBe("bookingDetails");
+    expect(plan.readiness.canAssess).toBe(true);
+    const report = await client
+      .post(`/api/sessions/${sid}/assessment`)
+      .set("Origin", origin)
+      .send({ revision: current.revision });
+    expect(report.status).toBe(200);
+    expect(
+      report.body.content.recommendations.map((r: any) => r.serviceId),
+    ).toContain("booking");
+    const rejectMessage = "I can only spend a small amount initially.";
+    let r = await client
+      .post(`/api/sessions/${sid}/chat`)
+      .set("Origin", origin)
+      .send({ revision: current.revision, message: rejectMessage });
+    current = r.body.session;
+    pending = current.evidence.filter((e: any) => e.status === "inferred");
+    expect(pending.length).toBeGreaterThan(0);
+    r = await client
+      .post(`/api/sessions/${sid}/evidence`)
+      .set("Origin", origin)
+      .send({
+        revision: current.revision,
+        ids: pending.map((e: any) => e.id),
+        accept: false,
+      });
+    expect(r.status).toBe(200);
+    current = r.body;
+    r = await client
+      .post(`/api/sessions/${sid}/chat`)
+      .set("Origin", origin)
+      .send({ revision: current.revision, message: rejectMessage });
+    expect(
+      r.body.session.evidence.filter((e: any) => e.status === "inferred"),
+    ).toHaveLength(0);
+    expect(
+      r.body.session.answers.some((a: any) => a.questionId === "budget"),
+    ).toBe(false);
+    expect(
+      (await client.get(`/api/sessions/${sid}/report`)).body.content,
+    ).toEqual(report.body.content);
+    expect((await client.get(`/api/sessions/${sid}/report`)).body.stale).toBe(
+      true,
+    );
+  });
+  it("supports custom synthetic personas, records human evaluation, and reuses approved patterns", async () => {
+    const persona = {
+      ...personas[0],
+      id: "custom-synthetic",
+      name: "Custom synthetic nail workflow",
+    };
+    let r = await client
+      .post("/api/simulations")
+      .set("Origin", origin)
+      .send({ persona });
+    expect(r.status).toBe(201);
+    expect(r.body.passed).toBe(true);
+    const runId = r.body.id;
+    r = await client
+      .put(`/api/simulations/${runId}/evaluation`)
+      .set("Origin", origin)
+      .send({
+        notes: "Reviewed for proportionality and evidence; synthetic only",
+        omissions: ["Confirm cancellation rules"],
+        incorrectAssumptions: [],
+        verdict: "needs_revision",
+      });
+    expect(r.status).toBe(200);
+    expect(JSON.parse(r.body.evaluationNotes).review.omissions).toContain(
+      "Confirm cancellation rules",
+    );
+    const c = await db.caseIntelligenceRecord.findFirstOrThrow({
+      where: { sourceRunId: runId },
+    });
+    r = await client
+      .put(`/api/cases/${c.id}/review`)
+      .set("Origin", origin)
+      .send({
+        status: "approved",
+        notes: "Sanitized synthetic reference with no customer outcome",
+        title: "Reusable professional presence pattern",
+        pattern: {
+          ...(c.pattern as any),
+          industry: "cross-industry",
+          tools: ["WhatsApp"],
+          goals: ["gallery", "keep WhatsApp enquiries"],
+        },
+      });
+    expect(r.status).toBe(200);
+    r = await client
+      .post("/api/simulations")
+      .set("Origin", origin)
+      .send({
+        persona: {
+          ...persona,
+          id: "related-synthetic",
+          name: "Related synthetic persona",
+        },
+      });
+    expect(r.status).toBe(201);
+    expect(
+      r.body.report.matchedCases.some(
+        (ref: any) => ref.id === c.id && ref.sourceType === "simulation",
+      ),
+    ).toBe(true);
+    expect(
+      r.body.report.recommendations.some((rec: any) =>
+        rec.nextSteps.some((step: string) =>
+          step.includes("Reference-informed check"),
+        ),
+      ),
+    ).toBe(true);
+  });
   it("blocks access to another admin’s session", async () => {
     const other = await db.adminUser.create({
       data: {
@@ -309,6 +498,48 @@ describe("real PostgreSQL API vertical slice", () => {
     await db.discoverySession.delete({ where: { id: session.id } });
     await db.subject.delete({ where: { id: subject.id } });
     await db.adminUser.delete({ where: { id: other.id } });
+  });
+  it("forces guest inference local even when a service caller omits forceMock", async () => {
+    const guest = request.agent(app);
+    const r = await guest
+      .post("/api/guest/sessions")
+      .set("Origin", origin)
+      .send({});
+    expect(r.status).toBe(201);
+    guestOwners.push(r.body.adminId);
+    const original = {
+      AI_PROVIDER: config.AI_PROVIDER,
+      AI_ALLOW_REMOTE: config.AI_ALLOW_REMOTE,
+      CLOUDFLARE_ACCOUNT_ID: config.CLOUDFLARE_ACCOUNT_ID,
+      CLOUDFLARE_API_TOKEN: config.CLOUDFLARE_API_TOKEN,
+    };
+    const originalFetch = globalThis.fetch;
+    let calls = 0;
+    try {
+      Object.assign(config, {
+        AI_PROVIDER: "cloudflare",
+        AI_ALLOW_REMOTE: "true",
+        CLOUDFLARE_ACCOUNT_ID: "test-only",
+        CLOUDFLARE_API_TOKEN: "test-only",
+      });
+      globalThis.fetch = async () => {
+        calls++;
+        throw new Error("Remote guest inference prohibited");
+      };
+      const result = await converse(r.body.id, r.body.adminId, {
+        revision: 0,
+        message: "I need something affordable",
+        mode: "conversation",
+      });
+      expect(result.provider).toBe("mock-development");
+      expect(calls).toBe(0);
+      expect(
+        await db.aiUsageRecord.count({ where: { sessionId: r.body.id } }),
+      ).toBe(0);
+    } finally {
+      Object.assign(config, original);
+      globalThis.fetch = originalFetch;
+    }
   });
   it("isolates guest ownership, privileges, references and report export", async () => {
     const guest = request.agent(app),

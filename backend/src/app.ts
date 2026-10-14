@@ -15,12 +15,13 @@ import {
   tokenHash,
 } from "./auth.js";
 import {
+  evidenceBatchInput,
   answerInput,
   chatInput,
   mutationSchema,
 } from "../../shared/src/index.js";
 import { questions, version } from "./discovery.js";
-import { personas, matchCases } from "./library.js";
+import { personas, matchCases, personaSchema } from "./library.js";
 import * as sessions from "./session-service.js";
 import { guestRouter } from "./guest.js";
 import { renderPdf } from "./pdf.js";
@@ -34,6 +35,9 @@ const patternSchema = z
     patterns: z.array(z.string().max(100)).max(20),
     discoveryQuestions: z.array(z.string().max(300)).max(10).optional(),
     constraints: z.array(z.string().max(100)).max(20).optional(),
+    stage: z.string().max(100).optional(),
+    scope: z.array(z.string().max(100)).max(20).optional(),
+    limitations: z.array(z.string().max(300)).max(10).optional(),
   })
   .strict();
 export const app = express();
@@ -180,6 +184,18 @@ app.post("/api/sessions/:id/evidence/:evidenceId", async (req, res) => {
     ),
   );
 });
+app.post("/api/sessions/:id/evidence", async (req, res) => {
+  const input = evidenceBatchInput.parse(req.body);
+  res.json(
+    await sessions.confirmBatch(
+      idSchema.parse(req.params.id),
+      res.locals.adminId,
+      input.revision,
+      input.ids,
+      input.accept,
+    ),
+  );
+});
 app.post("/api/sessions/:id/assessment", async (req, res) =>
   res.json(
     await sessions.assess(
@@ -215,12 +231,21 @@ app.get("/api/scenarios", async (_req, res) =>
 app.get("/api/personas", (_req, res) => res.json(personas));
 app.post("/api/simulations", async (req, res) => {
   const input = z
-    .object({ personaId: z.string().max(100) })
-    .strict()
+    .union([
+      z.object({ personaId: z.string().min(1).max(100) }).strict(),
+      z.object({ persona: personaSchema }).strict(),
+    ])
     .parse(req.body);
+  const definition = "persona" in input ? input.persona : undefined;
   res
     .status(201)
-    .json(await sessions.simulate(res.locals.adminId, input.personaId));
+    .json(
+      await sessions.simulate(
+        res.locals.adminId,
+        definition?.id ?? ("personaId" in input ? input.personaId : ""),
+        definition,
+      ),
+    );
 });
 app.get("/api/simulations", async (_req, res) =>
   res.json(
@@ -231,6 +256,50 @@ app.get("/api/simulations", async (_req, res) =>
     }),
   ),
 );
+app.put("/api/simulations/:id/evaluation", async (req, res) => {
+  const id = idSchema.parse(req.params.id);
+  const evaluation = z
+    .object({
+      notes: z.string().min(10).max(2000),
+      omissions: z.array(z.string().max(300)).max(20),
+      incorrectAssumptions: z.array(z.string().max(300)).max(20),
+      verdict: z.enum(["acceptable", "needs_revision", "rejected"]),
+    })
+    .strict()
+    .parse(req.body);
+  const run = await db.simulationRun.findFirst({
+    where: { id, session: { adminId: res.locals.adminId } },
+  });
+  if (!run) throw new AppError(404, "not_found", "Simulation not found");
+  let automated = run.evaluationNotes;
+  try {
+    const prior = JSON.parse(automated);
+    if (typeof prior.automated === "string") automated = prior.automated;
+  } catch {
+    /* Initial automated notes are plain text. */
+  }
+  const updated = await db.$transaction(async (tx) => {
+    const result = await tx.simulationRun.update({
+      where: { id },
+      data: {
+        evaluationNotes: JSON.stringify({
+          automated,
+          review: evaluation,
+        }),
+      },
+    });
+    await tx.auditEvent.create({
+      data: {
+        actorId: res.locals.adminId,
+        action: "simulation.evaluated",
+        entityId: id,
+        details: { verdict: evaluation.verdict },
+      },
+    });
+    return result;
+  });
+  res.json(updated);
+});
 app.get("/api/cases", async (req, res) => {
   if (req.query.sessionId) {
     const s = await sessions.getSession(

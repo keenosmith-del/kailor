@@ -185,7 +185,12 @@ export function SessionPage() {
                 ready={ready}
               />
             ) : view === "conversation" ? (
-              <Conversation session={session} busy={busy} act={act} />
+              <Conversation
+                session={session}
+                next={next}
+                busy={busy}
+                act={act}
+              />
             ) : view === "canvas" ? (
               <Canvas session={session} assess={assess} busy={busy} />
             ) : view === "report" ? (

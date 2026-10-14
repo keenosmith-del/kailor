@@ -20,7 +20,7 @@ Open **http://127.0.0.1:5173**. API is **http://127.0.0.1:5050/api/health**. Use
 The Compose database binds only to loopback and stores data in `kailor_kailor_postgres`. Development DB credentials are local conveniences, not production credentials. `docker compose down` stops it without deleting data. Do not use `down -v` unless you intend to destroy the local database.
 
 ```bash
-npm run simulate            # persists five clearly synthetic sessions and pending cases
+npm run simulate            # persists fourteen clearly synthetic sessions and pending cases
 npm test                    # deterministic/unit tests; no DB connection required
 npm run typecheck
 npm run build
@@ -39,3 +39,5 @@ Do not repeat `createdb` if the test database exists. The suite refuses a databa
 `npm run build` compiles backend ESM into `backend/dist` and static frontend assets into `frontend/dist`. `npm start -w backend` starts the compiled API from the backend workspace. Production frontend hosting is not provisioned: use a same-origin reverse proxy for `/api`, TLS, `NODE_ENV=production`, a strong private database URL and controlled admin access. Configure static SPA fallback to `index.html`. The backend does not automatically serve frontend assets.
 
 Troubleshooting: start Docker if its socket is missing; check health and migration status if tables are absent; regenerate Prisma after schema changes; restart dev servers after dependency changes. Use `npm ci` to reproduce the lockfile. Security overrides for React deduplication, `deepmerge-ts` and `mysql2` are pinned in the root manifest and covered by build/database verification.
+
+Iteration 003 adds nullable context/plan JSONB projections. Run `npm run db:generate` and `npm run db:migrate` before starting; no reset/reseed is needed for existing local data. `npm run evaluate` runs fourteen behavior fixtures without database access. See the iteration 003 record for isolated PostgreSQL verification.

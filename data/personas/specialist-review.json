@@ -1,0 +1,33 @@
+{
+  "synthetic": true,
+  "description": "Hypothetical internal evaluation persona; no customer outcomes.",
+  "chat": [
+    "What is the smallest useful first step?"
+  ],
+  "expectedServices": [
+    "integration"
+  ],
+  "excludedServices": [
+    "website",
+    "ai"
+  ],
+  "id": "specialist-review",
+  "name": "Regulated unfamiliar requirements",
+  "answers": {
+    "stage": "established",
+    "kind": "business",
+    "constraints": "Affordable initial pilot; keep human approval",
+    "budget": "Unknown",
+    "timing": "No fixed date",
+    "industry": "Manufacturing maintenance team",
+    "problems": [
+      "none"
+    ],
+    "workflowDetails": "Track maintenance inspections and safety approvals; specialist engineering review required",
+    "goals": "Coordinate recurring inspections",
+    "tools": "Existing industrial software",
+    "presence": [
+      "none"
+    ]
+  }
+}

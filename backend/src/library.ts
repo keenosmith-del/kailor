@@ -1,3 +1,14 @@
+import adaptivePersona0 from "../../data/personas/existing-booking.json" with { type: "json" };
+import adaptivePersona1 from "../../data/personas/new-idea.json" with { type: "json" };
+import adaptivePersona2 from "../../data/personas/technical-founder.json" with { type: "json" };
+import adaptivePersona3 from "../../data/personas/fleet-maintenance.json" with { type: "json" };
+import adaptivePersona4 from "../../data/personas/cross-industry-booking.json" with { type: "json" };
+import adaptivePersona5 from "../../data/personas/same-industry-portfolio.json" with { type: "json" };
+import adaptivePersona6 from "../../data/personas/vague-user.json" with { type: "json" };
+import adaptivePersona7 from "../../data/personas/no-website.json" with { type: "json" };
+import adaptivePersona8 from "../../data/personas/specialist-review.json" with { type: "json" };
+import { z } from "zod";
+import { answerValue } from "../../shared/src/index.js";
 import nails from "../../data/scenarios/nails.json" with { type: "json" };
 import salon from "../../data/scenarios/salon.json" with { type: "json" };
 import seller from "../../data/scenarios/seller.json" with { type: "json" };
@@ -18,6 +29,7 @@ import professionalPersona from "../../data/personas/professional.json" with { t
 import invoicePersona from "../../data/personas/invoice-business.json" with { type: "json" };
 import teacherPersona from "../../data/personas/teacher.json" with { type: "json" };
 import kaiPersona from "../../data/personas/kai.json" with { type: "json" };
+import { signalAnswers } from "./context-extraction.js";
 import type { Answers } from "../../shared/src/index.js";
 export const scenarios = [
   nails,
@@ -42,6 +54,15 @@ export const personas = [
   invoicePersona,
   teacherPersona,
   kaiPersona,
+  adaptivePersona0,
+  adaptivePersona1,
+  adaptivePersona2,
+  adaptivePersona3,
+  adaptivePersona4,
+  adaptivePersona5,
+  adaptivePersona6,
+  adaptivePersona7,
+  adaptivePersona8,
 ];
 export type Pattern = {
   industry: string;
@@ -51,6 +72,9 @@ export type Pattern = {
   patterns: string[];
   discoveryQuestions?: string[];
   constraints?: string[];
+  stage?: string;
+  scope?: string[];
+  limitations?: string[];
 };
 export type CaseRecord = {
   id: string;
@@ -63,6 +87,8 @@ export interface CaseRetriever {
   match(answers: Answers, cases: CaseRecord[]): ReturnType<typeof matchCases>;
 }
 export function matchCases(a: Answers, cases: CaseRecord[]) {
+  const confirmed = a;
+  a = signalAnswers(a);
   const has = (key: string, v: string) =>
     Array.isArray(a[key])
       ? (a[key] as string[]).includes(v)
@@ -77,7 +103,9 @@ export function matchCases(a: Answers, cases: CaseRecord[]) {
       for (const p of c.pattern.problems)
         if (has("problems", p)) {
           score += 4;
-          reasons.push(`Confirmed challenge: ${p}`);
+          reasons.push(
+            `${Array.isArray(confirmed.problems) && confirmed.problems.includes(p) ? "Confirmed challenge" : "Described challenge signal (interpretation requires review)"}: ${p}`,
+          );
         }
       for (const t of c.pattern.tools)
         if (has("tools", t) || has("presence", t)) {
@@ -101,7 +129,31 @@ export function matchCases(a: Answers, cases: CaseRecord[]) {
           score++;
           reasons.push(`Shared constraint: ${constraint}`);
         }
-      return { ...c, score, reasons };
+      if (c.pattern.stage && a.stage === c.pattern.stage) {
+        score += 2;
+        reasons.push(`Shared project stage: ${c.pattern.stage}`);
+      }
+      for (const term of c.pattern.scope ?? [])
+        if (
+          has("request", term) ||
+          has("scopeDetails", term) ||
+          has("workflowDetails", term)
+        ) {
+          score += 3;
+          reasons.push(`Related scope: ${term}`);
+        }
+      const useful = reasons.some((r) => /challenge|goal|scope/.test(r));
+      return {
+        ...c,
+        score: useful ? score : 0,
+        reasons,
+        usefulness:
+          "Reference questions and alternatives only; current evidence determines suitability",
+        limitations: c.pattern.limitations ?? [
+          "Self-reported or synthetic pattern; no verified customer outcome",
+          "Different tools, constraints and scope may make this pattern unsuitable",
+        ],
+      };
     })
     .filter((c) => c.score >= 4)
     .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
@@ -114,3 +166,19 @@ export const seededCases: CaseRecord[] = scenarios.map((s) => ({
   reviewStatus: "approved",
   pattern: s,
 }));
+
+export const personaSchema = z
+  .object({
+    id: z.string().min(1).max(100),
+    name: z.string().min(1).max(150),
+    synthetic: z.literal(true),
+    description: z.string().max(1000),
+    answers: z
+      .record(z.string().max(80), answerValue)
+      .refine((a) => Object.keys(a).length <= 30),
+    chat: z.array(z.string().max(4000)).max(8),
+    expectedServices: z.array(z.string().max(100)).max(20),
+    excludedServices: z.array(z.string().max(100)).max(20),
+  })
+  .strict();
+export type SyntheticPersona = z.infer<typeof personaSchema>;

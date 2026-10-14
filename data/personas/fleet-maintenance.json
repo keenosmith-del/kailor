@@ -1,0 +1,34 @@
+{
+  "synthetic": true,
+  "description": "Hypothetical internal evaluation persona; no customer outcomes.",
+  "chat": [
+    "What is the smallest useful first step?"
+  ],
+  "expectedServices": [
+    "integration"
+  ],
+  "excludedServices": [
+    "website",
+    "portfolio",
+    "ai"
+  ],
+  "id": "fleet-maintenance",
+  "name": "Fleet maintenance coordination",
+  "answers": {
+    "stage": "established",
+    "kind": "business",
+    "constraints": "Affordable initial pilot; keep human approval",
+    "budget": "Unknown",
+    "timing": "No fixed date",
+    "industry": "I coordinate maintenance for a small fleet of delivery vehicles",
+    "problems": [
+      "none"
+    ],
+    "workflowDetails": "Record inspections, schedule repairs, coordinate mechanics and report downtime",
+    "goals": "Manage inspection records and repairs",
+    "tools": "Spreadsheets and messages",
+    "presence": [
+      "none"
+    ]
+  }
+}

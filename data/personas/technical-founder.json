@@ -1,0 +1,34 @@
+{
+  "synthetic": true,
+  "description": "Hypothetical internal evaluation persona; no customer outcomes.",
+  "chat": [
+    "What is the smallest useful first step?"
+  ],
+  "expectedServices": [
+    "webapp"
+  ],
+  "excludedServices": [
+    "website",
+    "ai"
+  ],
+  "id": "technical-founder",
+  "name": "Technical founder application scope",
+  "answers": {
+    "stage": "specific",
+    "kind": "business",
+    "constraints": "Affordable initial pilot; keep human approval",
+    "budget": "Unknown",
+    "timing": "No fixed date",
+    "industry": "New education software idea",
+    "request": "I need a web application that allows teachers to create weekly lesson plans from approved templates",
+    "problems": [
+      "custom"
+    ],
+    "scopeDetails": "Teachers choose approved templates; review, storage and export; no generative AI in the first version",
+    "goals": "Produce weekly plans with template approval",
+    "presence": [
+      "none"
+    ],
+    "tools": "Approved document templates"
+  }
+}

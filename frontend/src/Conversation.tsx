@@ -2,8 +2,13 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { Mascot } from "./Mascot";
 import { api } from "./api";
-import type { SessionProps } from "./types";
-export function Conversation({ session, busy, act }: SessionProps) {
+import type { SessionProps, Next } from "./types";
+export function Conversation({
+  session,
+  busy,
+  act,
+  next,
+}: SessionProps & { next: Next }) {
   const [message, setMessage] = useState(""),
     [mode, setMode] = useState("conversation");
   async function send(e: FormEvent) {
@@ -37,10 +42,7 @@ export function Conversation({ session, busy, act }: SessionProps) {
               <MessageCircle size={26} />
               <p>What’s on your mind?</p>
               <div className="suggestions">
-                {[
-                  "What would be a sensible first step?",
-                  "set goals: Make it easier for people to find my work",
-                ].map((p) => (
+                {next.suggestedPrompts.map((p) => (
                   <button key={p} onClick={() => setMessage(p)}>
                     {p}
                   </button>
@@ -62,6 +64,46 @@ export function Conversation({ session, busy, act }: SessionProps) {
           ))}
           {busy && <p className="muted">Thinking through your context…</p>}
         </div>
+        {session.evidence.filter((e) => e.status === "inferred").length > 1 && (
+          <div className="actions">
+            <button
+              className="button"
+              disabled={busy}
+              onClick={() =>
+                void act(() =>
+                  api(`/sessions/${session.id}/evidence`, "POST", {
+                    revision: session.revision,
+                    ids: session.evidence
+                      .filter((e) => e.status === "inferred")
+                      .slice(0, 8)
+                      .map((e) => e.id),
+                    accept: true,
+                  }),
+                )
+              }
+            >
+              Confirm these details
+            </button>
+            <button
+              className="text-link"
+              disabled={busy}
+              onClick={() =>
+                void act(() =>
+                  api(`/sessions/${session.id}/evidence`, "POST", {
+                    revision: session.revision,
+                    ids: session.evidence
+                      .filter((e) => e.status === "inferred")
+                      .slice(0, 8)
+                      .map((e) => e.id),
+                    accept: false,
+                  }),
+                )
+              }
+            >
+              Dismiss these details
+            </button>
+          </div>
+        )}
         {session.evidence
           .filter((e) => e.status === "inferred")
           .map((e) => (
@@ -136,8 +178,9 @@ export function Conversation({ session, busy, act }: SessionProps) {
           </div>
         </form>
         <p className="fine-print">
-          AI suggestions require confirmation. Development mode uses explicit
-          “set field: value” proposals; it does not interpret arbitrary prose.
+          Review extracted details before confirming. Local preview uses limited
+          language rules; AI assistance is available only through the authorized
+          founder configuration.
         </p>
       </div>
     </div>
