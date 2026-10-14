@@ -45,3 +45,7 @@ Iteration 003 adds nullable context/plan JSONB projections. Run `npm run db:gene
 ## Iteration 004 schema update
 
 Run npm run db:generate and npm run db:migrate against the configured database, then apply the same additive migration to the existing isolated kailor_test database before integration tests. Do not reset or reseed existing development data: seeding can update the founder password. Failed simulations now persist without an assessment. The existing local servers on API 5050/frontend 5173 can hot reload these changes; avoid launching duplicate servers. No deployment, credentials or billing setup is required for deterministic reliability tests.
+
+## Iteration 005 schema and verification
+
+Run `npm run db:generate` and `npm run db:migrate` before using knowledge-revision-aware servers. The additive migration preserves existing sessions/report content; do not reset or reseed existing data. Apply the same migration to `kailor_test` using the existing command above. `npm run evaluate:live` only checks/runs existing founder opt-in configuration and never enables paid billing; actual synthetic live evaluation requires the `_test` database and bounded limits. See [iteration 005](../iterations/005-contextual-intelligence.md) for exact commands and executed results.

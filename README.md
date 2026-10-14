@@ -98,3 +98,5 @@ See [iteration 003](docs/iterations/003-adaptive-intelligence.md) for migration,
 ## Iteration 004 reliability
 
 Discovery now validates evidence quality, distinguishes skipped/unknown/not-applicable responses, confirms material corrections and offers recovery when useful information is exhausted. One independent evidence policy governs planner, assessment, chat and Canvas; industry or case matches alone cannot create a recommendation. Reports remain immutable qualified drafts. See [the implementation and verification report](docs/iterations/004-intelligence-reliability.md) for contracts, actual tests, migration, limits and local commands.
+
+Iteration 005 adds contextual operational gaps, separate knowledge/report revisions, constrained model-assisted follow-up wording, short-lived cross-view drafts, founder pattern forms and audited case-supported approach comparisons. See [implementation, verification and limits](docs/iterations/005-contextual-intelligence.md) and [ADR 007](docs/decisions/007-contextual-knowledge-and-case-reasoning.md). Remote model quality is unverified when credentials/opt-in are absent.

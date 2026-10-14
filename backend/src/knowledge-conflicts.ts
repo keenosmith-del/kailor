@@ -12,13 +12,22 @@ export function clausesOf(text: string) {
     .map((s) => s.trim())
     .filter(Boolean);
 }
+function currentTechnology(clause: string, pattern: RegExp) {
+  const match = pattern.exec(clause);
+  if (!match) return false;
+  const before = clause.slice(0, match.index);
+  return (
+    /^(?:existing|already|currently|our|my)\b/i.test(match[0]) ||
+    !/\b(?:want|need|plan|intend|hope|would like)\b/i.test(before)
+  );
+}
 export function claimsFromText(text: string, key: string): FactClaim[] {
   const claims: FactClaim[] = [];
   const add = (facet: KnowledgeFacet, value: string, quote: string) =>
     claims.push({ facet, value, key, quote });
   for (const clause of clausesOf(text)) {
     if (
-      /\b(?:might|maybe|hypothetically|whether|if I|used to|thinking about)\b/i.test(
+      /\b(?:might|maybe|what if|hypothetically|whether|if I|used to|thinking about)\b/i.test(
         clause,
       )
     )
@@ -30,8 +39,9 @@ export function claimsFromText(text: string, key: string): FactClaim[] {
     )
       add("website", "absent", clause);
     else if (
-      /\b(?:already have|have|has|existing|our|my) (?:a |an? )?website\b/i.test(
+      currentTechnology(
         clause,
+        /\b(?:already have|have|has|existing|our|my) (?:a |an? )?website\b/i,
       ) &&
       !/\b(?:don't|do not|never|no longer)\b/i.test(clause)
     )
@@ -43,8 +53,9 @@ export function claimsFromText(text: string, key: string): FactClaim[] {
     )
       add("booking", "absent", clause);
     else if (
-      /\b(?:already use|already have|use|using|existing) (?:a |an? )?(?:booking|scheduling) (?:system|software|provider|platform)/i.test(
+      currentTechnology(
         clause,
+        /\b(?:already use|already have|use|using|existing) (?:a |an? )?(?:booking|scheduling) (?:system|software|provider|platform)/i,
       )
     )
       add("booking", "existing", clause);
@@ -52,6 +63,7 @@ export function claimsFromText(text: string, key: string): FactClaim[] {
       ["ai", "AI"],
       ["automation", "automat(?:ion|ing|e)"],
       ["websitePreference", "website"],
+      ["appPreference", "(?:mobile app|web app|app|application)"],
     ] as const) {
       if (
         new RegExp(
@@ -92,6 +104,7 @@ export function claimsOf(a: Answers): FactClaim[] {
     ["aiPreference", "ai"],
     ["automationPreference", "automation"],
     ["websitePreference", "websitePreference"],
+    ["appPreference", "appPreference"],
   ] as const) {
     if (a[key] && a[key] !== "unknown")
       claims.push({ key, facet, value: String(a[key]), quote: String(a[key]) });
@@ -122,6 +135,7 @@ export function knowledgeConflicts(
     "ai",
     "automation",
     "websitePreference",
+    "appPreference",
   ] as const) {
     const found = claims.filter((c) => c.facet === facet);
     const previous = found[0],
@@ -207,6 +221,7 @@ export function applyResolvedFacets(
     "ai",
     "automation",
     "websitePreference",
+    "appPreference",
   ] as const) {
     const values = [
       ...new Set(all.filter((c) => c.facet === facet).map((c) => c.value)),
@@ -219,6 +234,7 @@ export function applyResolvedFacets(
       ai: "aiPreference",
       automation: "automationPreference",
       websitePreference: "websitePreference",
+      appPreference: "appPreference",
     }[facet];
     if (value) result[key] = value;
   }

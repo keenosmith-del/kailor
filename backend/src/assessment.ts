@@ -10,6 +10,7 @@ import type { Evidence, AnswerStates } from "../../shared/src/index.js";
 import { evaluateReadiness } from "./discovery-readiness.js";
 import { services } from "../../data/services.js";
 import { matchCases, type CaseRecord } from "./library.js";
+import { evaluateSolutions } from "./solution-evaluation.js";
 export function recommend(
   a: Answers,
   pricing: { currency: string; hourlyRate?: number } = { currency: "ZAR" },
@@ -184,22 +185,12 @@ export function createReport(
   const signals = evaluateEvidence(raw, evidence, states).answers;
   const readiness = evaluateReadiness(raw, evidence, states);
   const matches = matchCases(raw, cases, evidence, states);
-  const recommendations = recommend(raw, pricing, evidence, states).map(
-    (recommendation) => {
-      const reference = matches.find((item) =>
-        item.pattern.patterns.includes(recommendation.serviceId),
-      );
-      const clarification = reference?.pattern.discoveryQuestions?.[0];
-      return {
-        ...recommendation,
-        nextSteps: clarification
-          ? [
-              ...recommendation.nextSteps,
-              `Reference-informed check (${reference!.title}, ${reference!.sourceType}): ${clarification}`,
-            ]
-          : recommendation.nextSteps,
-      };
-    },
+  const recommendations = evaluateSolutions(
+    raw,
+    recommend(raw, pricing, evidence, states),
+    cases,
+    evidence,
+    states,
   );
   const matchedCases = matches.map(
     ({
@@ -208,6 +199,8 @@ export function createReport(
       sourceType,
       reasons,
       reviewStatus,
+      reviewVersion,
+      sourceRunId,
       limitations,
       usefulness,
     }) => ({
@@ -216,6 +209,9 @@ export function createReport(
       sourceType,
       reasons,
       approvalStatus: reviewStatus,
+      reviewVersion: reviewVersion ?? 0,
+      sourceRunId: sourceRunId ?? null,
+      outcomeVerification: "unverified" as const,
       limitations,
       usefulness,
     }),

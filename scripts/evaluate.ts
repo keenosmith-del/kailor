@@ -96,3 +96,41 @@ console.log(
   }),
 );
 if (reliabilityFailures) process.exitCode = 1;
+
+const { intelligenceMatrix, learningEvaluation } = await import(
+  "../backend/src/intelligence-evaluation.js"
+);
+const independent = intelligenceMatrix();
+const learning = learningEvaluation();
+await mkdir(".cache/qa/iteration005", { recursive: true });
+await writeFile(
+  ".cache/qa/iteration005/intelligence.json",
+  JSON.stringify(
+    { generatedAt: new Date().toISOString(), independent, learning },
+    null,
+    2,
+  ),
+);
+for (const c of independent)
+  console.log(
+    JSON.stringify({
+      intelligence: c.id,
+      passed: c.passed,
+      failure: c.failureReason,
+    }),
+  );
+console.log(
+  JSON.stringify({
+    independentCases: independent.length,
+    failures: independent.filter((c) => !c.passed).length,
+    learning: learning.result,
+    questionBefore: learning.baseline.question,
+    questionAfter: learning.withApprovedReference.question,
+  }),
+);
+if (
+  independent.some((c) => !c.passed) ||
+  !learning.acceptancePassed ||
+  learning.result !== "improved"
+)
+  process.exitCode = 1;

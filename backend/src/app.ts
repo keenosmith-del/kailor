@@ -1,3 +1,4 @@
+import { containsSensitiveData } from "./conversation-guidance.js";
 import { evaluateInput } from "./input-quality.js";
 import { evaluateReadiness } from "./discovery-readiness.js";
 import express from "express";
@@ -40,6 +41,55 @@ const patternSchema = z
     stage: z.string().max(100).optional(),
     scope: z.array(z.string().max(100)).max(20).optional(),
     limitations: z.array(z.string().max(300)).max(10).optional(),
+    unsuitableConditions: z
+      .array(z.string().min(1).max(300))
+      .max(10)
+      .optional(),
+    followUpDimensions: z
+      .array(
+        z.enum([
+          "offlineDetails",
+          "dataCaptureDetails",
+          "accessDetails",
+          "reportingDetails",
+          "integrationDetails",
+          "bookingCapabilities",
+          "websiteContent",
+          "currentAlternatives",
+          "firstVersion",
+        ]),
+      )
+      .max(9)
+      .optional(),
+    approaches: z
+      .array(
+        z
+          .object({
+            serviceId: z.string().min(1).max(100),
+            title: z.string().min(1).max(200),
+            rationale: z.string().min(1).max(500),
+            dependencies: z
+              .array(z.string().min(1).max(300))
+              .max(10)
+              .optional(),
+            unsuitableWhen: z
+              .array(
+                z.enum([
+                  "websiteStatus",
+                  "bookingStatus",
+                  "aiPreference",
+                  "automationPreference",
+                  "websitePreference",
+                  "appPreference",
+                ]),
+              )
+              .max(6)
+              .optional(),
+          })
+          .strict(),
+      )
+      .max(10)
+      .optional(),
     unsuitableConstraints: z
       .array(z.string().min(1).max(100))
       .max(20)
@@ -262,6 +312,19 @@ app.get("/api/simulations", async (_req, res) =>
     }),
   ),
 );
+app.get("/api/simulations/:id", async (req, res) => {
+  const id = idSchema.parse(req.params.id);
+  const run = await db.simulationRun.findFirst({
+    where: { id, session: { adminId: res.locals.adminId } },
+  });
+  if (!run) throw new AppError(404, "not_found", "Simulation not found");
+  const snapshot = run.assessmentId
+    ? await db.reportSnapshot.findUnique({
+        where: { assessmentId: run.assessmentId },
+      })
+    : null;
+  res.json({ ...run, report: snapshot?.content ?? null });
+});
 app.put("/api/simulations/:id/evaluation", async (req, res) => {
   const id = idSchema.parse(req.params.id);
   const evaluation = z
@@ -334,14 +397,35 @@ app.put("/api/cases/:id/review", async (req, res) => {
       status: z.enum(["approved", "rejected"]),
       notes: z.string().trim().min(10).max(2000),
       title: z.string().trim().min(1).max(150),
+      reviewVersion: z.number().int().nonnegative().optional(),
       pattern: patternSchema,
     })
     .strict()
     .parse(req.body);
   const record = await db.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "CaseIntelligenceRecord" WHERE id = ${id} FOR UPDATE`;
     const c = await tx.caseIntelligenceRecord.findUnique({ where: { id } });
     if (!c) throw new AppError(404, "not_found", "Case not found");
+    if (
+      input.reviewVersion !== undefined &&
+      input.reviewVersion !== c.reviewVersion
+    )
+      throw new AppError(
+        409,
+        "case_revision_conflict",
+        "This case was reviewed elsewhere. Reload before editing.",
+      );
     if (input.status === "approved") {
+      if (
+        containsSensitiveData(
+          JSON.stringify({ title: input.title, pattern: input.pattern }),
+        )
+      )
+        throw new AppError(
+          422,
+          "case_sensitive_data",
+          "Remove identifying or sensitive data from the reusable pattern before approval",
+        );
       const quality = evaluateInput(input.title, "caseTitle");
       const industryQuality = evaluateInput(input.pattern.industry, "industry");
       if (
@@ -365,6 +449,16 @@ app.put("/api/cases/:id/review", async (req, res) => {
           422,
           "case_unsupported_pattern",
           "Unknown delivery capabilities cannot be approved as established services",
+        );
+      if (
+        input.pattern.approaches?.some(
+          (a) => !input.pattern.patterns.includes(a.serviceId),
+        )
+      )
+        throw new AppError(
+          422,
+          "case_unsupported_pattern",
+          "Approach services must be supported by the reusable pattern and source assessment",
         );
       for (const factor of [
         ...input.pattern.problems,

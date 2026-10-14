@@ -1,0 +1,1223 @@
+{
+  "generatedAt": "2026-10-14T22:58:21.896Z",
+  "independent": [
+    {
+      "id": "agricultural-field-work",
+      "situation": "I inspect agricultural machinery and want technicians to record service work from their phones, including places where they have no internet connection.",
+      "desiredOutcome": "Capture service records offline",
+      "confirmedFacts": {
+        "stage": "specific",
+        "request": "I inspect agricultural machinery and want technicians to record service work from their phones, including places where they have no internet connection."
+      },
+      "unverifiedDetails": [
+        "record structure",
+        "roles",
+        "sync conflict policy"
+      ],
+      "usefulFollowUpDimensions": [
+        "offlineDetails",
+        "dataCaptureDetails",
+        "accessDetails",
+        "reportingDetails"
+      ],
+      "unacceptableAssumptions": [
+        "portfolio",
+        "booking",
+        "publishing",
+        "ai"
+      ],
+      "solutionCategories": [
+        "integration"
+      ],
+      "readiness": true,
+      "retrievalRelevant": false,
+      "dimensions": [
+        "offline",
+        "data_capture",
+        "collaboration"
+      ],
+      "actual": {
+        "services": [
+          "integration"
+        ],
+        "gaps": [
+          "offlineDetails",
+          "dataCaptureDetails",
+          "accessDetails",
+          "workflowDetails",
+          "reportingDetails",
+          "constraints",
+          "currentAlternatives",
+          "firstVersion",
+          "budget"
+        ],
+        "selectedQuestion": "offlineDetails",
+        "readiness": true,
+        "dimensions": [
+          "data_capture",
+          "collaboration",
+          "offline"
+        ],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "factory-quality",
+      "situation": "Operators inspect batches on paper and supervisors sign off defects.",
+      "desiredOutcome": "Capture and review quality checks",
+      "confirmedFacts": {
+        "stage": "established",
+        "industry": "Manufacturing quality team",
+        "goals": "Record batch inspections and supervisor approvals using shared tablets"
+      },
+      "unverifiedDetails": [
+        "approval roles",
+        "fields"
+      ],
+      "usefulFollowUpDimensions": [
+        "dataCaptureDetails",
+        "reportingDetails"
+      ],
+      "unacceptableAssumptions": [
+        "website",
+        "booking",
+        "ai"
+      ],
+      "solutionCategories": [
+        "integration"
+      ],
+      "readiness": true,
+      "retrievalRelevant": false,
+      "dimensions": [
+        "data_capture",
+        "approvals"
+      ],
+      "actual": {
+        "services": [
+          "integration"
+        ],
+        "gaps": [
+          "dataCaptureDetails",
+          "accessDetails",
+          "workflowDetails",
+          "reportingDetails",
+          "constraints",
+          "currentAlternatives",
+          "problems",
+          "budget"
+        ],
+        "selectedQuestion": "dataCaptureDetails",
+        "readiness": true,
+        "dimensions": [
+          "collaboration",
+          "data_capture",
+          "approvals"
+        ],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "fleet-workshop",
+      "situation": "Mechanics log repairs on paper",
+      "desiredOutcome": "Track maintenance",
+      "confirmedFacts": {
+        "stage": "established",
+        "industry": "A regional fleet workshop",
+        "goals": "Record repairs and maintenance for vehicles and export weekly manager reports"
+      },
+      "unverifiedDetails": [
+        "record fields"
+      ],
+      "usefulFollowUpDimensions": [
+        "dataCaptureDetails"
+      ],
+      "unacceptableAssumptions": [
+        "portfolio",
+        "ai"
+      ],
+      "solutionCategories": [
+        "integration"
+      ],
+      "readiness": true,
+      "retrievalRelevant": false,
+      "dimensions": [
+        "data_capture",
+        "reporting"
+      ],
+      "actual": {
+        "services": [
+          "integration"
+        ],
+        "gaps": [
+          "dataCaptureDetails",
+          "workflowDetails",
+          "constraints",
+          "currentAlternatives",
+          "problems",
+          "tools",
+          "budget"
+        ],
+        "selectedQuestion": "dataCaptureDetails",
+        "readiness": true,
+        "dimensions": [
+          "data_capture",
+          "reporting"
+        ],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "property-access",
+      "situation": "Rental staff share spreadsheets",
+      "desiredOutcome": "Capture approvals",
+      "confirmedFacts": {
+        "stage": "established",
+        "industry": "Property managers",
+        "goals": "Record maintenance requests with staff approval and reporting"
+      },
+      "unverifiedDetails": [
+        "roles",
+        "records"
+      ],
+      "usefulFollowUpDimensions": [
+        "accessDetails",
+        "dataCaptureDetails"
+      ],
+      "unacceptableAssumptions": [
+        "booking",
+        "website"
+      ],
+      "solutionCategories": [
+        "integration"
+      ],
+      "readiness": true,
+      "retrievalRelevant": false,
+      "dimensions": [
+        "collaboration",
+        "approvals"
+      ],
+      "actual": {
+        "services": [
+          "integration"
+        ],
+        "gaps": [
+          "dataCaptureDetails",
+          "accessDetails",
+          "workflowDetails",
+          "reportingDetails",
+          "constraints",
+          "currentAlternatives",
+          "problems",
+          "tools",
+          "budget"
+        ],
+        "selectedQuestion": "dataCaptureDetails",
+        "readiness": true,
+        "dimensions": [
+          "data_capture",
+          "collaboration",
+          "approvals",
+          "reporting"
+        ],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "health-admin",
+      "situation": "Clinic reception manages appointments manually",
+      "desiredOutcome": "Improve appointment reminders",
+      "confirmedFacts": {
+        "stage": "established",
+        "industry": "Healthcare administration",
+        "bookingDetails": "Appointments through WhatsApp cause missed reminders",
+        "goals": "Reduce missed appointments",
+        "bookingStatus": "existing"
+      },
+      "unverifiedDetails": [
+        "provider reminder settings",
+        "sensitive data handling"
+      ],
+      "usefulFollowUpDimensions": [
+        "bookingCapabilities"
+      ],
+      "unacceptableAssumptions": [
+        "website",
+        "webapp",
+        "ai"
+      ],
+      "solutionCategories": [
+        "integration"
+      ],
+      "readiness": true,
+      "retrievalRelevant": true,
+      "dimensions": [
+        "scheduling",
+        "communication"
+      ],
+      "actual": {
+        "services": [
+          "integration"
+        ],
+        "gaps": [
+          "bookingCapabilities",
+          "constraints",
+          "budget"
+        ],
+        "selectedQuestion": "bookingCapabilities",
+        "readiness": true,
+        "dimensions": [
+          "communication",
+          "scheduling"
+        ],
+        "references": [
+          "seed-fitness",
+          "seed-food",
+          "seed-nails",
+          "seed-salon"
+        ]
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "event-team",
+      "situation": "Volunteers collect attendance on paper",
+      "desiredOutcome": "Record attendance",
+      "confirmedFacts": {
+        "stage": "established",
+        "industry": "Event organizers",
+        "goals": "Record volunteer attendance and export weekly manager reports"
+      },
+      "unverifiedDetails": [
+        "access",
+        "capture fields"
+      ],
+      "usefulFollowUpDimensions": [
+        "accessDetails",
+        "dataCaptureDetails"
+      ],
+      "unacceptableAssumptions": [
+        "portfolio",
+        "booking"
+      ],
+      "solutionCategories": [
+        "integration"
+      ],
+      "readiness": true,
+      "retrievalRelevant": false,
+      "dimensions": [
+        "data_capture",
+        "collaboration"
+      ],
+      "actual": {
+        "services": [
+          "integration"
+        ],
+        "gaps": [
+          "dataCaptureDetails",
+          "accessDetails",
+          "workflowDetails",
+          "constraints",
+          "currentAlternatives",
+          "problems",
+          "tools",
+          "budget"
+        ],
+        "selectedQuestion": "dataCaptureDetails",
+        "readiness": true,
+        "dimensions": [
+          "data_capture",
+          "collaboration",
+          "reporting"
+        ],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "construction",
+      "situation": "Site inspections use paper",
+      "desiredOutcome": "Capture records offline",
+      "confirmedFacts": {
+        "stage": "specific",
+        "request": "Record construction inspections offline for site staff using phones"
+      },
+      "unverifiedDetails": [
+        "sync",
+        "record retention"
+      ],
+      "usefulFollowUpDimensions": [
+        "offlineDetails"
+      ],
+      "unacceptableAssumptions": [
+        "website",
+        "booking"
+      ],
+      "solutionCategories": [
+        "integration"
+      ],
+      "readiness": true,
+      "retrievalRelevant": false,
+      "dimensions": [
+        "offline",
+        "data_capture"
+      ],
+      "actual": {
+        "services": [
+          "integration"
+        ],
+        "gaps": [
+          "offlineDetails",
+          "dataCaptureDetails",
+          "accessDetails",
+          "workflowDetails",
+          "reportingDetails",
+          "constraints",
+          "currentAlternatives",
+          "firstVersion",
+          "budget"
+        ],
+        "selectedQuestion": "offlineDetails",
+        "readiness": true,
+        "dimensions": [
+          "data_capture",
+          "collaboration",
+          "offline"
+        ],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "nonprofit",
+      "situation": "Volunteers duplicate weekly reporting",
+      "desiredOutcome": "Record and report donations",
+      "confirmedFacts": {
+        "stage": "established",
+        "industry": "Nonprofit team",
+        "goals": "Record donation receipts with volunteer approvals and reporting"
+      },
+      "unverifiedDetails": [
+        "roles",
+        "data retention"
+      ],
+      "usefulFollowUpDimensions": [
+        "accessDetails",
+        "reportingDetails"
+      ],
+      "unacceptableAssumptions": [
+        "booking",
+        "portfolio"
+      ],
+      "solutionCategories": [
+        "integration"
+      ],
+      "readiness": true,
+      "retrievalRelevant": false,
+      "dimensions": [
+        "data_capture",
+        "collaboration",
+        "reporting"
+      ],
+      "actual": {
+        "services": [
+          "integration"
+        ],
+        "gaps": [
+          "dataCaptureDetails",
+          "accessDetails",
+          "workflowDetails",
+          "reportingDetails",
+          "constraints",
+          "currentAlternatives",
+          "problems",
+          "tools",
+          "budget"
+        ],
+        "selectedQuestion": "dataCaptureDetails",
+        "readiness": true,
+        "dimensions": [
+          "collaboration",
+          "data_capture",
+          "approvals",
+          "reporting"
+        ],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "education-admin",
+      "situation": "Teachers collect forms on paper",
+      "desiredOutcome": "Reduce lost approval records",
+      "confirmedFacts": {
+        "stage": "established",
+        "industry": "An independent school",
+        "goals": "Record teacher approval forms and track missing records"
+      },
+      "unverifiedDetails": [
+        "access",
+        "retention"
+      ],
+      "usefulFollowUpDimensions": [
+        "accessDetails",
+        "reportingDetails"
+      ],
+      "unacceptableAssumptions": [
+        "publishing",
+        "ai",
+        "booking"
+      ],
+      "solutionCategories": [
+        "integration"
+      ],
+      "readiness": true,
+      "retrievalRelevant": false,
+      "dimensions": [
+        "data_capture",
+        "collaboration",
+        "approvals"
+      ],
+      "actual": {
+        "services": [
+          "integration"
+        ],
+        "gaps": [
+          "dataCaptureDetails",
+          "accessDetails",
+          "workflowDetails",
+          "reportingDetails",
+          "constraints",
+          "currentAlternatives",
+          "problems",
+          "tools",
+          "budget"
+        ],
+        "selectedQuestion": "dataCaptureDetails",
+        "readiness": true,
+        "dimensions": [
+          "data_capture",
+          "collaboration",
+          "approvals"
+        ],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "consultancy-multi-goal",
+      "situation": "A consultant needs presentation and invoice changes",
+      "desiredOutcome": "Two separate outcomes",
+      "confirmedFacts": {
+        "stage": "established",
+        "kind": "professional",
+        "industry": "Independent consultant",
+        "goals": "I want a portfolio and invoice automation",
+        "invoiceDetails": "I manually copy project totals into invoices every week",
+        "constraints": "Limited budget"
+      },
+      "unverifiedDetails": [
+        "content",
+        "accounting integration"
+      ],
+      "usefulFollowUpDimensions": [
+        "websiteContent"
+      ],
+      "unacceptableAssumptions": [
+        "booking",
+        "webapp",
+        "ai"
+      ],
+      "solutionCategories": [
+        "portfolio",
+        "automation"
+      ],
+      "readiness": true,
+      "retrievalRelevant": true,
+      "dimensions": [
+        "presentation",
+        "automation"
+      ],
+      "actual": {
+        "services": [
+          "portfolio",
+          "email",
+          "automation"
+        ],
+        "gaps": [
+          "websiteContent",
+          "tools",
+          "presence",
+          "budget"
+        ],
+        "selectedQuestion": "websiteContent",
+        "readiness": true,
+        "dimensions": [
+          "automation",
+          "presentation"
+        ],
+        "references": [
+          "seed-freelancer",
+          "seed-trades",
+          "seed-consultant",
+          "seed-creative"
+        ]
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "personal-productivity",
+      "situation": "An individual tracks tasks manually",
+      "desiredOutcome": "Capture task progress",
+      "confirmedFacts": {
+        "stage": "established",
+        "industry": "Personal projects",
+        "workflowDetails": "I record project tasks in notebooks and need a weekly progress report"
+      },
+      "unverifiedDetails": [
+        "current alternatives"
+      ],
+      "usefulFollowUpDimensions": [
+        "dataCaptureDetails",
+        "reportingDetails"
+      ],
+      "unacceptableAssumptions": [
+        "website",
+        "booking",
+        "ai"
+      ],
+      "solutionCategories": [
+        "integration"
+      ],
+      "readiness": true,
+      "retrievalRelevant": false,
+      "dimensions": [
+        "data_capture",
+        "reporting"
+      ],
+      "actual": {
+        "services": [
+          "integration"
+        ],
+        "gaps": [
+          "dataCaptureDetails",
+          "reportingDetails",
+          "constraints",
+          "currentAlternatives",
+          "problems",
+          "tools",
+          "budget"
+        ],
+        "selectedQuestion": "dataCaptureDetails",
+        "readiness": true,
+        "dimensions": [
+          "data_capture",
+          "reporting"
+        ],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "undefined-technical-term",
+      "situation": "A founder asks for a platform",
+      "desiredOutcome": "Not established",
+      "confirmedFacts": {
+        "stage": "specific",
+        "request": "I want a platform"
+      },
+      "unverifiedDetails": [
+        "users",
+        "essential functions",
+        "outcome"
+      ],
+      "usefulFollowUpDimensions": [],
+      "unacceptableAssumptions": [
+        "webapp",
+        "ai",
+        "website"
+      ],
+      "solutionCategories": [],
+      "readiness": false,
+      "retrievalRelevant": false,
+      "dimensions": [],
+      "actual": {
+        "services": [],
+        "gaps": [
+          "clarification",
+          "workflowDetails",
+          "budget"
+        ],
+        "selectedQuestion": "clarification",
+        "readiness": false,
+        "dimensions": [],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "hypothetical-offline",
+      "situation": "A photographer considers offline",
+      "desiredOutcome": "Portfolio",
+      "confirmedFacts": {
+        "stage": "established",
+        "kind": "professional",
+        "industry": "I am a photographer. I want a portfolio. What if I wanted offline operation?"
+      },
+      "unverifiedDetails": [
+        "offline is hypothetical"
+      ],
+      "usefulFollowUpDimensions": [
+        "websiteContent"
+      ],
+      "unacceptableAssumptions": [
+        "integration",
+        "webapp",
+        "booking"
+      ],
+      "solutionCategories": [
+        "portfolio"
+      ],
+      "readiness": true,
+      "retrievalRelevant": true,
+      "dimensions": [
+        "presentation"
+      ],
+      "actual": {
+        "services": [
+          "portfolio",
+          "email"
+        ],
+        "gaps": [
+          "websiteContent",
+          "constraints",
+          "tools",
+          "presence",
+          "budget"
+        ],
+        "selectedQuestion": "websiteContent",
+        "readiness": true,
+        "dimensions": [
+          "presentation"
+        ],
+        "references": [
+          "seed-consultant",
+          "seed-creative",
+          "seed-food",
+          "seed-freelancer"
+        ]
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "clinical-boundary",
+      "situation": "Clinical diagnosis software",
+      "desiredOutcome": "Automate treatment decisions",
+      "confirmedFacts": {
+        "stage": "specific",
+        "request": "I need an application to diagnose patient illness and prescribe treatment"
+      },
+      "unverifiedDetails": [
+        "clinical expertise"
+      ],
+      "usefulFollowUpDimensions": [],
+      "unacceptableAssumptions": [
+        "webapp",
+        "integration",
+        "ai"
+      ],
+      "solutionCategories": [],
+      "readiness": false,
+      "retrievalRelevant": false,
+      "dimensions": [
+        "application"
+      ],
+      "actual": {
+        "services": [],
+        "gaps": [
+          "workflowDetails",
+          "currentAlternatives",
+          "firstVersion",
+          "budget"
+        ],
+        "readiness": false,
+        "dimensions": [
+          "application"
+        ],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    },
+    {
+      "id": "short-legitimate",
+      "situation": "A watchmaker",
+      "desiredOutcome": "Not established",
+      "confirmedFacts": {
+        "stage": "established",
+        "industry": "Watch repair"
+      },
+      "unverifiedDetails": [
+        "desired change"
+      ],
+      "usefulFollowUpDimensions": [],
+      "unacceptableAssumptions": [
+        "website",
+        "booking",
+        "webapp"
+      ],
+      "solutionCategories": [],
+      "readiness": false,
+      "retrievalRelevant": false,
+      "dimensions": [],
+      "actual": {
+        "services": [],
+        "gaps": [
+          "clarification",
+          "workflowDetails",
+          "goals",
+          "problems",
+          "budget"
+        ],
+        "selectedQuestion": "clarification",
+        "readiness": false,
+        "dimensions": [],
+        "references": []
+      },
+      "passed": true,
+      "failureReason": ""
+    }
+  ],
+  "learning": {
+    "scenario": {
+      "problems": [
+        "custom",
+        "booking"
+      ],
+      "stage": "specific",
+      "industry": "Independent appointment-based service",
+      "request": "I want a scheduling application to manage customer appointments",
+      "bookingStatus": "existing",
+      "websiteStatus": "existing",
+      "bookingDetails": "Bookings have missed reminders and cancellations",
+      "goals": "Reduce missed appointments and reminders"
+    },
+    "baseline": {
+      "question": "scopeDetails",
+      "report": {
+        "title": "Your way forward",
+        "status": "qualified preliminary draft — consultant review required",
+        "synthetic": true,
+        "revision": 1,
+        "createdAt": "2026-10-14T22:58:21.893Z",
+        "recommendations": [
+          {
+            "serviceId": "integration",
+            "problem": "Improve the existing booking workflow before considering another provider.",
+            "solution": "Business software integration",
+            "evidence": [
+              "problems: custom, booking",
+              "industry: Independent appointment-based service",
+              "request: I want a scheduling application to manage customer appointments",
+              "bookingDetails: Bookings have missed reminders and cancellations",
+              "goals: Reduce missed appointments and reminders"
+            ],
+            "benefits": [
+              "Connect existing systems where supported APIs and permissions exist."
+            ],
+            "alternatives": [
+              "Improve availability and reminders in the current workflow first",
+              "Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls",
+              "Add booking to an existing website only if that channel is useful",
+              "Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially"
+            ],
+            "complexity": "requires technical scoping",
+            "dependencies": [
+              "Current provider permissions and export/integration support",
+              "Availability, reminders and cancellation policy",
+              "Vendor subscription terms and ongoing support"
+            ],
+            "confidence": "conditional — based on self-reported facts; consultant validation required",
+            "delivery": "custom / exploratory",
+            "nextSteps": [
+              "Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence.",
+              "Review this option with the consultant",
+              "Validate constraints, budget and acceptance criteria"
+            ],
+            "optional": false,
+            "estimate": {
+              "status": "manual_review",
+              "currency": "ZAR",
+              "implementationLow": null,
+              "implementationHigh": null,
+              "recurringStatus": "vendor_quote_required",
+              "notes": "Implementation and third-party subscriptions are separate. No binding quotation. Consultant hours must be configured in data/services.ts."
+            }
+          },
+          {
+            "serviceId": "webapp",
+            "problem": "You described intended functionality for an application; validate the smallest useful scope.",
+            "solution": "Custom web application",
+            "evidence": [
+              "request: I want a scheduling application to manage customer appointments"
+            ],
+            "benefits": [
+              "Validate and scope a purpose-built tool."
+            ],
+            "alternatives": [
+              "Validate the initial workflow with approved templates and existing software",
+              "Prototype a small web application after defining essential users and features",
+              "Native mobile requires evidence of device-specific needs and partner feasibility review"
+            ],
+            "complexity": "requires technical scoping",
+            "dependencies": [
+              "Essential user roles and initial acceptance criteria",
+              "Data privacy, template ownership and review workflow",
+              "Hosting, export, maintenance and supported integrations"
+            ],
+            "confidence": "conditional — interpreted from the cited user description; confirm scope with the consultant",
+            "delivery": "custom / exploratory",
+            "nextSteps": [
+              "Prefer a feasibility check and existing-tool comparison before custom engineering; required capabilities and maintenance effort are not established.",
+              "Review this option with the consultant",
+              "Validate constraints, budget and acceptance criteria"
+            ],
+            "optional": false,
+            "estimate": {
+              "status": "manual_review",
+              "currency": "ZAR",
+              "implementationLow": null,
+              "implementationHigh": null,
+              "recurringStatus": "vendor_quote_required",
+              "notes": "Implementation and third-party subscriptions are separate. No binding quotation. Consultant hours must be configured in data/services.ts."
+            }
+          }
+        ],
+        "matchedCases": [],
+        "sections": [
+          {
+            "title": "Your Situation",
+            "paragraphs": [
+              "Context: Independent appointment-based service",
+              "Starting point: specific",
+              "Goal: Reduce missed appointments and reminders"
+            ]
+          },
+          {
+            "title": "Current Position",
+            "paragraphs": [
+              "Presence: Described channels: website",
+              "Tools: Not confirmed",
+              "User-selected challenges: custom, booking",
+              "Current booking provider: self-reported existing; takes precedence over earlier tool descriptions.",
+              "Website status: self-reported existing; no technical inspection."
+            ]
+          },
+          {
+            "title": "Opportunities",
+            "paragraphs": [
+              "Improve the existing booking workflow before considering another provider.",
+              "You described intended functionality for an application; validate the smallest useful scope."
+            ]
+          },
+          {
+            "title": "Recommended Solutions",
+            "paragraphs": [
+              "Business software integration — custom / exploratory",
+              "Improve the existing booking workflow before considering another provider.",
+              "Evidence: problems: custom, booking; industry: Independent appointment-based service; request: I want a scheduling application to manage customer appointments; bookingDetails: Bookings have missed reminders and cancellations; goals: Reduce missed appointments and reminders",
+              "Potential benefit: Connect existing systems where supported APIs and permissions exist.",
+              "Confidence: conditional — based on self-reported facts; consultant validation required",
+              "Custom web application — custom / exploratory",
+              "You described intended functionality for an application; validate the smallest useful scope.",
+              "Evidence: request: I want a scheduling application to manage customer appointments",
+              "Potential benefit: Validate and scope a purpose-built tool.",
+              "Confidence: conditional — interpreted from the cited user description; confirm scope with the consultant"
+            ]
+          },
+          {
+            "title": "Possible Approaches",
+            "paragraphs": [
+              "Business software integration: Improve availability and reminders in the current workflow first; Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls; Add booking to an existing website only if that channel is useful; Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially",
+              "Complexity: requires technical scoping. Dependencies: Current provider permissions and export/integration support; Availability, reminders and cancellation policy; Vendor subscription terms and ongoing support",
+              "Custom web application: Validate the initial workflow with approved templates and existing software; Prototype a small web application after defining essential users and features; Native mobile requires evidence of device-specific needs and partner feasibility review",
+              "Complexity: requires technical scoping. Dependencies: Essential user roles and initial acceptance criteria; Data privacy, template ownership and review workflow; Hosting, export, maintenance and supported integrations"
+            ]
+          },
+          {
+            "title": "Costs & Considerations",
+            "paragraphs": [
+              "Budget: Not confirmed",
+              "Constraints: Not confirmed",
+              "Business software integration: manual_review. Recurring costs: vendor quote required.",
+              "Custom web application: manual_review. Recurring costs: vendor quote required.",
+              "All estimates are drafts. Implementation, third-party subscriptions, hosting, domain renewal and recurring maintenance require separate review. Optional future enhancements need their own scope."
+            ]
+          },
+          {
+            "title": "Your Way Forward",
+            "paragraphs": [
+              "Timing: Not confirmed",
+              "Readiness: qualified preliminary assessment available. Useful situation and objective evidence support a qualified initial direction",
+              "constraints: not provided",
+              "budget: not provided",
+              "tools: not provided",
+              "timing: not provided",
+              "Before implementation: Confirm reminder/cancellation workflow and provider terms",
+              "Before implementation: Validate a small initial version and existing-tool alternatives",
+              "Review the evidence and unresolved assumptions with the consultant. Choose the smallest useful first step. Confirm scope and costs before implementation.",
+              "Business software integration: Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence.",
+              "Business software integration: Review this option with the consultant",
+              "Business software integration: Validate constraints, budget and acceptance criteria",
+              "Custom web application: Prefer a feasibility check and existing-tool comparison before custom engineering; required capabilities and maintenance effort are not established.",
+              "Custom web application: Review this option with the consultant",
+              "Custom web application: Validate constraints, budget and acceptance criteria"
+            ]
+          }
+        ]
+      }
+    },
+    "withApprovedReference": {
+      "question": "bookingCapabilities",
+      "report": {
+        "title": "Your way forward",
+        "status": "qualified preliminary draft — consultant review required",
+        "synthetic": true,
+        "revision": 1,
+        "createdAt": "2026-10-14T22:58:21.895Z",
+        "recommendations": [
+          {
+            "serviceId": "integration",
+            "problem": "Improve the existing booking workflow before considering another provider.",
+            "solution": "Business software integration",
+            "evidence": [
+              "problems: custom, booking",
+              "industry: Independent appointment-based service",
+              "request: I want a scheduling application to manage customer appointments",
+              "bookingDetails: Bookings have missed reminders and cancellations",
+              "goals: Reduce missed appointments and reminders"
+            ],
+            "benefits": [
+              "Connect existing systems where supported APIs and permissions exist."
+            ],
+            "alternatives": [
+              "Improve availability and reminders in the current workflow first",
+              "Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls",
+              "Add booking to an existing website only if that channel is useful",
+              "Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially",
+              "Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified): compare Configure current reminders and cancellation controls. Rationale to validate: Use an existing capability before buying or building a replacement"
+            ],
+            "complexity": "requires technical scoping",
+            "dependencies": [
+              "Current provider permissions and export/integration support",
+              "Availability, reminders and cancellation policy",
+              "Vendor subscription terms and ongoing support",
+              "Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified): verify Verify current reminder controls and vendor permissions"
+            ],
+            "confidence": "conditional — based on self-reported facts; consultant validation required",
+            "delivery": "custom / exploratory",
+            "nextSteps": [
+              "Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence. Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified) supports comparing Configure current reminders and cancellation controls, subject to its dependencies and current-client evidence.",
+              "Review this option with the consultant",
+              "Validate constraints, budget and acceptance criteria",
+              "Reference-informed check — Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified): Check whether existing reminder and cancellation settings solve the actual problem before adding another provider.",
+              "Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified): limitation — Synthetic source; outcomes unverified",
+              "Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified): limitation — Different provider permissions may prevent integration"
+            ],
+            "optional": false,
+            "estimate": {
+              "status": "manual_review",
+              "currency": "ZAR",
+              "implementationLow": null,
+              "implementationHigh": null,
+              "recurringStatus": "vendor_quote_required",
+              "notes": "Implementation and third-party subscriptions are separate. No binding quotation. Consultant hours must be configured in data/services.ts."
+            }
+          },
+          {
+            "serviceId": "webapp",
+            "problem": "You described intended functionality for an application; validate the smallest useful scope.",
+            "solution": "Custom web application",
+            "evidence": [
+              "request: I want a scheduling application to manage customer appointments"
+            ],
+            "benefits": [
+              "Validate and scope a purpose-built tool."
+            ],
+            "alternatives": [
+              "Validate the initial workflow with approved templates and existing software",
+              "Prototype a small web application after defining essential users and features",
+              "Native mobile requires evidence of device-specific needs and partner feasibility review"
+            ],
+            "complexity": "requires technical scoping",
+            "dependencies": [
+              "Essential user roles and initial acceptance criteria",
+              "Data privacy, template ownership and review workflow",
+              "Hosting, export, maintenance and supported integrations"
+            ],
+            "confidence": "conditional — interpreted from the cited user description; confirm scope with the consultant",
+            "delivery": "custom / exploratory",
+            "nextSteps": [
+              "Prefer a feasibility check and existing-tool comparison before custom engineering; required capabilities and maintenance effort are not established.",
+              "Review this option with the consultant",
+              "Validate constraints, budget and acceptance criteria"
+            ],
+            "optional": false,
+            "estimate": {
+              "status": "manual_review",
+              "currency": "ZAR",
+              "implementationLow": null,
+              "implementationHigh": null,
+              "recurringStatus": "vendor_quote_required",
+              "notes": "Implementation and third-party subscriptions are separate. No binding quotation. Consultant hours must be configured in data/services.ts."
+            }
+          }
+        ],
+        "matchedCases": [
+          {
+            "id": "reviewed-synthetic-booking",
+            "title": "Independent appointment workflow review",
+            "sourceType": "synthetic",
+            "reasons": [
+              "Confirmed challenge: booking",
+              "Related goal: reminders"
+            ],
+            "approvalStatus": "approved",
+            "reviewVersion": 1,
+            "sourceRunId": null,
+            "outcomeVerification": "unverified",
+            "limitations": [
+              "Synthetic source; outcomes unverified",
+              "Different provider permissions may prevent integration"
+            ],
+            "usefulness": "Reference questions and alternatives only; current evidence determines suitability"
+          }
+        ],
+        "sections": [
+          {
+            "title": "Your Situation",
+            "paragraphs": [
+              "Context: Independent appointment-based service",
+              "Starting point: specific",
+              "Goal: Reduce missed appointments and reminders"
+            ]
+          },
+          {
+            "title": "Current Position",
+            "paragraphs": [
+              "Presence: Described channels: website",
+              "Tools: Not confirmed",
+              "User-selected challenges: custom, booking",
+              "Current booking provider: self-reported existing; takes precedence over earlier tool descriptions.",
+              "Website status: self-reported existing; no technical inspection."
+            ]
+          },
+          {
+            "title": "Opportunities",
+            "paragraphs": [
+              "Improve the existing booking workflow before considering another provider.",
+              "You described intended functionality for an application; validate the smallest useful scope."
+            ]
+          },
+          {
+            "title": "Recommended Solutions",
+            "paragraphs": [
+              "Business software integration — custom / exploratory",
+              "Improve the existing booking workflow before considering another provider.",
+              "Evidence: problems: custom, booking; industry: Independent appointment-based service; request: I want a scheduling application to manage customer appointments; bookingDetails: Bookings have missed reminders and cancellations; goals: Reduce missed appointments and reminders",
+              "Potential benefit: Connect existing systems where supported APIs and permissions exist.",
+              "Confidence: conditional — based on self-reported facts; consultant validation required",
+              "Custom web application — custom / exploratory",
+              "You described intended functionality for an application; validate the smallest useful scope.",
+              "Evidence: request: I want a scheduling application to manage customer appointments",
+              "Potential benefit: Validate and scope a purpose-built tool.",
+              "Confidence: conditional — interpreted from the cited user description; confirm scope with the consultant"
+            ]
+          },
+          {
+            "title": "Possible Approaches",
+            "paragraphs": [
+              "Business software integration: Improve availability and reminders in the current workflow first; Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls; Add booking to an existing website only if that channel is useful; Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially; Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified): compare Configure current reminders and cancellation controls. Rationale to validate: Use an existing capability before buying or building a replacement",
+              "Complexity: requires technical scoping. Dependencies: Current provider permissions and export/integration support; Availability, reminders and cancellation policy; Vendor subscription terms and ongoing support; Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified): verify Verify current reminder controls and vendor permissions",
+              "Custom web application: Validate the initial workflow with approved templates and existing software; Prototype a small web application after defining essential users and features; Native mobile requires evidence of device-specific needs and partner feasibility review",
+              "Complexity: requires technical scoping. Dependencies: Essential user roles and initial acceptance criteria; Data privacy, template ownership and review workflow; Hosting, export, maintenance and supported integrations"
+            ]
+          },
+          {
+            "title": "Costs & Considerations",
+            "paragraphs": [
+              "Budget: Not confirmed",
+              "Constraints: Not confirmed",
+              "Business software integration: manual_review. Recurring costs: vendor quote required.",
+              "Custom web application: manual_review. Recurring costs: vendor quote required.",
+              "All estimates are drafts. Implementation, third-party subscriptions, hosting, domain renewal and recurring maintenance require separate review. Optional future enhancements need their own scope."
+            ]
+          },
+          {
+            "title": "Your Way Forward",
+            "paragraphs": [
+              "Timing: Not confirmed",
+              "Readiness: qualified preliminary assessment available. Useful situation and objective evidence support a qualified initial direction",
+              "constraints: not provided",
+              "budget: not provided",
+              "tools: not provided",
+              "timing: not provided",
+              "Before implementation: Confirm reminder/cancellation workflow and provider terms",
+              "Before implementation: Validate a small initial version and existing-tool alternatives",
+              "Review the evidence and unresolved assumptions with the consultant. Choose the smallest useful first step. Confirm scope and costs before implementation.",
+              "Business software integration: Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence. Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified) supports comparing Configure current reminders and cancellation controls, subject to its dependencies and current-client evidence.",
+              "Business software integration: Review this option with the consultant",
+              "Business software integration: Validate constraints, budget and acceptance criteria",
+              "Business software integration: Reference-informed check — Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified): Check whether existing reminder and cancellation settings solve the actual problem before adding another provider.",
+              "Business software integration: Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified): limitation — Synthetic source; outcomes unverified",
+              "Business software integration: Reference reviewed-synthetic-booking v1 (synthetic; outcome unverified): limitation — Different provider permissions may prevent integration",
+              "Custom web application: Prefer a feasibility check and existing-tool comparison before custom engineering; required capabilities and maintenance effort are not established.",
+              "Custom web application: Review this option with the consultant",
+              "Custom web application: Validate constraints, budget and acceptance criteria",
+              "Reference only (synthetic): Independent appointment workflow review. Confirmed challenge: booking; Related goal: reminders. No implementation results or ROI are asserted."
+            ]
+          }
+        ]
+      }
+    },
+    "criteria": {
+      "baseline": {
+        "currentProviderInvestigatedFirst": false,
+        "noUnjustifiedWebsite": true,
+        "currentClientFactsPreserved": true,
+        "existingReminderAlternative": true,
+        "providerPermissionsChecked": true
+      },
+      "withReference": {
+        "currentProviderInvestigatedFirst": true,
+        "noUnjustifiedWebsite": true,
+        "currentClientFactsPreserved": true,
+        "existingReminderAlternative": true,
+        "providerPermissionsChecked": true
+      },
+      "beforeScore": 4,
+      "afterScore": 5,
+      "maximumScore": 5
+    },
+    "acceptancePassed": true,
+    "changedQuestion": true,
+    "result": "improved",
+    "caveat": "Synthetic behavior evaluation; does not establish commercial outcomes or model learning"
+  }
+}

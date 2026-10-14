@@ -1,0 +1,425 @@
+{
+  "generatedAt": "2026-10-14T22:58:33.368Z",
+  "sourceRunId": "f37ed648-5d00-46ee-9b32-ca14567ebf34",
+  "approvedCaseId": "4c4aab28-bfbc-43da-8d2e-d60d040e3a6e",
+  "sourceType": "simulation",
+  "reviewVersion": 1,
+  "evaluation": {
+    "scenario": {
+      "problems": [
+        "custom",
+        "booking"
+      ],
+      "stage": "specific",
+      "industry": "Independent appointment-based service",
+      "request": "I want a scheduling application to manage customer appointments",
+      "bookingStatus": "existing",
+      "websiteStatus": "existing",
+      "bookingDetails": "Bookings have missed reminders and cancellations",
+      "goals": "Reduce missed appointments and reminders"
+    },
+    "baseline": {
+      "question": "scopeDetails",
+      "report": {
+        "title": "Your way forward",
+        "status": "qualified preliminary draft — consultant review required",
+        "synthetic": true,
+        "revision": 1,
+        "createdAt": "2026-10-14T22:58:33.239Z",
+        "recommendations": [
+          {
+            "serviceId": "integration",
+            "problem": "Improve the existing booking workflow before considering another provider.",
+            "solution": "Business software integration",
+            "evidence": [
+              "problems: custom, booking",
+              "industry: Independent appointment-based service",
+              "request: I want a scheduling application to manage customer appointments",
+              "bookingDetails: Bookings have missed reminders and cancellations",
+              "goals: Reduce missed appointments and reminders"
+            ],
+            "benefits": [
+              "Connect existing systems where supported APIs and permissions exist."
+            ],
+            "alternatives": [
+              "Improve availability and reminders in the current workflow first",
+              "Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls",
+              "Add booking to an existing website only if that channel is useful",
+              "Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially"
+            ],
+            "complexity": "requires technical scoping",
+            "dependencies": [
+              "Current provider permissions and export/integration support",
+              "Availability, reminders and cancellation policy",
+              "Vendor subscription terms and ongoing support"
+            ],
+            "confidence": "conditional — based on self-reported facts; consultant validation required",
+            "delivery": "custom / exploratory",
+            "nextSteps": [
+              "Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence.",
+              "Review this option with the consultant",
+              "Validate constraints, budget and acceptance criteria"
+            ],
+            "optional": false,
+            "estimate": {
+              "status": "manual_review",
+              "currency": "ZAR",
+              "implementationLow": null,
+              "implementationHigh": null,
+              "recurringStatus": "vendor_quote_required",
+              "notes": "Implementation and third-party subscriptions are separate. No binding quotation. Consultant hours must be configured in data/services.ts."
+            }
+          },
+          {
+            "serviceId": "webapp",
+            "problem": "You described intended functionality for an application; validate the smallest useful scope.",
+            "solution": "Custom web application",
+            "evidence": [
+              "request: I want a scheduling application to manage customer appointments"
+            ],
+            "benefits": [
+              "Validate and scope a purpose-built tool."
+            ],
+            "alternatives": [
+              "Validate the initial workflow with approved templates and existing software",
+              "Prototype a small web application after defining essential users and features",
+              "Native mobile requires evidence of device-specific needs and partner feasibility review"
+            ],
+            "complexity": "requires technical scoping",
+            "dependencies": [
+              "Essential user roles and initial acceptance criteria",
+              "Data privacy, template ownership and review workflow",
+              "Hosting, export, maintenance and supported integrations"
+            ],
+            "confidence": "conditional — interpreted from the cited user description; confirm scope with the consultant",
+            "delivery": "custom / exploratory",
+            "nextSteps": [
+              "Prefer a feasibility check and existing-tool comparison before custom engineering; required capabilities and maintenance effort are not established.",
+              "Review this option with the consultant",
+              "Validate constraints, budget and acceptance criteria"
+            ],
+            "optional": false,
+            "estimate": {
+              "status": "manual_review",
+              "currency": "ZAR",
+              "implementationLow": null,
+              "implementationHigh": null,
+              "recurringStatus": "vendor_quote_required",
+              "notes": "Implementation and third-party subscriptions are separate. No binding quotation. Consultant hours must be configured in data/services.ts."
+            }
+          }
+        ],
+        "matchedCases": [],
+        "sections": [
+          {
+            "title": "Your Situation",
+            "paragraphs": [
+              "Context: Independent appointment-based service",
+              "Starting point: specific",
+              "Goal: Reduce missed appointments and reminders"
+            ]
+          },
+          {
+            "title": "Current Position",
+            "paragraphs": [
+              "Presence: Described channels: website",
+              "Tools: Not confirmed",
+              "User-selected challenges: custom, booking",
+              "Current booking provider: self-reported existing; takes precedence over earlier tool descriptions.",
+              "Website status: self-reported existing; no technical inspection."
+            ]
+          },
+          {
+            "title": "Opportunities",
+            "paragraphs": [
+              "Improve the existing booking workflow before considering another provider.",
+              "You described intended functionality for an application; validate the smallest useful scope."
+            ]
+          },
+          {
+            "title": "Recommended Solutions",
+            "paragraphs": [
+              "Business software integration — custom / exploratory",
+              "Improve the existing booking workflow before considering another provider.",
+              "Evidence: problems: custom, booking; industry: Independent appointment-based service; request: I want a scheduling application to manage customer appointments; bookingDetails: Bookings have missed reminders and cancellations; goals: Reduce missed appointments and reminders",
+              "Potential benefit: Connect existing systems where supported APIs and permissions exist.",
+              "Confidence: conditional — based on self-reported facts; consultant validation required",
+              "Custom web application — custom / exploratory",
+              "You described intended functionality for an application; validate the smallest useful scope.",
+              "Evidence: request: I want a scheduling application to manage customer appointments",
+              "Potential benefit: Validate and scope a purpose-built tool.",
+              "Confidence: conditional — interpreted from the cited user description; confirm scope with the consultant"
+            ]
+          },
+          {
+            "title": "Possible Approaches",
+            "paragraphs": [
+              "Business software integration: Improve availability and reminders in the current workflow first; Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls; Add booking to an existing website only if that channel is useful; Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially",
+              "Complexity: requires technical scoping. Dependencies: Current provider permissions and export/integration support; Availability, reminders and cancellation policy; Vendor subscription terms and ongoing support",
+              "Custom web application: Validate the initial workflow with approved templates and existing software; Prototype a small web application after defining essential users and features; Native mobile requires evidence of device-specific needs and partner feasibility review",
+              "Complexity: requires technical scoping. Dependencies: Essential user roles and initial acceptance criteria; Data privacy, template ownership and review workflow; Hosting, export, maintenance and supported integrations"
+            ]
+          },
+          {
+            "title": "Costs & Considerations",
+            "paragraphs": [
+              "Budget: Not confirmed",
+              "Constraints: Not confirmed",
+              "Business software integration: manual_review. Recurring costs: vendor quote required.",
+              "Custom web application: manual_review. Recurring costs: vendor quote required.",
+              "All estimates are drafts. Implementation, third-party subscriptions, hosting, domain renewal and recurring maintenance require separate review. Optional future enhancements need their own scope."
+            ]
+          },
+          {
+            "title": "Your Way Forward",
+            "paragraphs": [
+              "Timing: Not confirmed",
+              "Readiness: qualified preliminary assessment available. Useful situation and objective evidence support a qualified initial direction",
+              "constraints: not provided",
+              "budget: not provided",
+              "tools: not provided",
+              "timing: not provided",
+              "Before implementation: Confirm reminder/cancellation workflow and provider terms",
+              "Before implementation: Validate a small initial version and existing-tool alternatives",
+              "Review the evidence and unresolved assumptions with the consultant. Choose the smallest useful first step. Confirm scope and costs before implementation.",
+              "Business software integration: Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence.",
+              "Business software integration: Review this option with the consultant",
+              "Business software integration: Validate constraints, budget and acceptance criteria",
+              "Custom web application: Prefer a feasibility check and existing-tool comparison before custom engineering; required capabilities and maintenance effort are not established.",
+              "Custom web application: Review this option with the consultant",
+              "Custom web application: Validate constraints, budget and acceptance criteria"
+            ]
+          }
+        ]
+      }
+    },
+    "withApprovedReference": {
+      "question": "bookingCapabilities",
+      "report": {
+        "title": "Your way forward",
+        "status": "qualified preliminary draft — consultant review required",
+        "synthetic": true,
+        "revision": 1,
+        "createdAt": "2026-10-14T22:58:33.241Z",
+        "recommendations": [
+          {
+            "serviceId": "integration",
+            "problem": "Improve the existing booking workflow before considering another provider.",
+            "solution": "Business software integration",
+            "evidence": [
+              "problems: custom, booking",
+              "industry: Independent appointment-based service",
+              "request: I want a scheduling application to manage customer appointments",
+              "bookingDetails: Bookings have missed reminders and cancellations",
+              "goals: Reduce missed appointments and reminders"
+            ],
+            "benefits": [
+              "Connect existing systems where supported APIs and permissions exist."
+            ],
+            "alternatives": [
+              "Improve availability and reminders in the current workflow first",
+              "Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls",
+              "Add booking to an existing website only if that channel is useful",
+              "Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially",
+              "Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): compare Configure current reminders and cancellation controls. Rationale to validate: Use an existing capability before buying or building a replacement"
+            ],
+            "complexity": "requires technical scoping",
+            "dependencies": [
+              "Current provider permissions and export/integration support",
+              "Availability, reminders and cancellation policy",
+              "Vendor subscription terms and ongoing support",
+              "Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): verify Verify current reminder controls and vendor permissions"
+            ],
+            "confidence": "conditional — based on self-reported facts; consultant validation required",
+            "delivery": "custom / exploratory",
+            "nextSteps": [
+              "Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence. Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified) supports comparing Configure current reminders and cancellation controls, subject to its dependencies and current-client evidence.",
+              "Review this option with the consultant",
+              "Validate constraints, budget and acceptance criteria",
+              "Reference-informed check — Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): Check whether existing reminder and cancellation settings solve the actual problem before adding another provider.",
+              "Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): limitation — Synthetic source; outcomes unverified",
+              "Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): limitation — Different provider permissions may prevent integration"
+            ],
+            "optional": false,
+            "estimate": {
+              "status": "manual_review",
+              "currency": "ZAR",
+              "implementationLow": null,
+              "implementationHigh": null,
+              "recurringStatus": "vendor_quote_required",
+              "notes": "Implementation and third-party subscriptions are separate. No binding quotation. Consultant hours must be configured in data/services.ts."
+            }
+          },
+          {
+            "serviceId": "webapp",
+            "problem": "You described intended functionality for an application; validate the smallest useful scope.",
+            "solution": "Custom web application",
+            "evidence": [
+              "request: I want a scheduling application to manage customer appointments"
+            ],
+            "benefits": [
+              "Validate and scope a purpose-built tool."
+            ],
+            "alternatives": [
+              "Validate the initial workflow with approved templates and existing software",
+              "Prototype a small web application after defining essential users and features",
+              "Native mobile requires evidence of device-specific needs and partner feasibility review"
+            ],
+            "complexity": "requires technical scoping",
+            "dependencies": [
+              "Essential user roles and initial acceptance criteria",
+              "Data privacy, template ownership and review workflow",
+              "Hosting, export, maintenance and supported integrations"
+            ],
+            "confidence": "conditional — interpreted from the cited user description; confirm scope with the consultant",
+            "delivery": "custom / exploratory",
+            "nextSteps": [
+              "Prefer a feasibility check and existing-tool comparison before custom engineering; required capabilities and maintenance effort are not established.",
+              "Review this option with the consultant",
+              "Validate constraints, budget and acceptance criteria"
+            ],
+            "optional": false,
+            "estimate": {
+              "status": "manual_review",
+              "currency": "ZAR",
+              "implementationLow": null,
+              "implementationHigh": null,
+              "recurringStatus": "vendor_quote_required",
+              "notes": "Implementation and third-party subscriptions are separate. No binding quotation. Consultant hours must be configured in data/services.ts."
+            }
+          }
+        ],
+        "matchedCases": [
+          {
+            "id": "4c4aab28-bfbc-43da-8d2e-d60d040e3a6e",
+            "title": "Independent appointment workflow review",
+            "sourceType": "simulation",
+            "reasons": [
+              "Confirmed challenge: booking",
+              "Related goal: reminders"
+            ],
+            "approvalStatus": "approved",
+            "reviewVersion": 1,
+            "sourceRunId": "f37ed648-5d00-46ee-9b32-ca14567ebf34",
+            "outcomeVerification": "unverified",
+            "limitations": [
+              "Synthetic source; outcomes unverified",
+              "Different provider permissions may prevent integration"
+            ],
+            "usefulness": "Reference questions and alternatives only; current evidence determines suitability"
+          }
+        ],
+        "sections": [
+          {
+            "title": "Your Situation",
+            "paragraphs": [
+              "Context: Independent appointment-based service",
+              "Starting point: specific",
+              "Goal: Reduce missed appointments and reminders"
+            ]
+          },
+          {
+            "title": "Current Position",
+            "paragraphs": [
+              "Presence: Described channels: website",
+              "Tools: Not confirmed",
+              "User-selected challenges: custom, booking",
+              "Current booking provider: self-reported existing; takes precedence over earlier tool descriptions.",
+              "Website status: self-reported existing; no technical inspection."
+            ]
+          },
+          {
+            "title": "Opportunities",
+            "paragraphs": [
+              "Improve the existing booking workflow before considering another provider.",
+              "You described intended functionality for an application; validate the smallest useful scope."
+            ]
+          },
+          {
+            "title": "Recommended Solutions",
+            "paragraphs": [
+              "Business software integration — custom / exploratory",
+              "Improve the existing booking workflow before considering another provider.",
+              "Evidence: problems: custom, booking; industry: Independent appointment-based service; request: I want a scheduling application to manage customer appointments; bookingDetails: Bookings have missed reminders and cancellations; goals: Reduce missed appointments and reminders",
+              "Potential benefit: Connect existing systems where supported APIs and permissions exist.",
+              "Confidence: conditional — based on self-reported facts; consultant validation required",
+              "Custom web application — custom / exploratory",
+              "You described intended functionality for an application; validate the smallest useful scope.",
+              "Evidence: request: I want a scheduling application to manage customer appointments",
+              "Potential benefit: Validate and scope a purpose-built tool.",
+              "Confidence: conditional — interpreted from the cited user description; confirm scope with the consultant"
+            ]
+          },
+          {
+            "title": "Possible Approaches",
+            "paragraphs": [
+              "Business software integration: Improve availability and reminders in the current workflow first; Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls; Add booking to an existing website only if that channel is useful; Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially; Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): compare Configure current reminders and cancellation controls. Rationale to validate: Use an existing capability before buying or building a replacement",
+              "Complexity: requires technical scoping. Dependencies: Current provider permissions and export/integration support; Availability, reminders and cancellation policy; Vendor subscription terms and ongoing support; Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): verify Verify current reminder controls and vendor permissions",
+              "Custom web application: Validate the initial workflow with approved templates and existing software; Prototype a small web application after defining essential users and features; Native mobile requires evidence of device-specific needs and partner feasibility review",
+              "Complexity: requires technical scoping. Dependencies: Essential user roles and initial acceptance criteria; Data privacy, template ownership and review workflow; Hosting, export, maintenance and supported integrations"
+            ]
+          },
+          {
+            "title": "Costs & Considerations",
+            "paragraphs": [
+              "Budget: Not confirmed",
+              "Constraints: Not confirmed",
+              "Business software integration: manual_review. Recurring costs: vendor quote required.",
+              "Custom web application: manual_review. Recurring costs: vendor quote required.",
+              "All estimates are drafts. Implementation, third-party subscriptions, hosting, domain renewal and recurring maintenance require separate review. Optional future enhancements need their own scope."
+            ]
+          },
+          {
+            "title": "Your Way Forward",
+            "paragraphs": [
+              "Timing: Not confirmed",
+              "Readiness: qualified preliminary assessment available. Useful situation and objective evidence support a qualified initial direction",
+              "constraints: not provided",
+              "budget: not provided",
+              "tools: not provided",
+              "timing: not provided",
+              "Before implementation: Confirm reminder/cancellation workflow and provider terms",
+              "Before implementation: Validate a small initial version and existing-tool alternatives",
+              "Review the evidence and unresolved assumptions with the consultant. Choose the smallest useful first step. Confirm scope and costs before implementation.",
+              "Business software integration: Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence. Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified) supports comparing Configure current reminders and cancellation controls, subject to its dependencies and current-client evidence.",
+              "Business software integration: Review this option with the consultant",
+              "Business software integration: Validate constraints, budget and acceptance criteria",
+              "Business software integration: Reference-informed check — Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): Check whether existing reminder and cancellation settings solve the actual problem before adding another provider.",
+              "Business software integration: Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): limitation — Synthetic source; outcomes unverified",
+              "Business software integration: Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): limitation — Different provider permissions may prevent integration",
+              "Custom web application: Prefer a feasibility check and existing-tool comparison before custom engineering; required capabilities and maintenance effort are not established.",
+              "Custom web application: Review this option with the consultant",
+              "Custom web application: Validate constraints, budget and acceptance criteria",
+              "Reference only (simulation): Independent appointment workflow review. Confirmed challenge: booking; Related goal: reminders. No implementation results or ROI are asserted."
+            ]
+          }
+        ]
+      }
+    },
+    "criteria": {
+      "baseline": {
+        "currentProviderInvestigatedFirst": false,
+        "noUnjustifiedWebsite": true,
+        "currentClientFactsPreserved": true,
+        "existingReminderAlternative": true,
+        "providerPermissionsChecked": true
+      },
+      "withReference": {
+        "currentProviderInvestigatedFirst": true,
+        "noUnjustifiedWebsite": true,
+        "currentClientFactsPreserved": true,
+        "existingReminderAlternative": true,
+        "providerPermissionsChecked": true
+      },
+      "beforeScore": 4,
+      "afterScore": 5,
+      "maximumScore": 5
+    },
+    "acceptancePassed": true,
+    "changedQuestion": true,
+    "result": "improved",
+    "caveat": "Synthetic behavior evaluation; does not establish commercial outcomes or model learning"
+  },
+  "historyPreserved": true,
+  "immutableReport": true
+}

@@ -12,6 +12,7 @@ import { api, sessionHref, ApiError } from "./api";
 import { Mascot } from "./Mascot";
 import { discoveryCompletionPose, discoveryPoseAssets } from "./mascot-assets";
 import type { Next, SessionProps } from "./types";
+import { readDraft, saveDraft } from "./drafts";
 const feedbackDuration = 0.34;
 
 function DiscoveryScene({
@@ -82,16 +83,27 @@ export function Discovery({
   const [recovering, setRecovering] = useState(false);
   const [validation, setValidation] = useState<ApiError | null>(null);
   const question =
-    next.active.find((q) => q.id === editing) ??
+    (editing && next.active.some((q) => q.id === editing)
+      ? ([...(next.questionHistory ?? [])]
+          .reverse()
+          .find((h) => h.question.id === editing)?.question ??
+        next.active.find((q) => q.id === editing))
+      : undefined) ??
     (recovering ? next.completion.recoveryQuestion : next.question);
   useEffect(() => {
     const saved = session.answers.find((a) => a.questionId === question?.id);
     setValue(
       recovering
         ? ""
-        : (saved?.value ?? (question?.type === "multi" ? [] : "")),
+        : (readDraft(
+            session.id,
+            session.knowledgeRevision ?? session.revision,
+            question?.id ?? "",
+          ) ??
+            saved?.value ??
+            (question?.type === "multi" ? [] : "")),
     );
-  }, [question?.id, recovering]);
+  }, [question?.id, recovering, session.id, session.revision]);
   const previousQuestion = [...session.answers]
     .reverse()
     .find(
@@ -140,6 +152,12 @@ export function Discovery({
         },
       );
       if (success) {
+        saveDraft(
+          session.id,
+          session.knowledgeRevision ?? session.revision,
+          question.id,
+          "",
+        );
         setEditing(null);
         setRecovering(false);
         setValidation(null);
@@ -212,6 +230,12 @@ export function Discovery({
                       placeholder="In your own words…"
                       onChange={(e) => {
                         setValue(e.target.value);
+                        saveDraft(
+                          session.id,
+                          session.knowledgeRevision ?? session.revision,
+                          question.id,
+                          e.target.value,
+                        );
                         setValidation(null);
                       }}
                     />

@@ -13,6 +13,7 @@ const choiceKeys = new Set([
   "aiPreference",
   "automationPreference",
   "websitePreference",
+  "appPreference",
 ]);
 const uncertain =
   /^(?:i |we )?(?:don['’]?t know(?: (?:what i want|yet))?|do not know(?: what i want)?|not sure(?: yet)?|unsure|unknown|not established|not defined|not decided|no idea|i have no idea|not sure what i want|still exploring|i['’]?m still exploring|help me work this out|i don['’]?t know what i want yet)[.!?]*$/i;
@@ -147,7 +148,7 @@ export function evaluateInput(
       "clarify",
     );
   if (
-    /^(?:hi|hello|hey|thanks|thank you|good (?:morning|afternoon)|can you explain that|what do you mean|i changed my mind)[.!?]*$/i.test(
+    /^(?:hi|hello|hey|thanks(?:,? that makes sense)?|thank you|good (?:morning|afternoon)|can you explain that|what do you mean|i changed my mind)[.!?]*$/i.test(
       text,
     )
   )
@@ -186,7 +187,7 @@ export function evaluateInput(
       "clarify",
     );
   if (
-    /\b(?:might|maybe|hypothetically|used to|thinking about|whether|if i had)\b/i.test(
+    /\b(?:might|maybe|what if|hypothetically|used to|thinking about|whether|if i had)\b/i.test(
       text,
     )
   )

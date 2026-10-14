@@ -14,6 +14,8 @@ type CanvasData = {
     title: string;
     kind: string;
     complexity: string;
+    delivery?: string;
+    rationale?: string;
     dependencies: string[];
     evidence: string[];
   }[];
@@ -80,12 +82,18 @@ export function Canvas({
                 transition={{ delay: i * 0.07 }}
               >
                 <span className="badge">
-                  {c.kind === "future" ? "future proposal" : c.kind}
+                  {c.kind === "future"
+                    ? "future proposal"
+                    : c.delivery?.includes("exploratory")
+                      ? "exploratory"
+                      : c.kind}
                 </span>
                 <h2>{c.title}</h2>
                 <p className="muted">{c.complexity}</p>
                 <details>
                   <summary>Evidence & dependencies</summary>
+                  {c.rationale && <p>{c.rationale}</p>}
+                  {c.delivery && <p>Delivery: {c.delivery}</p>}
                   {c.evidence.map((e) => (
                     <p key={e}>{e}</p>
                   ))}

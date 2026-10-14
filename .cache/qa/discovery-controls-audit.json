@@ -1,0 +1,1122 @@
+[
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-neutral.png",
+    "question": "Where are you right now?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "A business"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "An independent professional"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "A personal project or idea"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-pensive.png",
+    "question": "What best describes your work?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-confused.png",
+    "question": "Tell us a little about what you do.",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Instagram / social channels"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "A website"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Professional email"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "A marketplace"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Nowhere online yet"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Skip for now"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-impatient.png",
+    "question": "Where can people find you today?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Skip for now"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Not applicable"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-grumpy.png",
+    "question": "How is your website working for you?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Skip for now"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Not applicable"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-unamused.png",
+    "question": "What tools are part of your day?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Presenting my work professionally"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Managing appointments"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Preparing or following up invoices"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Recurring content or research"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "An outdated website"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "A specific tool or application"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Still exploring"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-facepalm.png",
+    "question": "Where would a little help make a difference?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Skip for now"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Not applicable"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-hiding.png",
+    "question": "What gets in the way of a smooth booking?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Skip for now"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Not applicable"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-annoyed.png",
+    "question": "Walk us through an invoice.",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Skip for now"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Not applicable"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-neutral.png",
+    "question": "What repeats in your content or research process?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-pensive.png",
+    "question": "What would better look like?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Skip for now"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Not applicable"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-confused.png",
+    "question": "What should we work around?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Skip for now"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-impatient.png",
+    "question": "Have you thought about an investment range?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Continue"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Skip for now"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Not applicable"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Back"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-grumpy.png",
+    "question": "Is there a date that matters?",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Prepare the assessment"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 160,
+    "pose": "/mascot/poses/kailor-unamused.png",
+    "question": "I think we havesomewhere to start.",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Explore the analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 19,
+    "pose": "/mascot/poses/kailor-unamused.png",
+    "question": "I think we havesomewhere to start.",
+    "revisit": 0
+  },
+  {
+    "controls": [
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Discovery"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Conversation"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Solution canvas"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Analysis"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "Start again"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "I own a business"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "I have an idea"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "I don’t know where to start"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(48, 47, 42)",
+        "glass": true,
+        "text": "I know exactly what I want"
+      },
+      {
+        "background": "rgba(255, 255, 255, 0.43)",
+        "color": "rgb(51, 56, 62)",
+        "glass": true,
+        "text": "Have a conversation instead?"
+      }
+    ],
+    "mascotTop": 193.1759033203125,
+    "pose": "/mascot/poses/kailor-neutral.png",
+    "question": "Where are you right now?",
+    "revisit": 0
+  }
+]

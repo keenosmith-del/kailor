@@ -401,25 +401,7 @@ export async function converse(
     const previousEvidence = await tx.evidence.findMany({
       where: { sessionId: id },
     });
-    await tx.conversationMessage.createMany({
-      data: [
-        {
-          id: userMessageId,
-          sessionId: id,
-          role: "user",
-          ordinal: s.revision * 2,
-          content: input.message,
-          provider: "user",
-        },
-        {
-          sessionId: id,
-          role: "assistant",
-          ordinal: s.revision * 2 + 1,
-          content: result.output.reply,
-          provider: result.provider,
-        },
-      ],
-    });
+    let createdProposals = 0;
     for (const p of result.output.proposals) {
       if (!messageQuality.usableFacts && !/^set\s/i.test(input.message))
         continue;
@@ -467,12 +449,76 @@ export async function converse(
           }),
         },
       });
+      createdProposals++;
     }
+    if (!createdProposals && result.output.proposals.length) {
+      result.output.reply = previousEvidence.some(
+        (e) => e.active && e.status === "inferred",
+      )
+        ? "Those details are already pending below. Confirm or dismiss the saved proposals when you are ready."
+        : `There are no new details to confirm from that message. Your saved context is unchanged.${currentPlan.question ? ` We can next explore: ${currentPlan.question.title}` : " We can discuss the available options or return to discovery."}`;
+    }
+    await tx.conversationMessage.createMany({
+      data: [
+        {
+          id: userMessageId,
+          sessionId: id,
+          role: "user",
+          ordinal: s.revision * 2,
+          content: input.message,
+          provider: "user",
+        },
+        {
+          sessionId: id,
+          role: "assistant",
+          ordinal: s.revision * 2 + 1,
+          content: result.output.reply,
+          provider: result.provider,
+        },
+      ],
+    });
     await tx.discoverySession.update({
       where: { id },
       data: { revision: { increment: 1 } },
     });
-    await persistPlan(tx, id);
+    const plan = await persistPlan(tx, id);
+    if (
+      result.output.followUp &&
+      plan.question?.id === result.output.followUp.questionId
+    ) {
+      const generated = {
+        ...plan.question,
+        title: result.output.followUp.title,
+        hint: result.output.followUp.hint,
+      };
+      plan.question = generated;
+      plan.active = plan.active.map((q) =>
+        q.id === generated.id ? generated : q,
+      );
+      const history = plan.questionHistory ?? [];
+      const last = history.at(-1);
+      const entry = {
+        revision: plan.revision,
+        question: generated,
+        source: result.provider,
+        caseIds: plan.provenance.caseIds,
+      };
+      if (last?.revision === plan.revision && last.question.id === generated.id)
+        history[history.length - 1] = entry;
+      else history.push(entry);
+      plan.questionHistory = history;
+      plan.provenance.generation = {
+        provider: result.provider,
+        questionId: generated.id,
+        sourceRevision: input.revision,
+        sourceMessageId: userMessageId,
+        validation: "passed",
+      };
+      await tx.discoverySession.update({
+        where: { id },
+        data: { planState: json(plan) },
+      });
+    }
     await tx.auditEvent.create({
       data: {
         actorId: adminId,
@@ -535,6 +581,27 @@ async function persistPlan(tx: Prisma.TransactionClient, id: string) {
     statesOf(s),
   );
   const prior = s.planState as unknown as DiscoveryPlan | null;
+  const history = [...(prior?.questionHistory ?? [])];
+  if (!history.length && prior?.question)
+    history.push({
+      revision: prior.revision,
+      question: prior.question,
+      source: prior.provenance?.generation?.provider ?? "deterministic",
+      caseIds: prior.provenance?.caseIds ?? [],
+    });
+  const last = history.at(-1);
+  if (
+    plan.question &&
+    (last?.question.id !== plan.question.id ||
+      last?.question.title !== plan.question.title)
+  )
+    history.push({
+      revision: plan.revision,
+      question: plan.question,
+      source: "deterministic",
+      caseIds: plan.provenance.caseIds,
+    });
+  plan.questionHistory = history;
   for (const [key, state] of Object.entries(prior?.questionStates ?? {}))
     if (
       !(key in plan.answerStates) &&
@@ -564,7 +631,7 @@ export async function nextForSession(
   const saved = s.planState as unknown as DiscoveryPlan | null;
   if (
     saved?.revision === s.revision &&
-    saved.plannerVersion === "reliability-2" &&
+    saved.plannerVersion === "contextual-3" &&
     saved.questionStates &&
     saved.completion
   )
@@ -651,14 +718,18 @@ export async function assess(id: string, adminId: string, revision: number) {
   const cases = await referenceCases(adminId);
   const result = await db.$transaction(async (tx) => {
     const s = await lock(tx, id, adminId, revision);
-    const existing = await tx.assessment.findUnique({
-      where: {
-        sessionId_sessionRevision: { sessionId: id, sessionRevision: revision },
-      },
+    const existing = await tx.assessment.findFirst({
+      where: { sessionId: id, knowledgeRevision: s.knowledgeRevision },
+      orderBy: { createdAt: "desc" },
       include: { report: true },
     });
     const a = answersOf(s);
-    const plan = await persistPlan(tx, id);
+    const savedPlan = s.planState as unknown as DiscoveryPlan | null;
+    const plan =
+      savedPlan?.revision === s.revision &&
+      savedPlan.plannerVersion === "contextual-3"
+        ? savedPlan
+        : await persistPlan(tx, id);
     if (!plan.readiness.canAssess) {
       logger.info("assessment.blocked", {
         sessionId: id,
@@ -689,6 +760,7 @@ export async function assess(id: string, adminId: string, revision: number) {
       data: {
         sessionId: id,
         sessionRevision: revision,
+        knowledgeRevision: s.knowledgeRevision,
         summary: content.sections[0].paragraphs.join("\n"),
         report: { create: { content: json(content) } },
         recommendations: {
@@ -733,9 +805,12 @@ export async function getReport(id: string, adminId: string) {
   return {
     reportId: report.id,
     content: report.content as unknown as Report,
-    stale:
-      report.assessment.sessionRevision !== s.revision ||
-      !evaluateReadiness(answersOf(s), evidenceOf(s), statesOf(s)).canAssess,
+    stale: report.assessment.knowledgeRevision !== s.knowledgeRevision,
+    assessmentBlocked: !evaluateReadiness(
+      answersOf(s),
+      evidenceOf(s),
+      statesOf(s),
+    ).canAssess,
   };
 }
 export async function canvas(id: string, adminId: string) {
@@ -751,7 +826,9 @@ export async function canvas(id: string, adminId: string) {
     statesOf(s),
   );
   const snapshot = await db.reportSnapshot.findFirst({
-    where: { assessment: { sessionId: id, sessionRevision: s.revision } },
+    where: {
+      assessment: { sessionId: id, knowledgeRevision: s.knowledgeRevision },
+    },
     include: { assessment: true },
     orderBy: { createdAt: "desc" },
   });
@@ -772,6 +849,8 @@ export async function canvas(id: string, adminId: string) {
     components: content.recommendations.map((r) => ({
       id: r.serviceId,
       title: r.solution,
+      delivery: r.delivery,
+      rationale: r.nextSteps[0],
       kind:
         r.serviceId === "publishing"
           ? "future"

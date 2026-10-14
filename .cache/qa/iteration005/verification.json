@@ -1,0 +1,51 @@
+{
+  "verifiedLocalDate": "2026-10-15",
+  "typecheck": "passed",
+  "unitTests": 228,
+  "integrationTests": 109,
+  "personaFixtures": 14,
+  "reliabilityCases": 57,
+  "independentCases": 15,
+  "evaluationFailures": 0,
+  "build": "passed",
+  "learningCriteria": {
+    "before": 4,
+    "after": 5,
+    "total": 5,
+    "questionBefore": "scopeDetails",
+    "questionAfter": "bookingCapabilities",
+    "interpretation": "Improved synthetic question ordering; service eligibility unchanged"
+  },
+  "liveInference": {
+    "executed": false,
+    "provider": "mock",
+    "remoteOptIn": false,
+    "credentialsPresent": false
+  },
+  "browser": {
+    "guided": true,
+    "freeTextOffline": true,
+    "handoff": true,
+    "bothDraftsRetained": true,
+    "confirmation": true,
+    "dynamicProgression": true,
+    "preparationAndNavigationSeparate": true,
+    "noOpReportFreshness": true,
+    "canvasSnapshot": true,
+    "founderReviewApprovalComparison": true,
+    "incompleteRecovery": true,
+    "restart": true,
+    "mobileViewport": "390x844 emulation",
+    "browserPdfCompletion": "unverified; download event timeout",
+    "physicalDevices": false,
+    "accessibilityCertification": false
+  },
+  "qaServerCleaned": true,
+  "gitStaged": false,
+  "gitCommitted": false,
+  "sourceManifest": {
+    "modified": 36,
+    "added": 11
+  },
+  "unrelatedGitignoreChangePreserved": true
+}

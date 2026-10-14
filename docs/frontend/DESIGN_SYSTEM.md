@@ -47,3 +47,7 @@ Iteration 003 renders the persisted adaptive question plan, exposes preliminary 
 ## Iteration 004 reliability feedback
 
 Reuse the existing discovery composition, typography, mascot and transitions. Inline validation retains typed text; required text can communicate uncertainty. Exhausted/unsupported discovery presents known context with Tell kailor more, Have a conversation and Start again. Material corrections use explicit confirmation. Report/Canvas actions reflect authoritative eligibility; saved historical reports retain their stale explanation. Review your answers is removed as requested. No introduction, palette, artwork, global style or PDF template redesign was made.
+
+## Iteration 005 interaction-only changes
+
+The composition, typography, cream palette, mascot assets, scroll transitions and report/PDF layout remain. Contextual prompts use existing question controls; suggestions reflect the saved situation and remain available after messages. Unsent text uses tab-scoped, knowledge-revision-scoped session storage with a thirty-minute expiry and pruning on use/visibility/minute timer. Saving/sending/restart/logout clear the appropriate drafts; browser suspension may delay physical cleanup. Founder review adds ordinary form fields, category/dimension checkboxes and expandable source findings/technical inspection within the existing private Workspace. Analysis distinguishes blocked preparation from snapshot freshness. No removed answer-review control or new design system is introduced.

@@ -1,5 +1,6 @@
 import { signalAnswers } from "./context-extraction.js";
 import type { Answers, Question, AnswerValue } from "../../shared/src/index.js";
+import { contextualQuestions } from "./contextual-intelligence.js";
 const options = (...items: string[]) =>
   items.map((item) => {
     const [value, label] = item.split("|");
@@ -259,8 +260,22 @@ export const questions: Question[] = [
     type: "text",
     optional: true,
   },
+  ...contextualQuestions,
+  {
+    id: "appPreference",
+    title: "Should an application still be considered?",
+    hint: "A simpler website or existing tool may be sufficient.",
+    type: "single",
+    optional: true,
+    options: options(
+      "requested|Consider an application",
+      "declined|No application",
+      "unknown|Not decided",
+    ),
+  },
 ];
 export function relevant(q: Question, a: Answers) {
+  if (q.id === "scopeDetails" && a.appPreference === "declined") return false;
   return (
     !q.when ||
     q.when.values.some((v) =>
@@ -278,6 +293,8 @@ export function nextQuestion(a: Answers) {
     activeQuestions(a).find(
       (q) =>
         ![
+          ...contextualQuestions.map((q) => q.id),
+          "appPreference",
           "scopeDetails",
           "workflowDetails",
           "websiteUrl",

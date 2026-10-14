@@ -52,7 +52,7 @@ describe("adaptive intelligence behavioral evaluation", () => {
         "I coordinate maintenance for a small fleet of delivery vehicles and need a better way to manage inspections and repairs.",
       goals: "Manage inspections and repairs",
     };
-    expect(planDiscovery(a).question?.id).toBe("workflowDetails");
+    expect(planDiscovery(a).question?.id).toBe("dataCaptureDetails");
     const report = createReport(a, 1, true, []);
     expect(report.recommendations.map((r) => r.serviceId)).toEqual([
       "integration",
@@ -87,7 +87,7 @@ describe("adaptive intelligence behavioral evaluation", () => {
       presence: ["none"],
       tools: "No current tools",
     };
-    expect(planDiscovery(a).question).toBeNull();
+    expect(planDiscovery(a).question?.id).toBe("websiteContent");
     expect(planDiscovery(a).ranking.map((r) => r.id)).not.toContain("goals");
     expect(recommend(a).map((r) => r.serviceId)).toContain("portfolio");
   });

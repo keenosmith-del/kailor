@@ -1,15 +1,26 @@
+# Dependencies
 node_modules/
-dist/
-build/
-coverage/
+
+# Environment variables
 .env
 .env.*
 !.env.example
-.DS_Store
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Logs
 *.log
-.cache/
-.turbo/
-backend/storage/
-data/runtime/
-backend/src/generated/
-*.tsbuildinfo
+npm-debug.log*
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Local uploads
+backend/uploads/

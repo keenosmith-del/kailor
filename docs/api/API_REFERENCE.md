@@ -73,3 +73,14 @@ A material guided contradiction returns HTTP 409 `input_conflict` with `error.de
 Next-plan responses include completion, conflicts, answerStates and questionStates. Readiness additionally carries criticalUnknowns and evidenceDirections. Chat returns quality and pending source-grounded proposals; greetings/irrelevant text can remain history without facts. Context corrections identify current value, earlier keys and confirmation source. Canvas includes readiness and data source; blocked sessions have no recommendation components. Assessment HTTP 422 `insufficient_evidence` details explain current readiness/completion. Historical report/PDF retrieval remains available without overwriting the snapshot; its stale flag reflects current facts.
 
 Failed synthetic runs can return null assessment/report and are not reusable. Review pattern `unsuitableConstraints` is optional. Case approval quality failures return 422 `case_quality`; revisions are tracked with prior review audit details. Founder/guest route restrictions are unchanged.
+
+## Iteration 005 additions and semantics
+
+- Session JSON includes `knowledgeRevision`; mutations continue to require the activity `revision`.
+- `/sessions/:id/next` retains its shape and adds contextual statements/gaps, planned-question history and optional generation provenance. Optional question IDs use existing answer and evidence endpoints.
+- Report `stale` compares knowledge revisions. `assessmentBlocked` separately indicates that current readiness prevents preparing a new assessment. Report content remains immutable and the PDF route still serves that saved content.
+- `GET /api/simulations/:id` requires founder authentication and source-session ownership. It returns run detail plus `report`, the exact snapshot linked by the source run, or null.
+- Existing case review accepts optional `reviewVersion`, `followUpDimensions`, bounded `approaches` and `unsuitableConditions`. Each approach specifies supported `serviceId`, `title`, `rationale`, optional `dependencies` and optional `unsuitableWhen` state keys. Stale supplied versions return `409 case_revision_conflict`; known identifying data at approval returns `422 case_sensitive_data`. Source classification cannot be edited.
+- Model chat output may include `followUp {questionId,title,hint}` only for an explicitly requested current contextual text gap. It never directly changes confirmed answers.
+
+All founder routes remain behind existing authentication/origin controls. Guest paths are unchanged and force local inference/seed-only references.

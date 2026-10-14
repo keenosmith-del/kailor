@@ -21,6 +21,7 @@ import { Conversation } from "./Conversation";
 import { Discovery } from "./Discovery";
 import type { Next } from "./types";
 import { ErrorBox, errorMessage } from "./ui";
+import { clearDrafts, pruneDrafts } from "./drafts";
 async function readSession(id: string) {
   const [session, next, report] = await Promise.all([
     api<Session>(`/sessions/${id}`),
@@ -69,6 +70,17 @@ export function SessionPage() {
     [busy, setBusy] = useState(false),
     [ready, setReady] = useState(false),
     [processing, setProcessing] = useState("");
+  useEffect(() => {
+    pruneDrafts();
+    const timer = window.setInterval(pruneDrafts, 60_000);
+    window.addEventListener("pageshow", pruneDrafts);
+    document.addEventListener("visibilitychange", pruneDrafts);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("pageshow", pruneDrafts);
+      document.removeEventListener("visibilitychange", pruneDrafts);
+    };
+  }, []);
   const guest = window.location.pathname.startsWith("/preview/");
   const reload = useCallback(async () => {
     const data = await readSession(id);
@@ -122,6 +134,7 @@ export function SessionPage() {
         guest ? {} : { name: session?.subject.name ?? "New discovery" },
       );
       const data = await readSession(created.id);
+      clearDrafts(id);
       // Keep the old page present until the new session is ready for a crossfade.
       loadedSessionId.current = created.id;
       setSession(data.session);

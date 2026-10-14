@@ -35,6 +35,8 @@ model DiscoverySession {
   subject Subject @relation(fields: [subjectId], references: [id])
   definitionVersion String
   revision Int @default(0)
+  // Advances only when authoritative answers/response states change.
+  knowledgeRevision Int @default(0)
   // Revision-bound derived context and stable deterministic question plan.
   contextState Json?
   planState Json?
@@ -89,12 +91,14 @@ model Assessment {
   sessionId String
   session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   sessionRevision Int
+  knowledgeRevision Int @default(0)
   status String @default("draft")
   summary String
   createdAt DateTime @default(now())
   recommendations Recommendation[]
   report ReportSnapshot?
   @@unique([sessionId, sessionRevision])
+  @@index([sessionId, knowledgeRevision])
 }
 model Service {
   id String @id

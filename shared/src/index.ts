@@ -36,6 +36,7 @@ export type Evidence = {
 export type Session = {
   id: string;
   revision: number;
+  knowledgeRevision?: number;
   definitionVersion: string;
   synthetic: boolean;
   subject: { name: string };
@@ -86,6 +87,9 @@ export type Report = {
     sourceType: string;
     reasons: string[];
     approvalStatus?: string;
+    reviewVersion?: number;
+    sourceRunId?: string | null;
+    outcomeVerification?: "unverified";
     limitations?: string[];
     usefulness?: string;
   }[];
@@ -93,6 +97,14 @@ export type Report = {
 export const chatOutputSchema = z
   .object({
     reply: z.string().min(1).max(3000),
+    followUp: z
+      .object({
+        questionId: z.string().max(80),
+        title: z.string().min(10).max(200),
+        hint: z.string().min(10).max(500),
+      })
+      .strict()
+      .optional(),
     proposals: z
       .array(
         z
@@ -129,7 +141,38 @@ export const chatInput = mutationSchema
   })
   .strict();
 
+export type ContextDimension =
+  | "data_capture"
+  | "communication"
+  | "scheduling"
+  | "collaboration"
+  | "approvals"
+  | "reporting"
+  | "automation"
+  | "presentation"
+  | "application"
+  | "offline";
+export type ContextStatement = {
+  text: string;
+  sourceKey: string;
+  evidenceIds: string[];
+  status:
+    | "confirmed-description"
+    | "hypothetical"
+    | "unverified"
+    | "superseded";
+  dimensions: ContextDimension[];
+};
 export type DiscoveryContext = {
+  statements?: ContextStatement[];
+  dimensions?: ContextDimension[];
+  currentProcess?: ContextStatement[];
+  desiredProcess?: ContextStatement[];
+  capabilities?: ContextStatement[];
+  limitations?: ContextStatement[];
+  technicalRequirements?: ContextStatement[];
+  openQuestions?: string[];
+
   subjectType: string;
   stage: string;
   activity: string;
@@ -183,6 +226,12 @@ export type DiscoveryPlan = {
   revision: number;
   plannerVersion: string;
   question: Question | null;
+  questionHistory?: {
+    revision: number;
+    question: Question;
+    source: string;
+    caseIds: string[];
+  }[];
   active: Question[];
   answered: number;
   total: number;
@@ -200,6 +249,13 @@ export type DiscoveryPlan = {
   suggestedPrompts: string[];
   provenance: {
     source: "deterministic";
+    generation?: {
+      provider: string;
+      questionId: string;
+      sourceRevision: number;
+      sourceMessageId: string;
+      validation: "passed";
+    };
     definitionVersion: string;
     caseIds: string[];
   };
@@ -245,7 +301,8 @@ export type KnowledgeFacet =
   | "booking"
   | "ai"
   | "automation"
-  | "websitePreference";
+  | "websitePreference"
+  | "appPreference";
 export type FactClaim = {
   facet: KnowledgeFacet;
   value: string;

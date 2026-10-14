@@ -21,7 +21,8 @@
     "db:seed": "tsx backend/prisma/seed.ts",
     "simulate": "tsx scripts/simulate.ts",
     "format": "prettier --write backend/src/*.ts backend/tests/*.ts backend/prisma/*.ts frontend/src shared/src data scripts/*.ts docs README.md *.json",
-    "evaluate": "node --import tsx scripts/evaluate.ts"
+    "evaluate": "node --import tsx scripts/evaluate.ts",
+    "evaluate:live": "node --import tsx scripts/evaluate-live.ts"
   },
   "devDependencies": {
     "@types/node": "24.10.1",

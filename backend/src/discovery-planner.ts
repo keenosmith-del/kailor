@@ -5,6 +5,7 @@ import type {
   Question,
   AnswerStates,
 } from "../../shared/src/index.js";
+import { contextualGaps } from "./contextual-intelligence.js";
 import { activeQuestions, version } from "./discovery.js";
 import { buildContext, signalAnswers } from "./context-extraction.js";
 import { evaluateReadiness } from "./discovery-readiness.js";
@@ -29,7 +30,7 @@ export function planDiscovery(
   a = usableAnswers(raw, states);
   const decision = evaluateEvidence(raw, evidence, states);
   const s = decision.answers,
-    context = buildContext(a, evidence);
+    context = buildContext(raw, evidence, states);
   const matches = matchCases(raw, cases, evidence, states);
   const readiness = evaluateReadiness(raw, evidence, states);
   const definitions = activeQuestions(s).map((q) =>
@@ -48,6 +49,16 @@ export function planDiscovery(
           }
         : q,
   );
+  const gaps = contextualGaps(
+    {
+      ...s,
+      ...Object.fromEntries(
+        Object.entries(raw).filter(([key]) => states[key] !== "answered"),
+      ),
+    },
+    evidence,
+    states,
+  );
   const candidates = definitions.filter((q) => !(q.id in raw));
   const ranking = candidates
     .map((q) => {
@@ -57,6 +68,8 @@ export function planDiscovery(
         score += value;
         reasons.push(reason);
       };
+      const gap = gaps.find((g) => g.id === q.id);
+      if (gap) rank(gap.score, gap.reason);
       if (q.id === "stage") rank(1000, "Select the starting context");
       if (q.id === "request" && a.stage === "specific")
         rank(900, "Describe the exact requirement before business details");
@@ -145,6 +158,14 @@ export function planDiscovery(
         score = 0;
         reasons.push("Already described indirectly; no repeated question");
       }
+      const dimensionReference = matches.find((m) =>
+        m.pattern.followUpDimensions?.includes(q.id),
+      );
+      if (dimensionReference && score > 0)
+        rank(
+          80,
+          `Approved reference ${dimensionReference.id} v${dimensionReference.reviewVersion ?? 0} identifies a decision gap; current context independently supports it`,
+        );
       const reference = matches.find(
         (m) =>
           m.pattern.discoveryQuestions?.length &&
@@ -200,7 +221,7 @@ export function planDiscovery(
   );
   return {
     revision,
-    plannerVersion: "reliability-2",
+    plannerVersion: "contextual-3",
     question,
     active,
     answered: Object.keys(a).filter((k) => states[k] === "answered").length,
@@ -226,13 +247,36 @@ export function planDiscovery(
       })),
     ),
     suggestedPrompts: [
-      question
-        ? `I'd like to discuss: ${question.title}`
-        : "What is the smallest useful first step?",
-      context.directions.includes("booking")
-        ? "I would like to clarify my booking workflow and constraints."
-        : "I want to improve the process without unnecessary complexity.",
-    ],
+      ...new Set([
+        ...(context.directions.includes("invoices")
+          ? ["What could I automate without replacing my tools?"]
+          : []),
+        ...(context.dimensions?.includes("offline")
+          ? ["What are the tradeoffs of working offline?"]
+          : []),
+        ...(context.directions.includes("booking")
+          ? [
+              s.bookingStatus === "existing"
+                ? "Could my current provider handle reminders and cancellations?"
+                : "Would an existing booking tool be enough?",
+            ]
+          : []),
+        ...(context.dimensions?.includes("presentation")
+          ? [
+              s.websiteStatus === "existing"
+                ? "Would improving my current site be enough?"
+                : "What content would a simple website need?",
+            ]
+          : []),
+        ...(context.dimensions?.includes("application")
+          ? ["What's the smallest version I could build?"]
+          : []),
+        ...(question ? [`I'd like to discuss: ${question.title}`] : []),
+        ...(!decision.objectiveKnown
+          ? ["Can you help me work out what this would need?"]
+          : []),
+      ]),
+    ].slice(0, 3),
     provenance: {
       source: "deterministic",
       definitionVersion: version,

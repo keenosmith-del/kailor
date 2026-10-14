@@ -193,6 +193,12 @@ export async function writeAnswer(
     } else delete entered.presence;
   }
   const next = pruneAnswers(entered, effective);
+  const previousEffective = applyResolvedFacets(
+    signalAnswers(usableAnswers(previous, statesOf(s))),
+    evidenceOf(s),
+  );
+  const changedInterpretation =
+    JSON.stringify(previousEffective) !== JSON.stringify(effective);
   const removed = Object.keys(previous).filter((k) => !(k in next));
   if (quality.usableFacts) {
     const superseded = s.evidence
@@ -289,7 +295,16 @@ export async function writeAnswer(
     });
   await tx.discoverySession.update({
     where: { id: s.id },
-    data: { revision: { increment: 1 } },
+    data: {
+      revision: { increment: 1 },
+      ...(JSON.stringify(previous[key]) !==
+        JSON.stringify(selectedSkip ? "" : value) ||
+      statesOf(s)[key] !== state ||
+      removed.length ||
+      changedInterpretation
+        ? { knowledgeRevision: { increment: 1 } }
+        : {}),
+    },
   });
   const updatedPlan = await refreshPlan(tx, s.id);
   logger.info(

@@ -1,8 +1,9 @@
 import { ArrowRight, MessageCircle } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { Mascot } from "./Mascot";
 import { api } from "./api";
 import type { SessionProps, Next } from "./types";
+import { readDraft, saveDraft } from "./drafts";
 export function Conversation({
   session,
   busy,
@@ -41,6 +42,26 @@ export function Conversation({
           : value;
   const [message, setMessage] = useState(""),
     [mode, setMode] = useState("conversation");
+  useEffect(() => {
+    setMessage(
+      String(
+        readDraft(
+          session.id,
+          session.knowledgeRevision ?? session.revision,
+          "conversation",
+        ) ?? "",
+      ),
+    );
+  }, [session.id, session.revision]);
+  function draft(text: string) {
+    setMessage(text);
+    saveDraft(
+      session.id,
+      session.knowledgeRevision ?? session.revision,
+      "conversation",
+      text,
+    );
+  }
   async function send(e: FormEvent) {
     e.preventDefault();
     if (!message.trim()) return;
@@ -50,7 +71,7 @@ export function Conversation({
         message,
         mode,
       });
-      setMessage("");
+      draft("");
     });
   }
   return (
@@ -73,7 +94,7 @@ export function Conversation({
               <p>What’s on your mind?</p>
               <div className="suggestions">
                 {next.suggestedPrompts.map((p) => (
-                  <button key={p} onClick={() => setMessage(p)}>
+                  <button key={p} onClick={() => draft(p)}>
                     {p}
                   </button>
                 ))}
@@ -195,6 +216,15 @@ export function Conversation({
               </div>
             </div>
           ))}
+        {!!session.messages.length && !!next.suggestedPrompts.length && (
+          <div className="suggestions">
+            {next.suggestedPrompts.map((p) => (
+              <button key={p} disabled={busy} onClick={() => draft(p)}>
+                {p}
+              </button>
+            ))}
+          </div>
+        )}
         <form className="chat-form" onSubmit={send}>
           <label className="sr-only" htmlFor="message">
             Your message
@@ -204,7 +234,7 @@ export function Conversation({
             maxLength={4000}
             rows={3}
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => draft(e.target.value)}
             placeholder="Tell us a little more…"
           />
           <div className="actions">

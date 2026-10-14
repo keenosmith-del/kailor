@@ -28,7 +28,7 @@ export function evaluateEvidence(
     .flatMap(([, v]) =>
       clausesOf(String(v)).filter(
         (c) =>
-          !/\b(?:might|maybe|hypothetically|whether|if I|used to|thinking about)\b/i.test(
+          !/\b(?:might|maybe|what if|hypothetically|whether|if I|used to|thinking about)\b/i.test(
             c,
           ),
       ),
@@ -166,7 +166,7 @@ export function evaluateEvidence(
   const requestedScope = clausesOf(String(a.request ?? ""))
     .filter(
       (c) =>
-        !/\b(?:might|maybe|hypothetically|whether|if I|used to|thinking about)\b/i.test(
+        !/\b(?:might|maybe|what if|hypothetically|whether|if I|used to|thinking about)\b/i.test(
           c,
         ),
     )
@@ -184,7 +184,7 @@ export function evaluateEvidence(
     /allows?|for |users?|customers?|teachers?|workflow|approval|record|template/i.test(
       requestedScope,
     );
-  if (application)
+  if (application && a.appPreference !== "declined")
     add(
       "application",
       ["webapp"],
@@ -212,7 +212,14 @@ export function evaluateEvidence(
       raw.clarification ||
       /\b(?:want|need|reduce|improve)\b/i.test(text));
   if (
-    !directions.length &&
+    (!directions.length ||
+      /offline|no internet|inspect|maintenan|quality control|inventory/i.test(
+        Object.entries(raw)
+          .filter(([key]) => key !== "industry")
+          .map(([, v]) => String(v))
+          .join(" "),
+      )) &&
+    !directions.some((d) => d.id === "application") &&
     (operational || concreteWorkflow) &&
     goal &&
     a.automationPreference !== "declined"

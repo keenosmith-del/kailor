@@ -408,7 +408,7 @@ describe("real PostgreSQL API vertical slice", () => {
       (await client.get(`/api/sessions/${sid}/report`)).body.content,
     ).toEqual(report.body.content);
     expect((await client.get(`/api/sessions/${sid}/report`)).body.stale).toBe(
-      true,
+      false,
     );
   });
   it("supports custom synthetic personas, records human evaluation, and reuses approved patterns", async () => {

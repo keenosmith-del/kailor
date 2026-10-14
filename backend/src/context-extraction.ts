@@ -3,6 +3,7 @@ import type {
   ChatOutput,
   DiscoveryContext,
   Evidence,
+  AnswerStates,
 } from "../../shared/src/index.js";
 
 import { evaluateInput, usableAnswers } from "./input-quality.js";
@@ -12,6 +13,11 @@ import {
   applyResolvedFacets,
   currentCorrections,
 } from "./knowledge-conflicts.js";
+
+import {
+  contextualStatements,
+  contextualGaps,
+} from "./contextual-intelligence.js";
 
 // Extraction is separate from quality and reply generation. Clauses retain negation and modality.
 export function extractCandidates(message: string): ChatOutput["proposals"] {
@@ -29,12 +35,18 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
       ]);
     else if (!result.has(key)) result.set(key, value);
   };
-  const current = clausesOf(message).filter(
-    (c) =>
-      !/\b(?:might|maybe|hypothetically|whether|if I|used to|thinking about)\b/i.test(
-        c,
-      ),
-  );
+  const current = clausesOf(message)
+    .filter(
+      (c) =>
+        !/^(?:can|could|would|should|what|how|is|are|do|does)\b/i.test(c) &&
+        !/start with something smaller/i.test(c),
+    )
+    .filter(
+      (c) =>
+        !/\b(?:might|maybe|what if|hypothetically|whether|if I|used to|thinking about)\b/i.test(
+          c,
+        ),
+    );
   const text =
     current.length === clausesOf(message).length
       ? message.trim()
@@ -55,6 +67,7 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
     ["ai", "aiPreference"],
     ["automation", "automationPreference"],
     ["websitePreference", "websitePreference"],
+    ["appPreference", "appPreference"],
   ] as const) {
     const values = [
       ...new Set(claims.filter((c) => c.facet === facet).map((c) => c.value)),
@@ -76,12 +89,17 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
         ? presence.filter((p) => p !== "none")
         : presence,
     );
-  if (
-    /\b(?:use|using|through|via|spreadsheets?|whatsapp|booking system|booking platform|existing software)\b/i.test(
-      text,
-    )
-  )
-    add("tools", text);
+  const currentTools = current.filter(
+    (clause) =>
+      /\b(?:use|using|through|via|spreadsheets?|whatsapp|booking system|booking platform|existing software)\b/i.test(
+        clause,
+      ) &&
+      !/\b(?:want|need|plan|intend|would like)\b.*\b(?:use|using|adopt|replace)\b/i.test(
+        clause,
+      ) &&
+      !/\b(?:don't|do not|no longer|never) (?:use|have)\b/i.test(clause),
+  );
+  if (currentTools.length) add("tools", currentTools.join(". "));
   const problems: string[] = [];
   const goalClauses: string[] = [];
   for (const clause of current) {
@@ -222,8 +240,11 @@ export function signalAnswers(a: Answers, includeDetails = true): Answers {
 export function buildContext(
   a: Answers,
   evidence: Evidence[] = [],
+  states: AnswerStates = {},
 ): DiscoveryContext {
-  a = usableAnswers(a);
+  const sourceAnswers = a;
+  const sourceStatements = contextualStatements(a, evidence, states);
+  a = usableAnswers(a, states);
   const signals = applyResolvedFacets(signalAnswers(a), evidence);
   const corrections = currentCorrections(a, evidence);
   const activity = String(
@@ -237,10 +258,40 @@ export function buildContext(
       "",
   );
   const text = Object.values(a).flat().join(" ");
+  const statements = sourceStatements;
+  const current = statements.filter(
+    (s) => s.status === "confirmed-description",
+  );
   const unknowns = ["constraints", "budget", "tools"].filter(
     (k) => !(k in a) && !(k in signals),
   );
   return {
+    statements,
+    dimensions: [...new Set(current.flatMap((s) => s.dimensions))],
+    currentProcess: current.filter((s) =>
+      /currently|today|already|use|manually/i.test(s.text),
+    ),
+    desiredProcess: current.filter((s) =>
+      /want|need|reduce|improve|should/i.test(s.text),
+    ),
+    capabilities: current.filter(
+      (s) =>
+        /already|can |supports?|(?:I|we) use|currently/i.test(s.text) &&
+        !/want to use|need to use|plan to use/i.test(s.text),
+    ),
+    limitations: current.filter((s) =>
+      /cannot|can't|limited|no internet|offline|must|without/i.test(s.text),
+    ),
+    technicalRequirements: current.filter((s) =>
+      s.dimensions.some((d) =>
+        ["offline", "data_capture", "application", "approvals"].includes(d),
+      ),
+    ),
+    openQuestions: contextualGaps(
+      { ...signals, ...sourceAnswers },
+      evidence,
+      states,
+    ).map((g) => g.id),
     subjectType: String(a.kind ?? "unknown"),
     stage: String(a.stage ?? "unknown"),
     activity: corrections.length
@@ -281,7 +332,15 @@ export function buildContext(
       .map((e) => ({ key: e.key, value: e.value, origin: e.source })),
     objectives: ["goals", "idea", "request", "frustrations"]
       .filter((k) => a[k])
-      .map((key) => ({ key, value: a[key] })),
+      .flatMap((key) =>
+        clausesOf(String(a[key])).flatMap((clause) =>
+          clause
+            .split(
+              /\s+and\s+(?=(?:invoice|automat|a portfolio|a website|easier|record|manage))/i,
+            )
+            .map((value) => ({ key, value })),
+        ),
+      ),
     workflows: [
       "tools",
       "bookingDetails",
@@ -305,7 +364,7 @@ export function buildContext(
       inspected: false,
     },
     specialistReview:
-      /\b(?:medical|legal|manufactur|fleet|logistics|regulated|industrial|diagnos)\b/i.test(
+      /\b(?:medical|healthcare|legal|manufactur\w*|fleet|agricultur\w*|machinery|construction|logistics|regulated|industrial|diagnos\w*)\b/i.test(
         text,
       ),
   };

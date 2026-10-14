@@ -27,6 +27,7 @@ export function Analysis({
   const [report, setReport] = useState<{
       content: Report;
       stale: boolean;
+      assessmentBlocked?: boolean;
     } | null>(null),
     [index, setIndex] = useState(0),
     [error, setError] = useState(""),
@@ -98,6 +99,18 @@ export function Analysis({
         </button>
       </div>
       <ErrorBox error={error} />
+      {report.assessmentBlocked && !report.stale && (
+        <p className="notice">
+          This snapshot reflects your confirmed information. Resolve the current
+          clarification before preparing another assessment.{" "}
+          <Link
+            className="text-link"
+            to={sessionHref(session.id, "conversation")}
+          >
+            Review the clarification
+          </Link>
+        </p>
+      )}
       {report.stale && (
         <div className="notice">
           Your discovery has changed since this snapshot.

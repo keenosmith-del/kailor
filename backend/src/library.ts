@@ -83,12 +83,22 @@ export type Pattern = {
   limitations?: string[];
   unsuitableConstraints?: string[];
   unsuitableConditions?: string[];
+  followUpDimensions?: string[];
+  approaches?: {
+    serviceId: string;
+    title: string;
+    rationale: string;
+    dependencies?: string[];
+    unsuitableWhen?: string[];
+  }[];
 };
 export type CaseRecord = {
   id: string;
   title: string;
   sourceType: string;
   reviewStatus: string;
+  reviewVersion?: number;
+  sourceRunId?: string | null;
   pattern: Pattern;
 };
 export interface CaseRetriever {
