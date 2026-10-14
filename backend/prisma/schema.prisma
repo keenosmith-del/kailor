@@ -55,6 +55,8 @@ model DiscoveryAnswer {
   questionId String
   value Json
   skipped Boolean @default(false)
+  responseState String @default("answered")
+  quality Json?
   updatedAt DateTime @updatedAt
   @@unique([sessionId, questionId])
 }
@@ -78,6 +80,7 @@ model Evidence {
   status String @default("inferred")
   source String
   active Boolean @default(true)
+  provenance Json?
   createdAt DateTime @default(now())
   @@index([sessionId, active])
 }
@@ -152,7 +155,7 @@ model SimulationRun {
   sessionId String
   session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   discoveryPath Json
-  assessmentId String
+  assessmentId String?
   evaluationNotes String
   approvalStatus String @default("pending")
   createdAt DateTime @default(now())
@@ -169,6 +172,7 @@ model CaseIntelligenceRecord {
   pattern Json
   reviewNotes String?
   reviewedAt DateTime?
+  reviewVersion Int @default(0)
   createdAt DateTime @default(now())
 }
 model AiUsageRecord {

@@ -1,3 +1,5 @@
+import { evaluateInput } from "./input-quality.js";
+import { evaluateReadiness } from "./discovery-readiness.js";
 import express from "express";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -38,6 +40,10 @@ const patternSchema = z
     stage: z.string().max(100).optional(),
     scope: z.array(z.string().max(100)).max(20).optional(),
     limitations: z.array(z.string().max(300)).max(10).optional(),
+    unsuitableConstraints: z
+      .array(z.string().min(1).max(100))
+      .max(20)
+      .optional(),
   })
   .strict();
 export const app = express();
@@ -307,7 +313,12 @@ app.get("/api/cases", async (req, res) => {
       res.locals.adminId,
     );
     res.json(
-      matchCases(sessions.answersOf(s), await sessions.referenceCases()),
+      matchCases(
+        sessions.answersOf(s),
+        await sessions.referenceCases(),
+        s.evidence as unknown as import("../../shared/src/index.js").Evidence[],
+        sessions.statesOf(s),
+      ),
     );
   } else
     res.json(
@@ -330,6 +341,97 @@ app.put("/api/cases/:id/review", async (req, res) => {
   const record = await db.$transaction(async (tx) => {
     const c = await tx.caseIntelligenceRecord.findUnique({ where: { id } });
     if (!c) throw new AppError(404, "not_found", "Case not found");
+    if (input.status === "approved") {
+      const quality = evaluateInput(input.title, "caseTitle");
+      const industryQuality = evaluateInput(input.pattern.industry, "industry");
+      if (
+        !quality.usableFacts ||
+        !industryQuality.usableFacts ||
+        !input.pattern.patterns.length ||
+        (!input.pattern.problems.length &&
+          !input.pattern.goals.length &&
+          !input.pattern.scope?.length)
+      )
+        throw new AppError(
+          422,
+          "case_quality",
+          "Reusable knowledge needs a meaningful pattern and supported objective, not placeholder content",
+        );
+      const knownServices = await tx.service.count({
+        where: { id: { in: input.pattern.patterns } },
+      });
+      if (knownServices !== new Set(input.pattern.patterns).size)
+        throw new AppError(
+          422,
+          "case_unsupported_pattern",
+          "Unknown delivery capabilities cannot be approved as established services",
+        );
+      for (const factor of [
+        ...input.pattern.problems,
+        ...input.pattern.goals,
+        ...input.pattern.tools,
+        ...(input.pattern.constraints ?? []),
+        ...(input.pattern.scope ?? []),
+      ])
+        if (!evaluateInput(factor, "caseFactor").usableFacts)
+          throw new AppError(
+            422,
+            "case_quality",
+            "A reusable matching factor contains placeholder or ambiguous information",
+          );
+      if (c.sourceRunId) {
+        const run = await tx.simulationRun.findUniqueOrThrow({
+          where: { id: c.sourceRunId },
+          include: { session: { include: { answers: true, evidence: true } } },
+        });
+        if (
+          !run.assessmentId ||
+          !evaluateReadiness(
+            sessions.answersOf(run.session),
+            run.session
+              .evidence as unknown as import("../../shared/src/index.js").Evidence[],
+            sessions.statesOf(run.session),
+          ).canAssess
+        )
+          throw new AppError(
+            422,
+            "case_insufficient_evidence",
+            "This source run has insufficient or conflicting evidence; it cannot be approved for reuse",
+          );
+        const snapshot = await tx.reportSnapshot.findUnique({
+          where: { assessmentId: run.assessmentId },
+        });
+        const supported =
+          (
+            snapshot?.content as unknown as
+              | import("../../shared/src/index.js").Report
+              | undefined
+          )?.recommendations.map((r) => r.serviceId) ?? [];
+        if (
+          !supported.length ||
+          input.pattern.patterns.some((id) => !supported.includes(id))
+        )
+          throw new AppError(
+            422,
+            "case_unsupported_pattern",
+            "A reusable pattern cannot claim services unsupported by its source assessment",
+          );
+      }
+    }
+    await tx.auditEvent.create({
+      data: {
+        actorId: res.locals.adminId,
+        action: "case.review-history",
+        entityId: id,
+        details: sessions.json({
+          version: c.reviewVersion,
+          title: c.title,
+          reviewStatus: c.reviewStatus,
+          pattern: c.pattern,
+          reviewNotes: c.reviewNotes,
+        }),
+      },
+    });
     const updated = await tx.caseIntelligenceRecord.update({
       where: { id },
       data: {
@@ -338,6 +440,7 @@ app.put("/api/cases/:id/review", async (req, res) => {
         title: input.title,
         pattern: sessions.json(input.pattern),
         reviewedAt: new Date(),
+        reviewVersion: { increment: 1 },
       },
     });
     if (c.sourceRunId)
@@ -404,6 +507,9 @@ app.use(
                 message: i.message,
               })),
             }
+          : {}),
+        ...(error instanceof AppError && error.details
+          ? { details: error.details }
           : {}),
         requestId: res.locals.requestId,
       },

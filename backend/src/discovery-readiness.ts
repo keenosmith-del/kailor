@@ -1,45 +1,44 @@
-import type { Answers, Readiness } from "../../shared/src/index.js";
-import { signalAnswers } from "./context-extraction.js";
-export function evaluateReadiness(a: Answers, directions: number): Readiness {
-  const s = signalAnswers(a);
-  const situation = !!(a.industry || a.idea || a.request || a.frustrations);
-  const objective = !!(
-    s.goals ||
-    s.request ||
-    s.frustrations ||
-    (Array.isArray(s.problems) && s.problems.some((p) => p !== "none"))
-  );
-  const uncertainties = ["constraints", "budget", "tools", "timing"]
-    .filter((k) => !s[k])
-    .map((k) => `${k} is unknown or unspecified`);
-  if (!situation || !objective || !directions)
-    return {
-      state: "needs_information",
-      canAssess: false,
-      reasons: [
-        !situation
-          ? "Describe the situation or intended users"
-          : !objective
-            ? "Clarify a practical objective or difficulty"
-            : "Clarify the workflow or scope to support a solution direction",
-      ],
-      uncertainties,
-    };
+import type {
+  Answers,
+  AnswerStates,
+  Evidence,
+  Readiness,
+} from "../../shared/src/index.js";
+import { evaluateEvidence } from "./evidence-policy.js";
+import { usableAnswers } from "./input-quality.js";
+export function evaluateReadiness(
+  a: Answers,
+  evidence: Evidence[] = [],
+  states: AnswerStates = {},
+): Readiness {
+  const decision = evaluateEvidence(a, evidence, states);
+  const canAssess =
+    decision.situationKnown &&
+    decision.objectiveKnown &&
+    decision.directions.length > 0 &&
+    !decision.conflicts.length &&
+    !decision.unsupported;
+  const criticalUnknowns = canAssess
+    ? [...new Set(decision.directions.flatMap((d) => d.limitations))]
+    : decision.reasons;
+  const useful = usableAnswers(a, states);
+  const deep =
+    canAssess &&
+    !!useful.scopeDetails &&
+    !!useful.tools &&
+    !!useful.constraints;
   return {
-    state: uncertainties.length
-      ? "available_with_uncertainties"
-      : a.scopeDetails ||
-          a.bookingDetails ||
-          a.invoiceDetails ||
-          a.contentDetails
+    state: !canAssess
+      ? "needs_information"
+      : deep
         ? "deeper"
-        : "preliminary",
-    canAssess: true,
-    reasons: [
-      "A situation and practical objective are described",
-      "At least one proportionate direction has supporting evidence",
-      "Unknown commercial inputs remain for consultant review",
-    ],
-    uncertainties,
+        : decision.unknowns.length
+          ? "available_with_uncertainties"
+          : "preliminary",
+    canAssess,
+    reasons: decision.reasons,
+    uncertainties: decision.unknowns,
+    criticalUnknowns,
+    evidenceDirections: decision.directions,
   };
 }

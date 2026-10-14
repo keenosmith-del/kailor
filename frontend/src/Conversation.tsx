@@ -9,6 +9,36 @@ export function Conversation({
   act,
   next,
 }: SessionProps & { next: Next }) {
+  const labels: Record<string, string> = {
+    industry: "Activity",
+    goals: "Objective",
+    constraints: "Constraints",
+    budget: "Investment",
+    presence: "Current channels",
+    tools: "Tools and workflow",
+    websiteStatus: "Website status",
+    bookingStatus: "Booking provider",
+    aiPreference: "AI preference",
+    automationPreference: "Automation preference",
+    websitePreference: "Website preference",
+    clarification: "Clarification",
+    request: "Requirement",
+  };
+  const displayValue = (
+    key: string,
+    value: import("../../shared/src/index").AnswerValue,
+  ) =>
+    Array.isArray(value)
+      ? value.join(", ")
+      : value === "absent" && key.endsWith("Status")
+        ? key === "websiteStatus"
+          ? "No current website"
+          : "No current booking provider"
+        : value === "existing" && key.endsWith("Status")
+          ? key === "websiteStatus"
+            ? "An existing website"
+            : "An existing booking provider"
+          : value;
   const [message, setMessage] = useState(""),
     [mode, setMode] = useState("conversation");
   async function send(e: FormEvent) {
@@ -108,10 +138,24 @@ export function Conversation({
           .filter((e) => e.status === "inferred")
           .map((e) => (
             <div className="proposal" key={e.id}>
-              <span className="badge">unconfirmed proposal</span>
+              <span className="badge">
+                {e.provenance?.conflicts?.length
+                  ? "proposed correction"
+                  : "unconfirmed proposal"}
+              </span>
+              {e.provenance?.conflicts?.map((c) => (
+                <p className="muted" key={c.id}>
+                  {c.message} Earlier: {c.previous.quote}
+                </p>
+              ))}
               <p>
-                <strong>{e.key}:</strong>{" "}
-                {Array.isArray(e.value) ? e.value.join(", ") : e.value}
+                <strong>
+                  {labels[e.key] ??
+                    next.active.find((q) => q.id === e.key)?.title ??
+                    e.key}
+                  :
+                </strong>{" "}
+                {displayValue(e.key, e.value)}
               </p>
               <p className="muted">
                 Confirming replaces the answer for this field. Related questions
@@ -130,7 +174,9 @@ export function Conversation({
                     )
                   }
                 >
-                  Confirm
+                  {e.provenance?.conflicts?.length
+                    ? "Confirm correction"
+                    : "Confirm"}
                 </button>
                 <button
                   className="text-link"

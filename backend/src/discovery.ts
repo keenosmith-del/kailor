@@ -149,6 +149,57 @@ export const questions: Question[] = [
     when: { key: "problems", values: ["content"] },
   },
   {
+    id: "clarification",
+    title: "What is one task, difficulty or outcome we should understand?",
+    hint: "A concrete example is enough. Tell me what happens today and what you would like to change.",
+    type: "text",
+    optional: true,
+  },
+  {
+    id: "bookingStatus",
+    title: "Do you currently use a booking provider?",
+    hint: "Record the current situation without assuming a change is needed.",
+    type: "single",
+    optional: true,
+    options: options("existing|Yes", "absent|No", "unknown|Not sure"),
+  },
+  {
+    id: "aiPreference",
+    title: "Would you like AI considered?",
+    hint: "It is optional and must suit the problem.",
+    type: "single",
+    optional: true,
+    options: options(
+      "requested|Consider it",
+      "declined|No AI",
+      "unknown|Not sure",
+    ),
+  },
+  {
+    id: "automationPreference",
+    title: "Would you like automation considered?",
+    hint: "Manual improvements may be enough.",
+    type: "single",
+    optional: true,
+    options: options(
+      "requested|Consider it",
+      "declined|No automation",
+      "unknown|Not sure",
+    ),
+  },
+  {
+    id: "websitePreference",
+    title: "Would you like a website considered?",
+    hint: "An existing channel may already be sufficient.",
+    type: "single",
+    optional: true,
+    options: options(
+      "requested|Consider it",
+      "declined|No website",
+      "unknown|Not sure",
+    ),
+  },
+  {
     id: "websiteStatus",
     title: "Do you already have a website?",
     hint: "This only records what you tell us; no audit is implied.",
@@ -231,6 +282,11 @@ export function nextQuestion(a: Answers) {
           "workflowDetails",
           "websiteUrl",
           "websiteStatus",
+          "clarification",
+          "bookingStatus",
+          "aiPreference",
+          "automationPreference",
+          "websitePreference",
         ].includes(q.id) && !(q.id in a),
     ) ?? null
   );
@@ -273,9 +329,9 @@ export function validateAnswer(id: string, value: AnswerValue, skip = false) {
     throw new Error("Choose valid, non-conflicting options");
   return q;
 }
-export function pruneAnswers(a: Answers): Answers {
+export function pruneAnswers(a: Answers, context: Answers = a): Answers {
   const result = { ...a };
   for (const q of questions)
-    if (!relevant(q, signalAnswers(result, false))) delete result[q.id];
+    if (!relevant(q, signalAnswers(context, false))) delete result[q.id];
   return result;
 }

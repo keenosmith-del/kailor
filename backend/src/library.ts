@@ -29,8 +29,14 @@ import professionalPersona from "../../data/personas/professional.json" with { t
 import invoicePersona from "../../data/personas/invoice-business.json" with { type: "json" };
 import teacherPersona from "../../data/personas/teacher.json" with { type: "json" };
 import kaiPersona from "../../data/personas/kai.json" with { type: "json" };
+import { evaluateInput, usableAnswers } from "./input-quality.js";
+import { evaluateEvidence } from "./evidence-policy.js";
 import { signalAnswers } from "./context-extraction.js";
-import type { Answers } from "../../shared/src/index.js";
+import type {
+  Answers,
+  Evidence,
+  AnswerStates,
+} from "../../shared/src/index.js";
 export const scenarios = [
   nails,
   salon,
@@ -75,6 +81,8 @@ export type Pattern = {
   stage?: string;
   scope?: string[];
   limitations?: string[];
+  unsuitableConstraints?: string[];
+  unsuitableConditions?: string[];
 };
 export type CaseRecord = {
   id: string;
@@ -86,9 +94,17 @@ export type CaseRecord = {
 export interface CaseRetriever {
   match(answers: Answers, cases: CaseRecord[]): ReturnType<typeof matchCases>;
 }
-export function matchCases(a: Answers, cases: CaseRecord[]) {
+export function matchCases(
+  a: Answers,
+  cases: CaseRecord[],
+  evidence: Evidence[] = [],
+  states: AnswerStates = {},
+) {
+  const decision = evaluateEvidence(a, evidence, states);
+  if (decision.conflicts.length || decision.unsupported) return [];
+  a = usableAnswers(a, states);
   const confirmed = a;
-  a = signalAnswers(a);
+  a = decision.answers;
   const has = (key: string, v: string) =>
     Array.isArray(a[key])
       ? (a[key] as string[]).includes(v)
@@ -96,7 +112,50 @@ export function matchCases(a: Answers, cases: CaseRecord[]) {
           .toLowerCase()
           .includes(v.toLowerCase());
   return cases
-    .filter((c) => c.reviewStatus === "approved")
+    .filter(
+      (c) =>
+        c.reviewStatus === "approved" &&
+        evaluateInput(c.title, "caseTitle").usableFacts &&
+        evaluateInput(c.pattern.industry, "industry").usableFacts,
+    )
+    .filter(
+      (c) =>
+        !(c.pattern.unsuitableConstraints ?? []).some((term) =>
+          String(a.constraints ?? "")
+            .toLowerCase()
+            .includes(term.toLowerCase()),
+        ),
+    )
+    .filter(
+      (c) =>
+        !(
+          c.pattern.patterns.includes("website") &&
+          /(?:don.t|do not) (?:want|need) (?:a )?website/i.test(
+            String(a.constraints ?? ""),
+          )
+        ) &&
+        !(
+          c.pattern.patterns.includes("ai") &&
+          /no AI|don.t want AI|do not want AI/i.test(
+            String(a.constraints ?? ""),
+          )
+        ),
+    )
+    .filter(
+      (c) =>
+        !(
+          c.pattern.patterns.includes("website") &&
+          a.websitePreference === "declined"
+        ) &&
+        !(c.pattern.patterns.includes("ai") && a.aiPreference === "declined"),
+    )
+    .filter(
+      (c) =>
+        !(
+          a.websiteStatus === "existing" &&
+          c.pattern.patterns.every((p) => ["website", "portfolio"].includes(p))
+        ),
+    )
     .map((c) => {
       const reasons: string[] = [];
       let score = 0;
@@ -149,9 +208,12 @@ export function matchCases(a: Answers, cases: CaseRecord[]) {
         reasons,
         usefulness:
           "Reference questions and alternatives only; current evidence determines suitability",
-        limitations: c.pattern.limitations ?? [
-          "Self-reported or synthetic pattern; no verified customer outcome",
-          "Different tools, constraints and scope may make this pattern unsuitable",
+        limitations: [
+          ...(c.pattern.limitations ?? [
+            "Self-reported or synthetic pattern; no verified customer outcome",
+            "Different tools, constraints and scope may make this pattern unsuitable",
+          ]),
+          ...(c.pattern.unsuitableConditions ?? []),
         ],
       };
     })

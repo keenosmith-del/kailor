@@ -1,3 +1,18 @@
+import { writeAnswer as applyAnswerMutation } from "./answer-mutation.js";
+import {
+  type StoredSession,
+  json,
+  answersOf,
+  statesOf,
+  evidenceOf,
+} from "./session-state.js";
+import { containsSensitiveData } from "./conversation-guidance.js";
+import { randomUUID } from "node:crypto";
+import { evaluateInput, usableAnswers } from "./input-quality.js";
+import { claimsOf, detectUpdateConflicts } from "./knowledge-conflicts.js";
+import { evaluateEvidence } from "./evidence-policy.js";
+import { evaluateReadiness } from "./discovery-readiness.js";
+import { logger } from "./config.js";
 import { planDiscovery } from "./discovery-planner.js";
 import { signalAnswers } from "./context-extraction.js";
 import { db } from "./db.js";
@@ -5,7 +20,6 @@ import type { Prisma } from "./generated/prisma/client.js";
 import { AppError } from "./errors.js";
 import {
   activeQuestions,
-  pruneAnswers,
   relevant,
   validateAnswer,
   version,
@@ -14,10 +28,12 @@ import type {
   Answers,
   AnswerValue,
   Report,
+  AnswerStates,
+  AnswerState,
   DiscoveryPlan,
   Evidence,
 } from "../../shared/src/index.js";
-import { createReport } from "./assessment.js";
+import { createReport, recommend } from "./assessment.js";
 import {
   type CaseRecord,
   type SyntheticPersona,
@@ -36,19 +52,11 @@ import {
 } from "./ai.js";
 const include = {
   subject: true,
-  answers: true,
+  answers: { orderBy: { updatedAt: "asc" as const } },
   messages: { orderBy: { ordinal: "asc" as const } },
   evidence: { where: { active: true }, orderBy: { createdAt: "asc" as const } },
 };
-export const json = (value: unknown) =>
-  JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
-export function answersOf(session: {
-  answers: { questionId: string; value: unknown }[];
-}): Answers {
-  return Object.fromEntries(
-    session.answers.map((a) => [a.questionId, a.value]),
-  ) as Answers;
-}
+export { json, answersOf, statesOf } from "./session-state.js";
 export async function getSession(id: string, adminId: string) {
   const s = await db.discoverySession.findFirst({
     where: { id, adminId },
@@ -106,75 +114,27 @@ export async function createSession(
 }
 async function writeAnswer(
   tx: Prisma.TransactionClient,
-  s: Awaited<ReturnType<typeof getSession>>,
+  s: StoredSession,
   key: string,
   value: AnswerValue,
   skip: boolean,
   source: string,
+  responseState?: AnswerState,
+  resolveConflicts = false,
+  provenance: Evidence["provenance"] = {},
 ) {
-  const q = validateAnswer(key, value, skip);
-  const previous = answersOf(s);
-  if (!relevant(q, signalAnswers(previous)))
-    throw new AppError(
-      400,
-      "irrelevant_question",
-      "This question is not active in this pathway",
-    );
-  const next = pruneAnswers({ ...previous, [key]: skip ? "" : value });
-  const removed = Object.keys(previous).filter((k) => !(k in next));
-  const inactiveProposals = s.evidence
-    .filter(
-      (e) =>
-        e.status === "inferred" &&
-        !activeQuestions(signalAnswers(next)).some((q) => q.id === e.key),
-    )
-    .map((e) => e.id);
-  if (inactiveProposals.length)
-    await tx.evidence.updateMany({
-      where: { id: { in: inactiveProposals } },
-      data: { active: false },
-    });
-  if (removed.length)
-    await tx.discoveryAnswer.deleteMany({
-      where: { sessionId: s.id, questionId: { in: removed } },
-    });
-  await tx.evidence.updateMany({
-    where: { sessionId: s.id, key: { in: [key, ...removed] }, active: true },
-    data: { active: false },
-  });
-  await tx.discoveryAnswer.upsert({
-    where: { sessionId_questionId: { sessionId: s.id, questionId: key } },
-    create: {
-      sessionId: s.id,
-      questionId: key,
-      value: json(skip ? "" : value),
-      skipped: skip,
-    },
-    update: { value: json(skip ? "" : value), skipped: skip },
-  });
-  if (!skip)
-    await tx.evidence.create({
-      data: {
-        sessionId: s.id,
-        key,
-        value: json(value),
-        status: "confirmed",
-        source,
-      },
-    });
-  await tx.discoverySession.update({
-    where: { id: s.id },
-    data: { revision: { increment: 1 } },
-  });
-  await persistPlan(tx, s.id);
-  await tx.auditEvent.create({
-    data: {
-      actorId: s.adminId,
-      action: "answer.updated",
-      entityId: s.id,
-      details: json({ key, removed, source }),
-    },
-  });
+  return applyAnswerMutation(
+    persistPlan,
+    tx,
+    s,
+    key,
+    value,
+    skip,
+    source,
+    responseState,
+    resolveConflicts,
+    provenance,
+  );
 }
 export async function submitAnswer(
   id: string,
@@ -184,6 +144,8 @@ export async function submitAnswer(
     questionId: string;
     value: AnswerValue;
     skip?: boolean;
+    responseState?: AnswerState;
+    resolveConflicts?: boolean;
   },
 ) {
   try {
@@ -196,9 +158,66 @@ export async function submitAnswer(
         input.value,
         input.skip ?? false,
         "guided",
+        input.responseState,
+        input.resolveConflicts,
       );
     });
   } catch (e) {
+    if (
+      e instanceof AppError &&
+      e.code === "input_conflict" &&
+      e.status === 409
+    ) {
+      const details = e.details as {
+        quality: import("../../shared/src/index.js").InputQuality;
+        conflicts: import("../../shared/src/index.js").DiscoveryConflict[];
+      };
+      const pending = await db.$transaction(async (tx) => {
+        await lock(tx, id, adminId, input.revision);
+        await tx.evidence.updateMany({
+          where: {
+            sessionId: id,
+            key: input.questionId,
+            status: "inferred",
+            active: true,
+          },
+          data: { active: false },
+        });
+        const proposal = await tx.evidence.create({
+          data: {
+            sessionId: id,
+            key: input.questionId,
+            value: json(input.value),
+            status: "inferred",
+            source: "guided-proposal",
+            provenance: json({
+              quote: input.value,
+              basis: "explicit-proposed-correction",
+              quality: details.quality,
+              conflicts: details.conflicts,
+            }),
+          },
+        });
+        const changed = await tx.discoverySession.update({
+          where: { id },
+          data: { revision: { increment: 1 } },
+        });
+        await persistPlan(tx, id);
+        await tx.auditEvent.create({
+          data: {
+            actorId: adminId,
+            action: "contradiction.proposed",
+            entityId: id,
+            details: json({
+              key: input.questionId,
+              facets: details.conflicts.map((c) => c.facet),
+            }),
+          },
+        });
+        return { evidenceId: proposal.id, revision: changed.revision };
+      });
+      throw new AppError(409, e.code, e.message, { ...details, ...pending });
+    }
     if (e instanceof AppError) throw e;
     if (
       e instanceof Error &&
@@ -237,6 +256,9 @@ export async function confirmEvidence(
         e.value as AnswerValue,
         false,
         "chat-confirmed",
+        undefined,
+        true,
+        e.provenance as Evidence["provenance"],
       );
     else {
       await tx.evidence.update({
@@ -295,13 +317,32 @@ export async function converse(
   const s = await getSession(id, adminId);
   if (s.revision !== input.revision)
     throw new AppError(409, "revision_conflict", "Refresh the changed session");
+  const currentPlan = await nextForSession(id, adminId);
+  if (currentPlan.revision !== s.revision)
+    throw new AppError(
+      409,
+      "revision_conflict",
+      "This session changed before conversation planning; please refresh",
+    );
   const guest = (
     await db.adminUser.findUniqueOrThrow({ where: { id: adminId } })
   ).isGuest;
   let provider = new MockProvider() as import("./ai.js").AiProvider;
   let reason: string | null = null;
+  const messageQuality = evaluateInput(input.message, "", "chat");
+  const sensitive = containsSensitiveData(
+    JSON.stringify({
+      message: input.message,
+      context: answersOf(s),
+      history: s.messages.map((m) => m.content),
+    }),
+  );
   const reservation =
-    !forceMock && !guest && remoteEnabled(config)
+    !forceMock &&
+    !guest &&
+    messageQuality.usableFacts &&
+    !sensitive &&
+    remoteEnabled(config)
       ? await reserveUsage(id, input.mode)
       : null;
   if (reservation)
@@ -313,15 +354,28 @@ export async function converse(
       timeoutMs: config.AI_TIMEOUT_MS,
     });
   else
-    reason = remoteEnabled(config)
-      ? "budget_exhausted_or_simulation"
-      : "remote_disabled";
+    reason = sensitive
+      ? "sensitive_context_kept_local"
+      : !messageQuality.usableFacts
+        ? "local_conversational_turn"
+        : remoteEnabled(config)
+          ? "budget_exhausted_or_simulation"
+          : "remote_disabled";
   const result = await inferSafely(
     provider,
     answersOf(s),
     input.message,
     s.messages,
     input.mode,
+    {
+      plan: currentPlan,
+      recommendations: recommend(
+        answersOf(s),
+        undefined,
+        evidenceOf(s),
+        statesOf(s),
+      ),
+    },
   );
   if (reservation)
     await db.aiUsageRecord.update({
@@ -331,6 +385,17 @@ export async function converse(
         reason: result.fallbackReason,
       },
     });
+  const userMessageId = randomUUID();
+  const updateConflicts = result.output.proposals.flatMap((p) =>
+    detectUpdateConflicts(
+      usableAnswers(answersOf(s), statesOf(s)),
+      p.key,
+      p.value,
+      evidenceOf(s),
+    ),
+  );
+  if (updateConflicts.length)
+    result.output.reply = `${updateConflicts[0].message} Please review and confirm the proposed correction below.`;
   await db.$transaction(async (tx) => {
     await lock(tx, id, adminId, input.revision);
     const previousEvidence = await tx.evidence.findMany({
@@ -339,6 +404,7 @@ export async function converse(
     await tx.conversationMessage.createMany({
       data: [
         {
+          id: userMessageId,
           sessionId: id,
           role: "user",
           ordinal: s.revision * 2,
@@ -355,6 +421,10 @@ export async function converse(
       ],
     });
     for (const p of result.output.proposals) {
+      if (!messageQuality.usableFacts && !/^set\s/i.test(input.message))
+        continue;
+      const candidateQuality = evaluateInput(p.value, p.key, "proposal");
+      if (!candidateQuality.usableFacts) continue;
       const q = validateAnswer(p.key, p.value);
       if (!relevant(q, signalAnswers(answersOf(s)))) continue;
       if (JSON.stringify(answersOf(s)[p.key]) === JSON.stringify(p.value))
@@ -379,6 +449,22 @@ export async function converse(
           value: json(p.value),
           status: "inferred",
           source: result.provider,
+          provenance: json({
+            quote: p.quote ?? input.message,
+            sourceMessageId: userMessageId,
+            basis:
+              p.basis ??
+              (result.provider === "mock-development"
+                ? "explicit-extraction"
+                : "model-proposal"),
+            quality: candidateQuality,
+            conflicts: detectUpdateConflicts(
+              usableAnswers(answersOf(s), statesOf(s)),
+              p.key,
+              p.value,
+              evidenceOf(s),
+            ),
+          }),
         },
       });
     }
@@ -395,14 +481,24 @@ export async function converse(
         details: json({
           provider: result.provider,
           fallbackReason: result.fallbackReason ?? reason,
+          quality: messageQuality.disposition,
+          conflicts: updateConflicts.map((c) => c.facet),
         }),
       },
     });
+  });
+  logger.info("conversation.quality", {
+    sessionId: id,
+    disposition: messageQuality.disposition,
+    proposalCount: result.output.proposals.length,
+    conflicts: updateConflicts.map((c) => c.facet),
+    fallback: result.fallbackReason ?? reason,
   });
   return {
     session: await getSession(id, adminId),
     provider: result.provider,
     fallbackReason: result.fallbackReason ?? reason,
+    quality: messageQuality,
   };
 }
 export async function referenceCases(adminId?: string): Promise<CaseRecord[]> {
@@ -436,10 +532,27 @@ async function persistPlan(tx: Prisma.TransactionClient, id: string) {
     s.revision,
     s.evidence as unknown as Evidence[],
     cases,
+    statesOf(s),
   );
+  const prior = s.planState as unknown as DiscoveryPlan | null;
+  for (const [key, state] of Object.entries(prior?.questionStates ?? {}))
+    if (
+      !(key in plan.answerStates) &&
+      state !== "not_presented" &&
+      !plan.active.some((q) => q.id === key)
+    )
+      plan.questionStates[key] = "irrelevant";
   await tx.discoverySession.update({
     where: { id },
     data: { contextState: json(plan.context), planState: json(plan) },
+  });
+  logger.info("discovery.planned", {
+    sessionId: id,
+    revision: s.revision,
+    completion: plan.completion.state,
+    nextQuestion: plan.question?.id ?? null,
+    matchedCases: plan.provenance.caseIds.length,
+    canAssess: plan.readiness.canAssess,
   });
   return plan;
 }
@@ -449,7 +562,12 @@ export async function nextForSession(
 ): Promise<DiscoveryPlan> {
   const s = await getSession(id, adminId);
   const saved = s.planState as unknown as DiscoveryPlan | null;
-  if (saved?.revision === s.revision && saved.plannerVersion === "adaptive-1")
+  if (
+    saved?.revision === s.revision &&
+    saved.plannerVersion === "reliability-2" &&
+    saved.questionStates &&
+    saved.completion
+  )
     return saved;
   return db.$transaction(async (tx) => {
     await lock(tx, id, adminId, s.revision);
@@ -466,6 +584,24 @@ export async function confirmBatch(
 ) {
   await db.$transaction(async (tx) => {
     let s = await lock(tx, id, adminId, revision);
+    if (accept) {
+      const selected = s.evidence.filter(
+        (e) => ids.includes(e.id) && e.status === "inferred",
+      );
+      const claims = selected.flatMap((e) =>
+        claimsOf({ [e.key]: e.value as AnswerValue }),
+      );
+      if (
+        claims.some((c) =>
+          claims.some((x) => x.facet === c.facet && x.value !== c.value),
+        )
+      )
+        throw new AppError(
+          422,
+          "input_conflict",
+          "These proposals contain different statements about the same fact or preference. Confirm the current one individually.",
+        );
+    }
     for (const evidenceId of ids) {
       const e = s.evidence.find(
         (e) => e.id === evidenceId && e.status === "inferred",
@@ -480,6 +616,9 @@ export async function confirmBatch(
           e.value as AnswerValue,
           false,
           "chat-confirmed",
+          undefined,
+          true,
+          e.provenance as Evidence["provenance"],
         );
       else {
         await tx.evidence.update({
@@ -518,18 +657,34 @@ export async function assess(id: string, adminId: string, revision: number) {
       },
       include: { report: true },
     });
-    if (existing) return existing;
     const a = answersOf(s);
-    if (!planDiscovery(a, revision).readiness.canAssess)
+    const plan = await persistPlan(tx, id);
+    if (!plan.readiness.canAssess) {
+      logger.info("assessment.blocked", {
+        sessionId: id,
+        revision,
+        state: plan.completion.state,
+      });
       throw new AppError(
         422,
         "insufficient_evidence",
-        "Describe a situation and objective with enough workflow or scope evidence for a preliminary direction",
+        "More useful evidence or clarification is needed before preparing an assessment",
+        { readiness: plan.readiness, completion: plan.completion },
       );
-    const content = createReport(a, revision, s.synthetic, cases, {
-      currency: config.ESTIMATE_CURRENCY,
-      hourlyRate: config.ESTIMATE_HOURLY_RATE,
-    });
+    }
+    if (existing) return existing;
+    const content = createReport(
+      a,
+      revision,
+      s.synthetic,
+      cases,
+      {
+        currency: config.ESTIMATE_CURRENCY,
+        hourlyRate: config.ESTIMATE_HOURLY_RATE,
+      },
+      evidenceOf(s),
+      statesOf(s),
+    );
     const assessment = await tx.assessment.create({
       data: {
         sessionId: id,
@@ -578,20 +733,37 @@ export async function getReport(id: string, adminId: string) {
   return {
     reportId: report.id,
     content: report.content as unknown as Report,
-    stale: report.assessment.sessionRevision !== s.revision,
+    stale:
+      report.assessment.sessionRevision !== s.revision ||
+      !evaluateReadiness(answersOf(s), evidenceOf(s), statesOf(s)).canAssess,
   };
 }
 export async function canvas(id: string, adminId: string) {
   const s = await getSession(id, adminId);
-  const content = createReport(
+  const readiness = evaluateReadiness(answersOf(s), evidenceOf(s), statesOf(s));
+  const preview = createReport(
     answersOf(s),
     s.revision,
     s.synthetic,
     await referenceCases(adminId),
+    undefined,
+    evidenceOf(s),
+    statesOf(s),
   );
+  const snapshot = await db.reportSnapshot.findFirst({
+    where: { assessment: { sessionId: id, sessionRevision: s.revision } },
+    include: { assessment: true },
+    orderBy: { createdAt: "desc" },
+  });
+  const content = readiness.canAssess
+    ? ((snapshot?.content as unknown as Report | undefined) ?? preview)
+    : { ...preview, recommendations: [] };
   return {
     revision: s.revision,
-    existing: (signalAnswers(answersOf(s)).presence ?? []) as string[],
+    readiness,
+    source: snapshot && readiness.canAssess ? "snapshot" : "validated-preview",
+    existing: (evaluateEvidence(answersOf(s), evidenceOf(s), statesOf(s))
+      .answers.presence ?? []) as string[],
     existingOrigin: answersOf(s).presence
       ? "confirmed-selection"
       : signalAnswers(answersOf(s)).presence
@@ -610,7 +782,11 @@ export async function canvas(id: string, adminId: string) {
       dependencies: r.dependencies,
       evidence: r.evidence,
     })),
-    note: "Proposed components from current confirmed evidence. No implementation is implied.",
+    note: !readiness.canAssess
+      ? readiness.reasons.join(". ")
+      : snapshot
+        ? "Components from the saved assessment snapshot. No implementation is implied."
+        : "Qualified directions from validated evidence; prepare an assessment to save a report. No implementation is implied.",
   };
 }
 export async function simulate(
@@ -629,97 +805,134 @@ export async function simulate(
     revision: number;
     source: string;
   }[] = [];
-  let q = (await nextForSession(s.id, adminId)).question;
-  while (q) {
-    const value = (persona.answers as Answers)[q.id];
-    if (value === undefined && !q.optional)
-      throw new AppError(422, "fixture_missing", `Persona needs ${q.id}`);
-    s = await submitAnswer(s.id, adminId, {
-      revision: s.revision,
-      questionId: q.id,
-      value: value ?? "",
-      skip: value === undefined,
+  try {
+    let q = (await nextForSession(s.id, adminId)).question;
+    while (q) {
+      const value = (persona.answers as Answers)[q.id];
+      if (value === undefined && !q.optional)
+        throw new AppError(422, "fixture_missing", `Persona needs ${q.id}`);
+      s = await submitAnswer(s.id, adminId, {
+        revision: s.revision,
+        questionId: q.id,
+        value: value ?? "",
+        skip: value === undefined,
+      });
+      path.push({
+        questionId: q.id,
+        title: q.title,
+        value: value ?? "",
+        skipped: value === undefined,
+        revision: s.revision,
+        source: "deterministic",
+      });
+      q = (await nextForSession(s.id, adminId)).question;
+    }
+    // Additional fixture details are voluntary context, not required form completion.
+    for (const [key, value] of Object.entries(persona.answers)) {
+      if (key in answersOf(s)) continue;
+      const q = activeQuestions(signalAnswers(answersOf(s))).find(
+        (q) => q.id === key,
+      );
+      if (!q) continue;
+      s = await submitAnswer(s.id, adminId, {
+        revision: s.revision,
+        questionId: key,
+        value: value as AnswerValue,
+      });
+    }
+    for (const message of persona.chat)
+      s = (
+        await converse(
+          s.id,
+          adminId,
+          { revision: s.revision, message, mode: "conversation" },
+          true,
+        )
+      ).session;
+    const assessment = await assess(s.id, adminId, s.revision);
+    const got = assessment.content.recommendations.map((r) => r.serviceId);
+    const missing = persona.expectedServices.filter((x) => !got.includes(x)),
+      unexpected = persona.excludedServices.filter((x) => got.includes(x));
+    const notes = `Synthetic regression: missing expected [${missing.join(", ")}]; unexpected [${unexpected.join(", ")}]. No commercial outcome. Human evaluation required.`;
+    return db.$transaction(async (tx) => {
+      const run = await tx.simulationRun.create({
+        data: {
+          personaId,
+          persona: json(persona),
+          sessionId: s.id,
+          discoveryPath: json(path),
+          assessmentId: assessment.assessmentId,
+          evaluationNotes: notes,
+        },
+      });
+      const a = answersOf(s);
+      if (!missing.length && !unexpected.length)
+        await tx.caseIntelligenceRecord.create({
+          data: {
+            sourceType: "simulation",
+            sourceRunId: run.id,
+            title: `Synthetic reference: ${persona.name}`,
+            pattern: json({
+              industry: String(a.industry ?? ""),
+              problems: signalAnswers(a).problems ?? [],
+              tools: [],
+              goals: [],
+              constraints: /affordable|limited|small/i.test(
+                String(a.constraints ?? ""),
+              )
+                ? ["affordable"]
+                : [],
+              stage: String(a.stage ?? "unknown"),
+              limitations: [
+                "Synthetic assessment; no observed customer outcome",
+                "Validate current workflow and constraints before reuse",
+              ],
+              patterns: got,
+              discoveryQuestions: [
+                "Which part of the current workflow is actually causing friction?",
+              ],
+            }),
+          },
+        });
+      return {
+        ...run,
+        report: assessment.content,
+        passed: missing.length === 0 && unexpected.length === 0,
+      };
     });
-    path.push({
-      questionId: q.id,
-      title: q.title,
-      value: value ?? "",
-      skipped: value === undefined,
-      revision: s.revision,
-      source: "deterministic",
-    });
-    q = (await nextForSession(s.id, adminId)).question;
-  }
-  // Additional fixture details are voluntary context, not required form completion.
-  for (const [key, value] of Object.entries(persona.answers)) {
-    if (key in answersOf(s)) continue;
-    const q = activeQuestions(signalAnswers(answersOf(s))).find(
-      (q) => q.id === key,
-    );
-    if (!q) continue;
-    s = await submitAnswer(s.id, adminId, {
-      revision: s.revision,
-      questionId: key,
-      value: value as AnswerValue,
-    });
-  }
-  for (const message of persona.chat)
-    s = (
-      await converse(
-        s.id,
-        adminId,
-        { revision: s.revision, message, mode: "conversation" },
-        true,
-      )
-    ).session;
-  const assessment = await assess(s.id, adminId, s.revision);
-  const got = assessment.content.recommendations.map((r) => r.serviceId);
-  const missing = persona.expectedServices.filter((x) => !got.includes(x)),
-    unexpected = persona.excludedServices.filter((x) => got.includes(x));
-  const notes = `Synthetic regression: missing expected [${missing.join(", ")}]; unexpected [${unexpected.join(", ")}]. No commercial outcome. Human evaluation required.`;
-  return db.$transaction(async (tx) => {
-    const run = await tx.simulationRun.create({
+  } catch (error) {
+    if (!(error instanceof AppError) || error.status >= 500) throw error;
+    s = await getSession(s.id, adminId);
+    const failure = {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+    };
+    const run = await db.simulationRun.create({
       data: {
         personaId,
         persona: json(persona),
         sessionId: s.id,
         discoveryPath: json(path),
-        assessmentId: assessment.assessmentId,
-        evaluationNotes: notes,
+        assessmentId: null,
+        evaluationNotes: JSON.stringify({
+          status: "insufficient_evidence_or_invalid_input",
+          failure,
+        }),
+        approvalStatus: "not_reusable",
       },
     });
-    const a = answersOf(s);
-    await tx.caseIntelligenceRecord.create({
-      data: {
-        sourceType: "simulation",
-        sourceRunId: run.id,
-        title: `Synthetic reference: ${persona.name}`,
-        pattern: json({
-          industry: String(a.industry ?? ""),
-          problems: signalAnswers(a).problems ?? [],
-          tools: [],
-          goals: [],
-          constraints: /affordable|limited|small/i.test(
-            String(a.constraints ?? ""),
-          )
-            ? ["affordable"]
-            : [],
-          stage: String(a.stage ?? "unknown"),
-          limitations: [
-            "Synthetic assessment; no observed customer outcome",
-            "Validate current workflow and constraints before reuse",
-          ],
-          patterns: got,
-          discoveryQuestions: [
-            "Which part of the current workflow is actually causing friction?",
-          ],
-        }),
-      },
+    logger.info("simulation.incomplete", {
+      sessionId: s.id,
+      runId: run.id,
+      code: error.code,
     });
     return {
       ...run,
-      report: assessment.content,
-      passed: missing.length === 0 && unexpected.length === 0,
+      report: null,
+      passed: false,
+      failure,
+      readiness: evaluateReadiness(answersOf(s), evidenceOf(s), statesOf(s)),
     };
-  });
+  }
 }

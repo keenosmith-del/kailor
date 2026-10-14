@@ -43,3 +43,7 @@ Progress, portfolio, presence, website, tools, and booking/invoice/content detai
 Discovery no longer renders the “Understanding what you’ve shared…” message during answer submission. Clicking Prepare the assessment crossfades the mascot to `other/kailor-smiling.png`, which remains through the completed assessment state. A failed preparation restores the previous pose for retry.
 
 Iteration 003 renders the persisted adaptive question plan, exposes preliminary preparation during useful follow-ups and uses normal dynamic conversation prompts plus grouped proposal confirmation. No visual architecture, artwork, palette or report-section redesign was introduced.
+
+## Iteration 004 reliability feedback
+
+Reuse the existing discovery composition, typography, mascot and transitions. Inline validation retains typed text; required text can communicate uncertainty. Exhausted/unsupported discovery presents known context with Tell kailor more, Have a conversation and Start again. Material corrections use explicit confirmation. Report/Canvas actions reflect authoritative eligibility; saved historical reports retain their stale explanation. Review your answers is removed as requested. No introduction, palette, artwork, global style or PDF template redesign was made.

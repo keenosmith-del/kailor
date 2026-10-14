@@ -47,10 +47,21 @@ export function Workspace() {
     setBusy(true);
     setError("");
     try {
-      const run = await api<{ sessionId: string }>("/simulations", "POST", {
+      const run = await api<{
+        sessionId: string;
+        passed: boolean;
+        report: unknown;
+        failure?: { message: string };
+      }>("/simulations", "POST", {
         personaId: id,
       });
-      navigate(`/sessions/${run.sessionId}/report`);
+      if (!run.passed || !run.report) {
+        setError(
+          run.failure?.message ??
+            "This synthetic run needs clarification. Its discovery has been saved; no reusable case was created.",
+        );
+        await load();
+      } else navigate(`/sessions/${run.sessionId}/discovery`);
     } catch (e) {
       setError(errorMessage(e));
     } finally {

@@ -2,7 +2,9 @@ import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import type { Session } from "../../shared/src/index";
-import { api } from "./api";
+import { Link } from "react-router";
+import type { Next } from "./types";
+import { api, sessionHref } from "./api";
 import { ErrorBox, errorMessage } from "./ui";
 type CanvasData = {
   existing: string[];
@@ -21,14 +23,17 @@ export function Canvas({
   session,
   assess,
   busy,
+  next,
 }: {
   session: Session;
   assess: () => Promise<void>;
   busy: boolean;
+  next: Next;
 }) {
   const [canvas, setCanvas] = useState<CanvasData | null>(null),
     [error, setError] = useState("");
   useEffect(() => {
+    setCanvas(null);
     void api<CanvasData>(`/sessions/${session.id}/canvas`)
       .then(setCanvas)
       .catch((e) => setError(errorMessage(e)));
@@ -102,13 +107,22 @@ export function Canvas({
           <p className="fine-print">{canvas.note}</p>
         </>
       )}
-      <button
-        className="button primary"
-        disabled={busy}
-        onClick={() => void assess()}
-      >
-        Prepare analysis <ArrowRight size={17} />
-      </button>
+      {next.readiness.canAssess ? (
+        <button
+          className="button primary"
+          disabled={busy}
+          onClick={() => void assess()}
+        >
+          Prepare analysis <ArrowRight size={17} />
+        </button>
+      ) : (
+        <p className="lead">
+          {next.readiness.reasons.join(". ")}{" "}
+          <Link className="text-link" to={sessionHref(session.id, "discovery")}>
+            Return to discovery
+          </Link>
+        </p>
+      )}
     </section>
   );
 }

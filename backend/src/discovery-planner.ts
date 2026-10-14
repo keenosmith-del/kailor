@@ -3,11 +3,13 @@ import type {
   DiscoveryPlan,
   Evidence,
   Question,
+  AnswerStates,
 } from "../../shared/src/index.js";
 import { activeQuestions, version } from "./discovery.js";
 import { buildContext, signalAnswers } from "./context-extraction.js";
 import { evaluateReadiness } from "./discovery-readiness.js";
-import { recommend } from "./assessment.js";
+import { evaluateEvidence } from "./evidence-policy.js";
+import { usableAnswers, inferResponseState } from "./input-quality.js";
 import { matchCases, type CaseRecord } from "./library.js";
 
 export function planDiscovery(
@@ -15,11 +17,21 @@ export function planDiscovery(
   revision = 0,
   evidence: Evidence[] = [],
   cases: CaseRecord[] = [],
+  states: AnswerStates = {},
 ): DiscoveryPlan {
-  const s = signalAnswers(a),
+  const raw = a;
+  states = {
+    ...Object.fromEntries(
+      Object.entries(a).map(([k, v]) => [k, inferResponseState(v, v === "")]),
+    ),
+    ...states,
+  };
+  a = usableAnswers(raw, states);
+  const decision = evaluateEvidence(raw, evidence, states);
+  const s = decision.answers,
     context = buildContext(a, evidence);
-  const matches = matchCases(a, cases);
-  const readiness = evaluateReadiness(a, recommend(a).length);
+  const matches = matchCases(raw, cases, evidence, states);
+  const readiness = evaluateReadiness(raw, evidence, states);
   const definitions = activeQuestions(s).map((q) =>
     q.id === "scopeDetails" &&
     /teacher|lesson|curriculum/i.test(String(s.request))
@@ -36,7 +48,7 @@ export function planDiscovery(
           }
         : q,
   );
-  const candidates = definitions.filter((q) => !(q.id in a));
+  const candidates = definitions.filter((q) => !(q.id in raw));
   const ranking = candidates
     .map((q) => {
       let score = 0;
@@ -52,7 +64,7 @@ export function planDiscovery(
         rank(900, "Clarify the idea without assuming existing operations");
       if (q.id === "frustrations" && a.stage === "uncertain")
         rank(900, "Clarify the situation in plain language");
-      if (q.id === "industry" && !context.activity)
+      if (q.id === "industry" && !decision.situationKnown)
         rank(800, "Situation is missing");
       if (
         [
@@ -63,7 +75,9 @@ export function planDiscovery(
         ].includes(q.id) ||
         (q.id === "workflowDetails" &&
           !context.directions.length &&
-          (!!s.goals ||
+          (decision.situationKnown ||
+            !!raw.frustrations ||
+            !!s.goals ||
             !!s.frustrations ||
             /maintenance|inspect|repair|fleet|manufactur|logistics|process|workflow|operational/i.test(
               Object.values(a).flat().join(" "),
@@ -75,9 +89,28 @@ export function planDiscovery(
           80,
           "Application audience and scope precede supporting workflow details",
         );
-      if (q.id === "constraints")
+      if (
+        q.id === "clarification" &&
+        (!decision.situationKnown ||
+          !decision.objectiveKnown ||
+          !decision.directions.length)
+      )
+        rank(
+          760,
+          "A concrete example is needed; clarify rather than inventing a requirement",
+        );
+      if (
+        q.id === "workflowDetails" &&
+        (raw.frustrations || raw.goals) &&
+        !decision.directions.length
+      )
+        rank(
+          160,
+          "Investigate the incomplete outcome using a concrete current process",
+        );
+      if (q.id === "constraints" && decision.directions.length)
         rank(650, "Constraints affect complexity and suitability");
-      if (q.id === "goals" && !s.goals && !s.request && !s.frustrations)
+      if (q.id === "goals" && !decision.objectiveKnown)
         rank(680, "A practical outcome is missing");
       if (q.id === "problems" && !s.problems && !s.request)
         rank(
@@ -87,7 +120,8 @@ export function planDiscovery(
       if (
         q.id === "tools" &&
         !s.tools &&
-        !["starting", "specific"].includes(String(a.stage))
+        !["starting", "specific"].includes(String(a.stage)) &&
+        decision.directions.length > 0
       )
         rank(550, "Avoid replacing tools that already work");
       if (
@@ -132,17 +166,56 @@ export function planDiscovery(
   let question = top ? definitions.find((q) => q.id === top.id)! : null;
   // Preliminary analysis is available immediately; only material clarifications remain in the path.
   if (readiness.canAssess && top && top.score < 500) question = null;
+  if (decision.conflicts.length || decision.unsupported) question = null;
+  const recoveryQuestion: Question = {
+    id: "clarification",
+    title: decision.unsupported
+      ? "Is there an administrative workflow we can investigate safely?"
+      : "What is one concrete task or outcome we should understand?",
+    hint: context.activity
+      ? `I have your context: ${context.activity.slice(0, 180)}. Describe what happens today and what should change.`
+      : "Describe a real activity, the current steps, who is involved and the outcome you want.",
+    type: "text",
+    optional: true,
+  };
+  const completion: DiscoveryPlan["completion"] = {
+    state: decision.unsupported
+      ? "unsupported"
+      : readiness.canAssess
+        ? readiness.state === "deeper"
+          ? "deeper_available"
+          : "preliminary_available"
+        : decision.conflicts.length
+          ? "clarification_required"
+          : question
+            ? decision.situationKnown
+              ? "clarification_required"
+              : "in_progress"
+            : "exhausted",
+    reasons: readiness.reasons,
+    recoveryQuestion,
+  };
   const active: Question[] = definitions.map((q) =>
     q.id === question?.id ? question : q,
   );
   return {
     revision,
-    plannerVersion: "adaptive-1",
+    plannerVersion: "reliability-2",
     question,
     active,
-    answered: Object.keys(a).length,
+    answered: Object.keys(a).filter((k) => states[k] === "answered").length,
     total: active.length,
     readiness,
+    completion,
+    conflicts: decision.conflicts,
+    answerStates: states,
+    questionStates: Object.fromEntries(
+      [...activeQuestions({}), ...definitions].map((q) => [
+        q.id,
+        states[q.id] ??
+          (q.id === question?.id ? "awaiting_answer" : "not_presented"),
+      ]),
+    ),
     context,
     ranking,
     referenceHints: matches.flatMap((m) =>

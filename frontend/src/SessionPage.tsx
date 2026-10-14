@@ -27,7 +27,15 @@ async function readSession(id: string) {
     api<Next>(`/sessions/${id}/next`),
     api<{ stale: boolean }>(`/sessions/${id}/report`).catch(() => null),
   ]);
-  return { session, next, ready: !!report && !report.stale };
+  if (session.revision !== next.revision)
+    throw new Error(
+      "This session changed while loading. Please reload to see the current question.",
+    );
+  return {
+    session,
+    next,
+    ready: !!report && !report.stale && next.readiness.canAssess,
+  };
 }
 
 function SessionTransition({ children }: { children: ReactNode }) {
@@ -74,7 +82,10 @@ export function SessionPage() {
     setError("");
     void reload().catch((e) => setError(errorMessage(e)));
   }, [id, reload]);
-  async function act(fn: () => Promise<unknown>) {
+  async function act(
+    fn: () => Promise<unknown>,
+    onError?: (error: unknown) => boolean,
+  ) {
     setBusy(true);
     setError("");
     try {
@@ -82,7 +93,7 @@ export function SessionPage() {
       await reload();
       return true;
     } catch (e) {
-      setError(errorMessage(e));
+      if (!onError?.(e)) setError(errorMessage(e));
       await reload().catch(() => {});
       return false;
     } finally {
@@ -183,6 +194,7 @@ export function SessionPage() {
                 act={act}
                 assess={assess}
                 ready={ready}
+                restart={restart}
               />
             ) : view === "conversation" ? (
               <Conversation
@@ -192,9 +204,19 @@ export function SessionPage() {
                 act={act}
               />
             ) : view === "canvas" ? (
-              <Canvas session={session} assess={assess} busy={busy} />
+              <Canvas
+                session={session}
+                next={next}
+                assess={assess}
+                busy={busy}
+              />
             ) : view === "report" ? (
-              <Analysis session={session} assess={assess} busy={busy} />
+              <Analysis
+                session={session}
+                next={next}
+                assess={assess}
+                busy={busy}
+              />
             ) : (
               <p>Choose a discovery view.</p>
             )}

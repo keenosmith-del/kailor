@@ -8,7 +8,7 @@ import { MessageCircle } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import type { AnswerValue } from "../../shared/src/index";
-import { api, sessionHref } from "./api";
+import { api, sessionHref, ApiError } from "./api";
 import { Mascot } from "./Mascot";
 import { discoveryCompletionPose, discoveryPoseAssets } from "./mascot-assets";
 import type { Next, SessionProps } from "./types";
@@ -48,7 +48,13 @@ export function Discovery({
   act,
   assess,
   ready,
-}: SessionProps & { next: Next; assess: () => Promise<void>; ready: boolean }) {
+  restart,
+}: SessionProps & {
+  next: Next;
+  assess: () => Promise<void>;
+  ready: boolean;
+  restart: () => Promise<void>;
+}) {
   const reduced = useReducedMotion();
   const saving = useRef(false);
   const [submittedControl, setSubmittedControl] = useState<string | null>(null);
@@ -73,36 +79,71 @@ export function Discovery({
   }, []);
   const [editing, setEditing] = useState<string | null>(null),
     [value, setValue] = useState<AnswerValue>("");
-  const question = next.active.find((q) => q.id === editing) ?? next.question;
+  const [recovering, setRecovering] = useState(false);
+  const [validation, setValidation] = useState<ApiError | null>(null);
+  const question =
+    next.active.find((q) => q.id === editing) ??
+    (recovering ? next.completion.recoveryQuestion : next.question);
   useEffect(() => {
     const saved = session.answers.find((a) => a.questionId === question?.id);
-    setValue(saved?.value ?? (question?.type === "multi" ? [] : ""));
-  }, [question?.id]);
-  const idx = next.active.findIndex((q) => q.id === question?.id);
+    setValue(
+      recovering
+        ? ""
+        : (saved?.value ?? (question?.type === "multi" ? [] : "")),
+    );
+  }, [question?.id, recovering]);
+  const previousQuestion = [...session.answers]
+    .reverse()
+    .find(
+      (a) =>
+        a.questionId !== question?.id &&
+        next.active.some((q) => q.id === a.questionId),
+    );
   async function save(
     answer: AnswerValue = value,
     skip = false,
     control = "continue",
+    responseState?: import("../../shared/src/index").AnswerState,
+    resolveConflicts = false,
   ) {
     if (!question || busy || saving.current) return;
     saving.current = true;
     setSubmittedControl(control);
     try {
-      const success = await act(async () => {
-        // Let the pressed/pop feedback finish even when the API responds instantly.
-        await Promise.all([
-          api(`/sessions/${session.id}/answers`, "PUT", {
-            revision: session.revision,
-            questionId: question.id,
-            value: answer,
-            skip,
-          }),
-          new Promise((resolve) =>
-            setTimeout(resolve, reduced ? 0 : feedbackDuration * 1000),
-          ),
-        ]);
-      });
-      if (success) setEditing(null);
+      const success = await act(
+        async () => {
+          // Let the pressed/pop feedback finish even when the API responds instantly.
+          await Promise.all([
+            api(`/sessions/${session.id}/answers`, "PUT", {
+              revision: session.revision,
+              questionId: question.id,
+              value: answer,
+              skip,
+              responseState,
+              resolveConflicts,
+            }),
+            new Promise((resolve) =>
+              setTimeout(resolve, reduced ? 0 : feedbackDuration * 1000),
+            ),
+          ]);
+        },
+        (error) => {
+          if (
+            error instanceof ApiError &&
+            ["input_quality", "input_conflict"].includes(error.code)
+          ) {
+            setValidation(error);
+            if (error.code === "input_conflict") setEditing(question.id);
+            return true;
+          }
+          return false;
+        },
+      );
+      if (success) {
+        setEditing(null);
+        setRecovering(false);
+        setValidation(null);
+      }
     } finally {
       saving.current = false;
       setSubmittedControl(null);
@@ -169,7 +210,10 @@ export function Discovery({
                       maxLength={4000}
                       value={typeof value === "string" ? value : ""}
                       placeholder="In your own words…"
-                      onChange={(e) => setValue(e.target.value)}
+                      onChange={(e) => {
+                        setValue(e.target.value);
+                        setValidation(null);
+                      }}
                     />
                   ) : (
                     <div className="choices">
@@ -232,6 +276,24 @@ export function Discovery({
                     </div>
                   )}
                 </fieldset>
+                {validation && (
+                  <p className="question-description" role="alert">
+                    {validation.message}
+                  </p>
+                )}
+                {validation?.code === "input_conflict" && (
+                  <div className="actions">
+                    <button
+                      className="discovery-action"
+                      disabled={busy}
+                      onClick={() =>
+                        void save(value, false, "continue", undefined, true)
+                      }
+                    >
+                      Confirm this correction
+                    </button>
+                  </div>
+                )}
                 <div className="actions">
                   {(question.type !== "single" ||
                     (typeof value === "string" && value.length > 0)) && (
@@ -261,6 +323,22 @@ export function Discovery({
                     >
                       Continue
                     </motion.button>
+                  )}
+                  {question.type === "text" && (
+                    <button
+                      className="discovery-action"
+                      disabled={busy}
+                      onClick={() =>
+                        void save(
+                          "I don’t know yet.",
+                          false,
+                          "unknown",
+                          "unknown",
+                        )
+                      }
+                    >
+                      I’m not sure yet
+                    </button>
                   )}
                   {question.optional && (
                     <motion.button
@@ -308,23 +386,71 @@ export function Discovery({
                       }
                       disabled={busy}
                       onClick={() =>
-                        void save("Not applicable", false, "not-applicable")
+                        void save(
+                          "Not applicable",
+                          false,
+                          "not-applicable",
+                          "not_applicable",
+                        )
                       }
                     >
                       Not applicable
                     </motion.button>
                   )}
-                  {idx > 0 && (
+                  {previousQuestion && (
                     <button
                       className="discovery-action"
                       disabled={busy}
-                      onClick={() => setEditing(next.active[idx - 1].id)}
+                      onClick={() => setEditing(previousQuestion.questionId)}
                     >
                       Back
                     </button>
                   )}
                 </div>
               </>
+            ) : !next.readiness.canAssess ? (
+              <div className="readiness">
+                <h1>We need a little more information.</h1>
+                <p className="question-description">
+                  {next.completion.state === "unsupported"
+                    ? "This request needs qualified specialist review before I can recommend a solution."
+                    : "I haven’t gathered enough detail to recommend a suitable solution yet. You can tell me more about what you’re working on, have a conversation, or begin again."}
+                </p>
+                {next.context.activity && (
+                  <p className="question-description">
+                    I have your context: {next.context.activity.slice(0, 180)}.
+                  </p>
+                )}
+                <p className="question-description">
+                  {next.readiness.reasons.join(". ")}
+                </p>
+                <div className="actions">
+                  <button
+                    className="discovery-action"
+                    disabled={busy}
+                    onClick={() => {
+                      setRecovering(true);
+                      setValue("");
+                      setValidation(null);
+                    }}
+                  >
+                    Tell kailor more
+                  </button>
+                  <Link
+                    className="discovery-action"
+                    to={sessionHref(session.id, "conversation")}
+                  >
+                    Have a conversation
+                  </Link>
+                  <button
+                    className="discovery-action"
+                    disabled={busy}
+                    onClick={() => void restart()}
+                  >
+                    Start again
+                  </button>
+                </div>
+              </div>
             ) : (
               <div className="readiness">
                 <h1>
@@ -381,29 +507,15 @@ export function Discovery({
                 )}
               </div>
             )}
-            <details>
-              <summary>Review your answers</summary>
-              <div className="actions">
-                {session.answers.map((a) => (
-                  <button
-                    key={a.questionId}
-                    className="text-link"
-                    disabled={busy}
-                    onClick={() => setEditing(a.questionId)}
-                  >
-                    {next.active.find((q) => q.id === a.questionId)?.title ??
-                      a.questionId}
-                  </button>
-                ))}
-              </div>
-            </details>
-            <Link
-              className="conversation-link text-link"
-              to={sessionHref(session.id, "conversation")}
-            >
-              <MessageCircle size={15} strokeWidth={1.5} aria-hidden="true" />
-              Have a conversation instead?
-            </Link>
+            {(question || next.readiness.canAssess) && (
+              <Link
+                className="conversation-link text-link"
+                to={sessionHref(session.id, "conversation")}
+              >
+                <MessageCircle size={15} strokeWidth={1.5} aria-hidden="true" />
+                Have a conversation instead?
+              </Link>
+            )}
           </div>
         </DiscoveryScene>
       </AnimatePresence>

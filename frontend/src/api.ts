@@ -6,6 +6,11 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
+    public code = "",
+    public details?: {
+      quality?: import("../../shared/src/index").InputQuality;
+      conflicts?: import("../../shared/src/index").DiscoveryConflict[];
+    },
   ) {
     super(message);
   }
@@ -28,6 +33,8 @@ export async function api<T>(
     throw new ApiError(
       response.status,
       payload.error?.message ?? "Request failed",
+      payload.error?.code ?? "",
+      payload.error?.details,
     );
   }
   return response.status === 204 ? (undefined as T) : response.json();

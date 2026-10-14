@@ -8,16 +8,20 @@ import {
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import type { Report, Session } from "../../shared/src/index";
-import { api, downloadReport } from "./api";
+import { Link } from "react-router";
+import type { Next } from "./types";
+import { api, downloadReport, sessionHref } from "./api";
 import { ErrorBox, errorMessage } from "./ui";
 export function Analysis({
   session,
   assess,
   busy,
+  next,
 }: {
   session: Session;
   assess: () => Promise<void>;
   busy: boolean;
+  next: Next;
 }) {
   const reduced = useReducedMotion();
   const [report, setReport] = useState<{
@@ -47,25 +51,32 @@ export function Analysis({
           goes a long way.
         </h1>
         <p className="lead">
-          Prepare your assessment once your context, challenges and goals are
-          confirmed.
+          {next.readiness.canAssess
+            ? "There is enough evidence for a qualified preliminary assessment."
+            : next.readiness.reasons.join(". ")}
         </p>
         <ErrorBox error={error} />
-        <button
-          className="button primary"
-          disabled={busy}
-          onClick={() =>
-            void assess()
-              .then(() =>
-                api<{ content: Report; stale: boolean }>(
-                  `/sessions/${session.id}/report`,
-                ).then(setReport),
-              )
-              .catch((e) => setError(errorMessage(e)))
-          }
-        >
-          Prepare draft analysis <ArrowRight size={17} />
-        </button>
+        {next.readiness.canAssess ? (
+          <button
+            className="button primary"
+            disabled={busy}
+            onClick={() =>
+              void assess()
+                .then(() =>
+                  api<{ content: Report; stale: boolean }>(
+                    `/sessions/${session.id}/report`,
+                  ).then(setReport),
+                )
+                .catch((e) => setError(errorMessage(e)))
+            }
+          >
+            Prepare draft analysis <ArrowRight size={17} />
+          </button>
+        ) : (
+          <Link className="text-link" to={sessionHref(session.id, "discovery")}>
+            Return to discovery
+          </Link>
+        )}
       </section>
     );
   const section = report.content.sections[index];
@@ -90,21 +101,33 @@ export function Analysis({
       {report.stale && (
         <div className="notice">
           Your discovery has changed since this snapshot.
-          <button
-            className="text-link"
-            disabled={busy}
-            onClick={() =>
-              void assess()
-                .then(() =>
-                  api<typeof report>(`/sessions/${session.id}/report`).then(
-                    setReport,
-                  ),
-                )
-                .catch((e) => setError(errorMessage(e)))
-            }
-          >
-            <RefreshCw size={15} /> Update analysis
-          </button>
+          {next.readiness.canAssess ? (
+            <button
+              className="text-link"
+              disabled={busy}
+              onClick={() =>
+                void assess()
+                  .then(() =>
+                    api<typeof report>(`/sessions/${session.id}/report`).then(
+                      setReport,
+                    ),
+                  )
+                  .catch((e) => setError(errorMessage(e)))
+              }
+            >
+              <RefreshCw size={15} /> Update analysis
+            </button>
+          ) : (
+            <p>
+              {next.readiness.reasons.join(". ")}{" "}
+              <Link
+                className="text-link"
+                to={sessionHref(session.id, "discovery")}
+              >
+                Clarify your current situation
+              </Link>
+            </p>
+          )}
         </div>
       )}
       <div

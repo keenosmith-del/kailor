@@ -15,3 +15,11 @@ Approved references add bounded clarification priority and refine recommendation
 `npm run evaluate` runs all 14 deterministic persona properties without database/network access. `npm run simulate` persists founder-owned sessions and pending cases. Real PostgreSQL integration tests execute all seeded runs plus custom definition/evaluation/approval/rerun workflows with isolated owners. See [iteration 003](../iterations/003-adaptive-intelligence.md) for exact results and API examples.
 
 `CaseRetriever` is the future adapter boundary for improved retrieval. Exact option/phrase overlap remains limited; no vector database or embeddings were added. Real assessment/project/outcome ingestion, formal commercial outcome validation and full Case Lab visuals remain future work. kai research → draft → approval → publication remains a proposed workflow only.
+
+## Iteration 004: reusable pattern safeguards
+
+Retrieval receives validated current facts plus evidence/response states. Material conflicts and unsupported requests produce no reusable matches. Industry alone cannot qualify. Explicit technology refusals and reviewed `unsuitableConstraints` exclude unsuitable candidates. Existing websites suppress pure new website/portfolio patterns; existing scheduling context supports improvement rather than duplication. Seed unsuitable conditions remain visible as limitations. Matching reasons and source labels are interpretation aids, not proof of client outcomes.
+
+Insufficient or unsuitable synthetic runs persist diagnostic sessions and failure notes with `assessmentId: null`, `report: null`, and no generated reusable case. Successful runs still create pending synthetic patterns. Approval requires useful sanitized title/pattern, known service IDs, valid current source readiness and source snapshot support for chosen services. `reviewVersion` increments on edits; the previous review is recorded in the audit event. Source classification remains seed/synthetic/real as originally stored; approval never turns a simulation into a real customer result. Cases cannot supply absent user facts or override preferences.
+
+This iteration strengthens deterministic retrieval and review APIs. It adds no fine tuning, automatic approval, embedding index, client outcome learning or Case Lab redesign.

@@ -94,3 +94,7 @@ npm run dev
 ```
 
 See [iteration 003](docs/iterations/003-adaptive-intelligence.md) for migration, exact verification results, changed files and limits. Local extraction is deliberately narrow. Live Cloudflare remains unverified because credentials are absent and opt-in is disabled. No billing, public deployment or model training was enabled.
+
+## Iteration 004 reliability
+
+Discovery now validates evidence quality, distinguishes skipped/unknown/not-applicable responses, confirms material corrections and offers recovery when useful information is exhausted. One independent evidence policy governs planner, assessment, chat and Canvas; industry or case matches alone cannot create a recommendation. Reports remain immutable qualified drafts. See [the implementation and verification report](docs/iterations/004-intelligence-reliability.md) for contracts, actual tests, migration, limits and local commands.

@@ -41,3 +41,7 @@ Do not repeat `createdb` if the test database exists. The suite refuses a databa
 Troubleshooting: start Docker if its socket is missing; check health and migration status if tables are absent; regenerate Prisma after schema changes; restart dev servers after dependency changes. Use `npm ci` to reproduce the lockfile. Security overrides for React deduplication, `deepmerge-ts` and `mysql2` are pinned in the root manifest and covered by build/database verification.
 
 Iteration 003 adds nullable context/plan JSONB projections. Run `npm run db:generate` and `npm run db:migrate` before starting; no reset/reseed is needed for existing local data. `npm run evaluate` runs fourteen behavior fixtures without database access. See the iteration 003 record for isolated PostgreSQL verification.
+
+## Iteration 004 schema update
+
+Run npm run db:generate and npm run db:migrate against the configured database, then apply the same additive migration to the existing isolated kailor_test database before integration tests. Do not reset or reseed existing development data: seeding can update the founder password. Failed simulations now persist without an assessment. The existing local servers on API 5050/frontend 5173 can hot reload these changes; avoid launching duplicate servers. No deployment, credentials or billing setup is required for deterministic reliability tests.

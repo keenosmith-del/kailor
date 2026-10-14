@@ -4,141 +4,60 @@ import type {
   Report,
 } from "../../shared/src/index.js";
 import { signalAnswers, buildContext } from "./context-extraction.js";
+import { evaluateEvidence } from "./evidence-policy.js";
+import { usableAnswers } from "./input-quality.js";
+import type { Evidence, AnswerStates } from "../../shared/src/index.js";
 import { evaluateReadiness } from "./discovery-readiness.js";
 import { services } from "../../data/services.js";
 import { matchCases, type CaseRecord } from "./library.js";
 export function recommend(
   a: Answers,
   pricing: { currency: string; hourlyRate?: number } = { currency: "ZAR" },
+  evidence: Evidence[] = [],
+  states: AnswerStates = {},
 ): Recommendation[] {
-  const confirmed = a;
-  a = signalAnswers(a);
+  const decision = evaluateEvidence(a, evidence, states);
+  if (
+    !decision.situationKnown ||
+    !decision.objectiveKnown ||
+    !decision.directions.length
+  )
+    return [];
+  const confirmed = usableAnswers(a, states);
+  a = decision.answers;
   const text = Object.values(confirmed).flat().join(" ");
-  const noWebsite = /(?:don.t|do not|no) (?:want|need)(?: a)? website/i.test(
-    text,
-  );
   const simple =
-    /affordable|limited|small amount|not complicated|don.t want a complicated|no custom|no AI/i.test(
-      text,
-    );
-  const existingBooking =
-    !/no longer use|don.t (?:have|use) (?:a )?booking|do not (?:have|use) (?:a )?booking/i.test(
-      text,
-    ) &&
-    /(?:already (?:have|use)|existing|use a) (?:a )?(?:booking|scheduling) (?:system|platform|tool)/i.test(
-      text,
-    );
-  const problems = Array.isArray(a.problems) ? a.problems : [];
-  const presence = Array.isArray(a.presence) ? a.presence : [];
-  const hasDetails = (key: string) =>
-    typeof a[key] === "string" &&
-    !!(a[key] as string).trim() &&
-    (a[key] as string).trim().toLowerCase() !== "not applicable";
-  const selected: {
-    id: string;
-    problem: string;
-    keys: string[];
-    optional?: boolean;
-  }[] = [];
-  if (problems.includes("credibility")) {
-    if (!presence.includes("website") && !noWebsite)
-      selected.push({
-        id:
-          a.kind === "professional" || /portfolio/i.test(text)
-            ? "portfolio"
-            : "website",
-        problem: "You want a more credible presentation of your work.",
-        keys: [
-          "problems",
-          "goals",
-          "presence",
-          "industry",
-          "portfolio",
-          "bookingDetails",
-        ],
-      });
-    if (!presence.includes("email"))
-      selected.push({
-        id: "email",
-        problem:
-          "A professional contact identity may support your credibility goal.",
-        keys: [
-          "problems",
-          "presence",
-          "industry",
-          "goals",
-          "portfolio",
-          "bookingDetails",
-        ],
-        optional: true,
-      });
-  }
-  if (
-    problems.includes("outdated") &&
-    presence.includes("website") &&
-    hasDetails("website")
-  )
-    selected.push({
-      id: "modernization",
-      problem: "Your existing website needs improvement.",
-      keys: ["website", "problems"],
-    });
-  if (
-    problems.includes("booking") &&
-    (hasDetails("bookingDetails") ||
-      /manual bookings?|bookings? manually|appointments? (?:through|via)|easier.*book/i.test(
+    /affordable|limited|small amount|not complicated|no custom/i.test(text);
+  const existingBooking = a.bookingStatus === "existing";
+  const explanations: Record<string, string> = {
+    presentation: "You want a more credible presentation of your work.",
+    modernization: "You described a problem with an existing website.",
+    booking: existingBooking
+      ? "Improve the existing booking workflow before considering another provider."
+      : "Your appointment workflow has described friction; start with a simple workflow or existing scheduling provider.",
+    invoices:
+      /manual|copy|repetitive|duplicate|several hours|every week|weekly/i.test(
         text,
-      ))
-  )
-    selected.push({
-      id: existingBooking ? "integration" : "booking",
-      problem: existingBooking
-        ? "Improve the existing booking workflow before considering another provider."
-        : "Your appointment workflow has described friction; start with a simple workflow or existing scheduling provider.",
-      keys: ["bookingDetails", "tools", "industry", "goals"],
-    });
-  if (
-    problems.includes("invoices") &&
-    (hasDetails("invoiceDetails") ||
-      (/invoic/i.test(text) &&
-        /spreadsheet|manual|repetitive|copy/i.test(text)))
-  )
-    selected.push({
-      id: "automation",
-      problem: "Invoice preparation contains repetitive work.",
-      keys: ["invoiceDetails", "tools", "goals", "industry"],
-    });
-  if (
-    problems.includes("content") &&
-    (hasDetails("contentDetails") ||
-      /weekly lesson|recurring research|draft generation/i.test(text))
-  )
-    selected.push({
-      id: "publishing",
-      problem: "Your research or content preparation repeats.",
-      keys: ["contentDetails", "goals", "request"],
-    });
-  if (problems.includes("custom") && a.request)
-    selected.push({
-      id: "webapp",
-      problem: "You have described a specific application requirement.",
-      keys: ["request", "scopeDetails", "goals"],
-    });
-  if (
-    !selected.length &&
-    (hasDetails("workflowDetails") ||
-      /\b(?:maintenance|inspections?|repairs?|inventory|logistics|fleet|integrat|operational|manufactur)\b/i.test(
-        text,
-      )) &&
-    (a.goals || a.request || a.frustrations || a.workflowDetails)
-  )
-    selected.push({
-      id: "integration",
-      problem:
-        "Explore a workflow improvement or existing software integration; delivery and specialist requirements need feasibility review.",
-      keys: ["industry", "goals", "request", "workflowDetails", "tools"],
-    });
-  return selected.map(({ id, problem, keys, optional = false }) => {
+      )
+        ? "Invoice preparation contains demonstrated repetitive work."
+        : "You want to explore improving invoice preparation; confirm the current steps before automating.",
+    content:
+      "Your research or content preparation repeats and requires human review.",
+    application:
+      "You described intended functionality for an application; validate the smallest useful scope.",
+    workflow_exploration:
+      "Explore a workflow improvement or feasibility review; specialist requirements and delivery remain unconfirmed.",
+  };
+  const selected = decision.directions.flatMap((direction) =>
+    direction.services.map((id) => ({
+      id,
+      problem: explanations[direction.id],
+      keys: direction.sourceKeys,
+      optional: id === "email",
+      basis: direction.basis,
+    })),
+  );
+  return selected.map(({ id, problem, keys, optional = false, basis }) => {
     const s = services.find((s) => s.id === id)!;
     const priced =
       pricing.hourlyRate !== undefined &&
@@ -147,7 +66,10 @@ export function recommend(
     return {
       serviceId: id,
       problem,
-      solution: s.name,
+      solution:
+        id === "integration" && !existingBooking
+          ? "Workflow feasibility and integration review"
+          : s.name,
       evidence: keys
         .filter((k) => confirmed[k] !== undefined)
         .map(
@@ -217,7 +139,9 @@ export function recommend(
                   "Confirm ongoing maintenance, hosting and vendor terms",
                 ],
       confidence:
-        "conditional — based on self-reported facts; consultant validation required",
+        basis === "interpreted"
+          ? "conditional — interpreted from the cited user description; confirm scope with the consultant"
+          : "conditional — based on self-reported facts; consultant validation required",
       delivery: s.delivery,
       nextSteps: [
         "Review this option with the consultant",
@@ -252,25 +176,31 @@ export function createReport(
   synthetic: boolean,
   cases: CaseRecord[],
   pricing?: { currency: string; hourlyRate?: number },
+  evidence: Evidence[] = [],
+  states: AnswerStates = {},
 ): Report {
-  const signals = signalAnswers(a);
-  const readiness = evaluateReadiness(a, recommend(a).length);
-  const matches = matchCases(a, cases);
-  const recommendations = recommend(a, pricing).map((recommendation) => {
-    const reference = matches.find((item) =>
-      item.pattern.patterns.includes(recommendation.serviceId),
-    );
-    const clarification = reference?.pattern.discoveryQuestions?.[0];
-    return {
-      ...recommendation,
-      nextSteps: clarification
-        ? [
-            ...recommendation.nextSteps,
-            `Reference-informed check (${reference!.title}, ${reference!.sourceType}): ${clarification}`,
-          ]
-        : recommendation.nextSteps,
-    };
-  });
+  const raw = a;
+  a = usableAnswers(a, states);
+  const signals = evaluateEvidence(raw, evidence, states).answers;
+  const readiness = evaluateReadiness(raw, evidence, states);
+  const matches = matchCases(raw, cases, evidence, states);
+  const recommendations = recommend(raw, pricing, evidence, states).map(
+    (recommendation) => {
+      const reference = matches.find((item) =>
+        item.pattern.patterns.includes(recommendation.serviceId),
+      );
+      const clarification = reference?.pattern.discoveryQuestions?.[0];
+      return {
+        ...recommendation,
+        nextSteps: clarification
+          ? [
+              ...recommendation.nextSteps,
+              `Reference-informed check (${reference!.title}, ${reference!.sourceType}): ${clarification}`,
+            ]
+          : recommendation.nextSteps,
+      };
+    },
+  );
   const matchedCases = matches.map(
     ({
       id,
@@ -291,12 +221,18 @@ export function createReport(
     }),
   );
   const val = (key: string) =>
-    Array.isArray(a[key])
-      ? (a[key] as string[]).join(", ")
-      : String(a[key] ?? "Not confirmed");
+    states[key] && states[key] !== "answered"
+      ? `${states[key].replace("_", " ")} — no factual value inferred`
+      : Array.isArray(a[key])
+        ? (a[key] as string[]).join(", ")
+        : String(a[key] ?? "Not confirmed");
   return {
     title: "Your way forward",
-    status: "draft — consultant review required",
+    status: readiness.canAssess
+      ? readiness.state === "deeper"
+        ? "draft solution evaluation — consultant review required"
+        : "qualified preliminary draft — consultant review required"
+      : "internal discovery notes — insufficient evidence, not an assessment",
     synthetic,
     revision,
     createdAt: new Date().toISOString(),
@@ -306,7 +242,7 @@ export function createReport(
       {
         title: "Your Situation",
         paragraphs: [
-          `Context: ${a.industry ? val("industry") : a.request ? val("request") : val("idea")}`,
+          `Context: ${buildContext(a, evidence).activity || "Not yet understood"}`,
           `Starting point: ${val("stage")}`,
           `Goal: ${a.goals ? val("goals") : a.request ? val("request") : signals.goals ? `Described in a confirmed answer: ${signals.goals}` : val("frustrations")}`,
         ],
@@ -314,9 +250,18 @@ export function createReport(
       {
         title: "Current Position",
         paragraphs: [
-          `Presence: ${a.presence ? val("presence") : signals.presence ? `Described channels: ${String(signals.presence)}` : "Not confirmed"}`,
+          `Presence: ${signals.presence ? `Described channels: ${String(signals.presence)}` : "Not confirmed"}`,
           `Tools: ${a.tools ? val("tools") : signals.tools ? `Described in a confirmed answer: ${signals.tools}` : "Not confirmed"}`,
-          `Confirmed challenges: ${val("problems")}`,
+          `User-selected challenges: ${val("problems")}`,
+          ...buildContext(a, evidence).corrections.map(
+            (c) =>
+              `Confirmed correction: current ${c.facet} is ${c.currentValue}. Earlier statements are source history, not current facts.`,
+          ),
+          ...(signals.bookingStatus
+            ? [
+                `Current booking provider: self-reported ${signals.bookingStatus}; takes precedence over earlier tool descriptions.`,
+              ]
+            : []),
           ...(a.websiteStatus
             ? [
                 `Website status: self-reported ${val("websiteStatus")}; no technical inspection.`,
@@ -370,8 +315,11 @@ export function createReport(
         title: "Your Way Forward",
         paragraphs: [
           `Timing: ${val("timing")}`,
-          `Readiness: ${readiness.state}. ${readiness.reasons.join(". ")}`,
+          `Readiness: ${readiness.canAssess ? (readiness.state === "deeper" ? "deeper evaluation available" : "qualified preliminary assessment available") : "more information required"}. ${readiness.reasons.join(". ")}`,
           ...readiness.uncertainties,
+          ...(readiness.criticalUnknowns ?? []).map(
+            (item) => `Before implementation: ${item}`,
+          ),
           "Review the evidence and unresolved assumptions with the consultant. Choose the smallest useful first step. Confirm scope and costs before implementation.",
           ...recommendations.flatMap((r) =>
             r.nextSteps.map((step) => `${r.solution}: ${step}`),

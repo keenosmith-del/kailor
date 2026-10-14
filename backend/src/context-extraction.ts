@@ -5,34 +5,77 @@ import type {
   Evidence,
 } from "../../shared/src/index.js";
 
-// Narrow, auditable language rules. These are candidates/signals, never database writes.
+import { evaluateInput, usableAnswers } from "./input-quality.js";
+import {
+  claimsFromText,
+  clausesOf,
+  applyResolvedFacets,
+  currentCorrections,
+} from "./knowledge-conflicts.js";
+
+// Extraction is separate from quality and reply generation. Clauses retain negation and modality.
 export function extractCandidates(message: string): ChatOutput["proposals"] {
-  const proposals: ChatOutput["proposals"] = [];
-  const add = (key: string, value: string | string[]) =>
-    proposals.push({ key, value });
-  const text = message.trim();
-  if (/\b(if I|perhaps|hypothetically|imagine|maybe I)\b/i.test(text))
-    return proposals;
-  if (/\b(I am|I'm|I run|I own|we run|we are|I coordinate)\b/i.test(text))
+  if (!evaluateInput(message, "", "chat").usableFacts) return [];
+  const result = new Map<string, string | string[]>();
+  const add = (key: string, value: string | string[]) => {
+    if (Array.isArray(value))
+      result.set(key, [
+        ...new Set([
+          ...(Array.isArray(result.get(key))
+            ? (result.get(key) as string[])
+            : []),
+          ...value,
+        ]),
+      ]);
+    else if (!result.has(key)) result.set(key, value);
+  };
+  const current = clausesOf(message).filter(
+    (c) =>
+      !/\b(?:might|maybe|hypothetically|whether|if I|used to|thinking about)\b/i.test(
+        c,
+      ),
+  );
+  const text =
+    current.length === clausesOf(message).length
+      ? message.trim()
+      : current.join(". ");
+  if (!text) return [];
+  if (/\b(?:I am|I'm|I run|I own|we run|we are|I coordinate)\b/i.test(text))
     add("industry", text);
-  const presence: string[] = [];
-  if (/\binstagram|social media\b/i.test(text)) presence.push("instagram");
+  const claims = claimsFromText(text, "chat");
   if (
-    /\b(?:already (?:have|has|use)|have|has|our|my|existing) (?:a |an )?website\b/i.test(
-      text,
-    ) &&
-    !/\b(?:don't|do not|no|not) (?:have |want |need )?(?:a )?website\b/i.test(
-      text,
+    claims.some((c) =>
+      claims.some((x) => x.facet === c.facet && x.value !== c.value),
     )
   )
-    presence.push("website");
+    return [];
+  for (const [facet, key] of [
+    ["website", "websiteStatus"],
+    ["booking", "bookingStatus"],
+    ["ai", "aiPreference"],
+    ["automation", "automationPreference"],
+    ["websitePreference", "websitePreference"],
+  ] as const) {
+    const values = [
+      ...new Set(claims.filter((c) => c.facet === facet).map((c) => c.value)),
+    ];
+    if (values.length === 1) add(key, values[0]);
+  }
+  const presence: string[] = [];
   if (
-    /\b(?:no website|don't have a website|do not have a website)\b/i.test(text)
+    /\b(?:use|advertise|only|through|via|on)\b[^.!?]*\binstagram\b/i.test(text)
   )
-    add("websiteStatus", "absent");
-  if (/\bnowhere online\b/i.test(text) && !presence.length)
-    presence.push("none");
-  if (presence.length) add("presence", presence);
+    presence.push("instagram");
+  if (claims.some((c) => c.facet === "website" && c.value === "existing"))
+    presence.push("website");
+  if (/nowhere online/i.test(text)) presence.push("none");
+  if (presence.length)
+    add(
+      "presence",
+      presence.includes("none") && presence.length > 1
+        ? presence.filter((p) => p !== "none")
+        : presence,
+    );
   if (
     /\b(?:use|using|through|via|spreadsheets?|whatsapp|booking system|booking platform|existing software)\b/i.test(
       text,
@@ -40,65 +83,100 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
   )
     add("tools", text);
   const problems: string[] = [];
-  if (
-    /\b(?:professional presence|portfolio|present (?:my|our) work|credib|gallery|showcase)\b/i.test(
-      text,
-    ) &&
-    !/\b(?:no|don't need|do not need) (?:public )?portfolio\b/i.test(text)
-  )
-    problems.push("credibility");
-  if (
-    /\b(?:manual bookings?|bookings? manually|appointments? (?:through|via)|easier.*book|manage.*appointments?|booking.*(?:difficult|friction|cancellations?|missed)|appointments?.*(?:difficult|missed))\b/i.test(
-      text,
+  const goalClauses: string[] = [];
+  for (const clause of current) {
+    if (
+      /\b(?:don't|do not|no) (?:want|need)\b/i.test(clause) &&
+      !/\b(?:but|however)\b/i.test(clause)
     )
-  )
-    problems.push("booking");
-  if (
-    /\binvoic/i.test(text) &&
-    /\b(?:repetitive|copy|manual|spreadsheet|reduce|email|duplicate)\b/i.test(
-      text,
+      continue;
+    if (
+      /portfolio|professional presence|credible gallery|showcase|present.*work|website for.*(?:photography|work|business)/i.test(
+        clause,
+      )
     )
-  )
-    problems.push("invoices");
-  if (
-    /\b(?:recurring|weekly|repeated|research|draft|lesson plan|publishing)\b/i.test(
-      text,
-    ) &&
-    /\b(?:content|research|lesson|draft|publication|publishing)\b/i.test(text)
-  )
-    problems.push("content");
-  if (
-    /\b(?:I need|I want|we need|we want)\b.*\b(?:web application|mobile application|mobile app|web app|app for|application that)\b/i.test(
-      text,
+      problems.push("credibility");
+    if (
+      /manual bookings?|bookings? manually|appointments? (?:through|via)|easier.*book|manage.*appointments?|booking.*(?:difficult|friction|cancellations?|missed)|appointments?.*(?:difficult|missed)|customer reminders/i.test(
+        clause,
+      )
     )
-  ) {
-    problems.push("custom");
-    add("request", text);
+      problems.push("booking");
+    if (
+      /invoic/i.test(clause) &&
+      /repetitive|copy|manual|spreadsheet|reduce|duplicate|every week|weekly|several hours|automat/i.test(
+        clause,
+      )
+    )
+      problems.push("invoices");
+    if (
+      /recurring|weekly|repeated|research|draft|lesson plan|publishing/i.test(
+        clause,
+      ) &&
+      /content|research|lesson|draft|publication|publishing/i.test(clause)
+    )
+      problems.push("content");
+    if (
+      /(?:I need|I want|we need|we want).*?(?:web application|mobile application|mobile app|web app|app for|application that)/i.test(
+        clause,
+      )
+    ) {
+      problems.push("custom");
+      add("request", clause);
+    }
+    if (
+      /(?:I want|I need|we want|we need|goal|mostly want|wants to)/i.test(
+        clause,
+      )
+    )
+      if (
+        !/^(?:I|we) (?:want|need)(?: something| it)? (?:affordable|cheap|inexpensive|simple|a small amount|a limited budget|quickly|soon|privacy)/i.test(
+          clause,
+        ) ||
+        /\bto (?:build|improve|automate|record|manage|reduce)\b/i.test(clause)
+      ) {
+        add("goals", clause);
+        goalClauses.push(clause);
+      }
+    if (
+      /manually|repetitive|several hours|current process|copy .*invoic/i.test(
+        clause,
+      )
+    )
+      add("workflowDetails", clause);
   }
+  if (goalClauses.length > 1) result.set("goals", text);
   if (problems.length) add("problems", problems);
   if (
-    /\b(?:I want|I need|we want|we need|goal|mostly want|wants to)\b/i.test(
-      text,
-    ) &&
-    !/^(?:I|we) (?:don't|do not) (?:want|need)/i.test(text)
-  )
-    add("goals", text);
-  if (
-    /\b(?:affordable|limited budget|small amount|only spend|can't afford|cannot afford|don't want|do not want|privacy|accessibility|not complicated|no pupil data|review|approval|not applicable)\b/i.test(
+    /affordable|limited budget|small amount|only spend|can't afford|cannot afford|don't want|do not want|privacy|accessibility|not complicated|no pupil data|review|approval/i.test(
       text,
     )
   )
     add("constraints", text);
   if (
-    /\b(?:budget|only spend|small amount|affordable|can't afford|cannot afford)\b/i.test(
+    /budget|only spend|small amount|affordable|can't afford|cannot afford/i.test(
       text,
     )
   )
     add("budget", text);
-  return proposals.slice(0, 8);
+  if (
+    result.size === 0 &&
+    /\b(?:want|need|improve|reduce|coordinate|record|build)\b/i.test(text)
+  )
+    add("clarification", text);
+  // A real requirement can also supply the situation without inventing an industry classification.
+  if (
+    !result.has("industry") &&
+    (result.has("workflowDetails") ||
+      (result.has("goals") &&
+        /for |workflow|application|inspection|build|portfolio/i.test(text)))
+  )
+    add("clarification", text);
+  return [...result].slice(0, 8).map(([key, value]) => ({ key, value }));
 }
 
 export function signalAnswers(a: Answers, includeDetails = true): Answers {
+  a = usableAnswers(a);
   const result = { ...a };
   // Only current independent confirmed descriptions: pruned detail branches cannot reactivate themselves.
   const roots = [
@@ -110,6 +188,7 @@ export function signalAnswers(a: Answers, includeDetails = true): Answers {
     "tools",
     "constraints",
     "portfolio",
+    "clarification",
   ];
   if (includeDetails)
     roots.push(
@@ -144,7 +223,19 @@ export function buildContext(
   a: Answers,
   evidence: Evidence[] = [],
 ): DiscoveryContext {
-  const signals = signalAnswers(a);
+  a = usableAnswers(a);
+  const signals = applyResolvedFacets(signalAnswers(a), evidence);
+  const corrections = currentCorrections(a, evidence);
+  const activity = String(
+    a.industry ??
+      a.idea ??
+      a.request ??
+      a.workflowDetails ??
+      a.clarification ??
+      a.frustrations ??
+      a.goals ??
+      "",
+  );
   const text = Object.values(a).flat().join(" ");
   const unknowns = ["constraints", "budget", "tools"].filter(
     (k) => !(k in a) && !(k in signals),
@@ -152,7 +243,10 @@ export function buildContext(
   return {
     subjectType: String(a.kind ?? "unknown"),
     stage: String(a.stage ?? "unknown"),
-    activity: String(a.industry ?? a.idea ?? a.request ?? ""),
+    activity: corrections.length
+      ? `Earlier description: ${activity}. Current corrections: ${corrections.map((c) => `${c.facet} ${c.currentValue}`).join("; ")}`
+      : activity,
+    corrections,
     facts: Object.entries(a)
       .filter(([, value]) => String(value).trim())
       .map(([key, value]) => ({
