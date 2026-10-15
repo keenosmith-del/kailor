@@ -24,3 +24,7 @@ npm-debug.log*
 
 # Local uploads
 backend/uploads/
+
+# Generated QA reports/screenshots and temporary migration verification artifacts.
+# Existing tracked historical outputs are left for the owner to untrack.
+.cache/

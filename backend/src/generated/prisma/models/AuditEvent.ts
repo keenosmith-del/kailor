@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model AuditEvent
- * 
+ *
  */
 export type AuditEventModel = runtime.Types.Result.DefaultSelection<Prisma.$AuditEventPayload>
 
@@ -84,43 +84,43 @@ export type AuditEventAggregateArgs<ExtArgs extends runtime.Types.Extensions.Int
   where?: Prisma.AuditEventWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AuditEvents to fetch.
    */
   orderBy?: Prisma.AuditEventOrderByWithRelationInput | Prisma.AuditEventOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.AuditEventWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AuditEvents from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AuditEvents.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned AuditEvents
   **/
   _count?: true | AuditEventCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: AuditEventMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: AuditEventMaxAggregateInputType
@@ -450,13 +450,13 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    * @example
    * // Get all AuditEvents
    * const auditEvents = await prisma.auditEvent.findMany()
-   * 
+   *
    * // Get first 10 AuditEvents
    * const auditEvents = await prisma.auditEvent.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const auditEventWithIdOnly = await prisma.auditEvent.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends AuditEventFindManyArgs>(args?: Prisma.SelectSubset<T, AuditEventFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -470,7 +470,7 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... data to create a AuditEvent
    *   }
    * })
-   * 
+   *
    */
   create<T extends AuditEventCreateArgs>(args: Prisma.SelectSubset<T, AuditEventCreateArgs<ExtArgs>>): Prisma.Prisma__AuditEventClient<runtime.Types.Result.GetResult<Prisma.$AuditEventPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -484,7 +484,7 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends AuditEventCreateManyArgs>(args?: Prisma.SelectSubset<T, AuditEventCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -498,7 +498,7 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many AuditEvents and only return the `id`
    * const auditEventWithIdOnly = await prisma.auditEvent.createManyAndReturn({
    *   select: { id: true },
@@ -508,7 +508,7 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends AuditEventCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, AuditEventCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditEventPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -522,7 +522,7 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... filter to delete one AuditEvent
    *   }
    * })
-   * 
+   *
    */
   delete<T extends AuditEventDeleteArgs>(args: Prisma.SelectSubset<T, AuditEventDeleteArgs<ExtArgs>>): Prisma.Prisma__AuditEventClient<runtime.Types.Result.GetResult<Prisma.$AuditEventPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -539,7 +539,7 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends AuditEventUpdateArgs>(args: Prisma.SelectSubset<T, AuditEventUpdateArgs<ExtArgs>>): Prisma.Prisma__AuditEventClient<runtime.Types.Result.GetResult<Prisma.$AuditEventPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -553,7 +553,7 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends AuditEventDeleteManyArgs>(args?: Prisma.SelectSubset<T, AuditEventDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -572,7 +572,7 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends AuditEventUpdateManyArgs>(args: Prisma.SelectSubset<T, AuditEventUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -589,7 +589,7 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more AuditEvents and only return the `id`
    * const auditEventWithIdOnly = await prisma.auditEvent.updateManyAndReturn({
    *   select: { id: true },
@@ -602,7 +602,7 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends AuditEventUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, AuditEventUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditEventPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -691,7 +691,7 @@ export interface AuditEventDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends AuditEventGroupByArgs,
@@ -858,31 +858,31 @@ export type AuditEventFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Int
   where?: Prisma.AuditEventWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AuditEvents to fetch.
    */
   orderBy?: Prisma.AuditEventOrderByWithRelationInput | Prisma.AuditEventOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for AuditEvents.
    */
   cursor?: Prisma.AuditEventWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AuditEvents from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AuditEvents.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of AuditEvents.
    */
   distinct?: Prisma.AuditEventScalarFieldEnum | Prisma.AuditEventScalarFieldEnum[]
@@ -906,31 +906,31 @@ export type AuditEventFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensi
   where?: Prisma.AuditEventWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AuditEvents to fetch.
    */
   orderBy?: Prisma.AuditEventOrderByWithRelationInput | Prisma.AuditEventOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for AuditEvents.
    */
   cursor?: Prisma.AuditEventWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AuditEvents from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AuditEvents.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of AuditEvents.
    */
   distinct?: Prisma.AuditEventScalarFieldEnum | Prisma.AuditEventScalarFieldEnum[]
@@ -954,31 +954,31 @@ export type AuditEventFindManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
   where?: Prisma.AuditEventWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AuditEvents to fetch.
    */
   orderBy?: Prisma.AuditEventOrderByWithRelationInput | Prisma.AuditEventOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing AuditEvents.
    */
   cursor?: Prisma.AuditEventWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AuditEvents from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AuditEvents.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of AuditEvents.
    */
   distinct?: Prisma.AuditEventScalarFieldEnum | Prisma.AuditEventScalarFieldEnum[]

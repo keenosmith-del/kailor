@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model AdminUser
- * 
+ *
  */
 export type AdminUserModel = runtime.Types.Result.DefaultSelection<Prisma.$AdminUserPayload>
 
@@ -82,43 +82,43 @@ export type AdminUserAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inte
   where?: Prisma.AdminUserWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AdminUsers to fetch.
    */
   orderBy?: Prisma.AdminUserOrderByWithRelationInput | Prisma.AdminUserOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.AdminUserWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AdminUsers from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AdminUsers.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned AdminUsers
   **/
   _count?: true | AdminUserCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: AdminUserMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: AdminUserMaxAggregateInputType
@@ -184,6 +184,9 @@ export type AdminUserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
   sessions?: Prisma.AuthSessionListRelationFilter
   discoveries?: Prisma.DiscoverySessionListRelationFilter
+  plans?: Prisma.PlanListRelationFilter
+  settings?: Prisma.XOR<Prisma.AccountSettingsNullableScalarRelationFilter, Prisma.AccountSettingsWhereInput> | null
+  preferences?: Prisma.AccountPreferenceListRelationFilter
 }
 
 export type AdminUserOrderByWithRelationInput = {
@@ -194,6 +197,9 @@ export type AdminUserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   sessions?: Prisma.AuthSessionOrderByRelationAggregateInput
   discoveries?: Prisma.DiscoverySessionOrderByRelationAggregateInput
+  plans?: Prisma.PlanOrderByRelationAggregateInput
+  settings?: Prisma.AccountSettingsOrderByWithRelationInput
+  preferences?: Prisma.AccountPreferenceOrderByRelationAggregateInput
 }
 
 export type AdminUserWhereUniqueInput = Prisma.AtLeast<{
@@ -207,6 +213,9 @@ export type AdminUserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
   sessions?: Prisma.AuthSessionListRelationFilter
   discoveries?: Prisma.DiscoverySessionListRelationFilter
+  plans?: Prisma.PlanListRelationFilter
+  settings?: Prisma.XOR<Prisma.AccountSettingsNullableScalarRelationFilter, Prisma.AccountSettingsWhereInput> | null
+  preferences?: Prisma.AccountPreferenceListRelationFilter
 }, "id" | "email">
 
 export type AdminUserOrderByWithAggregationInput = {
@@ -239,6 +248,9 @@ export type AdminUserCreateInput = {
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionCreateNestedManyWithoutAdminInput
   discoveries?: Prisma.DiscoverySessionCreateNestedManyWithoutAdminInput
+  plans?: Prisma.PlanCreateNestedManyWithoutAdminInput
+  settings?: Prisma.AccountSettingsCreateNestedOneWithoutAdminInput
+  preferences?: Prisma.AccountPreferenceCreateNestedManyWithoutAdminInput
 }
 
 export type AdminUserUncheckedCreateInput = {
@@ -249,6 +261,9 @@ export type AdminUserUncheckedCreateInput = {
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutAdminInput
   discoveries?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutAdminInput
+  plans?: Prisma.PlanUncheckedCreateNestedManyWithoutAdminInput
+  settings?: Prisma.AccountSettingsUncheckedCreateNestedOneWithoutAdminInput
+  preferences?: Prisma.AccountPreferenceUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type AdminUserUpdateInput = {
@@ -259,6 +274,9 @@ export type AdminUserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUpdateManyWithoutAdminNestedInput
   discoveries?: Prisma.DiscoverySessionUpdateManyWithoutAdminNestedInput
+  plans?: Prisma.PlanUpdateManyWithoutAdminNestedInput
+  settings?: Prisma.AccountSettingsUpdateOneWithoutAdminNestedInput
+  preferences?: Prisma.AccountPreferenceUpdateManyWithoutAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateInput = {
@@ -269,6 +287,9 @@ export type AdminUserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutAdminNestedInput
   discoveries?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutAdminNestedInput
+  plans?: Prisma.PlanUncheckedUpdateManyWithoutAdminNestedInput
+  settings?: Prisma.AccountSettingsUncheckedUpdateOneWithoutAdminNestedInput
+  preferences?: Prisma.AccountPreferenceUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type AdminUserCreateManyInput = {
@@ -350,6 +371,48 @@ export type AdminUserUpdateOneRequiredWithoutSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AdminUserUpdateToOneWithWhereWithoutSessionsInput, Prisma.AdminUserUpdateWithoutSessionsInput>, Prisma.AdminUserUncheckedUpdateWithoutSessionsInput>
 }
 
+export type AdminUserCreateNestedOneWithoutPlansInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutPlansInput, Prisma.AdminUserUncheckedCreateWithoutPlansInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutPlansInput
+  connect?: Prisma.AdminUserWhereUniqueInput
+}
+
+export type AdminUserUpdateOneRequiredWithoutPlansNestedInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutPlansInput, Prisma.AdminUserUncheckedCreateWithoutPlansInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutPlansInput
+  upsert?: Prisma.AdminUserUpsertWithoutPlansInput
+  connect?: Prisma.AdminUserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AdminUserUpdateToOneWithWhereWithoutPlansInput, Prisma.AdminUserUpdateWithoutPlansInput>, Prisma.AdminUserUncheckedUpdateWithoutPlansInput>
+}
+
+export type AdminUserCreateNestedOneWithoutSettingsInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutSettingsInput, Prisma.AdminUserUncheckedCreateWithoutSettingsInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutSettingsInput
+  connect?: Prisma.AdminUserWhereUniqueInput
+}
+
+export type AdminUserUpdateOneRequiredWithoutSettingsNestedInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutSettingsInput, Prisma.AdminUserUncheckedCreateWithoutSettingsInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutSettingsInput
+  upsert?: Prisma.AdminUserUpsertWithoutSettingsInput
+  connect?: Prisma.AdminUserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AdminUserUpdateToOneWithWhereWithoutSettingsInput, Prisma.AdminUserUpdateWithoutSettingsInput>, Prisma.AdminUserUncheckedUpdateWithoutSettingsInput>
+}
+
+export type AdminUserCreateNestedOneWithoutPreferencesInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutPreferencesInput, Prisma.AdminUserUncheckedCreateWithoutPreferencesInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutPreferencesInput
+  connect?: Prisma.AdminUserWhereUniqueInput
+}
+
+export type AdminUserUpdateOneRequiredWithoutPreferencesNestedInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutPreferencesInput, Prisma.AdminUserUncheckedCreateWithoutPreferencesInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutPreferencesInput
+  upsert?: Prisma.AdminUserUpsertWithoutPreferencesInput
+  connect?: Prisma.AdminUserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AdminUserUpdateToOneWithWhereWithoutPreferencesInput, Prisma.AdminUserUpdateWithoutPreferencesInput>, Prisma.AdminUserUncheckedUpdateWithoutPreferencesInput>
+}
+
 export type AdminUserCreateNestedOneWithoutDiscoveriesInput = {
   create?: Prisma.XOR<Prisma.AdminUserCreateWithoutDiscoveriesInput, Prisma.AdminUserUncheckedCreateWithoutDiscoveriesInput>
   connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutDiscoveriesInput
@@ -371,6 +434,9 @@ export type AdminUserCreateWithoutSessionsInput = {
   passwordHash: string
   createdAt?: Date | string
   discoveries?: Prisma.DiscoverySessionCreateNestedManyWithoutAdminInput
+  plans?: Prisma.PlanCreateNestedManyWithoutAdminInput
+  settings?: Prisma.AccountSettingsCreateNestedOneWithoutAdminInput
+  preferences?: Prisma.AccountPreferenceCreateNestedManyWithoutAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutSessionsInput = {
@@ -380,6 +446,9 @@ export type AdminUserUncheckedCreateWithoutSessionsInput = {
   passwordHash: string
   createdAt?: Date | string
   discoveries?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutAdminInput
+  plans?: Prisma.PlanUncheckedCreateNestedManyWithoutAdminInput
+  settings?: Prisma.AccountSettingsUncheckedCreateNestedOneWithoutAdminInput
+  preferences?: Prisma.AccountPreferenceUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutSessionsInput = {
@@ -405,6 +474,9 @@ export type AdminUserUpdateWithoutSessionsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   discoveries?: Prisma.DiscoverySessionUpdateManyWithoutAdminNestedInput
+  plans?: Prisma.PlanUpdateManyWithoutAdminNestedInput
+  settings?: Prisma.AccountSettingsUpdateOneWithoutAdminNestedInput
+  preferences?: Prisma.AccountPreferenceUpdateManyWithoutAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutSessionsInput = {
@@ -414,6 +486,201 @@ export type AdminUserUncheckedUpdateWithoutSessionsInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   discoveries?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutAdminNestedInput
+  plans?: Prisma.PlanUncheckedUpdateManyWithoutAdminNestedInput
+  settings?: Prisma.AccountSettingsUncheckedUpdateOneWithoutAdminNestedInput
+  preferences?: Prisma.AccountPreferenceUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type AdminUserCreateWithoutPlansInput = {
+  isGuest?: boolean
+  id?: string
+  email: string
+  passwordHash: string
+  createdAt?: Date | string
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutAdminInput
+  discoveries?: Prisma.DiscoverySessionCreateNestedManyWithoutAdminInput
+  settings?: Prisma.AccountSettingsCreateNestedOneWithoutAdminInput
+  preferences?: Prisma.AccountPreferenceCreateNestedManyWithoutAdminInput
+}
+
+export type AdminUserUncheckedCreateWithoutPlansInput = {
+  isGuest?: boolean
+  id?: string
+  email: string
+  passwordHash: string
+  createdAt?: Date | string
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutAdminInput
+  discoveries?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutAdminInput
+  settings?: Prisma.AccountSettingsUncheckedCreateNestedOneWithoutAdminInput
+  preferences?: Prisma.AccountPreferenceUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type AdminUserCreateOrConnectWithoutPlansInput = {
+  where: Prisma.AdminUserWhereUniqueInput
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutPlansInput, Prisma.AdminUserUncheckedCreateWithoutPlansInput>
+}
+
+export type AdminUserUpsertWithoutPlansInput = {
+  update: Prisma.XOR<Prisma.AdminUserUpdateWithoutPlansInput, Prisma.AdminUserUncheckedUpdateWithoutPlansInput>
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutPlansInput, Prisma.AdminUserUncheckedCreateWithoutPlansInput>
+  where?: Prisma.AdminUserWhereInput
+}
+
+export type AdminUserUpdateToOneWithWhereWithoutPlansInput = {
+  where?: Prisma.AdminUserWhereInput
+  data: Prisma.XOR<Prisma.AdminUserUpdateWithoutPlansInput, Prisma.AdminUserUncheckedUpdateWithoutPlansInput>
+}
+
+export type AdminUserUpdateWithoutPlansInput = {
+  isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.AuthSessionUpdateManyWithoutAdminNestedInput
+  discoveries?: Prisma.DiscoverySessionUpdateManyWithoutAdminNestedInput
+  settings?: Prisma.AccountSettingsUpdateOneWithoutAdminNestedInput
+  preferences?: Prisma.AccountPreferenceUpdateManyWithoutAdminNestedInput
+}
+
+export type AdminUserUncheckedUpdateWithoutPlansInput = {
+  isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutAdminNestedInput
+  discoveries?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutAdminNestedInput
+  settings?: Prisma.AccountSettingsUncheckedUpdateOneWithoutAdminNestedInput
+  preferences?: Prisma.AccountPreferenceUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type AdminUserCreateWithoutSettingsInput = {
+  isGuest?: boolean
+  id?: string
+  email: string
+  passwordHash: string
+  createdAt?: Date | string
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutAdminInput
+  discoveries?: Prisma.DiscoverySessionCreateNestedManyWithoutAdminInput
+  plans?: Prisma.PlanCreateNestedManyWithoutAdminInput
+  preferences?: Prisma.AccountPreferenceCreateNestedManyWithoutAdminInput
+}
+
+export type AdminUserUncheckedCreateWithoutSettingsInput = {
+  isGuest?: boolean
+  id?: string
+  email: string
+  passwordHash: string
+  createdAt?: Date | string
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutAdminInput
+  discoveries?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutAdminInput
+  plans?: Prisma.PlanUncheckedCreateNestedManyWithoutAdminInput
+  preferences?: Prisma.AccountPreferenceUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type AdminUserCreateOrConnectWithoutSettingsInput = {
+  where: Prisma.AdminUserWhereUniqueInput
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutSettingsInput, Prisma.AdminUserUncheckedCreateWithoutSettingsInput>
+}
+
+export type AdminUserUpsertWithoutSettingsInput = {
+  update: Prisma.XOR<Prisma.AdminUserUpdateWithoutSettingsInput, Prisma.AdminUserUncheckedUpdateWithoutSettingsInput>
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutSettingsInput, Prisma.AdminUserUncheckedCreateWithoutSettingsInput>
+  where?: Prisma.AdminUserWhereInput
+}
+
+export type AdminUserUpdateToOneWithWhereWithoutSettingsInput = {
+  where?: Prisma.AdminUserWhereInput
+  data: Prisma.XOR<Prisma.AdminUserUpdateWithoutSettingsInput, Prisma.AdminUserUncheckedUpdateWithoutSettingsInput>
+}
+
+export type AdminUserUpdateWithoutSettingsInput = {
+  isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.AuthSessionUpdateManyWithoutAdminNestedInput
+  discoveries?: Prisma.DiscoverySessionUpdateManyWithoutAdminNestedInput
+  plans?: Prisma.PlanUpdateManyWithoutAdminNestedInput
+  preferences?: Prisma.AccountPreferenceUpdateManyWithoutAdminNestedInput
+}
+
+export type AdminUserUncheckedUpdateWithoutSettingsInput = {
+  isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutAdminNestedInput
+  discoveries?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutAdminNestedInput
+  plans?: Prisma.PlanUncheckedUpdateManyWithoutAdminNestedInput
+  preferences?: Prisma.AccountPreferenceUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type AdminUserCreateWithoutPreferencesInput = {
+  isGuest?: boolean
+  id?: string
+  email: string
+  passwordHash: string
+  createdAt?: Date | string
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutAdminInput
+  discoveries?: Prisma.DiscoverySessionCreateNestedManyWithoutAdminInput
+  plans?: Prisma.PlanCreateNestedManyWithoutAdminInput
+  settings?: Prisma.AccountSettingsCreateNestedOneWithoutAdminInput
+}
+
+export type AdminUserUncheckedCreateWithoutPreferencesInput = {
+  isGuest?: boolean
+  id?: string
+  email: string
+  passwordHash: string
+  createdAt?: Date | string
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutAdminInput
+  discoveries?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutAdminInput
+  plans?: Prisma.PlanUncheckedCreateNestedManyWithoutAdminInput
+  settings?: Prisma.AccountSettingsUncheckedCreateNestedOneWithoutAdminInput
+}
+
+export type AdminUserCreateOrConnectWithoutPreferencesInput = {
+  where: Prisma.AdminUserWhereUniqueInput
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutPreferencesInput, Prisma.AdminUserUncheckedCreateWithoutPreferencesInput>
+}
+
+export type AdminUserUpsertWithoutPreferencesInput = {
+  update: Prisma.XOR<Prisma.AdminUserUpdateWithoutPreferencesInput, Prisma.AdminUserUncheckedUpdateWithoutPreferencesInput>
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutPreferencesInput, Prisma.AdminUserUncheckedCreateWithoutPreferencesInput>
+  where?: Prisma.AdminUserWhereInput
+}
+
+export type AdminUserUpdateToOneWithWhereWithoutPreferencesInput = {
+  where?: Prisma.AdminUserWhereInput
+  data: Prisma.XOR<Prisma.AdminUserUpdateWithoutPreferencesInput, Prisma.AdminUserUncheckedUpdateWithoutPreferencesInput>
+}
+
+export type AdminUserUpdateWithoutPreferencesInput = {
+  isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.AuthSessionUpdateManyWithoutAdminNestedInput
+  discoveries?: Prisma.DiscoverySessionUpdateManyWithoutAdminNestedInput
+  plans?: Prisma.PlanUpdateManyWithoutAdminNestedInput
+  settings?: Prisma.AccountSettingsUpdateOneWithoutAdminNestedInput
+}
+
+export type AdminUserUncheckedUpdateWithoutPreferencesInput = {
+  isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutAdminNestedInput
+  discoveries?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutAdminNestedInput
+  plans?: Prisma.PlanUncheckedUpdateManyWithoutAdminNestedInput
+  settings?: Prisma.AccountSettingsUncheckedUpdateOneWithoutAdminNestedInput
 }
 
 export type AdminUserCreateWithoutDiscoveriesInput = {
@@ -423,6 +690,9 @@ export type AdminUserCreateWithoutDiscoveriesInput = {
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionCreateNestedManyWithoutAdminInput
+  plans?: Prisma.PlanCreateNestedManyWithoutAdminInput
+  settings?: Prisma.AccountSettingsCreateNestedOneWithoutAdminInput
+  preferences?: Prisma.AccountPreferenceCreateNestedManyWithoutAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutDiscoveriesInput = {
@@ -432,6 +702,9 @@ export type AdminUserUncheckedCreateWithoutDiscoveriesInput = {
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutAdminInput
+  plans?: Prisma.PlanUncheckedCreateNestedManyWithoutAdminInput
+  settings?: Prisma.AccountSettingsUncheckedCreateNestedOneWithoutAdminInput
+  preferences?: Prisma.AccountPreferenceUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutDiscoveriesInput = {
@@ -457,6 +730,9 @@ export type AdminUserUpdateWithoutDiscoveriesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUpdateManyWithoutAdminNestedInput
+  plans?: Prisma.PlanUpdateManyWithoutAdminNestedInput
+  settings?: Prisma.AccountSettingsUpdateOneWithoutAdminNestedInput
+  preferences?: Prisma.AccountPreferenceUpdateManyWithoutAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutDiscoveriesInput = {
@@ -466,6 +742,9 @@ export type AdminUserUncheckedUpdateWithoutDiscoveriesInput = {
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutAdminNestedInput
+  plans?: Prisma.PlanUncheckedUpdateManyWithoutAdminNestedInput
+  settings?: Prisma.AccountSettingsUncheckedUpdateOneWithoutAdminNestedInput
+  preferences?: Prisma.AccountPreferenceUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 
@@ -476,11 +755,15 @@ export type AdminUserUncheckedUpdateWithoutDiscoveriesInput = {
 export type AdminUserCountOutputType = {
   sessions: number
   discoveries: number
+  plans: number
+  preferences: number
 }
 
 export type AdminUserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | AdminUserCountOutputTypeCountSessionsArgs
   discoveries?: boolean | AdminUserCountOutputTypeCountDiscoveriesArgs
+  plans?: boolean | AdminUserCountOutputTypeCountPlansArgs
+  preferences?: boolean | AdminUserCountOutputTypeCountPreferencesArgs
 }
 
 /**
@@ -507,6 +790,20 @@ export type AdminUserCountOutputTypeCountDiscoveriesArgs<ExtArgs extends runtime
   where?: Prisma.DiscoverySessionWhereInput
 }
 
+/**
+ * AdminUserCountOutputType without action
+ */
+export type AdminUserCountOutputTypeCountPlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlanWhereInput
+}
+
+/**
+ * AdminUserCountOutputType without action
+ */
+export type AdminUserCountOutputTypeCountPreferencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AccountPreferenceWhereInput
+}
+
 
 export type AdminUserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   isGuest?: boolean
@@ -516,6 +813,9 @@ export type AdminUserSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   createdAt?: boolean
   sessions?: boolean | Prisma.AdminUser$sessionsArgs<ExtArgs>
   discoveries?: boolean | Prisma.AdminUser$discoveriesArgs<ExtArgs>
+  plans?: boolean | Prisma.AdminUser$plansArgs<ExtArgs>
+  settings?: boolean | Prisma.AdminUser$settingsArgs<ExtArgs>
+  preferences?: boolean | Prisma.AdminUser$preferencesArgs<ExtArgs>
   _count?: boolean | Prisma.AdminUserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["adminUser"]>
 
@@ -547,6 +847,9 @@ export type AdminUserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type AdminUserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.AdminUser$sessionsArgs<ExtArgs>
   discoveries?: boolean | Prisma.AdminUser$discoveriesArgs<ExtArgs>
+  plans?: boolean | Prisma.AdminUser$plansArgs<ExtArgs>
+  settings?: boolean | Prisma.AdminUser$settingsArgs<ExtArgs>
+  preferences?: boolean | Prisma.AdminUser$preferencesArgs<ExtArgs>
   _count?: boolean | Prisma.AdminUserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AdminUserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -557,6 +860,9 @@ export type $AdminUserPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   objects: {
     sessions: Prisma.$AuthSessionPayload<ExtArgs>[]
     discoveries: Prisma.$DiscoverySessionPayload<ExtArgs>[]
+    plans: Prisma.$PlanPayload<ExtArgs>[]
+    settings: Prisma.$AccountSettingsPayload<ExtArgs> | null
+    preferences: Prisma.$AccountPreferencePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     isGuest: boolean
@@ -643,13 +949,13 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    * @example
    * // Get all AdminUsers
    * const adminUsers = await prisma.adminUser.findMany()
-   * 
+   *
    * // Get first 10 AdminUsers
    * const adminUsers = await prisma.adminUser.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `isGuest`
    * const adminUserWithIsGuestOnly = await prisma.adminUser.findMany({ select: { isGuest: true } })
-   * 
+   *
    */
   findMany<T extends AdminUserFindManyArgs>(args?: Prisma.SelectSubset<T, AdminUserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -663,7 +969,7 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    *     // ... data to create a AdminUser
    *   }
    * })
-   * 
+   *
    */
   create<T extends AdminUserCreateArgs>(args: Prisma.SelectSubset<T, AdminUserCreateArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -677,7 +983,7 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends AdminUserCreateManyArgs>(args?: Prisma.SelectSubset<T, AdminUserCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -691,7 +997,7 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many AdminUsers and only return the `isGuest`
    * const adminUserWithIsGuestOnly = await prisma.adminUser.createManyAndReturn({
    *   select: { isGuest: true },
@@ -701,7 +1007,7 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends AdminUserCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, AdminUserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -715,7 +1021,7 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    *     // ... filter to delete one AdminUser
    *   }
    * })
-   * 
+   *
    */
   delete<T extends AdminUserDeleteArgs>(args: Prisma.SelectSubset<T, AdminUserDeleteArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -732,7 +1038,7 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends AdminUserUpdateArgs>(args: Prisma.SelectSubset<T, AdminUserUpdateArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -746,7 +1052,7 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends AdminUserDeleteManyArgs>(args?: Prisma.SelectSubset<T, AdminUserDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -765,7 +1071,7 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends AdminUserUpdateManyArgs>(args: Prisma.SelectSubset<T, AdminUserUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -782,7 +1088,7 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more AdminUsers and only return the `isGuest`
    * const adminUserWithIsGuestOnly = await prisma.adminUser.updateManyAndReturn({
    *   select: { isGuest: true },
@@ -795,7 +1101,7 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends AdminUserUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, AdminUserUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -884,7 +1190,7 @@ export interface AdminUserDelegate<ExtArgs extends runtime.Types.Extensions.Inte
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends AdminUserGroupByArgs,
@@ -960,6 +1266,9 @@ export interface Prisma__AdminUserClient<T, Null = never, ExtArgs extends runtim
   readonly [Symbol.toStringTag]: "PrismaPromise"
   sessions<T extends Prisma.AdminUser$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuthSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   discoveries<T extends Prisma.AdminUser$discoveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$discoveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiscoverySessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  plans<T extends Prisma.AdminUser$plansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$plansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  settings<T extends Prisma.AdminUser$settingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$settingsArgs<ExtArgs>>): Prisma.Prisma__AccountSettingsClient<runtime.Types.Result.GetResult<Prisma.$AccountSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  preferences<T extends Prisma.AdminUser$preferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$preferencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1064,31 +1373,31 @@ export type AdminUserFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Inte
   where?: Prisma.AdminUserWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AdminUsers to fetch.
    */
   orderBy?: Prisma.AdminUserOrderByWithRelationInput | Prisma.AdminUserOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for AdminUsers.
    */
   cursor?: Prisma.AdminUserWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AdminUsers from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AdminUsers.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of AdminUsers.
    */
   distinct?: Prisma.AdminUserScalarFieldEnum | Prisma.AdminUserScalarFieldEnum[]
@@ -1116,31 +1425,31 @@ export type AdminUserFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensio
   where?: Prisma.AdminUserWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AdminUsers to fetch.
    */
   orderBy?: Prisma.AdminUserOrderByWithRelationInput | Prisma.AdminUserOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for AdminUsers.
    */
   cursor?: Prisma.AdminUserWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AdminUsers from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AdminUsers.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of AdminUsers.
    */
   distinct?: Prisma.AdminUserScalarFieldEnum | Prisma.AdminUserScalarFieldEnum[]
@@ -1168,31 +1477,31 @@ export type AdminUserFindManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
   where?: Prisma.AdminUserWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AdminUsers to fetch.
    */
   orderBy?: Prisma.AdminUserOrderByWithRelationInput | Prisma.AdminUserOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing AdminUsers.
    */
   cursor?: Prisma.AdminUserWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AdminUsers from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AdminUsers.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of AdminUsers.
    */
   distinct?: Prisma.AdminUserScalarFieldEnum | Prisma.AdminUserScalarFieldEnum[]
@@ -1432,6 +1741,73 @@ export type AdminUser$discoveriesArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.DiscoverySessionScalarFieldEnum | Prisma.DiscoverySessionScalarFieldEnum[]
+}
+
+/**
+ * AdminUser.plans
+ */
+export type AdminUser$plansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Plan
+   */
+  select?: Prisma.PlanSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Plan
+   */
+  omit?: Prisma.PlanOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlanInclude<ExtArgs> | null
+  where?: Prisma.PlanWhereInput
+  orderBy?: Prisma.PlanOrderByWithRelationInput | Prisma.PlanOrderByWithRelationInput[]
+  cursor?: Prisma.PlanWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PlanScalarFieldEnum | Prisma.PlanScalarFieldEnum[]
+}
+
+/**
+ * AdminUser.settings
+ */
+export type AdminUser$settingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccountSettings
+   */
+  select?: Prisma.AccountSettingsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AccountSettings
+   */
+  omit?: Prisma.AccountSettingsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccountSettingsInclude<ExtArgs> | null
+  where?: Prisma.AccountSettingsWhereInput
+}
+
+/**
+ * AdminUser.preferences
+ */
+export type AdminUser$preferencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccountPreference
+   */
+  select?: Prisma.AccountPreferenceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AccountPreference
+   */
+  omit?: Prisma.AccountPreferenceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccountPreferenceInclude<ExtArgs> | null
+  where?: Prisma.AccountPreferenceWhereInput
+  orderBy?: Prisma.AccountPreferenceOrderByWithRelationInput | Prisma.AccountPreferenceOrderByWithRelationInput[]
+  cursor?: Prisma.AccountPreferenceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AccountPreferenceScalarFieldEnum | Prisma.AccountPreferenceScalarFieldEnum[]
 }
 
 /**

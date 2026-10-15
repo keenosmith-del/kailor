@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { Mascot } from "./Mascot";
@@ -14,6 +15,7 @@ export function Conversation({
   assess,
   ready,
 }: SessionProps & { next: Next; assess: () => Promise<void>; ready: boolean }) {
+  const navigate = useNavigate();
   const labels: Record<string, string> = {
     industry: "Activity",
     goals: "Objective",
@@ -52,7 +54,9 @@ export function Conversation({
   const history = useRef<HTMLDivElement>(null);
   const followBottom = useRef(true);
   const [editing, setEditing] = useState<Record<string, string>>({});
-  const suggestions = conversationSuggestions(next, session.messages);
+  const suggestions = session.planProposals?.length
+    ? []
+    : conversationSuggestions(next, session.messages);
   useEffect(() => {
     if (followBottom.current && history.current)
       history.current.scrollTop = history.current.scrollHeight;
@@ -92,7 +96,8 @@ export function Conversation({
           mode,
         });
         setNotice(
-          response.provider === "mock-development"
+          response.provider === "mock-development" &&
+            response.fallbackReason !== "application_action"
             ? "This reply uses local guidance. Model assistance is unavailable or disabled for this turn."
             : "",
         );
@@ -178,6 +183,49 @@ export function Conversation({
             </p>
           )}
         </div>
+        {session.planProposals?.map((proposal) => (
+          <section className="plan-proposal" key={proposal.id}>
+            <p>
+              Start a separate plan for <strong>{proposal.title}</strong>?
+            </p>
+            <p className="muted">{proposal.description}</p>
+            <div className="actions">
+              {(
+                [
+                  ["create", "Create separate plan"],
+                  ["continue_current", "Keep discussing current plan"],
+                  ["cancel", "Cancel"],
+                ] as const
+              ).map(([decision, label]) => (
+                <button
+                  key={decision}
+                  className="button"
+                  disabled={busy}
+                  onClick={() =>
+                    void act(async () => {
+                      const result = await api<{
+                        plan: { lastSessionId: string } | null;
+                      }>(
+                        `/sessions/${session.id}/plan-proposals/${proposal.id}`,
+                        "POST",
+                        { revision: session.revision, decision },
+                      );
+                      if (result.plan?.lastSessionId)
+                        navigate(
+                          sessionHref(
+                            result.plan.lastSessionId,
+                            "conversation",
+                          ),
+                        );
+                    })
+                  }
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </section>
+        ))}
         {session.evidence.filter((e) => e.active && e.status === "inferred")
           .length > 1 && (
           <div className="actions">

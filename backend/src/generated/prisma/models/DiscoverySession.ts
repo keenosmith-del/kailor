@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model DiscoverySession
- * 
+ *
  */
 export type DiscoverySessionModel = runtime.Types.Result.DefaultSelection<Prisma.$DiscoverySessionPayload>
 
@@ -39,6 +39,7 @@ export type DiscoverySessionSumAggregateOutputType = {
 export type DiscoverySessionMinAggregateOutputType = {
   id: string | null
   adminId: string | null
+  planId: string | null
   subjectId: string | null
   definitionVersion: string | null
   revision: number | null
@@ -51,6 +52,7 @@ export type DiscoverySessionMinAggregateOutputType = {
 export type DiscoverySessionMaxAggregateOutputType = {
   id: string | null
   adminId: string | null
+  planId: string | null
   subjectId: string | null
   definitionVersion: string | null
   revision: number | null
@@ -63,6 +65,7 @@ export type DiscoverySessionMaxAggregateOutputType = {
 export type DiscoverySessionCountAggregateOutputType = {
   id: number
   adminId: number
+  planId: number
   subjectId: number
   definitionVersion: number
   revision: number
@@ -89,6 +92,7 @@ export type DiscoverySessionSumAggregateInputType = {
 export type DiscoverySessionMinAggregateInputType = {
   id?: true
   adminId?: true
+  planId?: true
   subjectId?: true
   definitionVersion?: true
   revision?: true
@@ -101,6 +105,7 @@ export type DiscoverySessionMinAggregateInputType = {
 export type DiscoverySessionMaxAggregateInputType = {
   id?: true
   adminId?: true
+  planId?: true
   subjectId?: true
   definitionVersion?: true
   revision?: true
@@ -113,6 +118,7 @@ export type DiscoverySessionMaxAggregateInputType = {
 export type DiscoverySessionCountAggregateInputType = {
   id?: true
   adminId?: true
+  planId?: true
   subjectId?: true
   definitionVersion?: true
   revision?: true
@@ -132,55 +138,55 @@ export type DiscoverySessionAggregateArgs<ExtArgs extends runtime.Types.Extensio
   where?: Prisma.DiscoverySessionWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of DiscoverySessions to fetch.
    */
   orderBy?: Prisma.DiscoverySessionOrderByWithRelationInput | Prisma.DiscoverySessionOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.DiscoverySessionWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` DiscoverySessions from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` DiscoverySessions.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned DiscoverySessions
   **/
   _count?: true | DiscoverySessionCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to average
   **/
   _avg?: DiscoverySessionAvgAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to sum
   **/
   _sum?: DiscoverySessionSumAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: DiscoverySessionMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: DiscoverySessionMaxAggregateInputType
@@ -214,6 +220,7 @@ export type DiscoverySessionGroupByArgs<ExtArgs extends runtime.Types.Extensions
 export type DiscoverySessionGroupByOutputType = {
   id: string
   adminId: string
+  planId: string
   subjectId: string
   definitionVersion: string
   revision: number
@@ -251,6 +258,7 @@ export type DiscoverySessionWhereInput = {
   NOT?: Prisma.DiscoverySessionWhereInput | Prisma.DiscoverySessionWhereInput[]
   id?: Prisma.StringFilter<"DiscoverySession"> | string
   adminId?: Prisma.StringFilter<"DiscoverySession"> | string
+  planId?: Prisma.StringFilter<"DiscoverySession"> | string
   subjectId?: Prisma.StringFilter<"DiscoverySession"> | string
   definitionVersion?: Prisma.StringFilter<"DiscoverySession"> | string
   revision?: Prisma.IntFilter<"DiscoverySession"> | number
@@ -261,6 +269,7 @@ export type DiscoverySessionWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"DiscoverySession"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DiscoverySession"> | Date | string
   admin?: Prisma.XOR<Prisma.AdminUserScalarRelationFilter, Prisma.AdminUserWhereInput>
+  plan?: Prisma.XOR<Prisma.PlanScalarRelationFilter, Prisma.PlanWhereInput>
   subject?: Prisma.XOR<Prisma.SubjectScalarRelationFilter, Prisma.SubjectWhereInput>
   answers?: Prisma.DiscoveryAnswerListRelationFilter
   messages?: Prisma.ConversationMessageListRelationFilter
@@ -268,11 +277,15 @@ export type DiscoverySessionWhereInput = {
   assessments?: Prisma.AssessmentListRelationFilter
   simulations?: Prisma.SimulationRunListRelationFilter
   usage?: Prisma.AiUsageRecordListRelationFilter
+  lastForPlans?: Prisma.PlanListRelationFilter
+  summaries?: Prisma.ConversationSummaryListRelationFilter
+  planProposals?: Prisma.PlanActionProposalListRelationFilter
 }
 
 export type DiscoverySessionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   adminId?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
   subjectId?: Prisma.SortOrder
   definitionVersion?: Prisma.SortOrder
   revision?: Prisma.SortOrder
@@ -283,6 +296,7 @@ export type DiscoverySessionOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   admin?: Prisma.AdminUserOrderByWithRelationInput
+  plan?: Prisma.PlanOrderByWithRelationInput
   subject?: Prisma.SubjectOrderByWithRelationInput
   answers?: Prisma.DiscoveryAnswerOrderByRelationAggregateInput
   messages?: Prisma.ConversationMessageOrderByRelationAggregateInput
@@ -290,14 +304,19 @@ export type DiscoverySessionOrderByWithRelationInput = {
   assessments?: Prisma.AssessmentOrderByRelationAggregateInput
   simulations?: Prisma.SimulationRunOrderByRelationAggregateInput
   usage?: Prisma.AiUsageRecordOrderByRelationAggregateInput
+  lastForPlans?: Prisma.PlanOrderByRelationAggregateInput
+  summaries?: Prisma.ConversationSummaryOrderByRelationAggregateInput
+  planProposals?: Prisma.PlanActionProposalOrderByRelationAggregateInput
 }
 
 export type DiscoverySessionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  id_planId_adminId?: Prisma.DiscoverySessionIdPlanIdAdminIdCompoundUniqueInput
   AND?: Prisma.DiscoverySessionWhereInput | Prisma.DiscoverySessionWhereInput[]
   OR?: Prisma.DiscoverySessionWhereInput[]
   NOT?: Prisma.DiscoverySessionWhereInput | Prisma.DiscoverySessionWhereInput[]
   adminId?: Prisma.StringFilter<"DiscoverySession"> | string
+  planId?: Prisma.StringFilter<"DiscoverySession"> | string
   subjectId?: Prisma.StringFilter<"DiscoverySession"> | string
   definitionVersion?: Prisma.StringFilter<"DiscoverySession"> | string
   revision?: Prisma.IntFilter<"DiscoverySession"> | number
@@ -308,6 +327,7 @@ export type DiscoverySessionWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"DiscoverySession"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DiscoverySession"> | Date | string
   admin?: Prisma.XOR<Prisma.AdminUserScalarRelationFilter, Prisma.AdminUserWhereInput>
+  plan?: Prisma.XOR<Prisma.PlanScalarRelationFilter, Prisma.PlanWhereInput>
   subject?: Prisma.XOR<Prisma.SubjectScalarRelationFilter, Prisma.SubjectWhereInput>
   answers?: Prisma.DiscoveryAnswerListRelationFilter
   messages?: Prisma.ConversationMessageListRelationFilter
@@ -315,11 +335,15 @@ export type DiscoverySessionWhereUniqueInput = Prisma.AtLeast<{
   assessments?: Prisma.AssessmentListRelationFilter
   simulations?: Prisma.SimulationRunListRelationFilter
   usage?: Prisma.AiUsageRecordListRelationFilter
-}, "id">
+  lastForPlans?: Prisma.PlanListRelationFilter
+  summaries?: Prisma.ConversationSummaryListRelationFilter
+  planProposals?: Prisma.PlanActionProposalListRelationFilter
+}, "id" | "id_planId_adminId">
 
 export type DiscoverySessionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   adminId?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
   subjectId?: Prisma.SortOrder
   definitionVersion?: Prisma.SortOrder
   revision?: Prisma.SortOrder
@@ -342,6 +366,7 @@ export type DiscoverySessionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.DiscoverySessionScalarWhereWithAggregatesInput | Prisma.DiscoverySessionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"DiscoverySession"> | string
   adminId?: Prisma.StringWithAggregatesFilter<"DiscoverySession"> | string
+  planId?: Prisma.StringWithAggregatesFilter<"DiscoverySession"> | string
   subjectId?: Prisma.StringWithAggregatesFilter<"DiscoverySession"> | string
   definitionVersion?: Prisma.StringWithAggregatesFilter<"DiscoverySession"> | string
   revision?: Prisma.IntWithAggregatesFilter<"DiscoverySession"> | number
@@ -364,6 +389,7 @@ export type DiscoverySessionCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
   subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
   answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
   messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
@@ -371,11 +397,15 @@ export type DiscoverySessionCreateInput = {
   assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionUncheckedCreateInput = {
   id?: string
   adminId: string
+  planId: string
   subjectId: string
   definitionVersion: string
   revision?: number
@@ -391,6 +421,9 @@ export type DiscoverySessionUncheckedCreateInput = {
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionUpdateInput = {
@@ -404,6 +437,7 @@ export type DiscoverySessionUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
   subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
   answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
   messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
@@ -411,11 +445,15 @@ export type DiscoverySessionUpdateInput = {
   assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
   subjectId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -431,11 +469,15 @@ export type DiscoverySessionUncheckedUpdateInput = {
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionCreateManyInput = {
   id?: string
   adminId: string
+  planId: string
   subjectId: string
   definitionVersion: string
   revision?: number
@@ -462,6 +504,7 @@ export type DiscoverySessionUpdateManyMutationInput = {
 export type DiscoverySessionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
   subjectId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -483,9 +526,26 @@ export type DiscoverySessionOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type DiscoverySessionNullableScalarRelationFilter = {
+  is?: Prisma.DiscoverySessionWhereInput | null
+  isNot?: Prisma.DiscoverySessionWhereInput | null
+}
+
+export type DiscoverySessionScalarRelationFilter = {
+  is?: Prisma.DiscoverySessionWhereInput
+  isNot?: Prisma.DiscoverySessionWhereInput
+}
+
+export type DiscoverySessionIdPlanIdAdminIdCompoundUniqueInput = {
+  id: string
+  planId: string
+  adminId: string
+}
+
 export type DiscoverySessionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   adminId?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
   subjectId?: Prisma.SortOrder
   definitionVersion?: Prisma.SortOrder
   revision?: Prisma.SortOrder
@@ -505,6 +565,7 @@ export type DiscoverySessionAvgOrderByAggregateInput = {
 export type DiscoverySessionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   adminId?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
   subjectId?: Prisma.SortOrder
   definitionVersion?: Prisma.SortOrder
   revision?: Prisma.SortOrder
@@ -517,6 +578,7 @@ export type DiscoverySessionMaxOrderByAggregateInput = {
 export type DiscoverySessionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   adminId?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
   subjectId?: Prisma.SortOrder
   definitionVersion?: Prisma.SortOrder
   revision?: Prisma.SortOrder
@@ -529,11 +591,6 @@ export type DiscoverySessionMinOrderByAggregateInput = {
 export type DiscoverySessionSumOrderByAggregateInput = {
   revision?: Prisma.SortOrder
   knowledgeRevision?: Prisma.SortOrder
-}
-
-export type DiscoverySessionScalarRelationFilter = {
-  is?: Prisma.DiscoverySessionWhereInput
-  isNot?: Prisma.DiscoverySessionWhereInput
 }
 
 export type DiscoverySessionCreateNestedManyWithoutAdminInput = {
@@ -620,12 +677,90 @@ export type DiscoverySessionUncheckedUpdateManyWithoutSubjectNestedInput = {
   deleteMany?: Prisma.DiscoverySessionScalarWhereInput | Prisma.DiscoverySessionScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type DiscoverySessionCreateNestedManyWithoutPlanInput = {
+  create?: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutPlanInput, Prisma.DiscoverySessionUncheckedCreateWithoutPlanInput> | Prisma.DiscoverySessionCreateWithoutPlanInput[] | Prisma.DiscoverySessionUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.DiscoverySessionCreateOrConnectWithoutPlanInput | Prisma.DiscoverySessionCreateOrConnectWithoutPlanInput[]
+  createMany?: Prisma.DiscoverySessionCreateManyPlanInputEnvelope
+  connect?: Prisma.DiscoverySessionWhereUniqueInput | Prisma.DiscoverySessionWhereUniqueInput[]
+}
+
+export type DiscoverySessionCreateNestedOneWithoutLastForPlansInput = {
+  create?: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutLastForPlansInput, Prisma.DiscoverySessionUncheckedCreateWithoutLastForPlansInput>
+  connectOrCreate?: Prisma.DiscoverySessionCreateOrConnectWithoutLastForPlansInput
+  connect?: Prisma.DiscoverySessionWhereUniqueInput
+}
+
+export type DiscoverySessionUncheckedCreateNestedManyWithoutPlanInput = {
+  create?: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutPlanInput, Prisma.DiscoverySessionUncheckedCreateWithoutPlanInput> | Prisma.DiscoverySessionCreateWithoutPlanInput[] | Prisma.DiscoverySessionUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.DiscoverySessionCreateOrConnectWithoutPlanInput | Prisma.DiscoverySessionCreateOrConnectWithoutPlanInput[]
+  createMany?: Prisma.DiscoverySessionCreateManyPlanInputEnvelope
+  connect?: Prisma.DiscoverySessionWhereUniqueInput | Prisma.DiscoverySessionWhereUniqueInput[]
+}
+
+export type DiscoverySessionUpdateManyWithoutPlanNestedInput = {
+  create?: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutPlanInput, Prisma.DiscoverySessionUncheckedCreateWithoutPlanInput> | Prisma.DiscoverySessionCreateWithoutPlanInput[] | Prisma.DiscoverySessionUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.DiscoverySessionCreateOrConnectWithoutPlanInput | Prisma.DiscoverySessionCreateOrConnectWithoutPlanInput[]
+  upsert?: Prisma.DiscoverySessionUpsertWithWhereUniqueWithoutPlanInput | Prisma.DiscoverySessionUpsertWithWhereUniqueWithoutPlanInput[]
+  createMany?: Prisma.DiscoverySessionCreateManyPlanInputEnvelope
+  set?: Prisma.DiscoverySessionWhereUniqueInput | Prisma.DiscoverySessionWhereUniqueInput[]
+  disconnect?: Prisma.DiscoverySessionWhereUniqueInput | Prisma.DiscoverySessionWhereUniqueInput[]
+  delete?: Prisma.DiscoverySessionWhereUniqueInput | Prisma.DiscoverySessionWhereUniqueInput[]
+  connect?: Prisma.DiscoverySessionWhereUniqueInput | Prisma.DiscoverySessionWhereUniqueInput[]
+  update?: Prisma.DiscoverySessionUpdateWithWhereUniqueWithoutPlanInput | Prisma.DiscoverySessionUpdateWithWhereUniqueWithoutPlanInput[]
+  updateMany?: Prisma.DiscoverySessionUpdateManyWithWhereWithoutPlanInput | Prisma.DiscoverySessionUpdateManyWithWhereWithoutPlanInput[]
+  deleteMany?: Prisma.DiscoverySessionScalarWhereInput | Prisma.DiscoverySessionScalarWhereInput[]
+}
+
+export type DiscoverySessionUpdateOneWithoutLastForPlansNestedInput = {
+  create?: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutLastForPlansInput, Prisma.DiscoverySessionUncheckedCreateWithoutLastForPlansInput>
+  connectOrCreate?: Prisma.DiscoverySessionCreateOrConnectWithoutLastForPlansInput
+  upsert?: Prisma.DiscoverySessionUpsertWithoutLastForPlansInput
+  disconnect?: Prisma.DiscoverySessionWhereInput | boolean
+  delete?: Prisma.DiscoverySessionWhereInput | boolean
+  connect?: Prisma.DiscoverySessionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DiscoverySessionUpdateToOneWithWhereWithoutLastForPlansInput, Prisma.DiscoverySessionUpdateWithoutLastForPlansInput>, Prisma.DiscoverySessionUncheckedUpdateWithoutLastForPlansInput>
+}
+
+export type DiscoverySessionUncheckedUpdateManyWithoutPlanNestedInput = {
+  create?: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutPlanInput, Prisma.DiscoverySessionUncheckedCreateWithoutPlanInput> | Prisma.DiscoverySessionCreateWithoutPlanInput[] | Prisma.DiscoverySessionUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.DiscoverySessionCreateOrConnectWithoutPlanInput | Prisma.DiscoverySessionCreateOrConnectWithoutPlanInput[]
+  upsert?: Prisma.DiscoverySessionUpsertWithWhereUniqueWithoutPlanInput | Prisma.DiscoverySessionUpsertWithWhereUniqueWithoutPlanInput[]
+  createMany?: Prisma.DiscoverySessionCreateManyPlanInputEnvelope
+  set?: Prisma.DiscoverySessionWhereUniqueInput | Prisma.DiscoverySessionWhereUniqueInput[]
+  disconnect?: Prisma.DiscoverySessionWhereUniqueInput | Prisma.DiscoverySessionWhereUniqueInput[]
+  delete?: Prisma.DiscoverySessionWhereUniqueInput | Prisma.DiscoverySessionWhereUniqueInput[]
+  connect?: Prisma.DiscoverySessionWhereUniqueInput | Prisma.DiscoverySessionWhereUniqueInput[]
+  update?: Prisma.DiscoverySessionUpdateWithWhereUniqueWithoutPlanInput | Prisma.DiscoverySessionUpdateWithWhereUniqueWithoutPlanInput[]
+  updateMany?: Prisma.DiscoverySessionUpdateManyWithWhereWithoutPlanInput | Prisma.DiscoverySessionUpdateManyWithWhereWithoutPlanInput[]
+  deleteMany?: Prisma.DiscoverySessionScalarWhereInput | Prisma.DiscoverySessionScalarWhereInput[]
+}
+
+export type DiscoverySessionCreateNestedOneWithoutSummariesInput = {
+  create?: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutSummariesInput, Prisma.DiscoverySessionUncheckedCreateWithoutSummariesInput>
+  connectOrCreate?: Prisma.DiscoverySessionCreateOrConnectWithoutSummariesInput
+  connect?: Prisma.DiscoverySessionWhereUniqueInput
+}
+
+export type DiscoverySessionUpdateOneRequiredWithoutSummariesNestedInput = {
+  create?: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutSummariesInput, Prisma.DiscoverySessionUncheckedCreateWithoutSummariesInput>
+  connectOrCreate?: Prisma.DiscoverySessionCreateOrConnectWithoutSummariesInput
+  upsert?: Prisma.DiscoverySessionUpsertWithoutSummariesInput
+  connect?: Prisma.DiscoverySessionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DiscoverySessionUpdateToOneWithWhereWithoutSummariesInput, Prisma.DiscoverySessionUpdateWithoutSummariesInput>, Prisma.DiscoverySessionUncheckedUpdateWithoutSummariesInput>
+}
+
+export type DiscoverySessionCreateNestedOneWithoutPlanProposalsInput = {
+  create?: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutPlanProposalsInput, Prisma.DiscoverySessionUncheckedCreateWithoutPlanProposalsInput>
+  connectOrCreate?: Prisma.DiscoverySessionCreateOrConnectWithoutPlanProposalsInput
+  connect?: Prisma.DiscoverySessionWhereUniqueInput
+}
+
+export type DiscoverySessionUpdateOneRequiredWithoutPlanProposalsNestedInput = {
+  create?: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutPlanProposalsInput, Prisma.DiscoverySessionUncheckedCreateWithoutPlanProposalsInput>
+  connectOrCreate?: Prisma.DiscoverySessionCreateOrConnectWithoutPlanProposalsInput
+  upsert?: Prisma.DiscoverySessionUpsertWithoutPlanProposalsInput
+  connect?: Prisma.DiscoverySessionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DiscoverySessionUpdateToOneWithWhereWithoutPlanProposalsInput, Prisma.DiscoverySessionUpdateWithoutPlanProposalsInput>, Prisma.DiscoverySessionUncheckedUpdateWithoutPlanProposalsInput>
 }
 
 export type DiscoverySessionCreateNestedOneWithoutAnswersInput = {
@@ -722,6 +857,7 @@ export type DiscoverySessionCreateWithoutAdminInput = {
   synthetic?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
   subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
   answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
   messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
@@ -729,10 +865,14 @@ export type DiscoverySessionCreateWithoutAdminInput = {
   assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionUncheckedCreateWithoutAdminInput = {
   id?: string
+  planId: string
   subjectId: string
   definitionVersion: string
   revision?: number
@@ -748,6 +888,9 @@ export type DiscoverySessionUncheckedCreateWithoutAdminInput = {
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionCreateOrConnectWithoutAdminInput = {
@@ -782,6 +925,7 @@ export type DiscoverySessionScalarWhereInput = {
   NOT?: Prisma.DiscoverySessionScalarWhereInput | Prisma.DiscoverySessionScalarWhereInput[]
   id?: Prisma.StringFilter<"DiscoverySession"> | string
   adminId?: Prisma.StringFilter<"DiscoverySession"> | string
+  planId?: Prisma.StringFilter<"DiscoverySession"> | string
   subjectId?: Prisma.StringFilter<"DiscoverySession"> | string
   definitionVersion?: Prisma.StringFilter<"DiscoverySession"> | string
   revision?: Prisma.IntFilter<"DiscoverySession"> | number
@@ -804,17 +948,22 @@ export type DiscoverySessionCreateWithoutSubjectInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
   answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
   messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
   evidence?: Prisma.EvidenceCreateNestedManyWithoutSessionInput
   assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionUncheckedCreateWithoutSubjectInput = {
   id?: string
   adminId: string
+  planId: string
   definitionVersion: string
   revision?: number
   knowledgeRevision?: number
@@ -829,6 +978,9 @@ export type DiscoverySessionUncheckedCreateWithoutSubjectInput = {
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionCreateOrConnectWithoutSubjectInput = {
@@ -857,7 +1009,7 @@ export type DiscoverySessionUpdateManyWithWhereWithoutSubjectInput = {
   data: Prisma.XOR<Prisma.DiscoverySessionUpdateManyMutationInput, Prisma.DiscoverySessionUncheckedUpdateManyWithoutSubjectInput>
 }
 
-export type DiscoverySessionCreateWithoutAnswersInput = {
+export type DiscoverySessionCreateWithoutPlanInput = {
   id?: string
   definitionVersion: string
   revision?: number
@@ -869,16 +1021,416 @@ export type DiscoverySessionCreateWithoutAnswersInput = {
   updatedAt?: Date | string
   admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
   subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
+  answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
   messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
   evidence?: Prisma.EvidenceCreateNestedManyWithoutSessionInput
   assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
+}
+
+export type DiscoverySessionUncheckedCreateWithoutPlanInput = {
+  id?: string
+  subjectId: string
+  definitionVersion: string
+  revision?: number
+  knowledgeRevision?: number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  answers?: Prisma.DiscoveryAnswerUncheckedCreateNestedManyWithoutSessionInput
+  messages?: Prisma.ConversationMessageUncheckedCreateNestedManyWithoutSessionInput
+  evidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutSessionInput
+  assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
+  simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
+  usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
+}
+
+export type DiscoverySessionCreateOrConnectWithoutPlanInput = {
+  where: Prisma.DiscoverySessionWhereUniqueInput
+  create: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutPlanInput, Prisma.DiscoverySessionUncheckedCreateWithoutPlanInput>
+}
+
+export type DiscoverySessionCreateManyPlanInputEnvelope = {
+  data: Prisma.DiscoverySessionCreateManyPlanInput | Prisma.DiscoverySessionCreateManyPlanInput[]
+  skipDuplicates?: boolean
+}
+
+export type DiscoverySessionCreateWithoutLastForPlansInput = {
+  id?: string
+  definitionVersion: string
+  revision?: number
+  knowledgeRevision?: number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
+  subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
+  answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
+  messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
+  evidence?: Prisma.EvidenceCreateNestedManyWithoutSessionInput
+  assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
+  simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
+  usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
+}
+
+export type DiscoverySessionUncheckedCreateWithoutLastForPlansInput = {
+  id?: string
+  adminId: string
+  planId: string
+  subjectId: string
+  definitionVersion: string
+  revision?: number
+  knowledgeRevision?: number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  answers?: Prisma.DiscoveryAnswerUncheckedCreateNestedManyWithoutSessionInput
+  messages?: Prisma.ConversationMessageUncheckedCreateNestedManyWithoutSessionInput
+  evidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutSessionInput
+  assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
+  simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
+  usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
+}
+
+export type DiscoverySessionCreateOrConnectWithoutLastForPlansInput = {
+  where: Prisma.DiscoverySessionWhereUniqueInput
+  create: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutLastForPlansInput, Prisma.DiscoverySessionUncheckedCreateWithoutLastForPlansInput>
+}
+
+export type DiscoverySessionUpsertWithWhereUniqueWithoutPlanInput = {
+  where: Prisma.DiscoverySessionWhereUniqueInput
+  update: Prisma.XOR<Prisma.DiscoverySessionUpdateWithoutPlanInput, Prisma.DiscoverySessionUncheckedUpdateWithoutPlanInput>
+  create: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutPlanInput, Prisma.DiscoverySessionUncheckedCreateWithoutPlanInput>
+}
+
+export type DiscoverySessionUpdateWithWhereUniqueWithoutPlanInput = {
+  where: Prisma.DiscoverySessionWhereUniqueInput
+  data: Prisma.XOR<Prisma.DiscoverySessionUpdateWithoutPlanInput, Prisma.DiscoverySessionUncheckedUpdateWithoutPlanInput>
+}
+
+export type DiscoverySessionUpdateManyWithWhereWithoutPlanInput = {
+  where: Prisma.DiscoverySessionScalarWhereInput
+  data: Prisma.XOR<Prisma.DiscoverySessionUpdateManyMutationInput, Prisma.DiscoverySessionUncheckedUpdateManyWithoutPlanInput>
+}
+
+export type DiscoverySessionUpsertWithoutLastForPlansInput = {
+  update: Prisma.XOR<Prisma.DiscoverySessionUpdateWithoutLastForPlansInput, Prisma.DiscoverySessionUncheckedUpdateWithoutLastForPlansInput>
+  create: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutLastForPlansInput, Prisma.DiscoverySessionUncheckedCreateWithoutLastForPlansInput>
+  where?: Prisma.DiscoverySessionWhereInput
+}
+
+export type DiscoverySessionUpdateToOneWithWhereWithoutLastForPlansInput = {
+  where?: Prisma.DiscoverySessionWhereInput
+  data: Prisma.XOR<Prisma.DiscoverySessionUpdateWithoutLastForPlansInput, Prisma.DiscoverySessionUncheckedUpdateWithoutLastForPlansInput>
+}
+
+export type DiscoverySessionUpdateWithoutLastForPlansInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  knowledgeRevision?: Prisma.IntFieldUpdateOperationsInput | number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
+  subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
+  answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
+  messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
+  evidence?: Prisma.EvidenceUpdateManyWithoutSessionNestedInput
+  assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
+  simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
+  usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
+}
+
+export type DiscoverySessionUncheckedUpdateWithoutLastForPlansInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
+  subjectId?: Prisma.StringFieldUpdateOperationsInput | string
+  definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  knowledgeRevision?: Prisma.IntFieldUpdateOperationsInput | number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  answers?: Prisma.DiscoveryAnswerUncheckedUpdateManyWithoutSessionNestedInput
+  messages?: Prisma.ConversationMessageUncheckedUpdateManyWithoutSessionNestedInput
+  evidence?: Prisma.EvidenceUncheckedUpdateManyWithoutSessionNestedInput
+  assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
+  simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
+  usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
+}
+
+export type DiscoverySessionCreateWithoutSummariesInput = {
+  id?: string
+  definitionVersion: string
+  revision?: number
+  knowledgeRevision?: number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
+  subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
+  answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
+  messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
+  evidence?: Prisma.EvidenceCreateNestedManyWithoutSessionInput
+  assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
+  simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
+  usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
+}
+
+export type DiscoverySessionUncheckedCreateWithoutSummariesInput = {
+  id?: string
+  adminId: string
+  planId: string
+  subjectId: string
+  definitionVersion: string
+  revision?: number
+  knowledgeRevision?: number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  answers?: Prisma.DiscoveryAnswerUncheckedCreateNestedManyWithoutSessionInput
+  messages?: Prisma.ConversationMessageUncheckedCreateNestedManyWithoutSessionInput
+  evidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutSessionInput
+  assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
+  simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
+  usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
+}
+
+export type DiscoverySessionCreateOrConnectWithoutSummariesInput = {
+  where: Prisma.DiscoverySessionWhereUniqueInput
+  create: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutSummariesInput, Prisma.DiscoverySessionUncheckedCreateWithoutSummariesInput>
+}
+
+export type DiscoverySessionUpsertWithoutSummariesInput = {
+  update: Prisma.XOR<Prisma.DiscoverySessionUpdateWithoutSummariesInput, Prisma.DiscoverySessionUncheckedUpdateWithoutSummariesInput>
+  create: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutSummariesInput, Prisma.DiscoverySessionUncheckedCreateWithoutSummariesInput>
+  where?: Prisma.DiscoverySessionWhereInput
+}
+
+export type DiscoverySessionUpdateToOneWithWhereWithoutSummariesInput = {
+  where?: Prisma.DiscoverySessionWhereInput
+  data: Prisma.XOR<Prisma.DiscoverySessionUpdateWithoutSummariesInput, Prisma.DiscoverySessionUncheckedUpdateWithoutSummariesInput>
+}
+
+export type DiscoverySessionUpdateWithoutSummariesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  knowledgeRevision?: Prisma.IntFieldUpdateOperationsInput | number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
+  subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
+  answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
+  messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
+  evidence?: Prisma.EvidenceUpdateManyWithoutSessionNestedInput
+  assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
+  simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
+  usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
+}
+
+export type DiscoverySessionUncheckedUpdateWithoutSummariesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
+  subjectId?: Prisma.StringFieldUpdateOperationsInput | string
+  definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  knowledgeRevision?: Prisma.IntFieldUpdateOperationsInput | number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  answers?: Prisma.DiscoveryAnswerUncheckedUpdateManyWithoutSessionNestedInput
+  messages?: Prisma.ConversationMessageUncheckedUpdateManyWithoutSessionNestedInput
+  evidence?: Prisma.EvidenceUncheckedUpdateManyWithoutSessionNestedInput
+  assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
+  simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
+  usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
+}
+
+export type DiscoverySessionCreateWithoutPlanProposalsInput = {
+  id?: string
+  definitionVersion: string
+  revision?: number
+  knowledgeRevision?: number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
+  subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
+  answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
+  messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
+  evidence?: Prisma.EvidenceCreateNestedManyWithoutSessionInput
+  assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
+  simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
+  usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+}
+
+export type DiscoverySessionUncheckedCreateWithoutPlanProposalsInput = {
+  id?: string
+  adminId: string
+  planId: string
+  subjectId: string
+  definitionVersion: string
+  revision?: number
+  knowledgeRevision?: number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  answers?: Prisma.DiscoveryAnswerUncheckedCreateNestedManyWithoutSessionInput
+  messages?: Prisma.ConversationMessageUncheckedCreateNestedManyWithoutSessionInput
+  evidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutSessionInput
+  assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
+  simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
+  usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+}
+
+export type DiscoverySessionCreateOrConnectWithoutPlanProposalsInput = {
+  where: Prisma.DiscoverySessionWhereUniqueInput
+  create: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutPlanProposalsInput, Prisma.DiscoverySessionUncheckedCreateWithoutPlanProposalsInput>
+}
+
+export type DiscoverySessionUpsertWithoutPlanProposalsInput = {
+  update: Prisma.XOR<Prisma.DiscoverySessionUpdateWithoutPlanProposalsInput, Prisma.DiscoverySessionUncheckedUpdateWithoutPlanProposalsInput>
+  create: Prisma.XOR<Prisma.DiscoverySessionCreateWithoutPlanProposalsInput, Prisma.DiscoverySessionUncheckedCreateWithoutPlanProposalsInput>
+  where?: Prisma.DiscoverySessionWhereInput
+}
+
+export type DiscoverySessionUpdateToOneWithWhereWithoutPlanProposalsInput = {
+  where?: Prisma.DiscoverySessionWhereInput
+  data: Prisma.XOR<Prisma.DiscoverySessionUpdateWithoutPlanProposalsInput, Prisma.DiscoverySessionUncheckedUpdateWithoutPlanProposalsInput>
+}
+
+export type DiscoverySessionUpdateWithoutPlanProposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  knowledgeRevision?: Prisma.IntFieldUpdateOperationsInput | number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
+  subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
+  answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
+  messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
+  evidence?: Prisma.EvidenceUpdateManyWithoutSessionNestedInput
+  assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
+  simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
+  usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+}
+
+export type DiscoverySessionUncheckedUpdateWithoutPlanProposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
+  subjectId?: Prisma.StringFieldUpdateOperationsInput | string
+  definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  knowledgeRevision?: Prisma.IntFieldUpdateOperationsInput | number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  answers?: Prisma.DiscoveryAnswerUncheckedUpdateManyWithoutSessionNestedInput
+  messages?: Prisma.ConversationMessageUncheckedUpdateManyWithoutSessionNestedInput
+  evidence?: Prisma.EvidenceUncheckedUpdateManyWithoutSessionNestedInput
+  assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
+  simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
+  usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+}
+
+export type DiscoverySessionCreateWithoutAnswersInput = {
+  id?: string
+  definitionVersion: string
+  revision?: number
+  knowledgeRevision?: number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
+  subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
+  messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
+  evidence?: Prisma.EvidenceCreateNestedManyWithoutSessionInput
+  assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
+  simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
+  usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionUncheckedCreateWithoutAnswersInput = {
   id?: string
   adminId: string
+  planId: string
   subjectId: string
   definitionVersion: string
   revision?: number
@@ -893,6 +1445,9 @@ export type DiscoverySessionUncheckedCreateWithoutAnswersInput = {
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionCreateOrConnectWithoutAnswersInput = {
@@ -922,17 +1477,22 @@ export type DiscoverySessionUpdateWithoutAnswersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
   subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
   messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
   evidence?: Prisma.EvidenceUpdateManyWithoutSessionNestedInput
   assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionUncheckedUpdateWithoutAnswersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
   subjectId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -947,6 +1507,9 @@ export type DiscoverySessionUncheckedUpdateWithoutAnswersInput = {
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionCreateWithoutMessagesInput = {
@@ -960,17 +1523,22 @@ export type DiscoverySessionCreateWithoutMessagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
   subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
   answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
   evidence?: Prisma.EvidenceCreateNestedManyWithoutSessionInput
   assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionUncheckedCreateWithoutMessagesInput = {
   id?: string
   adminId: string
+  planId: string
   subjectId: string
   definitionVersion: string
   revision?: number
@@ -985,6 +1553,9 @@ export type DiscoverySessionUncheckedCreateWithoutMessagesInput = {
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionCreateOrConnectWithoutMessagesInput = {
@@ -1014,17 +1585,22 @@ export type DiscoverySessionUpdateWithoutMessagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
   subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
   answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
   evidence?: Prisma.EvidenceUpdateManyWithoutSessionNestedInput
   assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionUncheckedUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
   subjectId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1039,6 +1615,9 @@ export type DiscoverySessionUncheckedUpdateWithoutMessagesInput = {
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionCreateWithoutEvidenceInput = {
@@ -1052,17 +1631,22 @@ export type DiscoverySessionCreateWithoutEvidenceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
   subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
   answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
   messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
   assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionUncheckedCreateWithoutEvidenceInput = {
   id?: string
   adminId: string
+  planId: string
   subjectId: string
   definitionVersion: string
   revision?: number
@@ -1077,6 +1661,9 @@ export type DiscoverySessionUncheckedCreateWithoutEvidenceInput = {
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionCreateOrConnectWithoutEvidenceInput = {
@@ -1106,17 +1693,22 @@ export type DiscoverySessionUpdateWithoutEvidenceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
   subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
   answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
   messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
   assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionUncheckedUpdateWithoutEvidenceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
   subjectId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1131,6 +1723,9 @@ export type DiscoverySessionUncheckedUpdateWithoutEvidenceInput = {
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionCreateWithoutAssessmentsInput = {
@@ -1144,17 +1739,22 @@ export type DiscoverySessionCreateWithoutAssessmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
   subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
   answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
   messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
   evidence?: Prisma.EvidenceCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionUncheckedCreateWithoutAssessmentsInput = {
   id?: string
   adminId: string
+  planId: string
   subjectId: string
   definitionVersion: string
   revision?: number
@@ -1169,6 +1769,9 @@ export type DiscoverySessionUncheckedCreateWithoutAssessmentsInput = {
   evidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionCreateOrConnectWithoutAssessmentsInput = {
@@ -1198,17 +1801,22 @@ export type DiscoverySessionUpdateWithoutAssessmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
   subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
   answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
   messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
   evidence?: Prisma.EvidenceUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionUncheckedUpdateWithoutAssessmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
   subjectId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1223,6 +1831,9 @@ export type DiscoverySessionUncheckedUpdateWithoutAssessmentsInput = {
   evidence?: Prisma.EvidenceUncheckedUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionCreateWithoutSimulationsInput = {
@@ -1236,17 +1847,22 @@ export type DiscoverySessionCreateWithoutSimulationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
   subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
   answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
   messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
   evidence?: Prisma.EvidenceCreateNestedManyWithoutSessionInput
   assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionUncheckedCreateWithoutSimulationsInput = {
   id?: string
   adminId: string
+  planId: string
   subjectId: string
   definitionVersion: string
   revision?: number
@@ -1261,6 +1877,9 @@ export type DiscoverySessionUncheckedCreateWithoutSimulationsInput = {
   evidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutSessionInput
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
   usage?: Prisma.AiUsageRecordUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionCreateOrConnectWithoutSimulationsInput = {
@@ -1290,17 +1909,22 @@ export type DiscoverySessionUpdateWithoutSimulationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
   subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
   answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
   messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
   evidence?: Prisma.EvidenceUpdateManyWithoutSessionNestedInput
   assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionUncheckedUpdateWithoutSimulationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
   subjectId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1315,6 +1939,9 @@ export type DiscoverySessionUncheckedUpdateWithoutSimulationsInput = {
   evidence?: Prisma.EvidenceUncheckedUpdateManyWithoutSessionNestedInput
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionCreateWithoutUsageInput = {
@@ -1328,17 +1955,22 @@ export type DiscoverySessionCreateWithoutUsageInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   admin: Prisma.AdminUserCreateNestedOneWithoutDiscoveriesInput
+  plan: Prisma.PlanCreateNestedOneWithoutSessionsInput
   subject: Prisma.SubjectCreateNestedOneWithoutSessionsInput
   answers?: Prisma.DiscoveryAnswerCreateNestedManyWithoutSessionInput
   messages?: Prisma.ConversationMessageCreateNestedManyWithoutSessionInput
   evidence?: Prisma.EvidenceCreateNestedManyWithoutSessionInput
   assessments?: Prisma.AssessmentCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionUncheckedCreateWithoutUsageInput = {
   id?: string
   adminId: string
+  planId: string
   subjectId: string
   definitionVersion: string
   revision?: number
@@ -1353,6 +1985,9 @@ export type DiscoverySessionUncheckedCreateWithoutUsageInput = {
   evidence?: Prisma.EvidenceUncheckedCreateNestedManyWithoutSessionInput
   assessments?: Prisma.AssessmentUncheckedCreateNestedManyWithoutSessionInput
   simulations?: Prisma.SimulationRunUncheckedCreateNestedManyWithoutSessionInput
+  lastForPlans?: Prisma.PlanUncheckedCreateNestedManyWithoutLastSessionInput
+  summaries?: Prisma.ConversationSummaryUncheckedCreateNestedManyWithoutSessionInput
+  planProposals?: Prisma.PlanActionProposalUncheckedCreateNestedManyWithoutSessionInput
 }
 
 export type DiscoverySessionCreateOrConnectWithoutUsageInput = {
@@ -1382,17 +2017,22 @@ export type DiscoverySessionUpdateWithoutUsageInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
   subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
   answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
   messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
   evidence?: Prisma.EvidenceUpdateManyWithoutSessionNestedInput
   assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionUncheckedUpdateWithoutUsageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
   subjectId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1407,10 +2047,14 @@ export type DiscoverySessionUncheckedUpdateWithoutUsageInput = {
   evidence?: Prisma.EvidenceUncheckedUpdateManyWithoutSessionNestedInput
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionCreateManyAdminInput = {
   id?: string
+  planId: string
   subjectId: string
   definitionVersion: string
   revision?: number
@@ -1432,6 +2076,7 @@ export type DiscoverySessionUpdateWithoutAdminInput = {
   synthetic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
   subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
   answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
   messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
@@ -1439,10 +2084,14 @@ export type DiscoverySessionUpdateWithoutAdminInput = {
   assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionUncheckedUpdateWithoutAdminInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
   subjectId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1458,10 +2107,14 @@ export type DiscoverySessionUncheckedUpdateWithoutAdminInput = {
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionUncheckedUpdateManyWithoutAdminInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
   subjectId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1476,6 +2129,7 @@ export type DiscoverySessionUncheckedUpdateManyWithoutAdminInput = {
 export type DiscoverySessionCreateManySubjectInput = {
   id?: string
   adminId: string
+  planId: string
   definitionVersion: string
   revision?: number
   knowledgeRevision?: number
@@ -1497,17 +2151,22 @@ export type DiscoverySessionUpdateWithoutSubjectInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  plan?: Prisma.PlanUpdateOneRequiredWithoutSessionsNestedInput
   answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
   messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
   evidence?: Prisma.EvidenceUpdateManyWithoutSessionNestedInput
   assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionUncheckedUpdateWithoutSubjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
   knowledgeRevision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1522,11 +2181,86 @@ export type DiscoverySessionUncheckedUpdateWithoutSubjectInput = {
   assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
   simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
   usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
 }
 
 export type DiscoverySessionUncheckedUpdateManyWithoutSubjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
+  definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  knowledgeRevision?: Prisma.IntFieldUpdateOperationsInput | number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DiscoverySessionCreateManyPlanInput = {
+  id?: string
+  subjectId: string
+  definitionVersion: string
+  revision?: number
+  knowledgeRevision?: number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DiscoverySessionUpdateWithoutPlanInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  knowledgeRevision?: Prisma.IntFieldUpdateOperationsInput | number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  admin?: Prisma.AdminUserUpdateOneRequiredWithoutDiscoveriesNestedInput
+  subject?: Prisma.SubjectUpdateOneRequiredWithoutSessionsNestedInput
+  answers?: Prisma.DiscoveryAnswerUpdateManyWithoutSessionNestedInput
+  messages?: Prisma.ConversationMessageUpdateManyWithoutSessionNestedInput
+  evidence?: Prisma.EvidenceUpdateManyWithoutSessionNestedInput
+  assessments?: Prisma.AssessmentUpdateManyWithoutSessionNestedInput
+  simulations?: Prisma.SimulationRunUpdateManyWithoutSessionNestedInput
+  usage?: Prisma.AiUsageRecordUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUpdateManyWithoutSessionNestedInput
+}
+
+export type DiscoverySessionUncheckedUpdateWithoutPlanInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  subjectId?: Prisma.StringFieldUpdateOperationsInput | string
+  definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  knowledgeRevision?: Prisma.IntFieldUpdateOperationsInput | number
+  contextState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  synthetic?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  answers?: Prisma.DiscoveryAnswerUncheckedUpdateManyWithoutSessionNestedInput
+  messages?: Prisma.ConversationMessageUncheckedUpdateManyWithoutSessionNestedInput
+  evidence?: Prisma.EvidenceUncheckedUpdateManyWithoutSessionNestedInput
+  assessments?: Prisma.AssessmentUncheckedUpdateManyWithoutSessionNestedInput
+  simulations?: Prisma.SimulationRunUncheckedUpdateManyWithoutSessionNestedInput
+  usage?: Prisma.AiUsageRecordUncheckedUpdateManyWithoutSessionNestedInput
+  lastForPlans?: Prisma.PlanUncheckedUpdateManyWithoutLastSessionNestedInput
+  summaries?: Prisma.ConversationSummaryUncheckedUpdateManyWithoutSessionNestedInput
+  planProposals?: Prisma.PlanActionProposalUncheckedUpdateManyWithoutSessionNestedInput
+}
+
+export type DiscoverySessionUncheckedUpdateManyWithoutPlanInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  subjectId?: Prisma.StringFieldUpdateOperationsInput | string
   definitionVersion?: Prisma.StringFieldUpdateOperationsInput | string
   revision?: Prisma.IntFieldUpdateOperationsInput | number
   knowledgeRevision?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1549,6 +2283,9 @@ export type DiscoverySessionCountOutputType = {
   assessments: number
   simulations: number
   usage: number
+  lastForPlans: number
+  summaries: number
+  planProposals: number
 }
 
 export type DiscoverySessionCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1558,6 +2295,9 @@ export type DiscoverySessionCountOutputTypeSelect<ExtArgs extends runtime.Types.
   assessments?: boolean | DiscoverySessionCountOutputTypeCountAssessmentsArgs
   simulations?: boolean | DiscoverySessionCountOutputTypeCountSimulationsArgs
   usage?: boolean | DiscoverySessionCountOutputTypeCountUsageArgs
+  lastForPlans?: boolean | DiscoverySessionCountOutputTypeCountLastForPlansArgs
+  summaries?: boolean | DiscoverySessionCountOutputTypeCountSummariesArgs
+  planProposals?: boolean | DiscoverySessionCountOutputTypeCountPlanProposalsArgs
 }
 
 /**
@@ -1612,10 +2352,32 @@ export type DiscoverySessionCountOutputTypeCountUsageArgs<ExtArgs extends runtim
   where?: Prisma.AiUsageRecordWhereInput
 }
 
+/**
+ * DiscoverySessionCountOutputType without action
+ */
+export type DiscoverySessionCountOutputTypeCountLastForPlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlanWhereInput
+}
+
+/**
+ * DiscoverySessionCountOutputType without action
+ */
+export type DiscoverySessionCountOutputTypeCountSummariesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConversationSummaryWhereInput
+}
+
+/**
+ * DiscoverySessionCountOutputType without action
+ */
+export type DiscoverySessionCountOutputTypeCountPlanProposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlanActionProposalWhereInput
+}
+
 
 export type DiscoverySessionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   adminId?: boolean
+  planId?: boolean
   subjectId?: boolean
   definitionVersion?: boolean
   revision?: boolean
@@ -1626,6 +2388,7 @@ export type DiscoverySessionSelect<ExtArgs extends runtime.Types.Extensions.Inte
   createdAt?: boolean
   updatedAt?: boolean
   admin?: boolean | Prisma.AdminUserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.PlanDefaultArgs<ExtArgs>
   subject?: boolean | Prisma.SubjectDefaultArgs<ExtArgs>
   answers?: boolean | Prisma.DiscoverySession$answersArgs<ExtArgs>
   messages?: boolean | Prisma.DiscoverySession$messagesArgs<ExtArgs>
@@ -1633,12 +2396,16 @@ export type DiscoverySessionSelect<ExtArgs extends runtime.Types.Extensions.Inte
   assessments?: boolean | Prisma.DiscoverySession$assessmentsArgs<ExtArgs>
   simulations?: boolean | Prisma.DiscoverySession$simulationsArgs<ExtArgs>
   usage?: boolean | Prisma.DiscoverySession$usageArgs<ExtArgs>
+  lastForPlans?: boolean | Prisma.DiscoverySession$lastForPlansArgs<ExtArgs>
+  summaries?: boolean | Prisma.DiscoverySession$summariesArgs<ExtArgs>
+  planProposals?: boolean | Prisma.DiscoverySession$planProposalsArgs<ExtArgs>
   _count?: boolean | Prisma.DiscoverySessionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["discoverySession"]>
 
 export type DiscoverySessionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   adminId?: boolean
+  planId?: boolean
   subjectId?: boolean
   definitionVersion?: boolean
   revision?: boolean
@@ -1649,12 +2416,14 @@ export type DiscoverySessionSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   createdAt?: boolean
   updatedAt?: boolean
   admin?: boolean | Prisma.AdminUserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.PlanDefaultArgs<ExtArgs>
   subject?: boolean | Prisma.SubjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["discoverySession"]>
 
 export type DiscoverySessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   adminId?: boolean
+  planId?: boolean
   subjectId?: boolean
   definitionVersion?: boolean
   revision?: boolean
@@ -1665,12 +2434,14 @@ export type DiscoverySessionSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   createdAt?: boolean
   updatedAt?: boolean
   admin?: boolean | Prisma.AdminUserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.PlanDefaultArgs<ExtArgs>
   subject?: boolean | Prisma.SubjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["discoverySession"]>
 
 export type DiscoverySessionSelectScalar = {
   id?: boolean
   adminId?: boolean
+  planId?: boolean
   subjectId?: boolean
   definitionVersion?: boolean
   revision?: boolean
@@ -1682,9 +2453,10 @@ export type DiscoverySessionSelectScalar = {
   updatedAt?: boolean
 }
 
-export type DiscoverySessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "adminId" | "subjectId" | "definitionVersion" | "revision" | "knowledgeRevision" | "contextState" | "planState" | "synthetic" | "createdAt" | "updatedAt", ExtArgs["result"]["discoverySession"]>
+export type DiscoverySessionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "adminId" | "planId" | "subjectId" | "definitionVersion" | "revision" | "knowledgeRevision" | "contextState" | "planState" | "synthetic" | "createdAt" | "updatedAt", ExtArgs["result"]["discoverySession"]>
 export type DiscoverySessionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   admin?: boolean | Prisma.AdminUserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.PlanDefaultArgs<ExtArgs>
   subject?: boolean | Prisma.SubjectDefaultArgs<ExtArgs>
   answers?: boolean | Prisma.DiscoverySession$answersArgs<ExtArgs>
   messages?: boolean | Prisma.DiscoverySession$messagesArgs<ExtArgs>
@@ -1692,14 +2464,19 @@ export type DiscoverySessionInclude<ExtArgs extends runtime.Types.Extensions.Int
   assessments?: boolean | Prisma.DiscoverySession$assessmentsArgs<ExtArgs>
   simulations?: boolean | Prisma.DiscoverySession$simulationsArgs<ExtArgs>
   usage?: boolean | Prisma.DiscoverySession$usageArgs<ExtArgs>
+  lastForPlans?: boolean | Prisma.DiscoverySession$lastForPlansArgs<ExtArgs>
+  summaries?: boolean | Prisma.DiscoverySession$summariesArgs<ExtArgs>
+  planProposals?: boolean | Prisma.DiscoverySession$planProposalsArgs<ExtArgs>
   _count?: boolean | Prisma.DiscoverySessionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DiscoverySessionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   admin?: boolean | Prisma.AdminUserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.PlanDefaultArgs<ExtArgs>
   subject?: boolean | Prisma.SubjectDefaultArgs<ExtArgs>
 }
 export type DiscoverySessionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   admin?: boolean | Prisma.AdminUserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.PlanDefaultArgs<ExtArgs>
   subject?: boolean | Prisma.SubjectDefaultArgs<ExtArgs>
 }
 
@@ -1707,6 +2484,7 @@ export type $DiscoverySessionPayload<ExtArgs extends runtime.Types.Extensions.In
   name: "DiscoverySession"
   objects: {
     admin: Prisma.$AdminUserPayload<ExtArgs>
+    plan: Prisma.$PlanPayload<ExtArgs>
     subject: Prisma.$SubjectPayload<ExtArgs>
     answers: Prisma.$DiscoveryAnswerPayload<ExtArgs>[]
     messages: Prisma.$ConversationMessagePayload<ExtArgs>[]
@@ -1714,10 +2492,14 @@ export type $DiscoverySessionPayload<ExtArgs extends runtime.Types.Extensions.In
     assessments: Prisma.$AssessmentPayload<ExtArgs>[]
     simulations: Prisma.$SimulationRunPayload<ExtArgs>[]
     usage: Prisma.$AiUsageRecordPayload<ExtArgs>[]
+    lastForPlans: Prisma.$PlanPayload<ExtArgs>[]
+    summaries: Prisma.$ConversationSummaryPayload<ExtArgs>[]
+    planProposals: Prisma.$PlanActionProposalPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     adminId: string
+    planId: string
     subjectId: string
     definitionVersion: string
     revision: number
@@ -1806,13 +2588,13 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    * @example
    * // Get all DiscoverySessions
    * const discoverySessions = await prisma.discoverySession.findMany()
-   * 
+   *
    * // Get first 10 DiscoverySessions
    * const discoverySessions = await prisma.discoverySession.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const discoverySessionWithIdOnly = await prisma.discoverySession.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends DiscoverySessionFindManyArgs>(args?: Prisma.SelectSubset<T, DiscoverySessionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiscoverySessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -1826,7 +2608,7 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... data to create a DiscoverySession
    *   }
    * })
-   * 
+   *
    */
   create<T extends DiscoverySessionCreateArgs>(args: Prisma.SelectSubset<T, DiscoverySessionCreateArgs<ExtArgs>>): Prisma.Prisma__DiscoverySessionClient<runtime.Types.Result.GetResult<Prisma.$DiscoverySessionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -1840,7 +2622,7 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends DiscoverySessionCreateManyArgs>(args?: Prisma.SelectSubset<T, DiscoverySessionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -1854,7 +2636,7 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many DiscoverySessions and only return the `id`
    * const discoverySessionWithIdOnly = await prisma.discoverySession.createManyAndReturn({
    *   select: { id: true },
@@ -1864,7 +2646,7 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends DiscoverySessionCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, DiscoverySessionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiscoverySessionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -1878,7 +2660,7 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... filter to delete one DiscoverySession
    *   }
    * })
-   * 
+   *
    */
   delete<T extends DiscoverySessionDeleteArgs>(args: Prisma.SelectSubset<T, DiscoverySessionDeleteArgs<ExtArgs>>): Prisma.Prisma__DiscoverySessionClient<runtime.Types.Result.GetResult<Prisma.$DiscoverySessionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -1895,7 +2677,7 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends DiscoverySessionUpdateArgs>(args: Prisma.SelectSubset<T, DiscoverySessionUpdateArgs<ExtArgs>>): Prisma.Prisma__DiscoverySessionClient<runtime.Types.Result.GetResult<Prisma.$DiscoverySessionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -1909,7 +2691,7 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends DiscoverySessionDeleteManyArgs>(args?: Prisma.SelectSubset<T, DiscoverySessionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -1928,7 +2710,7 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends DiscoverySessionUpdateManyArgs>(args: Prisma.SelectSubset<T, DiscoverySessionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -1945,7 +2727,7 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more DiscoverySessions and only return the `id`
    * const discoverySessionWithIdOnly = await prisma.discoverySession.updateManyAndReturn({
    *   select: { id: true },
@@ -1958,7 +2740,7 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends DiscoverySessionUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, DiscoverySessionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiscoverySessionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -2047,7 +2829,7 @@ export interface DiscoverySessionDelegate<ExtArgs extends runtime.Types.Extensio
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends DiscoverySessionGroupByArgs,
@@ -2122,6 +2904,7 @@ readonly fields: DiscoverySessionFieldRefs;
 export interface Prisma__DiscoverySessionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   admin<T extends Prisma.AdminUserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUserDefaultArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  plan<T extends Prisma.PlanDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PlanDefaultArgs<ExtArgs>>): Prisma.Prisma__PlanClient<runtime.Types.Result.GetResult<Prisma.$PlanPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   subject<T extends Prisma.SubjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SubjectDefaultArgs<ExtArgs>>): Prisma.Prisma__SubjectClient<runtime.Types.Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   answers<T extends Prisma.DiscoverySession$answersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DiscoverySession$answersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiscoveryAnswerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.DiscoverySession$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DiscoverySession$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2129,6 +2912,9 @@ export interface Prisma__DiscoverySessionClient<T, Null = never, ExtArgs extends
   assessments<T extends Prisma.DiscoverySession$assessmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DiscoverySession$assessmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   simulations<T extends Prisma.DiscoverySession$simulationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DiscoverySession$simulationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SimulationRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   usage<T extends Prisma.DiscoverySession$usageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DiscoverySession$usageArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AiUsageRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  lastForPlans<T extends Prisma.DiscoverySession$lastForPlansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DiscoverySession$lastForPlansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  summaries<T extends Prisma.DiscoverySession$summariesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DiscoverySession$summariesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationSummaryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  planProposals<T extends Prisma.DiscoverySession$planProposalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DiscoverySession$planProposalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlanActionProposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2160,6 +2946,7 @@ export interface Prisma__DiscoverySessionClient<T, Null = never, ExtArgs extends
 export interface DiscoverySessionFieldRefs {
   readonly id: Prisma.FieldRef<"DiscoverySession", 'String'>
   readonly adminId: Prisma.FieldRef<"DiscoverySession", 'String'>
+  readonly planId: Prisma.FieldRef<"DiscoverySession", 'String'>
   readonly subjectId: Prisma.FieldRef<"DiscoverySession", 'String'>
   readonly definitionVersion: Prisma.FieldRef<"DiscoverySession", 'String'>
   readonly revision: Prisma.FieldRef<"DiscoverySession", 'Int'>
@@ -2239,31 +3026,31 @@ export type DiscoverySessionFindFirstArgs<ExtArgs extends runtime.Types.Extensio
   where?: Prisma.DiscoverySessionWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of DiscoverySessions to fetch.
    */
   orderBy?: Prisma.DiscoverySessionOrderByWithRelationInput | Prisma.DiscoverySessionOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for DiscoverySessions.
    */
   cursor?: Prisma.DiscoverySessionWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` DiscoverySessions from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` DiscoverySessions.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of DiscoverySessions.
    */
   distinct?: Prisma.DiscoverySessionScalarFieldEnum | Prisma.DiscoverySessionScalarFieldEnum[]
@@ -2291,31 +3078,31 @@ export type DiscoverySessionFindFirstOrThrowArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.DiscoverySessionWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of DiscoverySessions to fetch.
    */
   orderBy?: Prisma.DiscoverySessionOrderByWithRelationInput | Prisma.DiscoverySessionOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for DiscoverySessions.
    */
   cursor?: Prisma.DiscoverySessionWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` DiscoverySessions from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` DiscoverySessions.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of DiscoverySessions.
    */
   distinct?: Prisma.DiscoverySessionScalarFieldEnum | Prisma.DiscoverySessionScalarFieldEnum[]
@@ -2343,31 +3130,31 @@ export type DiscoverySessionFindManyArgs<ExtArgs extends runtime.Types.Extension
   where?: Prisma.DiscoverySessionWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of DiscoverySessions to fetch.
    */
   orderBy?: Prisma.DiscoverySessionOrderByWithRelationInput | Prisma.DiscoverySessionOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing DiscoverySessions.
    */
   cursor?: Prisma.DiscoverySessionWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` DiscoverySessions from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` DiscoverySessions.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of DiscoverySessions.
    */
   distinct?: Prisma.DiscoverySessionScalarFieldEnum | Prisma.DiscoverySessionScalarFieldEnum[]
@@ -2711,6 +3498,78 @@ export type DiscoverySession$usageArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.AiUsageRecordScalarFieldEnum | Prisma.AiUsageRecordScalarFieldEnum[]
+}
+
+/**
+ * DiscoverySession.lastForPlans
+ */
+export type DiscoverySession$lastForPlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Plan
+   */
+  select?: Prisma.PlanSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Plan
+   */
+  omit?: Prisma.PlanOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlanInclude<ExtArgs> | null
+  where?: Prisma.PlanWhereInput
+  orderBy?: Prisma.PlanOrderByWithRelationInput | Prisma.PlanOrderByWithRelationInput[]
+  cursor?: Prisma.PlanWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PlanScalarFieldEnum | Prisma.PlanScalarFieldEnum[]
+}
+
+/**
+ * DiscoverySession.summaries
+ */
+export type DiscoverySession$summariesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ConversationSummary
+   */
+  select?: Prisma.ConversationSummarySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ConversationSummary
+   */
+  omit?: Prisma.ConversationSummaryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ConversationSummaryInclude<ExtArgs> | null
+  where?: Prisma.ConversationSummaryWhereInput
+  orderBy?: Prisma.ConversationSummaryOrderByWithRelationInput | Prisma.ConversationSummaryOrderByWithRelationInput[]
+  cursor?: Prisma.ConversationSummaryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConversationSummaryScalarFieldEnum | Prisma.ConversationSummaryScalarFieldEnum[]
+}
+
+/**
+ * DiscoverySession.planProposals
+ */
+export type DiscoverySession$planProposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PlanActionProposal
+   */
+  select?: Prisma.PlanActionProposalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PlanActionProposal
+   */
+  omit?: Prisma.PlanActionProposalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlanActionProposalInclude<ExtArgs> | null
+  where?: Prisma.PlanActionProposalWhereInput
+  orderBy?: Prisma.PlanActionProposalOrderByWithRelationInput | Prisma.PlanActionProposalOrderByWithRelationInput[]
+  cursor?: Prisma.PlanActionProposalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PlanActionProposalScalarFieldEnum | Prisma.PlanActionProposalScalarFieldEnum[]
 }
 
 /**

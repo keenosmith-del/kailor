@@ -1,3 +1,4 @@
+import { PlanManager, PlanLanding } from "./Plans";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { Navigate, Route, Routes } from "react-router";
@@ -16,6 +17,41 @@ export function App() {
   return (
     <Routes>
       <Route path="/" element={<Intro />} />
+      <Route path="/preview/plans/:planId" element={<PlanLanding />} />
+      <Route
+        path="/plans/:planId"
+        element={
+          auth === null ? (
+            <p>Opening plan…</p>
+          ) : auth ? (
+            <PlanLanding />
+          ) : (
+            <Login onLogin={() => setAuth(true)} />
+          )
+        }
+      />
+      <Route
+        path="/preview/plans"
+        element={
+          <main className="session-shell">
+            <PlanManager />
+          </main>
+        }
+      />
+      <Route
+        path="/plans"
+        element={
+          auth === null ? (
+            <div className="loading">Opening plans…</div>
+          ) : auth ? (
+            <main className="session-shell">
+              <PlanManager />
+            </main>
+          ) : (
+            <Login onLogin={() => setAuth(true)} />
+          )
+        }
+      />
       <Route path="/preview/:id/:view" element={<SessionPage />} />
       <Route
         path="/workspace"

@@ -491,6 +491,15 @@ describe("real PostgreSQL API vertical slice", () => {
       data: {
         adminId: other.id,
         subjectId: subject.id,
+        planId: (
+          await db.plan.create({
+            data: {
+              adminId: other.id,
+              title: "Other admin",
+              creationKey: crypto.randomUUID(),
+            },
+          })
+        ).id,
         definitionVersion: "1.0.0",
       },
     });

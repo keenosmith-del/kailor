@@ -222,7 +222,7 @@ export function planDiscovery(
   );
   return {
     revision,
-    plannerVersion: "contextual-3",
+    plannerVersion: "plans-memory-4",
     question,
     active,
     answered: Object.keys(a).filter((k) => states[k] === "answered").length,
@@ -269,7 +269,8 @@ export function planDiscovery(
                 : "What content would a simple website need?",
             ]
           : []),
-        ...(context.dimensions?.includes("application")
+        ...(context.dimensions?.includes("application") &&
+        s.appPreference !== "declined"
           ? ["What's the smallest version I could build?"]
           : []),
         ...(question ? [`I'd like to discuss: ${question.title}`] : []),

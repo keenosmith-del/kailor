@@ -33,3 +33,7 @@ Approved patterns can prioritize a relevant gap and inform supported alternative
 ## Iteration 006 conversation context
 
 Conversation reuses the saved adaptive plan's approved-reference question hints and supported recommendation alternatives. The remote payload omits case titles and source sessions. Existing founder review/sanitization, source labels, unsuitable conditions, guest seed-only retrieval and immutable report snapshots remain authoritative; reference knowledge cannot become current-user evidence or verified outcome claims. No new learning/training mechanism was introduced.
+
+## Iteration 007 personal memory boundaries
+
+Another plan owned by the same account is private personal context, not a reusable approved case. Normal inference never retrieves its records. Explicit comparison reads labelled confirmed requirements without merging evidence or making a new case. Personal summaries and account preferences cannot approve reusable knowledge. Existing source classification, founder review, suitability filtering, outcome disclaimers and guest seed-only reference access remain.

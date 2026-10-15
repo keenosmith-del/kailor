@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model Subject
- * 
+ *
  */
 export type SubjectModel = runtime.Types.Result.DefaultSelection<Prisma.$SubjectPayload>
 
@@ -70,43 +70,43 @@ export type SubjectAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   where?: Prisma.SubjectWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Subjects to fetch.
    */
   orderBy?: Prisma.SubjectOrderByWithRelationInput | Prisma.SubjectOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.SubjectWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Subjects from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Subjects.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned Subjects
   **/
   _count?: true | SubjectCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: SubjectMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: SubjectMaxAggregateInputType
@@ -480,13 +480,13 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    * @example
    * // Get all Subjects
    * const subjects = await prisma.subject.findMany()
-   * 
+   *
    * // Get first 10 Subjects
    * const subjects = await prisma.subject.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const subjectWithIdOnly = await prisma.subject.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends SubjectFindManyArgs>(args?: Prisma.SelectSubset<T, SubjectFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -500,7 +500,7 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *     // ... data to create a Subject
    *   }
    * })
-   * 
+   *
    */
   create<T extends SubjectCreateArgs>(args: Prisma.SelectSubset<T, SubjectCreateArgs<ExtArgs>>): Prisma.Prisma__SubjectClient<runtime.Types.Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -514,7 +514,7 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends SubjectCreateManyArgs>(args?: Prisma.SelectSubset<T, SubjectCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -528,7 +528,7 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many Subjects and only return the `id`
    * const subjectWithIdOnly = await prisma.subject.createManyAndReturn({
    *   select: { id: true },
@@ -538,7 +538,7 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends SubjectCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, SubjectCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -552,7 +552,7 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *     // ... filter to delete one Subject
    *   }
    * })
-   * 
+   *
    */
   delete<T extends SubjectDeleteArgs>(args: Prisma.SelectSubset<T, SubjectDeleteArgs<ExtArgs>>): Prisma.Prisma__SubjectClient<runtime.Types.Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -569,7 +569,7 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends SubjectUpdateArgs>(args: Prisma.SelectSubset<T, SubjectUpdateArgs<ExtArgs>>): Prisma.Prisma__SubjectClient<runtime.Types.Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -583,7 +583,7 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends SubjectDeleteManyArgs>(args?: Prisma.SelectSubset<T, SubjectDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -602,7 +602,7 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends SubjectUpdateManyArgs>(args: Prisma.SelectSubset<T, SubjectUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -619,7 +619,7 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more Subjects and only return the `id`
    * const subjectWithIdOnly = await prisma.subject.updateManyAndReturn({
    *   select: { id: true },
@@ -632,7 +632,7 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends SubjectUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, SubjectUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubjectPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -721,7 +721,7 @@ export interface SubjectDelegate<ExtArgs extends runtime.Types.Extensions.Intern
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends SubjectGroupByArgs,
@@ -898,31 +898,31 @@ export type SubjectFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Intern
   where?: Prisma.SubjectWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Subjects to fetch.
    */
   orderBy?: Prisma.SubjectOrderByWithRelationInput | Prisma.SubjectOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for Subjects.
    */
   cursor?: Prisma.SubjectWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Subjects from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Subjects.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Subjects.
    */
   distinct?: Prisma.SubjectScalarFieldEnum | Prisma.SubjectScalarFieldEnum[]
@@ -950,31 +950,31 @@ export type SubjectFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions
   where?: Prisma.SubjectWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Subjects to fetch.
    */
   orderBy?: Prisma.SubjectOrderByWithRelationInput | Prisma.SubjectOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for Subjects.
    */
   cursor?: Prisma.SubjectWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Subjects from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Subjects.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Subjects.
    */
   distinct?: Prisma.SubjectScalarFieldEnum | Prisma.SubjectScalarFieldEnum[]
@@ -1002,31 +1002,31 @@ export type SubjectFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
   where?: Prisma.SubjectWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Subjects to fetch.
    */
   orderBy?: Prisma.SubjectOrderByWithRelationInput | Prisma.SubjectOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing Subjects.
    */
   cursor?: Prisma.SubjectWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Subjects from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Subjects.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Subjects.
    */
   distinct?: Prisma.SubjectScalarFieldEnum | Prisma.SubjectScalarFieldEnum[]

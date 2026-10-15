@@ -22,7 +22,7 @@ const envSchema = z.object({
   AI_ALLOW_REMOTE: z.enum(["true", "false"]).default("false"),
   CLOUDFLARE_ACCOUNT_ID: z.string().default(""),
   CLOUDFLARE_API_TOKEN: z.string().default(""),
-  CLOUDFLARE_MODEL: z.string().default("@cf/meta/llama-3.1-8b-instruct"),
+  CLOUDFLARE_MODEL: z.string().default("@cf/meta/llama-3.1-8b-instruct-fp8"),
   AI_MAX_CALLS_PER_SESSION: z.coerce.number().int().min(0).max(100).default(5),
   AI_MAX_CALLS_PER_DAY: z.coerce.number().int().min(0).max(1000).default(20),
   AI_MAX_OUTPUT_TOKENS: z.coerce.number().int().min(128).max(2048).default(600),

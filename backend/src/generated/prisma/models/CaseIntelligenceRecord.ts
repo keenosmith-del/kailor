@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model CaseIntelligenceRecord
- * 
+ *
  */
 export type CaseIntelligenceRecordModel = runtime.Types.Result.DefaultSelection<Prisma.$CaseIntelligenceRecordPayload>
 
@@ -126,55 +126,55 @@ export type CaseIntelligenceRecordAggregateArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.CaseIntelligenceRecordWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of CaseIntelligenceRecords to fetch.
    */
   orderBy?: Prisma.CaseIntelligenceRecordOrderByWithRelationInput | Prisma.CaseIntelligenceRecordOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.CaseIntelligenceRecordWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` CaseIntelligenceRecords from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` CaseIntelligenceRecords.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned CaseIntelligenceRecords
   **/
   _count?: true | CaseIntelligenceRecordCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to average
   **/
   _avg?: CaseIntelligenceRecordAvgAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to sum
   **/
   _sum?: CaseIntelligenceRecordSumAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: CaseIntelligenceRecordMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: CaseIntelligenceRecordMaxAggregateInputType
@@ -507,10 +507,6 @@ export type CaseIntelligenceRecordUncheckedUpdateManyWithoutSourceRunNestedInput
   deleteMany?: Prisma.CaseIntelligenceRecordScalarWhereInput | Prisma.CaseIntelligenceRecordScalarWhereInput[]
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type CaseIntelligenceRecordCreateWithoutSourceRunInput = {
   id?: string
   sourceType: string
@@ -788,13 +784,13 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    * @example
    * // Get all CaseIntelligenceRecords
    * const caseIntelligenceRecords = await prisma.caseIntelligenceRecord.findMany()
-   * 
+   *
    * // Get first 10 CaseIntelligenceRecords
    * const caseIntelligenceRecords = await prisma.caseIntelligenceRecord.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const caseIntelligenceRecordWithIdOnly = await prisma.caseIntelligenceRecord.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends CaseIntelligenceRecordFindManyArgs>(args?: Prisma.SelectSubset<T, CaseIntelligenceRecordFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CaseIntelligenceRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -808,7 +804,7 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    *     // ... data to create a CaseIntelligenceRecord
    *   }
    * })
-   * 
+   *
    */
   create<T extends CaseIntelligenceRecordCreateArgs>(args: Prisma.SelectSubset<T, CaseIntelligenceRecordCreateArgs<ExtArgs>>): Prisma.Prisma__CaseIntelligenceRecordClient<runtime.Types.Result.GetResult<Prisma.$CaseIntelligenceRecordPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -822,7 +818,7 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends CaseIntelligenceRecordCreateManyArgs>(args?: Prisma.SelectSubset<T, CaseIntelligenceRecordCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -836,7 +832,7 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many CaseIntelligenceRecords and only return the `id`
    * const caseIntelligenceRecordWithIdOnly = await prisma.caseIntelligenceRecord.createManyAndReturn({
    *   select: { id: true },
@@ -846,7 +842,7 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends CaseIntelligenceRecordCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, CaseIntelligenceRecordCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CaseIntelligenceRecordPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -860,7 +856,7 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    *     // ... filter to delete one CaseIntelligenceRecord
    *   }
    * })
-   * 
+   *
    */
   delete<T extends CaseIntelligenceRecordDeleteArgs>(args: Prisma.SelectSubset<T, CaseIntelligenceRecordDeleteArgs<ExtArgs>>): Prisma.Prisma__CaseIntelligenceRecordClient<runtime.Types.Result.GetResult<Prisma.$CaseIntelligenceRecordPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -877,7 +873,7 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends CaseIntelligenceRecordUpdateArgs>(args: Prisma.SelectSubset<T, CaseIntelligenceRecordUpdateArgs<ExtArgs>>): Prisma.Prisma__CaseIntelligenceRecordClient<runtime.Types.Result.GetResult<Prisma.$CaseIntelligenceRecordPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -891,7 +887,7 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends CaseIntelligenceRecordDeleteManyArgs>(args?: Prisma.SelectSubset<T, CaseIntelligenceRecordDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -910,7 +906,7 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends CaseIntelligenceRecordUpdateManyArgs>(args: Prisma.SelectSubset<T, CaseIntelligenceRecordUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -927,7 +923,7 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more CaseIntelligenceRecords and only return the `id`
    * const caseIntelligenceRecordWithIdOnly = await prisma.caseIntelligenceRecord.updateManyAndReturn({
    *   select: { id: true },
@@ -940,7 +936,7 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends CaseIntelligenceRecordUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, CaseIntelligenceRecordUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CaseIntelligenceRecordPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -1029,7 +1025,7 @@ export interface CaseIntelligenceRecordDelegate<ExtArgs extends runtime.Types.Ex
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends CaseIntelligenceRecordGroupByArgs,
@@ -1213,31 +1209,31 @@ export type CaseIntelligenceRecordFindFirstArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.CaseIntelligenceRecordWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of CaseIntelligenceRecords to fetch.
    */
   orderBy?: Prisma.CaseIntelligenceRecordOrderByWithRelationInput | Prisma.CaseIntelligenceRecordOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for CaseIntelligenceRecords.
    */
   cursor?: Prisma.CaseIntelligenceRecordWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` CaseIntelligenceRecords from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` CaseIntelligenceRecords.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of CaseIntelligenceRecords.
    */
   distinct?: Prisma.CaseIntelligenceRecordScalarFieldEnum | Prisma.CaseIntelligenceRecordScalarFieldEnum[]
@@ -1265,31 +1261,31 @@ export type CaseIntelligenceRecordFindFirstOrThrowArgs<ExtArgs extends runtime.T
   where?: Prisma.CaseIntelligenceRecordWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of CaseIntelligenceRecords to fetch.
    */
   orderBy?: Prisma.CaseIntelligenceRecordOrderByWithRelationInput | Prisma.CaseIntelligenceRecordOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for CaseIntelligenceRecords.
    */
   cursor?: Prisma.CaseIntelligenceRecordWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` CaseIntelligenceRecords from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` CaseIntelligenceRecords.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of CaseIntelligenceRecords.
    */
   distinct?: Prisma.CaseIntelligenceRecordScalarFieldEnum | Prisma.CaseIntelligenceRecordScalarFieldEnum[]
@@ -1317,31 +1313,31 @@ export type CaseIntelligenceRecordFindManyArgs<ExtArgs extends runtime.Types.Ext
   where?: Prisma.CaseIntelligenceRecordWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of CaseIntelligenceRecords to fetch.
    */
   orderBy?: Prisma.CaseIntelligenceRecordOrderByWithRelationInput | Prisma.CaseIntelligenceRecordOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing CaseIntelligenceRecords.
    */
   cursor?: Prisma.CaseIntelligenceRecordWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` CaseIntelligenceRecords from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` CaseIntelligenceRecords.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of CaseIntelligenceRecords.
    */
   distinct?: Prisma.CaseIntelligenceRecordScalarFieldEnum | Prisma.CaseIntelligenceRecordScalarFieldEnum[]

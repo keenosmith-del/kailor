@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model DiscoveryAnswer
- * 
+ *
  */
 export type DiscoveryAnswerModel = runtime.Types.Result.DefaultSelection<Prisma.$DiscoveryAnswerPayload>
 
@@ -92,43 +92,43 @@ export type DiscoveryAnswerAggregateArgs<ExtArgs extends runtime.Types.Extension
   where?: Prisma.DiscoveryAnswerWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of DiscoveryAnswers to fetch.
    */
   orderBy?: Prisma.DiscoveryAnswerOrderByWithRelationInput | Prisma.DiscoveryAnswerOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.DiscoveryAnswerWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` DiscoveryAnswers from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` DiscoveryAnswers.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned DiscoveryAnswers
   **/
   _count?: true | DiscoveryAnswerCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: DiscoveryAnswerMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: DiscoveryAnswerMaxAggregateInputType
@@ -672,13 +672,13 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    * @example
    * // Get all DiscoveryAnswers
    * const discoveryAnswers = await prisma.discoveryAnswer.findMany()
-   * 
+   *
    * // Get first 10 DiscoveryAnswers
    * const discoveryAnswers = await prisma.discoveryAnswer.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const discoveryAnswerWithIdOnly = await prisma.discoveryAnswer.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends DiscoveryAnswerFindManyArgs>(args?: Prisma.SelectSubset<T, DiscoveryAnswerFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiscoveryAnswerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -692,7 +692,7 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    *     // ... data to create a DiscoveryAnswer
    *   }
    * })
-   * 
+   *
    */
   create<T extends DiscoveryAnswerCreateArgs>(args: Prisma.SelectSubset<T, DiscoveryAnswerCreateArgs<ExtArgs>>): Prisma.Prisma__DiscoveryAnswerClient<runtime.Types.Result.GetResult<Prisma.$DiscoveryAnswerPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -706,7 +706,7 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends DiscoveryAnswerCreateManyArgs>(args?: Prisma.SelectSubset<T, DiscoveryAnswerCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -720,7 +720,7 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many DiscoveryAnswers and only return the `id`
    * const discoveryAnswerWithIdOnly = await prisma.discoveryAnswer.createManyAndReturn({
    *   select: { id: true },
@@ -730,7 +730,7 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends DiscoveryAnswerCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, DiscoveryAnswerCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiscoveryAnswerPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -744,7 +744,7 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    *     // ... filter to delete one DiscoveryAnswer
    *   }
    * })
-   * 
+   *
    */
   delete<T extends DiscoveryAnswerDeleteArgs>(args: Prisma.SelectSubset<T, DiscoveryAnswerDeleteArgs<ExtArgs>>): Prisma.Prisma__DiscoveryAnswerClient<runtime.Types.Result.GetResult<Prisma.$DiscoveryAnswerPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -761,7 +761,7 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends DiscoveryAnswerUpdateArgs>(args: Prisma.SelectSubset<T, DiscoveryAnswerUpdateArgs<ExtArgs>>): Prisma.Prisma__DiscoveryAnswerClient<runtime.Types.Result.GetResult<Prisma.$DiscoveryAnswerPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -775,7 +775,7 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends DiscoveryAnswerDeleteManyArgs>(args?: Prisma.SelectSubset<T, DiscoveryAnswerDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -794,7 +794,7 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends DiscoveryAnswerUpdateManyArgs>(args: Prisma.SelectSubset<T, DiscoveryAnswerUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -811,7 +811,7 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more DiscoveryAnswers and only return the `id`
    * const discoveryAnswerWithIdOnly = await prisma.discoveryAnswer.updateManyAndReturn({
    *   select: { id: true },
@@ -824,7 +824,7 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends DiscoveryAnswerUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, DiscoveryAnswerUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiscoveryAnswerPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -913,7 +913,7 @@ export interface DiscoveryAnswerDelegate<ExtArgs extends runtime.Types.Extension
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends DiscoveryAnswerGroupByArgs,
@@ -1095,31 +1095,31 @@ export type DiscoveryAnswerFindFirstArgs<ExtArgs extends runtime.Types.Extension
   where?: Prisma.DiscoveryAnswerWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of DiscoveryAnswers to fetch.
    */
   orderBy?: Prisma.DiscoveryAnswerOrderByWithRelationInput | Prisma.DiscoveryAnswerOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for DiscoveryAnswers.
    */
   cursor?: Prisma.DiscoveryAnswerWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` DiscoveryAnswers from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` DiscoveryAnswers.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of DiscoveryAnswers.
    */
   distinct?: Prisma.DiscoveryAnswerScalarFieldEnum | Prisma.DiscoveryAnswerScalarFieldEnum[]
@@ -1147,31 +1147,31 @@ export type DiscoveryAnswerFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.DiscoveryAnswerWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of DiscoveryAnswers to fetch.
    */
   orderBy?: Prisma.DiscoveryAnswerOrderByWithRelationInput | Prisma.DiscoveryAnswerOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for DiscoveryAnswers.
    */
   cursor?: Prisma.DiscoveryAnswerWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` DiscoveryAnswers from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` DiscoveryAnswers.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of DiscoveryAnswers.
    */
   distinct?: Prisma.DiscoveryAnswerScalarFieldEnum | Prisma.DiscoveryAnswerScalarFieldEnum[]
@@ -1199,31 +1199,31 @@ export type DiscoveryAnswerFindManyArgs<ExtArgs extends runtime.Types.Extensions
   where?: Prisma.DiscoveryAnswerWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of DiscoveryAnswers to fetch.
    */
   orderBy?: Prisma.DiscoveryAnswerOrderByWithRelationInput | Prisma.DiscoveryAnswerOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing DiscoveryAnswers.
    */
   cursor?: Prisma.DiscoveryAnswerWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` DiscoveryAnswers from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` DiscoveryAnswers.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of DiscoveryAnswers.
    */
   distinct?: Prisma.DiscoveryAnswerScalarFieldEnum | Prisma.DiscoveryAnswerScalarFieldEnum[]

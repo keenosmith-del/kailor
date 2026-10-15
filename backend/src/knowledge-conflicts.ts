@@ -27,7 +27,7 @@ export function claimsFromText(text: string, key: string): FactClaim[] {
     claims.push({ facet, value, key, quote });
   for (const clause of clausesOf(text)) {
     if (
-      /\b(?:might|maybe|what if|hypothetically|whether|if I|used to|thinking about)\b/i.test(
+      /\b(?:might|maybe|what if|hypothetically|whether|if I|used to|thinking about|eventually|planning to|plan to|stopped using)\b/i.test(
         clause,
       )
     )
@@ -60,8 +60,9 @@ export function claimsFromText(text: string, key: string): FactClaim[] {
     )
       add("booking", "existing", clause);
     if (
-      /\b(?:actually|instead)\b/i.test(clause) &&
-      /\b(?:a website would be enough|a website is enough|website instead of (?:an? )?(?:app|application))\b/i.test(
+      (/\b(?:actually|instead|changed my mind)\b/i.test(clause) ||
+        /^A website is (?:sufficient|enough)/i.test(clause)) &&
+      /\b(?:a website would be enough|a website is enough|a website is sufficient|website instead of (?:an? )?(?:app|application))\b/i.test(
         clause,
       )
     ) {
@@ -83,7 +84,7 @@ export function claimsFromText(text: string, key: string): FactClaim[] {
         add(facet, "declined", clause);
       else if (
         new RegExp(
-          `\\b(?:I|we) (?:want|need)(?: to)?[^.!?]*\\b${term}\\b`,
+          `\\b(?:I|we) (?:(?:currently|now|only) )?(?:want|need)(?: to)?[^.!?]*\\b${term}\\b`,
           "i",
         ).test(clause)
       )

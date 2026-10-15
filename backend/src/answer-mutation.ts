@@ -293,7 +293,7 @@ export async function writeAnswer(
         }),
       },
     });
-  await tx.discoverySession.update({
+  const updatedKnowledge = await tx.discoverySession.update({
     where: { id: s.id },
     data: {
       revision: { increment: 1 },
@@ -306,6 +306,11 @@ export async function writeAnswer(
         : {}),
     },
   });
+  if (updatedKnowledge.knowledgeRevision !== s.knowledgeRevision)
+    await tx.conversationSummary.updateMany({
+      where: { sessionId: s.id, superseded: false },
+      data: { superseded: true },
+    });
   const updatedPlan = await refreshPlan(tx, s.id);
   logger.info(
     selectedSkip

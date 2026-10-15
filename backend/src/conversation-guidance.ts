@@ -21,6 +21,20 @@ export function localReply(
   const quality = evaluateInput(message, "", "chat"),
     plan = savedPlan ?? planDiscovery(context);
   const text = message.trim();
+  if (
+    /would I need to learn|do I need to (?:learn|code)|need.*web development/i.test(
+      text,
+    )
+  )
+    return "You may be able to start with a website builder or an existing portfolio tool without learning web development. Custom design or unusual integrations may need development help. How much would you like to maintain yourself?";
+  if (
+    /would (?:that|it) be cheaper|prefer the previous idea|go back to the (?:previous|earlier) idea/i.test(
+      text,
+    )
+  )
+    return "Which approach are you referring to? I can compare the earlier options once we identify it, without inventing a price.";
+  if (/integrate it with|connect it to what/i.test(text))
+    return `Integration depends on the product's APIs, permissions and data export support.${context.tools ? ` Your confirmed tools are ${String(context.tools)}.` : ""} Which tool or connection should we check first?`;
   const reference = resolveOption(text, history);
   if (reference)
     return reference.option
@@ -68,10 +82,49 @@ export function localReply(
     return plan.context.pending.length
       ? `These are proposed details from your messages: ${plan.context.pending.map((p) => `${p.key}: ${Array.isArray(p.value) ? p.value.join(", ") : p.value}`).join("; ")}. Confirm, edit or dismiss them before they become assessment evidence.`
       : "There are no pending details. We can discuss your confirmed context or explore alternatives.";
-  if (/summari[sz]e|what.*understood/i.test(text))
-    return plan.context.activity
-      ? `Your confirmed situation: ${plan.context.activity}\n\n${plan.context.objectives.length ? `Objectives: ${plan.context.objectives.map((o) => o.value).join("; ")}. ` : ""}${plan.context.pending.length ? "Some proposed details still need your confirmation. " : ""}${plan.question?.title ?? "You can prepare an initial assessment or continue exploring."}`
-      : "We have not confirmed a situation yet. What are you working on?";
+  if (
+    /summari[sz]e|what.*understood|where were we|what (?:do you know|have we decided|is still missing)|did I tell you/i.test(
+      text,
+    )
+  ) {
+    if (/website/i.test(text)) {
+      const current =
+        plan.context.corrections.find((c) => c.facet === "website")
+          ?.currentValue ?? context.websiteStatus;
+      if (current && current !== "unknown")
+        return `Your confirmed current website status is ${current === "existing" ? "an existing website" : "no current website"}.${plan.context.corrections.some((c) => c.facet === "website") ? " The earlier status is historical after your confirmed correction." : ""} You can propose a correction here if this has changed.`;
+    }
+    const descriptions = [
+      ...new Set(
+        (plan.context.statements ?? [])
+          .filter(
+            (s) =>
+              s.status === "confirmed-description" &&
+              ![
+                "stage",
+                "kind",
+                "websiteStatus",
+                "bookingStatus",
+                "websitePreference",
+                "appPreference",
+                "aiPreference",
+                "automationPreference",
+              ].includes(s.sourceKey),
+          )
+          .map((s) => s.text),
+      ),
+    ].slice(0, 4);
+    if (!descriptions.length && !plan.context.facts.length)
+      return "We have not confirmed a situation yet. What are you working on?";
+    return `Confirmed for this plan: ${
+      descriptions.length
+        ? descriptions.join(" ")
+        : plan.context.facts
+            .slice(0, 4)
+            .map((f) => `${f.key}: ${f.value}`)
+            .join("; ")
+    }\n\n${plan.context.pending.length ? `${plan.context.pending.length} proposed details still need confirmation. ` : ""}${plan.readiness.canAssess ? "You can prepare an initial assessment or continue exploring." : (plan.question?.title ?? "We still need a concrete situation and objective.")}`;
+  }
   if (/why.*recommend|explain.*recommendation/i.test(text)) {
     const recommendation = suppliedRecommendations?.[0];
     return recommendation

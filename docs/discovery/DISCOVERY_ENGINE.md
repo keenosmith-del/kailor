@@ -35,3 +35,9 @@ Definition `1.0.0` remains compatible through additive optional question IDs; pl
 ## Conversation as an assessment path
 
 Conversation can confirm sufficient evidence and prepare an assessment without selecting a guided starting stage. The shared planner suppresses that generic stage question once the situation is known. Shared evidence sufficiency, skipped states, pending conflicts and knowledge revisions remain authoritative. Explicit confirmation of a website replacing an application revises scope and report freshness; chat activity alone does not. See [iteration 006](../iterations/006-conversational-intelligence.md).
+
+## Iteration 007 independent plans
+
+Each discovery belongs to an explicitly owned plan. Switching resumes its selected session, including confirmed answers, pending proposals, context and report readiness. A new discovery is an explicit fresh epoch within the same plan; it preserves older sessions rather than deleting them or creating another business. Create another plan is a separate action. Archived plans retain readable history and reject mutations until restored.
+
+Natural mention of another business produces a plan proposal, not new active-business facts. User confirmation of evidence remains mandatory and uses the same answer writer across Discovery and Conversation. Confirmed corrections supersede old summaries transactionally. Current/planned/historical clauses are distinct. The shared planner adds a reusable `orderWorkflow` gap for customization, ordering and fulfilment, and no longer suggests application-first-version exploration after confirmed refusal. The projection version is `plans-memory-4`; older cached projections rebuild without rewriting knowledge or reports.

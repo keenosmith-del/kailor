@@ -1,0 +1,9 @@
+# ADR 009 — Explicit owned plans above discovery sessions
+
+Accepted for iteration 007. Subject remains a discovery label; it historically had no explicit owner and could not safely identify a durable business across accounts. Add a relational Plan with immutable UUID, owner, title/description, lifecycle revision, archive timestamp and owner-scoped creation key. DiscoverySession retains its own answers, evidence, activity/knowledge revisions and immutable reports, with a required composite foreign key `(planId, adminId)` to Plan. Plan.lastSessionId stores the explicitly chosen discovery; service authorization verifies its membership. AccountSettings stores the last explicit plan selection with an optimistic revision.
+
+Migration deterministically creates one plan per old session, using that session UUID as its plan UUID and `legacy:<session-id>` as its creation key. It never merges by subject/name, even for repeated names or shared subjects. Session IDs and report content do not change. This safe default can produce multiple similarly named historical plans; rename them explicitly rather than assuming they are one business.
+
+Create and new-discovery requests have stable UUID request keys. New-plan proposals are application records, not model-executed actions. Archive retains all data and permits historical reads; mutations and selection require restoration. No delete endpoint exists. Rename/archive and account selection use independent optimistic revisions; ordinary plan activity does not revise other plans or invalidate their reports.
+
+A new discovery is an explicitly fresh knowledge epoch in the same plan, not a copy/merge of previous authoritative answers. Old discoveries and their reports remain selectable. Resuming a plan restores its last selected discovery. This supports multiple sessions without silently carrying old assumptions into a newly requested discovery.

@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model Evidence
- * 
+ *
  */
 export type EvidenceModel = runtime.Types.Result.DefaultSelection<Prisma.$EvidencePayload>
 
@@ -98,43 +98,43 @@ export type EvidenceAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inter
   where?: Prisma.EvidenceWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Evidences to fetch.
    */
   orderBy?: Prisma.EvidenceOrderByWithRelationInput | Prisma.EvidenceOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.EvidenceWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Evidences from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Evidences.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned Evidences
   **/
   _count?: true | EvidenceCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: EvidenceMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: EvidenceMaxAggregateInputType
@@ -700,13 +700,13 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    * @example
    * // Get all Evidences
    * const evidences = await prisma.evidence.findMany()
-   * 
+   *
    * // Get first 10 Evidences
    * const evidences = await prisma.evidence.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const evidenceWithIdOnly = await prisma.evidence.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends EvidenceFindManyArgs>(args?: Prisma.SelectSubset<T, EvidenceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EvidencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -720,7 +720,7 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    *     // ... data to create a Evidence
    *   }
    * })
-   * 
+   *
    */
   create<T extends EvidenceCreateArgs>(args: Prisma.SelectSubset<T, EvidenceCreateArgs<ExtArgs>>): Prisma.Prisma__EvidenceClient<runtime.Types.Result.GetResult<Prisma.$EvidencePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -734,7 +734,7 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends EvidenceCreateManyArgs>(args?: Prisma.SelectSubset<T, EvidenceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -748,7 +748,7 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many Evidences and only return the `id`
    * const evidenceWithIdOnly = await prisma.evidence.createManyAndReturn({
    *   select: { id: true },
@@ -758,7 +758,7 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends EvidenceCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, EvidenceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EvidencePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -772,7 +772,7 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    *     // ... filter to delete one Evidence
    *   }
    * })
-   * 
+   *
    */
   delete<T extends EvidenceDeleteArgs>(args: Prisma.SelectSubset<T, EvidenceDeleteArgs<ExtArgs>>): Prisma.Prisma__EvidenceClient<runtime.Types.Result.GetResult<Prisma.$EvidencePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -789,7 +789,7 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends EvidenceUpdateArgs>(args: Prisma.SelectSubset<T, EvidenceUpdateArgs<ExtArgs>>): Prisma.Prisma__EvidenceClient<runtime.Types.Result.GetResult<Prisma.$EvidencePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -803,7 +803,7 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends EvidenceDeleteManyArgs>(args?: Prisma.SelectSubset<T, EvidenceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -822,7 +822,7 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends EvidenceUpdateManyArgs>(args: Prisma.SelectSubset<T, EvidenceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -839,7 +839,7 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more Evidences and only return the `id`
    * const evidenceWithIdOnly = await prisma.evidence.updateManyAndReturn({
    *   select: { id: true },
@@ -852,7 +852,7 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends EvidenceUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, EvidenceUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EvidencePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -941,7 +941,7 @@ export interface EvidenceDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends EvidenceGroupByArgs,
@@ -1124,31 +1124,31 @@ export type EvidenceFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Inter
   where?: Prisma.EvidenceWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Evidences to fetch.
    */
   orderBy?: Prisma.EvidenceOrderByWithRelationInput | Prisma.EvidenceOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for Evidences.
    */
   cursor?: Prisma.EvidenceWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Evidences from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Evidences.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Evidences.
    */
   distinct?: Prisma.EvidenceScalarFieldEnum | Prisma.EvidenceScalarFieldEnum[]
@@ -1176,31 +1176,31 @@ export type EvidenceFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extension
   where?: Prisma.EvidenceWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Evidences to fetch.
    */
   orderBy?: Prisma.EvidenceOrderByWithRelationInput | Prisma.EvidenceOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for Evidences.
    */
   cursor?: Prisma.EvidenceWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Evidences from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Evidences.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Evidences.
    */
   distinct?: Prisma.EvidenceScalarFieldEnum | Prisma.EvidenceScalarFieldEnum[]
@@ -1228,31 +1228,31 @@ export type EvidenceFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
   where?: Prisma.EvidenceWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Evidences to fetch.
    */
   orderBy?: Prisma.EvidenceOrderByWithRelationInput | Prisma.EvidenceOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing Evidences.
    */
   cursor?: Prisma.EvidenceWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Evidences from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Evidences.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Evidences.
    */
   distinct?: Prisma.EvidenceScalarFieldEnum | Prisma.EvidenceScalarFieldEnum[]

@@ -61,3 +61,9 @@ Contextual dimensions and decision gaps are projections of the existing answers/
 ## Iteration 006 conversation memory
 
 The existing AI adapter now receives bounded role-preserving transcript memory and an on-demand deterministic older-message digest. Session data is a separate untrusted message rather than system-policy interpolation. There is no summary table or migration. Both discovery inputs still share the same transactional evidence writer, readiness and immutable reports. See [ADR 008](../decisions/008-bounded-conversation-memory.md) and the [execution record](../iterations/006-conversational-intelligence.md).
+
+## Iteration 007 plans and personal memory
+
+Account → owned Plan → independent DiscoverySession → answers/evidence/messages/reports. Subject remains a session label. A composite session-plan-owner FK prevents cross-account reassignment. Plan and selection revisions control lifecycle/navigation; knowledge revision controls assessment freshness. New discovery starts a fresh epoch in the existing plan; old sessions remain explicitly selectable. Existing session/report URLs survive the deterministic one-plan-per-old-session migration.
+
+Versioned session summaries and query-scoped older retrieval complement confirmed facts and recent history. Account preferences are explicit defaults; curated Case Intelligence is separate. Plan action proposals and comparison endpoints enforce ownership and explicit decisions. See ADRs [009](../decisions/009-plan-ownership-and-lifecycle.md), [010](../decisions/010-personal-memory-authority.md), [011](../decisions/011-versioned-memory-lifecycle.md), [012](../decisions/012-explicit-cross-plan-operations.md) and [013](../decisions/013-plan-aware-model-routing.md).

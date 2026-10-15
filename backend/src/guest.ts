@@ -1,3 +1,4 @@
+import { planRouter } from "./plan-routes.js";
 import { evidenceReviewInput } from "../../shared/src/index.js";
 import { Router } from "express";
 import { randomBytes, randomUUID } from "node:crypto";
@@ -99,6 +100,7 @@ guestRouter.use((_req, res, next) => {
     );
   next();
 });
+guestRouter.use(planRouter);
 const id = z.uuid();
 guestRouter.get("/sessions/:id", async (req, res) =>
   res.json(

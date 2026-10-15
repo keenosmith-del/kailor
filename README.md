@@ -1,8 +1,21 @@
 # kailor
 
-An adaptive, AI-assisted technology discovery and solution-design platform. Iteration 001 is a working private consultant tool: persistent guided discovery, conversation, evidence-based recommendations, a solution canvas, immutable analysis reports and PDF export.
+Iteration 007 is a private, AI-assisted technology consultancy platform with independently owned business/project plans, persistent conversation memory, guided Discovery, confirmation-gated evidence, Solution Canvas, immutable assessments and PDF export. Plans can be created, renamed, resumed, archived, restored and explicitly compared without merging their knowledge.
 
-## Start locally
+Cloudflare inference remains opt-in and founder-only. Deterministic evaluation passes do not establish live model quality. See the [iteration 007 implementation and execution report](docs/iterations/007-conversational-memory-and-plans.md).
+
+## Start an existing local installation
+
+```bash
+docker compose up -d postgres
+npm run db:generate
+npm run db:migrate
+npm run dev
+```
+
+Existing data needs the additive plans-and-memory migration; do not reset or reseed the database. Open `/workspace` for private founder access and plan management. Existing session URLs still work.
+
+## First installation
 
 Node 22.12+ and running Docker Compose are required. From this directory:
 
@@ -24,6 +37,7 @@ The current workspace already has a generated local `.env`, migrated PostgreSQL,
 npm run simulate        # fourteen synthetic evaluation personas; persisted, pending review
 npm test                # deterministic unit and provider-contract suite
 npm run typecheck
+npm run evaluate
 npm run build
 ```
 
@@ -66,7 +80,7 @@ docs/
 - [Design system](docs/frontend/DESIGN_SYSTEM.md)
 - [Testing strategy](docs/testing/TESTING_STRATEGY.md)
 - [Setup and deployment boundaries](docs/deployment/LOCAL_SETUP.md)
-- [Iteration 001 results and remaining work](docs/iterations/001-initial-build.md)
+- [Latest iteration 007 results and limitations](docs/iterations/007-conversational-memory-and-plans.md)
 
 ## Boundaries
 
@@ -88,6 +102,7 @@ npm run db:migrate
 npm test
 npm run evaluate
 npm run typecheck
+npm run evaluate
 npm run build
 DATABASE_URL=postgresql://kailor:kailor_local@localhost:5432/kailor_test npm run test:integration
 npm run dev

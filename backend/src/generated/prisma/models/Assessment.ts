@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model Assessment
- * 
+ *
  */
 export type AssessmentModel = runtime.Types.Result.DefaultSelection<Prisma.$AssessmentPayload>
 
@@ -116,55 +116,55 @@ export type AssessmentAggregateArgs<ExtArgs extends runtime.Types.Extensions.Int
   where?: Prisma.AssessmentWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Assessments to fetch.
    */
   orderBy?: Prisma.AssessmentOrderByWithRelationInput | Prisma.AssessmentOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.AssessmentWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Assessments from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Assessments.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned Assessments
   **/
   _count?: true | AssessmentCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to average
   **/
   _avg?: AssessmentAvgAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to sum
   **/
   _sum?: AssessmentSumAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: AssessmentMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: AssessmentMaxAggregateInputType
@@ -912,13 +912,13 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    * @example
    * // Get all Assessments
    * const assessments = await prisma.assessment.findMany()
-   * 
+   *
    * // Get first 10 Assessments
    * const assessments = await prisma.assessment.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const assessmentWithIdOnly = await prisma.assessment.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends AssessmentFindManyArgs>(args?: Prisma.SelectSubset<T, AssessmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssessmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -932,7 +932,7 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... data to create a Assessment
    *   }
    * })
-   * 
+   *
    */
   create<T extends AssessmentCreateArgs>(args: Prisma.SelectSubset<T, AssessmentCreateArgs<ExtArgs>>): Prisma.Prisma__AssessmentClient<runtime.Types.Result.GetResult<Prisma.$AssessmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -946,7 +946,7 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends AssessmentCreateManyArgs>(args?: Prisma.SelectSubset<T, AssessmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -960,7 +960,7 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many Assessments and only return the `id`
    * const assessmentWithIdOnly = await prisma.assessment.createManyAndReturn({
    *   select: { id: true },
@@ -970,7 +970,7 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends AssessmentCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, AssessmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssessmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -984,7 +984,7 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... filter to delete one Assessment
    *   }
    * })
-   * 
+   *
    */
   delete<T extends AssessmentDeleteArgs>(args: Prisma.SelectSubset<T, AssessmentDeleteArgs<ExtArgs>>): Prisma.Prisma__AssessmentClient<runtime.Types.Result.GetResult<Prisma.$AssessmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -1001,7 +1001,7 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends AssessmentUpdateArgs>(args: Prisma.SelectSubset<T, AssessmentUpdateArgs<ExtArgs>>): Prisma.Prisma__AssessmentClient<runtime.Types.Result.GetResult<Prisma.$AssessmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -1015,7 +1015,7 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends AssessmentDeleteManyArgs>(args?: Prisma.SelectSubset<T, AssessmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -1034,7 +1034,7 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends AssessmentUpdateManyArgs>(args: Prisma.SelectSubset<T, AssessmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -1051,7 +1051,7 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more Assessments and only return the `id`
    * const assessmentWithIdOnly = await prisma.assessment.updateManyAndReturn({
    *   select: { id: true },
@@ -1064,7 +1064,7 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends AssessmentUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, AssessmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssessmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -1153,7 +1153,7 @@ export interface AssessmentDelegate<ExtArgs extends runtime.Types.Extensions.Int
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends AssessmentGroupByArgs,
@@ -1336,31 +1336,31 @@ export type AssessmentFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Int
   where?: Prisma.AssessmentWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Assessments to fetch.
    */
   orderBy?: Prisma.AssessmentOrderByWithRelationInput | Prisma.AssessmentOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for Assessments.
    */
   cursor?: Prisma.AssessmentWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Assessments from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Assessments.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Assessments.
    */
   distinct?: Prisma.AssessmentScalarFieldEnum | Prisma.AssessmentScalarFieldEnum[]
@@ -1388,31 +1388,31 @@ export type AssessmentFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensi
   where?: Prisma.AssessmentWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Assessments to fetch.
    */
   orderBy?: Prisma.AssessmentOrderByWithRelationInput | Prisma.AssessmentOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for Assessments.
    */
   cursor?: Prisma.AssessmentWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Assessments from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Assessments.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Assessments.
    */
   distinct?: Prisma.AssessmentScalarFieldEnum | Prisma.AssessmentScalarFieldEnum[]
@@ -1440,31 +1440,31 @@ export type AssessmentFindManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
   where?: Prisma.AssessmentWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Assessments to fetch.
    */
   orderBy?: Prisma.AssessmentOrderByWithRelationInput | Prisma.AssessmentOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing Assessments.
    */
   cursor?: Prisma.AssessmentWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Assessments from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Assessments.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Assessments.
    */
   distinct?: Prisma.AssessmentScalarFieldEnum | Prisma.AssessmentScalarFieldEnum[]

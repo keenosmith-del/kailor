@@ -195,7 +195,7 @@ export function evaluateEvidence(
       ["Validate a small initial version and existing-tool alternatives"],
     );
   const operational =
-    /inspect|maintenan|repair|inventory|records?|technicians?|offline|synchroni|reporting|data entry|approvals?|workflow|integrat/i.test(
+    /inspect|maintenan|repair|inventory|records?|technicians?|orders?|production|fulfil|offline|synchroni|reporting|data entry|approvals?|workflow|integrat/i.test(
       text,
     );
   const concreteWorkflow =
@@ -228,7 +228,7 @@ export function evaluateEvidence(
       "workflow_exploration",
       ["integration"],
       sourceKeys(
-        /inspect|maintenan|repair|inventory|record|technician|workflow|integrat|report|data entry/i,
+        /inspect|maintenan|repair|inventory|record|technician|orders?|production|fulfil|workflow|integrat|report|data entry/i,
         ["workflowDetails"],
       ),
       [

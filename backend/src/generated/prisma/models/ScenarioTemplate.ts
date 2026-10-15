@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model ScenarioTemplate
- * 
+ *
  */
 export type ScenarioTemplateModel = runtime.Types.Result.DefaultSelection<Prisma.$ScenarioTemplatePayload>
 
@@ -72,43 +72,43 @@ export type ScenarioTemplateAggregateArgs<ExtArgs extends runtime.Types.Extensio
   where?: Prisma.ScenarioTemplateWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ScenarioTemplates to fetch.
    */
   orderBy?: Prisma.ScenarioTemplateOrderByWithRelationInput | Prisma.ScenarioTemplateOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.ScenarioTemplateWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ScenarioTemplates from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ScenarioTemplates.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned ScenarioTemplates
   **/
   _count?: true | ScenarioTemplateCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: ScenarioTemplateMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: ScenarioTemplateMaxAggregateInputType
@@ -396,13 +396,13 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    * @example
    * // Get all ScenarioTemplates
    * const scenarioTemplates = await prisma.scenarioTemplate.findMany()
-   * 
+   *
    * // Get first 10 ScenarioTemplates
    * const scenarioTemplates = await prisma.scenarioTemplate.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const scenarioTemplateWithIdOnly = await prisma.scenarioTemplate.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends ScenarioTemplateFindManyArgs>(args?: Prisma.SelectSubset<T, ScenarioTemplateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScenarioTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -416,7 +416,7 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... data to create a ScenarioTemplate
    *   }
    * })
-   * 
+   *
    */
   create<T extends ScenarioTemplateCreateArgs>(args: Prisma.SelectSubset<T, ScenarioTemplateCreateArgs<ExtArgs>>): Prisma.Prisma__ScenarioTemplateClient<runtime.Types.Result.GetResult<Prisma.$ScenarioTemplatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -430,7 +430,7 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends ScenarioTemplateCreateManyArgs>(args?: Prisma.SelectSubset<T, ScenarioTemplateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -444,7 +444,7 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many ScenarioTemplates and only return the `id`
    * const scenarioTemplateWithIdOnly = await prisma.scenarioTemplate.createManyAndReturn({
    *   select: { id: true },
@@ -454,7 +454,7 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends ScenarioTemplateCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, ScenarioTemplateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScenarioTemplatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -468,7 +468,7 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... filter to delete one ScenarioTemplate
    *   }
    * })
-   * 
+   *
    */
   delete<T extends ScenarioTemplateDeleteArgs>(args: Prisma.SelectSubset<T, ScenarioTemplateDeleteArgs<ExtArgs>>): Prisma.Prisma__ScenarioTemplateClient<runtime.Types.Result.GetResult<Prisma.$ScenarioTemplatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -485,7 +485,7 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends ScenarioTemplateUpdateArgs>(args: Prisma.SelectSubset<T, ScenarioTemplateUpdateArgs<ExtArgs>>): Prisma.Prisma__ScenarioTemplateClient<runtime.Types.Result.GetResult<Prisma.$ScenarioTemplatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -499,7 +499,7 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends ScenarioTemplateDeleteManyArgs>(args?: Prisma.SelectSubset<T, ScenarioTemplateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -518,7 +518,7 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends ScenarioTemplateUpdateManyArgs>(args: Prisma.SelectSubset<T, ScenarioTemplateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -535,7 +535,7 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more ScenarioTemplates and only return the `id`
    * const scenarioTemplateWithIdOnly = await prisma.scenarioTemplate.updateManyAndReturn({
    *   select: { id: true },
@@ -548,7 +548,7 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends ScenarioTemplateUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, ScenarioTemplateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScenarioTemplatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -637,7 +637,7 @@ export interface ScenarioTemplateDelegate<ExtArgs extends runtime.Types.Extensio
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends ScenarioTemplateGroupByArgs,
@@ -802,31 +802,31 @@ export type ScenarioTemplateFindFirstArgs<ExtArgs extends runtime.Types.Extensio
   where?: Prisma.ScenarioTemplateWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ScenarioTemplates to fetch.
    */
   orderBy?: Prisma.ScenarioTemplateOrderByWithRelationInput | Prisma.ScenarioTemplateOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for ScenarioTemplates.
    */
   cursor?: Prisma.ScenarioTemplateWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ScenarioTemplates from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ScenarioTemplates.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of ScenarioTemplates.
    */
   distinct?: Prisma.ScenarioTemplateScalarFieldEnum | Prisma.ScenarioTemplateScalarFieldEnum[]
@@ -850,31 +850,31 @@ export type ScenarioTemplateFindFirstOrThrowArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.ScenarioTemplateWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ScenarioTemplates to fetch.
    */
   orderBy?: Prisma.ScenarioTemplateOrderByWithRelationInput | Prisma.ScenarioTemplateOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for ScenarioTemplates.
    */
   cursor?: Prisma.ScenarioTemplateWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ScenarioTemplates from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ScenarioTemplates.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of ScenarioTemplates.
    */
   distinct?: Prisma.ScenarioTemplateScalarFieldEnum | Prisma.ScenarioTemplateScalarFieldEnum[]
@@ -898,31 +898,31 @@ export type ScenarioTemplateFindManyArgs<ExtArgs extends runtime.Types.Extension
   where?: Prisma.ScenarioTemplateWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ScenarioTemplates to fetch.
    */
   orderBy?: Prisma.ScenarioTemplateOrderByWithRelationInput | Prisma.ScenarioTemplateOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing ScenarioTemplates.
    */
   cursor?: Prisma.ScenarioTemplateWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ScenarioTemplates from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ScenarioTemplates.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of ScenarioTemplates.
    */
   distinct?: Prisma.ScenarioTemplateScalarFieldEnum | Prisma.ScenarioTemplateScalarFieldEnum[]

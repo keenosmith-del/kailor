@@ -1,0 +1,11 @@
+# ADR 013 — Observable plan-aware provider routing
+
+Accepted for iteration 007. Keep AiProvider and the existing Cloudflare REST adapter. Use deterministic validation, ownership, readiness and plan actions; route useful accepted conversational requests to the real provider only with founder authorization, remote opt-in, credentials, privacy approval and an atomic usage reservation. Simple greetings and explicit plan actions remain local. Invalid/off-topic requests remain local. Inference may propose a validated intent and grounded separate-plan title, but it cannot execute an application action or confirm evidence.
+
+Audit intent, route, provider and safe fallback reason without logging raw prompts. Chat responses expose intent/routing for inspection; local replies retain honest attribution. Recent history, summary versions, retrieved references, pending facts, skipped questions and explicit account defaults are separately labelled untrusted data. The current user's new message is appended once. A requested exact confirmed budget may be recalled as a constraint; fabricated estimates remain rejected.
+
+Per-session limits and the globally serialized daily allowance remain. The global daily ceiling also bounds any one account across plans; creating another plan does not reset it. Failed calls count. Concurrent conversations can still reserve two calls before one loses its session revision race: no exactly-once remote charging claim is made. There are no automatic retries, paid billing activation or unrestricted tools.
+
+The old model documentation now redirects to an unavailable-model page. The default/example use `@cf/meta/llama-3.1-8b-instruct-fp8`; explicit existing environment overrides are preserved. Model availability, account billing and output quality require live verification. The three-call synthetic harness records baseline and actual outputs plus pending human rubric review, and skips when credentials/opt-in are absent.
+
+Sources inspected 15 October 2026: [Cloudflare model catalog](https://developers.cloudflare.com/workers-ai/models/), [FP8 model](https://developers.cloudflare.com/workers-ai/models/llama-3.1-8b-instruct-fp8/), [pricing and free allocation](https://developers.cloudflare.com/workers-ai/platform/pricing/). These public documents do not establish the user's account billing state or live model quality.

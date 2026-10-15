@@ -1,7 +1,7 @@
 export const sessionHref = (id: string, view: string) =>
   `${window.location.pathname.startsWith("/preview/") ? "/preview" : "/sessions"}/${id}/${view}`;
 const endpoint = (path: string) =>
-  `/api${window.location.pathname.startsWith("/preview/") && path.startsWith("/sessions") ? "/guest" : ""}${path}`;
+  `/api${window.location.pathname.startsWith("/preview/") && ["/sessions", "/plans", "/preferences"].some((prefix) => path.startsWith(prefix)) ? "/guest" : ""}${path}`;
 export class ApiError extends Error {
   constructor(
     public status: number,

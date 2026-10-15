@@ -49,3 +49,9 @@ Run npm run db:generate and npm run db:migrate against the configured database, 
 ## Iteration 005 schema and verification
 
 Run `npm run db:generate` and `npm run db:migrate` before using knowledge-revision-aware servers. The additive migration preserves existing sessions/report content; do not reset or reseed existing data. Apply the same migration to `kailor_test` using the existing command above. `npm run evaluate:live` only checks/runs existing founder opt-in configuration and never enables paid billing; actual synthetic live evaluation requires the `_test` database and bounded limits. See [iteration 005](../iterations/005-contextual-intelligence.md) for exact commands and executed results.
+
+## Iteration 007 upgrade
+
+For an existing installation, run `npm run db:generate` and `npm run db:migrate`; no reset, reseed or founder-password change is needed. Apply the same additive migration to `kailor_test` with the existing isolated command. Open `/workspace` or `/plans` for private account plan management; direct `/plans/:planId` and old `/sessions/:sessionId/:view` URLs work. Guest preview remains local-only and requires its existing preview authentication.
+
+The new default/example Cloudflare model is `@cf/meta/llama-3.1-8b-instruct-fp8`. An explicit `CLOUDFLARE_MODEL` in the ignored `.env` is not overwritten: inspect/choose a currently available model before opting in. The old model's official page currently reports it unavailable. Confirm account billing/free allocation independently; call allowances are not a zero-charge guarantee. The bounded live harness still skips without credentials and `AI_ALLOW_REMOTE=true`. See [ADR 013](../decisions/013-plan-aware-model-routing.md).

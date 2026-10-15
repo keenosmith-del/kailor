@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model ReportSnapshot
- * 
+ *
  */
 export type ReportSnapshotModel = runtime.Types.Result.DefaultSelection<Prisma.$ReportSnapshotPayload>
 
@@ -72,43 +72,43 @@ export type ReportSnapshotAggregateArgs<ExtArgs extends runtime.Types.Extensions
   where?: Prisma.ReportSnapshotWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ReportSnapshots to fetch.
    */
   orderBy?: Prisma.ReportSnapshotOrderByWithRelationInput | Prisma.ReportSnapshotOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.ReportSnapshotWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ReportSnapshots from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ReportSnapshots.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned ReportSnapshots
   **/
   _count?: true | ReportSnapshotCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: ReportSnapshotMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: ReportSnapshotMaxAggregateInputType
@@ -489,13 +489,13 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    * @example
    * // Get all ReportSnapshots
    * const reportSnapshots = await prisma.reportSnapshot.findMany()
-   * 
+   *
    * // Get first 10 ReportSnapshots
    * const reportSnapshots = await prisma.reportSnapshot.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const reportSnapshotWithIdOnly = await prisma.reportSnapshot.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends ReportSnapshotFindManyArgs>(args?: Prisma.SelectSubset<T, ReportSnapshotFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportSnapshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -509,7 +509,7 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... data to create a ReportSnapshot
    *   }
    * })
-   * 
+   *
    */
   create<T extends ReportSnapshotCreateArgs>(args: Prisma.SelectSubset<T, ReportSnapshotCreateArgs<ExtArgs>>): Prisma.Prisma__ReportSnapshotClient<runtime.Types.Result.GetResult<Prisma.$ReportSnapshotPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -523,7 +523,7 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends ReportSnapshotCreateManyArgs>(args?: Prisma.SelectSubset<T, ReportSnapshotCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -537,7 +537,7 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many ReportSnapshots and only return the `id`
    * const reportSnapshotWithIdOnly = await prisma.reportSnapshot.createManyAndReturn({
    *   select: { id: true },
@@ -547,7 +547,7 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends ReportSnapshotCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, ReportSnapshotCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportSnapshotPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -561,7 +561,7 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... filter to delete one ReportSnapshot
    *   }
    * })
-   * 
+   *
    */
   delete<T extends ReportSnapshotDeleteArgs>(args: Prisma.SelectSubset<T, ReportSnapshotDeleteArgs<ExtArgs>>): Prisma.Prisma__ReportSnapshotClient<runtime.Types.Result.GetResult<Prisma.$ReportSnapshotPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -578,7 +578,7 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends ReportSnapshotUpdateArgs>(args: Prisma.SelectSubset<T, ReportSnapshotUpdateArgs<ExtArgs>>): Prisma.Prisma__ReportSnapshotClient<runtime.Types.Result.GetResult<Prisma.$ReportSnapshotPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -592,7 +592,7 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends ReportSnapshotDeleteManyArgs>(args?: Prisma.SelectSubset<T, ReportSnapshotDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -611,7 +611,7 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends ReportSnapshotUpdateManyArgs>(args: Prisma.SelectSubset<T, ReportSnapshotUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -628,7 +628,7 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more ReportSnapshots and only return the `id`
    * const reportSnapshotWithIdOnly = await prisma.reportSnapshot.updateManyAndReturn({
    *   select: { id: true },
@@ -641,7 +641,7 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends ReportSnapshotUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, ReportSnapshotUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportSnapshotPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -730,7 +730,7 @@ export interface ReportSnapshotDelegate<ExtArgs extends runtime.Types.Extensions
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends ReportSnapshotGroupByArgs,
@@ -908,31 +908,31 @@ export type ReportSnapshotFindFirstArgs<ExtArgs extends runtime.Types.Extensions
   where?: Prisma.ReportSnapshotWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ReportSnapshots to fetch.
    */
   orderBy?: Prisma.ReportSnapshotOrderByWithRelationInput | Prisma.ReportSnapshotOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for ReportSnapshots.
    */
   cursor?: Prisma.ReportSnapshotWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ReportSnapshots from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ReportSnapshots.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of ReportSnapshots.
    */
   distinct?: Prisma.ReportSnapshotScalarFieldEnum | Prisma.ReportSnapshotScalarFieldEnum[]
@@ -960,31 +960,31 @@ export type ReportSnapshotFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ext
   where?: Prisma.ReportSnapshotWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ReportSnapshots to fetch.
    */
   orderBy?: Prisma.ReportSnapshotOrderByWithRelationInput | Prisma.ReportSnapshotOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for ReportSnapshots.
    */
   cursor?: Prisma.ReportSnapshotWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ReportSnapshots from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ReportSnapshots.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of ReportSnapshots.
    */
   distinct?: Prisma.ReportSnapshotScalarFieldEnum | Prisma.ReportSnapshotScalarFieldEnum[]
@@ -1012,31 +1012,31 @@ export type ReportSnapshotFindManyArgs<ExtArgs extends runtime.Types.Extensions.
   where?: Prisma.ReportSnapshotWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ReportSnapshots to fetch.
    */
   orderBy?: Prisma.ReportSnapshotOrderByWithRelationInput | Prisma.ReportSnapshotOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing ReportSnapshots.
    */
   cursor?: Prisma.ReportSnapshotWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ReportSnapshots from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ReportSnapshots.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of ReportSnapshots.
    */
   distinct?: Prisma.ReportSnapshotScalarFieldEnum | Prisma.ReportSnapshotScalarFieldEnum[]

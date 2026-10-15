@@ -13,6 +13,9 @@ model AdminUser {
   passwordHash String
   sessions AuthSession[]
   discoveries DiscoverySession[]
+  plans Plan[]
+  settings AccountSettings?
+  preferences AccountPreference[]
   createdAt DateTime @default(now())
 }
 model AuthSession {
@@ -27,10 +30,79 @@ model Subject {
   synthetic Boolean @default(false)
   sessions DiscoverySession[]
 }
+model Plan {
+  id String @id @default(uuid())
+  adminId String
+  admin AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  title String
+  description String @default("")
+  archivedAt DateTime?
+  revision Int @default(0)
+  creationKey String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  sessions DiscoverySession[]
+  lastSessionId String?
+  lastSession DiscoverySession? @relation("last-session", fields: [lastSessionId], references: [id], onDelete: SetNull)
+  selections AccountSettings[]
+  @@unique([id, adminId])
+  @@unique([adminId, creationKey])
+  @@index([adminId, archivedAt, updatedAt])
+}
+model AccountSettings {
+  adminId String @id
+  admin AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  activePlanId String?
+  activePlan Plan? @relation(fields: [activePlanId], references: [id], onDelete: SetNull)
+  revision Int @default(0)
+}
+model AccountPreference {
+  id String @id @default(uuid())
+  adminId String
+  admin AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  key String
+  value String
+  revision Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  @@unique([adminId, key])
+}
+model ConversationSummary {
+  id String @id @default(uuid())
+  sessionId String
+  session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  version Int
+  knowledgeRevision Int
+  sourceRevision Int
+  fromOrdinal Int
+  throughOrdinal Int
+  content Json
+  strategy String @default("structured-excerpts-v2")
+  superseded Boolean @default(false)
+  createdAt DateTime @default(now())
+  @@unique([sessionId, version])
+  @@index([sessionId, superseded, knowledgeRevision])
+}
+model PlanActionProposal {
+  id String @id @default(uuid())
+  sessionId String
+  session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sourceMessageId String
+  sourceRevision Int
+  title String
+  description String
+  kind String @default("new_plan")
+  status String @default("pending")
+  createdAt DateTime @default(now())
+  decidedAt DateTime?
+  @@index([sessionId, status])
+}
 model DiscoverySession {
   id String @id @default(uuid())
   adminId String
   admin AdminUser @relation(fields: [adminId], references: [id])
+  planId String
+  plan Plan @relation(fields: [planId, adminId], references: [id, adminId])
   subjectId String
   subject Subject @relation(fields: [subjectId], references: [id])
   definitionVersion String
@@ -49,6 +121,11 @@ model DiscoverySession {
   assessments Assessment[]
   simulations SimulationRun[]
   usage AiUsageRecord[]
+  lastForPlans Plan[] @relation("last-session")
+  summaries ConversationSummary[]
+  planProposals PlanActionProposal[]
+  @@index([planId, updatedAt])
+  @@unique([id, planId, adminId])
 }
 model DiscoveryAnswer {
   id String @id @default(uuid())
@@ -68,6 +145,8 @@ model ConversationMessage {
   session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   role String
   ordinal Int
+  intent String @default("discussion")
+  excludedFromContext Boolean @default(false)
   content String
   provider String
   createdAt DateTime @default(now())

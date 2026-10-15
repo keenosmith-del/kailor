@@ -1,3 +1,4 @@
+import { planRouter } from "./plan-routes.js";
 import { evidenceReviewInput } from "../../shared/src/index.js";
 import { containsSensitiveData } from "./conversation-guidance.js";
 import { evaluateInput } from "./input-quality.js";
@@ -58,6 +59,7 @@ const patternSchema = z
           "websiteContent",
           "currentAlternatives",
           "firstVersion",
+          "orderWorkflow",
         ]),
       )
       .max(9)
@@ -159,6 +161,7 @@ app.use("/api", requireAdmin, (_req, res, next) => {
   res.setHeader("Cache-Control", "no-store");
   next();
 });
+app.use("/api", planRouter);
 app.get("/api/auth/me", async (_req, res) => {
   const admin = await db.adminUser.findUniqueOrThrow({
     where: { id: res.locals.adminId },

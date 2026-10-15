@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-15T01:40:23.216Z",
+  "generatedAt": "2026-10-15T07:46:00.721Z",
   "independent": [
     {
       "id": "agricultural-field-work",
@@ -825,7 +825,7 @@
         "status": "qualified preliminary draft — consultant review required",
         "synthetic": true,
         "revision": 1,
-        "createdAt": "2026-10-15T01:40:23.214Z",
+        "createdAt": "2026-10-15T07:46:00.719Z",
         "recommendations": [
           {
             "serviceId": "integration",
@@ -1000,7 +1000,7 @@
         "status": "qualified preliminary draft — consultant review required",
         "synthetic": true,
         "revision": 1,
-        "createdAt": "2026-10-15T01:40:23.215Z",
+        "createdAt": "2026-10-15T07:46:00.721Z",
         "recommendations": [
           {
             "serviceId": "integration",

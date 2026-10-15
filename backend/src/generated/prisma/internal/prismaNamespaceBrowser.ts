@@ -54,6 +54,11 @@ export const ModelName = {
   AdminUser: 'AdminUser',
   AuthSession: 'AuthSession',
   Subject: 'Subject',
+  Plan: 'Plan',
+  AccountSettings: 'AccountSettings',
+  AccountPreference: 'AccountPreference',
+  ConversationSummary: 'ConversationSummary',
+  PlanActionProposal: 'PlanActionProposal',
   DiscoverySession: 'DiscoverySession',
   DiscoveryAnswer: 'DiscoveryAnswer',
   ConversationMessage: 'ConversationMessage',
@@ -115,9 +120,81 @@ export const SubjectScalarFieldEnum = {
 export type SubjectScalarFieldEnum = (typeof SubjectScalarFieldEnum)[keyof typeof SubjectScalarFieldEnum]
 
 
+export const PlanScalarFieldEnum = {
+  id: 'id',
+  adminId: 'adminId',
+  title: 'title',
+  description: 'description',
+  archivedAt: 'archivedAt',
+  revision: 'revision',
+  creationKey: 'creationKey',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastSessionId: 'lastSessionId'
+} as const
+
+export type PlanScalarFieldEnum = (typeof PlanScalarFieldEnum)[keyof typeof PlanScalarFieldEnum]
+
+
+export const AccountSettingsScalarFieldEnum = {
+  adminId: 'adminId',
+  activePlanId: 'activePlanId',
+  revision: 'revision'
+} as const
+
+export type AccountSettingsScalarFieldEnum = (typeof AccountSettingsScalarFieldEnum)[keyof typeof AccountSettingsScalarFieldEnum]
+
+
+export const AccountPreferenceScalarFieldEnum = {
+  id: 'id',
+  adminId: 'adminId',
+  key: 'key',
+  value: 'value',
+  revision: 'revision',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AccountPreferenceScalarFieldEnum = (typeof AccountPreferenceScalarFieldEnum)[keyof typeof AccountPreferenceScalarFieldEnum]
+
+
+export const ConversationSummaryScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  version: 'version',
+  knowledgeRevision: 'knowledgeRevision',
+  sourceRevision: 'sourceRevision',
+  fromOrdinal: 'fromOrdinal',
+  throughOrdinal: 'throughOrdinal',
+  content: 'content',
+  strategy: 'strategy',
+  superseded: 'superseded',
+  createdAt: 'createdAt'
+} as const
+
+export type ConversationSummaryScalarFieldEnum = (typeof ConversationSummaryScalarFieldEnum)[keyof typeof ConversationSummaryScalarFieldEnum]
+
+
+export const PlanActionProposalScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  sourceMessageId: 'sourceMessageId',
+  sourceRevision: 'sourceRevision',
+  title: 'title',
+  description: 'description',
+  kind: 'kind',
+  status: 'status',
+  createdAt: 'createdAt',
+  decidedAt: 'decidedAt'
+} as const
+
+export type PlanActionProposalScalarFieldEnum = (typeof PlanActionProposalScalarFieldEnum)[keyof typeof PlanActionProposalScalarFieldEnum]
+
+
 export const DiscoverySessionScalarFieldEnum = {
   id: 'id',
   adminId: 'adminId',
+  planId: 'planId',
   subjectId: 'subjectId',
   definitionVersion: 'definitionVersion',
   revision: 'revision',
@@ -151,6 +228,8 @@ export const ConversationMessageScalarFieldEnum = {
   sessionId: 'sessionId',
   role: 'role',
   ordinal: 'ordinal',
+  intent: 'intent',
+  excludedFromContext: 'excludedFromContext',
   content: 'content',
   provider: 'provider',
   createdAt: 'createdAt'
@@ -318,19 +397,19 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -341,6 +420,14 @@ export const QueryMode = {
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
 export const JsonNullValueFilter = {
   DbNull: DbNull,
   JsonNull: JsonNull,
@@ -348,12 +435,4 @@ export const JsonNullValueFilter = {
 } as const
 
 export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

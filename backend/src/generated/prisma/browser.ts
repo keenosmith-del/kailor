@@ -4,9 +4,9 @@
 // biome-ignore-all lint: generated file
 // @ts-nocheck 
 /*
- * This file should be your main import to use Prisma-related types and utilities in a browser. 
+ * This file should be your main import to use Prisma-related types and utilities in a browser.
  * Use it to get access to models, enums, and input types.
- * 
+ *
  * This file does not contain a `PrismaClient` class, nor several other helpers that are intended as server-side only.
  * See `client.ts` for the standard, server-side entry point.
  *
@@ -19,86 +19,111 @@ export * as $Enums from './enums.js'
 export * from './enums.js';
 /**
  * Model AdminUser
- * 
+ *
  */
 export type AdminUser = Prisma.AdminUserModel
 /**
  * Model AuthSession
- * 
+ *
  */
 export type AuthSession = Prisma.AuthSessionModel
 /**
  * Model Subject
- * 
+ *
  */
 export type Subject = Prisma.SubjectModel
 /**
+ * Model Plan
+ *
+ */
+export type Plan = Prisma.PlanModel
+/**
+ * Model AccountSettings
+ *
+ */
+export type AccountSettings = Prisma.AccountSettingsModel
+/**
+ * Model AccountPreference
+ *
+ */
+export type AccountPreference = Prisma.AccountPreferenceModel
+/**
+ * Model ConversationSummary
+ *
+ */
+export type ConversationSummary = Prisma.ConversationSummaryModel
+/**
+ * Model PlanActionProposal
+ *
+ */
+export type PlanActionProposal = Prisma.PlanActionProposalModel
+/**
  * Model DiscoverySession
- * 
+ *
  */
 export type DiscoverySession = Prisma.DiscoverySessionModel
 /**
  * Model DiscoveryAnswer
- * 
+ *
  */
 export type DiscoveryAnswer = Prisma.DiscoveryAnswerModel
 /**
  * Model ConversationMessage
- * 
+ *
  */
 export type ConversationMessage = Prisma.ConversationMessageModel
 /**
  * Model Evidence
- * 
+ *
  */
 export type Evidence = Prisma.EvidenceModel
 /**
  * Model Assessment
- * 
+ *
  */
 export type Assessment = Prisma.AssessmentModel
 /**
  * Model Service
- * 
+ *
  */
 export type Service = Prisma.ServiceModel
 /**
  * Model Recommendation
- * 
+ *
  */
 export type Recommendation = Prisma.RecommendationModel
 /**
  * Model CostEstimate
- * 
+ *
  */
 export type CostEstimate = Prisma.CostEstimateModel
 /**
  * Model ReportSnapshot
- * 
+ *
  */
 export type ReportSnapshot = Prisma.ReportSnapshotModel
 /**
  * Model ScenarioTemplate
- * 
+ *
  */
 export type ScenarioTemplate = Prisma.ScenarioTemplateModel
 /**
  * Model SimulationRun
- * 
+ *
  */
 export type SimulationRun = Prisma.SimulationRunModel
 /**
  * Model CaseIntelligenceRecord
- * 
+ *
  */
 export type CaseIntelligenceRecord = Prisma.CaseIntelligenceRecordModel
 /**
  * Model AiUsageRecord
- * 
+ *
  */
 export type AiUsageRecord = Prisma.AiUsageRecordModel
 /**
  * Model AuditEvent
- * 
+ *
  */
 export type AuditEvent = Prisma.AuditEventModel

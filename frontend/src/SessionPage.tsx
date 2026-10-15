@@ -1,3 +1,4 @@
+import { PlanNavigation } from "./Plans";
 import {
   AnimatePresence,
   motion,
@@ -21,7 +22,7 @@ import { Conversation } from "./Conversation";
 import { Discovery } from "./Discovery";
 import type { Next } from "./types";
 import { ErrorBox, errorMessage } from "./ui";
-import { clearDrafts, pruneDrafts } from "./drafts";
+import { pruneDrafts } from "./drafts";
 async function readSession(id: string) {
   const [session, next, report] = await Promise.all([
     api<Session>(`/sessions/${id}`),
@@ -63,6 +64,10 @@ export function SessionPage() {
   const navigate = useNavigate();
   const loadedSessionId = useRef("");
   const restartPending = useRef(false);
+  const restartKey = useRef(crypto.randomUUID());
+  const loadSequence = useRef(0);
+  const currentRoute = useRef(id);
+  currentRoute.current = id;
   const [restarting, setRestarting] = useState(false);
   const [session, setSession] = useState<Session | null>(null),
     [next, setNext] = useState<Next | null>(null),
@@ -83,7 +88,10 @@ export function SessionPage() {
   }, []);
   const guest = window.location.pathname.startsWith("/preview/");
   const reload = useCallback(async () => {
+    const sequence = ++loadSequence.current;
     const data = await readSession(id);
+    if (sequence !== loadSequence.current || currentRoute.current !== id)
+      return;
     loadedSessionId.current = id;
     setSession(data.session);
     setNext(data.next);
@@ -128,13 +136,27 @@ export function SessionPage() {
     setBusy(true);
     setError("");
     try {
-      const created = await api<Session>(
-        "/sessions",
-        "POST",
-        guest ? {} : { name: session?.subject.name ?? "New discovery" },
-      );
+      const result =
+        session?.planId && session.plan
+          ? await api<{ sessionId: string }>(
+              `/plans/${session.planId}/sessions`,
+              "POST",
+              {
+                revision: session.plan.revision,
+                creationKey: restartKey.current,
+              },
+            )
+          : null;
+      const created = result
+        ? { id: result.sessionId }
+        : await api<Session>(
+            "/sessions",
+            "POST",
+            guest ? {} : { name: session?.subject.name ?? "New discovery" },
+          );
       const data = await readSession(created.id);
-      clearDrafts(id);
+      restartKey.current = crypto.randomUUID();
+      // Keep the previous discovery and its scoped draft available when returning.
       // Keep the old page present until the new session is ready for a crossfade.
       loadedSessionId.current = created.id;
       setSession(data.session);
@@ -175,8 +197,12 @@ export function SessionPage() {
           whileHover={busy || reduced ? undefined : { y: -2, scale: 1.015 }}
           whileTap={busy || reduced ? undefined : { scale: 0.94 }}
           transition={{ duration: reduced ? 0 : 0.2 }}
-          aria-label={restarting ? "Starting a new discovery" : "Start again"}
-          disabled={busy}
+          aria-label={
+            restarting
+              ? "Starting a new discovery"
+              : "New discovery in this plan"
+          }
+          disabled={busy || !!session?.plan?.archivedAt}
           onClick={() => void restart()}
         >
           <motion.span
@@ -186,9 +212,24 @@ export function SessionPage() {
           >
             <RotateCcw size={12} strokeWidth={1.5} />
           </motion.span>
-          Start again
+          New discovery
         </motion.button>
       </nav>
+      {session?.id === id && (
+        <PlanNavigation
+          sessionId={id}
+          planId={session.planId}
+          title={session.plan?.title ?? session.subject.name}
+          busy={busy}
+          onChange={() => void reload()}
+        />
+      )}
+      {session?.plan?.archivedAt && (
+        <p className="preview-note">
+          This plan is archived. Its history is available; restore it under
+          Change plan to continue.
+        </p>
+      )}
       {guest && <p className="preview-note">Local guest preview</p>}
       <ErrorBox error={error} />
       {processing && (
@@ -196,45 +237,50 @@ export function SessionPage() {
           {processing}
         </p>
       )}
-      {session && next ? (
+      {session && next && session.id === id ? (
         <AnimatePresence mode="wait" initial={false}>
           <SessionTransition key={`${session.id}:${view}`}>
-            {view === "discovery" ? (
-              <Discovery
-                session={session}
-                next={next}
-                busy={busy}
-                act={act}
-                assess={assess}
-                ready={ready}
-                restart={restart}
-              />
-            ) : view === "conversation" ? (
-              <Conversation
-                assess={assess}
-                ready={ready}
-                session={session}
-                next={next}
-                busy={busy}
-                act={act}
-              />
-            ) : view === "canvas" ? (
-              <Canvas
-                session={session}
-                next={next}
-                assess={assess}
-                busy={busy}
-              />
-            ) : view === "report" ? (
-              <Analysis
-                session={session}
-                next={next}
-                assess={assess}
-                busy={busy}
-              />
-            ) : (
-              <p>Choose a discovery view.</p>
-            )}
+            <fieldset
+              className="session-content"
+              disabled={!!session.plan?.archivedAt}
+            >
+              {view === "discovery" ? (
+                <Discovery
+                  session={session}
+                  next={next}
+                  busy={busy}
+                  act={act}
+                  assess={assess}
+                  ready={ready}
+                  restart={restart}
+                />
+              ) : view === "conversation" ? (
+                <Conversation
+                  assess={assess}
+                  ready={ready}
+                  session={session}
+                  next={next}
+                  busy={busy}
+                  act={act}
+                />
+              ) : view === "canvas" ? (
+                <Canvas
+                  session={session}
+                  next={next}
+                  assess={assess}
+                  busy={busy}
+                />
+              ) : view === "report" ? (
+                <Analysis
+                  session={session}
+                  next={next}
+                  assess={assess}
+                  busy={busy}
+                />
+              ) : (
+                <p>Choose a discovery view.</p>
+              )}
+            </fieldset>
           </SessionTransition>
         </AnimatePresence>
       ) : (

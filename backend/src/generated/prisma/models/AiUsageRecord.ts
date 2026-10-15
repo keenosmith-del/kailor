@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model AiUsageRecord
- * 
+ *
  */
 export type AiUsageRecordModel = runtime.Types.Result.DefaultSelection<Prisma.$AiUsageRecordPayload>
 
@@ -118,55 +118,55 @@ export type AiUsageRecordAggregateArgs<ExtArgs extends runtime.Types.Extensions.
   where?: Prisma.AiUsageRecordWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AiUsageRecords to fetch.
    */
   orderBy?: Prisma.AiUsageRecordOrderByWithRelationInput | Prisma.AiUsageRecordOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.AiUsageRecordWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AiUsageRecords from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AiUsageRecords.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned AiUsageRecords
   **/
   _count?: true | AiUsageRecordCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to average
   **/
   _avg?: AiUsageRecordAvgAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to sum
   **/
   _sum?: AiUsageRecordSumAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: AiUsageRecordMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: AiUsageRecordMaxAggregateInputType
@@ -722,13 +722,13 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    * @example
    * // Get all AiUsageRecords
    * const aiUsageRecords = await prisma.aiUsageRecord.findMany()
-   * 
+   *
    * // Get first 10 AiUsageRecords
    * const aiUsageRecords = await prisma.aiUsageRecord.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const aiUsageRecordWithIdOnly = await prisma.aiUsageRecord.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends AiUsageRecordFindManyArgs>(args?: Prisma.SelectSubset<T, AiUsageRecordFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AiUsageRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -742,7 +742,7 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... data to create a AiUsageRecord
    *   }
    * })
-   * 
+   *
    */
   create<T extends AiUsageRecordCreateArgs>(args: Prisma.SelectSubset<T, AiUsageRecordCreateArgs<ExtArgs>>): Prisma.Prisma__AiUsageRecordClient<runtime.Types.Result.GetResult<Prisma.$AiUsageRecordPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -756,7 +756,7 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends AiUsageRecordCreateManyArgs>(args?: Prisma.SelectSubset<T, AiUsageRecordCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -770,7 +770,7 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many AiUsageRecords and only return the `id`
    * const aiUsageRecordWithIdOnly = await prisma.aiUsageRecord.createManyAndReturn({
    *   select: { id: true },
@@ -780,7 +780,7 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends AiUsageRecordCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, AiUsageRecordCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AiUsageRecordPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -794,7 +794,7 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... filter to delete one AiUsageRecord
    *   }
    * })
-   * 
+   *
    */
   delete<T extends AiUsageRecordDeleteArgs>(args: Prisma.SelectSubset<T, AiUsageRecordDeleteArgs<ExtArgs>>): Prisma.Prisma__AiUsageRecordClient<runtime.Types.Result.GetResult<Prisma.$AiUsageRecordPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -811,7 +811,7 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends AiUsageRecordUpdateArgs>(args: Prisma.SelectSubset<T, AiUsageRecordUpdateArgs<ExtArgs>>): Prisma.Prisma__AiUsageRecordClient<runtime.Types.Result.GetResult<Prisma.$AiUsageRecordPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -825,7 +825,7 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends AiUsageRecordDeleteManyArgs>(args?: Prisma.SelectSubset<T, AiUsageRecordDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -844,7 +844,7 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends AiUsageRecordUpdateManyArgs>(args: Prisma.SelectSubset<T, AiUsageRecordUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -861,7 +861,7 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more AiUsageRecords and only return the `id`
    * const aiUsageRecordWithIdOnly = await prisma.aiUsageRecord.updateManyAndReturn({
    *   select: { id: true },
@@ -874,7 +874,7 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends AiUsageRecordUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, AiUsageRecordUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AiUsageRecordPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -963,7 +963,7 @@ export interface AiUsageRecordDelegate<ExtArgs extends runtime.Types.Extensions.
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends AiUsageRecordGroupByArgs,
@@ -1145,31 +1145,31 @@ export type AiUsageRecordFindFirstArgs<ExtArgs extends runtime.Types.Extensions.
   where?: Prisma.AiUsageRecordWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AiUsageRecords to fetch.
    */
   orderBy?: Prisma.AiUsageRecordOrderByWithRelationInput | Prisma.AiUsageRecordOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for AiUsageRecords.
    */
   cursor?: Prisma.AiUsageRecordWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AiUsageRecords from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AiUsageRecords.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of AiUsageRecords.
    */
   distinct?: Prisma.AiUsageRecordScalarFieldEnum | Prisma.AiUsageRecordScalarFieldEnum[]
@@ -1197,31 +1197,31 @@ export type AiUsageRecordFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exte
   where?: Prisma.AiUsageRecordWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AiUsageRecords to fetch.
    */
   orderBy?: Prisma.AiUsageRecordOrderByWithRelationInput | Prisma.AiUsageRecordOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for AiUsageRecords.
    */
   cursor?: Prisma.AiUsageRecordWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AiUsageRecords from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AiUsageRecords.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of AiUsageRecords.
    */
   distinct?: Prisma.AiUsageRecordScalarFieldEnum | Prisma.AiUsageRecordScalarFieldEnum[]
@@ -1249,31 +1249,31 @@ export type AiUsageRecordFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
   where?: Prisma.AiUsageRecordWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of AiUsageRecords to fetch.
    */
   orderBy?: Prisma.AiUsageRecordOrderByWithRelationInput | Prisma.AiUsageRecordOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing AiUsageRecords.
    */
   cursor?: Prisma.AiUsageRecordWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` AiUsageRecords from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` AiUsageRecords.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of AiUsageRecords.
    */
   distinct?: Prisma.AiUsageRecordScalarFieldEnum | Prisma.AiUsageRecordScalarFieldEnum[]

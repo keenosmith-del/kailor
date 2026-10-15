@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model SimulationRun
- * 
+ *
  */
 export type SimulationRunModel = runtime.Types.Result.DefaultSelection<Prisma.$SimulationRunPayload>
 
@@ -98,43 +98,43 @@ export type SimulationRunAggregateArgs<ExtArgs extends runtime.Types.Extensions.
   where?: Prisma.SimulationRunWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of SimulationRuns to fetch.
    */
   orderBy?: Prisma.SimulationRunOrderByWithRelationInput | Prisma.SimulationRunOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.SimulationRunWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` SimulationRuns from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` SimulationRuns.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned SimulationRuns
   **/
   _count?: true | SimulationRunCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: SimulationRunMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: SimulationRunMaxAggregateInputType
@@ -445,10 +445,6 @@ export type SimulationRunUncheckedUpdateManyWithoutSessionNestedInput = {
   update?: Prisma.SimulationRunUpdateWithWhereUniqueWithoutSessionInput | Prisma.SimulationRunUpdateWithWhereUniqueWithoutSessionInput[]
   updateMany?: Prisma.SimulationRunUpdateManyWithWhereWithoutSessionInput | Prisma.SimulationRunUpdateManyWithWhereWithoutSessionInput[]
   deleteMany?: Prisma.SimulationRunScalarWhereInput | Prisma.SimulationRunScalarWhereInput[]
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
 }
 
 export type SimulationRunCreateNestedOneWithoutCasesInput = {
@@ -834,13 +830,13 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    * @example
    * // Get all SimulationRuns
    * const simulationRuns = await prisma.simulationRun.findMany()
-   * 
+   *
    * // Get first 10 SimulationRuns
    * const simulationRuns = await prisma.simulationRun.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const simulationRunWithIdOnly = await prisma.simulationRun.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends SimulationRunFindManyArgs>(args?: Prisma.SelectSubset<T, SimulationRunFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SimulationRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -854,7 +850,7 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... data to create a SimulationRun
    *   }
    * })
-   * 
+   *
    */
   create<T extends SimulationRunCreateArgs>(args: Prisma.SelectSubset<T, SimulationRunCreateArgs<ExtArgs>>): Prisma.Prisma__SimulationRunClient<runtime.Types.Result.GetResult<Prisma.$SimulationRunPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -868,7 +864,7 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends SimulationRunCreateManyArgs>(args?: Prisma.SelectSubset<T, SimulationRunCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -882,7 +878,7 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many SimulationRuns and only return the `id`
    * const simulationRunWithIdOnly = await prisma.simulationRun.createManyAndReturn({
    *   select: { id: true },
@@ -892,7 +888,7 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends SimulationRunCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, SimulationRunCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SimulationRunPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -906,7 +902,7 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... filter to delete one SimulationRun
    *   }
    * })
-   * 
+   *
    */
   delete<T extends SimulationRunDeleteArgs>(args: Prisma.SelectSubset<T, SimulationRunDeleteArgs<ExtArgs>>): Prisma.Prisma__SimulationRunClient<runtime.Types.Result.GetResult<Prisma.$SimulationRunPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -923,7 +919,7 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends SimulationRunUpdateArgs>(args: Prisma.SelectSubset<T, SimulationRunUpdateArgs<ExtArgs>>): Prisma.Prisma__SimulationRunClient<runtime.Types.Result.GetResult<Prisma.$SimulationRunPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -937,7 +933,7 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends SimulationRunDeleteManyArgs>(args?: Prisma.SelectSubset<T, SimulationRunDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -956,7 +952,7 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends SimulationRunUpdateManyArgs>(args: Prisma.SelectSubset<T, SimulationRunUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -973,7 +969,7 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more SimulationRuns and only return the `id`
    * const simulationRunWithIdOnly = await prisma.simulationRun.updateManyAndReturn({
    *   select: { id: true },
@@ -986,7 +982,7 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends SimulationRunUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, SimulationRunUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SimulationRunPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -1075,7 +1071,7 @@ export interface SimulationRunDelegate<ExtArgs extends runtime.Types.Extensions.
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends SimulationRunGroupByArgs,
@@ -1259,31 +1255,31 @@ export type SimulationRunFindFirstArgs<ExtArgs extends runtime.Types.Extensions.
   where?: Prisma.SimulationRunWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of SimulationRuns to fetch.
    */
   orderBy?: Prisma.SimulationRunOrderByWithRelationInput | Prisma.SimulationRunOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for SimulationRuns.
    */
   cursor?: Prisma.SimulationRunWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` SimulationRuns from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` SimulationRuns.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of SimulationRuns.
    */
   distinct?: Prisma.SimulationRunScalarFieldEnum | Prisma.SimulationRunScalarFieldEnum[]
@@ -1311,31 +1307,31 @@ export type SimulationRunFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exte
   where?: Prisma.SimulationRunWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of SimulationRuns to fetch.
    */
   orderBy?: Prisma.SimulationRunOrderByWithRelationInput | Prisma.SimulationRunOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for SimulationRuns.
    */
   cursor?: Prisma.SimulationRunWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` SimulationRuns from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` SimulationRuns.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of SimulationRuns.
    */
   distinct?: Prisma.SimulationRunScalarFieldEnum | Prisma.SimulationRunScalarFieldEnum[]
@@ -1363,31 +1359,31 @@ export type SimulationRunFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
   where?: Prisma.SimulationRunWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of SimulationRuns to fetch.
    */
   orderBy?: Prisma.SimulationRunOrderByWithRelationInput | Prisma.SimulationRunOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing SimulationRuns.
    */
   cursor?: Prisma.SimulationRunWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` SimulationRuns from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` SimulationRuns.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of SimulationRuns.
    */
   distinct?: Prisma.SimulationRunScalarFieldEnum | Prisma.SimulationRunScalarFieldEnum[]

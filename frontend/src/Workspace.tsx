@@ -1,29 +1,24 @@
-import { ArrowRight, Plus } from "lucide-react";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { PlanManager } from "./Plans";
+import { ArrowRight } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { services } from "../../data/services";
 import { clearDrafts } from "./drafts";
-import type { Session, Report } from "../../shared/src/index";
+import type { Report } from "../../shared/src/index";
 import { api } from "./api";
 import { ErrorBox, errorMessage } from "./ui";
 export function Workspace() {
-  const [sessions, setSessions] = useState<(Session & { updatedAt: string })[]>(
-      [],
-    ),
-    [personas, setPersonas] = useState<{ id: string; name: string }[]>([]),
+  const [personas, setPersonas] = useState<{ id: string; name: string }[]>([]),
     [cases, setCases] = useState<CaseItem[]>([]),
-    [name, setName] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
   const navigate = useNavigate();
   const load = useCallback(async () => {
     try {
-      const [s, p, c] = await Promise.all([
-        api<typeof sessions>("/sessions"),
+      const [p, c] = await Promise.all([
         api<typeof personas>("/personas"),
         api<CaseItem[]>("/cases"),
       ]);
-      setSessions(s);
       setPersonas(p);
       setCases(c);
     } catch (e) {
@@ -33,18 +28,6 @@ export function Workspace() {
   useEffect(() => {
     void load();
   }, [load]);
-  async function start(e: FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    try {
-      const s = await api<Session>("/sessions", "POST", { name });
-      navigate(`/sessions/${s.id}/discovery`);
-    } catch (e) {
-      setError(errorMessage(e));
-    } finally {
-      setBusy(false);
-    }
-  }
   async function simulate(id: string) {
     setBusy(true);
     setError("");
@@ -93,49 +76,9 @@ export function Workspace() {
         <br />
         what comes next.
       </h1>
+      <ErrorBox error={error} />
       <div className="workspace-grid">
-        <section>
-          <h2>A new discovery</h2>
-          <form onSubmit={start} className="inline-form">
-            <label className="sr-only" htmlFor="subject">
-              Business, person or project name
-            </label>
-            <input
-              id="subject"
-              placeholder="Business, person or project name"
-              required
-              maxLength={150}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <button className="button primary" disabled={busy}>
-              <Plus size={18} /> Begin
-            </button>
-          </form>
-          <ErrorBox error={error} />
-          <h2 className="section-heading">Pick up where you left off</h2>
-          <div className="session-list">
-            {sessions.length === 0 && (
-              <p className="muted">Your saved discoveries will appear here.</p>
-            )}
-            {sessions.map((s) => (
-              <Link
-                className="session-row"
-                key={s.id}
-                to={`/sessions/${s.id}/discovery`}
-              >
-                <div>
-                  <strong>{s.subject.name}</strong>
-                  <small>
-                    {s.synthetic ? "Synthetic evaluation" : "Private discovery"}{" "}
-                    · {new Date(s.updatedAt).toLocaleDateString()}
-                  </small>
-                </div>
-                <ArrowRight size={18} />
-              </Link>
-            ))}
-          </div>
-        </section>
+        <PlanManager />
         <aside className="quiet-card">
           <p className="eyebrow">learning thoughtfully</p>
           <h2>Try a different perspective.</h2>

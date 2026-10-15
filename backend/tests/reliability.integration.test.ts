@@ -196,6 +196,8 @@ describe("persisted quality and readiness acceptance matrix", () => {
       s = await db.discoverySession.findUniqueOrThrow({
         where: { id: s.id },
         include: {
+          plan: true,
+          planProposals: { where: { status: "pending" } },
           subject: true,
           answers: true,
           messages: true,

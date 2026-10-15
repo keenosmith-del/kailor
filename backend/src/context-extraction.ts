@@ -28,7 +28,7 @@ export function currentStatements(message: string): string[] {
     )
     .filter(
       (c) =>
-        !/\b(?:might|maybe|what if|hypothetically|whether|if I|used to|thinking about)\b/i.test(
+        !/\b(?:might|maybe|what if|hypothetically|whether|if I|used to|thinking about|eventually|planning to|plan to|stopped using)\b/i.test(
           c,
         ),
     );
@@ -56,7 +56,11 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
       ? message.trim()
       : current.join(". ");
   if (!text) return [];
-  if (/\b(?:I am|I'm|I run|I own|we run|we are|I coordinate)\b/i.test(text))
+  if (
+    /\b(?:I am|I'm|I run|I own|we run|we are|I coordinate|I work on my own)\b/i.test(
+      text,
+    )
+  )
     add("industry", text);
   const claims = claimsFromText(text, "chat");
   if (
@@ -113,13 +117,13 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
     )
       continue;
     if (
-      /portfolio|browse.*(?:work|products)|see my products|showcase|look more professional|professional presence|credible gallery|showcase|present.*work|website for.*(?:photography|work|business)/i.test(
+      /portfolio|browse.*(?:work|products)|see my products|showcase|look more professional|professional presence|more professional presence|credible gallery|showcase|present.*work|website for.*(?:photography|work|business)/i.test(
         clause,
       )
     )
       problems.push("credibility");
     if (
-      /manual bookings?|bookings? easier|take bookings? through|bookings? manually|appointments? (?:through|via)|easier.*book|manage.*appointments?|booking.*(?:difficult|friction|cancellations?|missed)|appointments?.*(?:difficult|missed)|customer reminders/i.test(
+      /manual bookings?|bookings? easier|easier bookings?|take bookings? through|bookings? manually|appointments? (?:through|via)|easier.*book|manage.*appointments?|booking.*(?:difficult|friction|cancellations?|missed)|appointments?.*(?:difficult|missed)|customer reminders/i.test(
         clause,
       )
     )
@@ -180,12 +184,31 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
       text,
     )
   )
-    add("budget", text);
+    add(
+      "budget",
+      current.find((c) =>
+        /budget|only spend|small amount|affordable|can.t afford|cannot afford/i.test(
+          c,
+        ),
+      ) ?? text,
+    );
   if (
     result.size === 0 &&
     /\b(?:want|need|improve|reduce|coordinate|record|build)\b/i.test(text)
   )
     add("clarification", text);
+  if (
+    /\b(?:budget|can spend|only spend)\b/i.test(text) &&
+    /(?:R|ZAR|USD|\$)\s?[\d,]+/i.test(text)
+  )
+    add(
+      "budget",
+      current.find((c) =>
+        /budget|only spend|small amount|affordable|can.t afford|cannot afford/i.test(
+          c,
+        ),
+      ) ?? text,
+    );
   // A real requirement can also supply the situation without inventing an industry classification.
   if (
     !result.has("industry") &&

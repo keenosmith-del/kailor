@@ -1,3 +1,8 @@
+import { routeTurn, safeModelIntent, applicationReply } from "./turn-intent.js";
+import {
+  updateConversationMemory,
+  readPersonalMemory,
+} from "./personal-memory.js";
 import { writeAnswer as applyAnswerMutation } from "./answer-mutation.js";
 import {
   type StoredSession,
@@ -51,6 +56,8 @@ import {
   remoteEnabled,
 } from "./ai.js";
 const include = {
+  plan: true,
+  planProposals: { where: { status: "pending" } },
   subject: true,
   answers: { orderBy: { updatedAt: "asc" as const } },
   messages: { orderBy: { ordinal: "asc" as const } },
@@ -76,13 +83,20 @@ async function lock(
   id: string,
   adminId: string,
   revision: number,
+  allowArchived = false,
 ) {
-  await tx.$queryRaw`SELECT id FROM "DiscoverySession" WHERE id = ${id} FOR UPDATE`;
+  await tx.$queryRaw`SELECT id FROM "DiscoverySession" WHERE id = ${id} AND "adminId" = ${adminId} FOR UPDATE`;
   const s = await tx.discoverySession.findFirst({
     where: { id, adminId },
     include,
   });
   if (!s) throw new AppError(404, "not_found", "Session not found");
+  if (s.plan.archivedAt && !allowArchived)
+    throw new AppError(
+      409,
+      "plan_archived",
+      "Restore this plan before changing it",
+    );
   if (s.revision !== revision)
     throw new AppError(
       409,
@@ -102,14 +116,25 @@ export async function createSession(
   name: string,
   synthetic = false,
 ) {
-  return db.discoverySession.create({
-    data: {
-      admin: { connect: { id: adminId } },
-      definitionVersion: version,
-      synthetic,
-      subject: { create: { name, synthetic } },
-    },
-    include,
+  return db.$transaction(async (tx) => {
+    const plan = await tx.plan.create({
+      data: { adminId, title: name, creationKey: randomUUID() },
+    });
+    const session = await tx.discoverySession.create({
+      data: {
+        admin: { connect: { id: adminId } },
+        plan: { connect: { id_adminId: { id: plan.id, adminId } } },
+        definitionVersion: version,
+        synthetic,
+        subject: { create: { name, synthetic } },
+      },
+      include,
+    });
+    await tx.plan.update({
+      where: { id: plan.id },
+      data: { lastSessionId: session.id },
+    });
+    return session;
   });
 }
 async function writeAnswer(
@@ -249,6 +274,17 @@ export async function confirmEvidence(
       (e) => e.id === evidenceId && e.status === "inferred",
     );
     if (!e) throw new AppError(404, "not_found", "Pending proposal not found");
+    if (editedValue !== undefined) {
+      try {
+        validateAnswer(e.key, editedValue);
+      } catch {
+        throw new AppError(
+          400,
+          "invalid_answer",
+          "The edited value is not valid for this detail",
+        );
+      }
+    }
     if (accept)
       await writeAnswer(
         tx,
@@ -274,6 +310,10 @@ export async function confirmEvidence(
       await tx.evidence.update({
         where: { id: e.id },
         data: { active: false, status: "rejected" },
+      });
+      await tx.conversationSummary.updateMany({
+        where: { sessionId: id, superseded: false },
+        data: { superseded: true },
       });
       await tx.discoverySession.update({
         where: { id },
@@ -327,6 +367,12 @@ export async function converse(
   const s = await getSession(id, adminId);
   if (s.revision !== input.revision)
     throw new AppError(409, "revision_conflict", "Refresh the changed session");
+  if (s.plan.archivedAt)
+    throw new AppError(
+      409,
+      "plan_archived",
+      "Restore this plan before changing it",
+    );
   const currentPlan = await nextForSession(id, adminId);
   if (currentPlan.revision !== s.revision)
     throw new AppError(
@@ -339,6 +385,12 @@ export async function converse(
   ).isGuest;
   let provider = new MockProvider() as import("./ai.js").AiProvider;
   let reason: string | null = null;
+  const routed = routeTurn(input.message);
+  const applicationTurn = [
+    "new_plan",
+    "plan_switch",
+    "cross_plan_comparison",
+  ].includes(routed.intent);
   const messageQuality = evaluateInput(input.message, "", "chat");
   const sensitive = containsSensitiveData(
     JSON.stringify({
@@ -349,6 +401,8 @@ export async function converse(
   );
   const reservation =
     !forceMock &&
+    !applicationTurn &&
+    routed.intent !== "greeting" &&
     !guest &&
     messageQuality.accepted &&
     messageQuality.disposition !== "off_topic" &&
@@ -369,21 +423,34 @@ export async function converse(
       },
     });
   else
-    reason = sensitive
-      ? "sensitive_context_kept_local"
-      : !messageQuality.usableFacts
-        ? "local_conversational_turn"
-        : remoteEnabled(config)
-          ? "budget_exhausted_or_simulation"
-          : "remote_disabled";
+    reason = applicationTurn
+      ? "application_action"
+      : routed.intent === "greeting"
+        ? "local_simple_turn"
+        : sensitive
+          ? "sensitive_context_kept_local"
+          : !messageQuality.usableFacts
+            ? "local_conversational_turn"
+            : remoteEnabled(config)
+              ? "budget_exhausted_or_simulation"
+              : "remote_disabled";
+  const personalMemory = await readPersonalMemory(s, input.message).catch(
+    () => ({
+      planId: s.planId,
+      sessionId: s.id,
+      retrieved: [],
+      preferences: [],
+    }),
+  );
   const result = await inferSafely(
     provider,
     answersOf(s),
     input.message,
-    s.messages,
+    s.messages.filter((m) => !m.excludedFromContext),
     input.mode,
     {
       plan: currentPlan,
+      memory: personalMemory,
       recommendations: recommend(
         answersOf(s),
         undefined,
@@ -400,6 +467,17 @@ export async function converse(
         reason: result.fallbackReason,
       },
     });
+  const intent = safeModelIntent(result.output, input.message);
+  const actionTurn = [
+    "new_plan",
+    "plan_switch",
+    "cross_plan_comparison",
+  ].includes(intent.intent);
+  if (actionTurn) {
+    result.output.proposals = [];
+    result.output.followUp = undefined;
+    result.output.reply = applicationReply(intent.intent);
+  }
   const userMessageId = randomUUID();
   const updateConflicts = result.output.proposals.flatMap((p) =>
     detectUpdateConflicts(
@@ -473,6 +551,21 @@ export async function converse(
         ? "Those details are already pending below. Confirm or dismiss the saved proposals when you are ready."
         : `There are no new details to confirm from that message. Your saved context is unchanged.${currentPlan.question ? ` We can next explore: ${currentPlan.question.title}` : " We can discuss the available options or return to discovery."}`;
     }
+    if (intent.intent === "new_plan" && intent.proposal) {
+      await tx.planActionProposal.updateMany({
+        where: { sessionId: id, status: "pending" },
+        data: { status: "superseded", decidedAt: new Date() },
+      });
+      await tx.planActionProposal.create({
+        data: {
+          sessionId: id,
+          sourceMessageId: userMessageId,
+          sourceRevision: s.revision,
+          title: intent.proposal.title,
+          description: intent.proposal.description,
+        },
+      });
+    }
     await tx.conversationMessage.createMany({
       data: [
         {
@@ -480,6 +573,8 @@ export async function converse(
           sessionId: id,
           role: "user",
           ordinal: s.revision * 2,
+          intent: intent.intent,
+          excludedFromContext: actionTurn,
           content: input.message,
           provider: "user",
         },
@@ -487,6 +582,8 @@ export async function converse(
           sessionId: id,
           role: "assistant",
           ordinal: s.revision * 2 + 1,
+          intent: intent.intent,
+          excludedFromContext: actionTurn,
           content: result.output.reply,
           provider: result.provider,
         },
@@ -543,11 +640,28 @@ export async function converse(
           provider: result.provider,
           fallbackReason: result.fallbackReason ?? reason,
           quality: messageQuality.disposition,
+          intent: intent.intent,
+          routing: applicationTurn
+            ? "application-action"
+            : reservation
+              ? "authorized-model"
+              : "local-fallback",
           conflicts: updateConflicts.map((c) => c.facet),
         }),
       },
     });
   });
+  await db
+    .$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM "DiscoverySession" WHERE id = ${id} FOR UPDATE`;
+      const memoryState = await tx.discoverySession.findUniqueOrThrow({
+        where: { id },
+      });
+      await updateConversationMemory(tx, memoryState);
+    })
+    .catch(() =>
+      logger.info("conversation.memory-fallback", { sessionId: id }),
+    );
   logger.info("conversation.quality", {
     sessionId: id,
     disposition: messageQuality.disposition,
@@ -560,6 +674,12 @@ export async function converse(
     provider: result.provider,
     fallbackReason: result.fallbackReason ?? reason,
     quality: messageQuality,
+    intent: intent.intent,
+    routing: applicationTurn
+      ? "application-action"
+      : reservation && !result.fallbackReason
+        ? "authorized-model"
+        : "local-fallback",
   };
 }
 export async function referenceCases(adminId?: string): Promise<CaseRecord[]> {
@@ -646,13 +766,13 @@ export async function nextForSession(
   const saved = s.planState as unknown as DiscoveryPlan | null;
   if (
     saved?.revision === s.revision &&
-    saved.plannerVersion === "contextual-3" &&
+    saved.plannerVersion === "plans-memory-4" &&
     saved.questionStates &&
     saved.completion
   )
     return saved;
   return db.$transaction(async (tx) => {
-    await lock(tx, id, adminId, s.revision);
+    await lock(tx, id, adminId, s.revision, true);
     return persistPlan(tx, id);
   });
 }
@@ -707,6 +827,10 @@ export async function confirmBatch(
           where: { id: e.id },
           data: { active: false, status: "rejected" },
         });
+        await tx.conversationSummary.updateMany({
+          where: { sessionId: id, superseded: false },
+          data: { superseded: true },
+        });
         await tx.discoverySession.update({
           where: { id },
           data: { revision: { increment: 1 } },
@@ -742,7 +866,7 @@ export async function assess(id: string, adminId: string, revision: number) {
     const savedPlan = s.planState as unknown as DiscoveryPlan | null;
     const plan =
       savedPlan?.revision === s.revision &&
-      savedPlan.plannerVersion === "contextual-3"
+      savedPlan.plannerVersion === "plans-memory-4"
         ? savedPlan
         : await persistPlan(tx, id);
     if (!plan.readiness.canAssess) {

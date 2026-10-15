@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { config } from "../backend/src/config.js";
-import { remoteEnabled } from "../backend/src/ai.js";
+import { remoteEnabled, MockProvider } from "../backend/src/ai.js";
 import { db } from "../backend/src/db.js";
 import {
   createSession,
@@ -11,10 +11,11 @@ import {
 const configuration = {
   provider: config.AI_PROVIDER,
   optIn: config.AI_ALLOW_REMOTE === "true",
+  model: config.CLOUDFLARE_MODEL,
   credentialsPresent:
     !!config.CLOUDFLARE_ACCOUNT_ID && !!config.CLOUDFLARE_API_TOKEN,
 };
-const directory = ".cache/qa/iteration006";
+const directory = ".cache/qa/iteration007";
 await mkdir(directory, { recursive: true });
 if (!remoteEnabled(config)) {
   const result = {
@@ -47,7 +48,15 @@ if (!remoteEnabled(config)) {
       passwordHash: "not-a-login-hash",
     },
   });
-  const results: unknown[] = [];
+  const results: {
+    message: string;
+    provider: string;
+    fallback: string | null;
+    reply?: string;
+    baseline: string;
+    review: unknown;
+    proposals: unknown;
+  }[] = [];
   let sessionId = "";
   let subjectId = "";
   try {
@@ -69,11 +78,41 @@ if (!remoteEnabled(config)) {
       value:
         "I inspect machinery and want staff to record work offline from phones",
     });
+    // Seed a genuinely older alternative using local processing; it makes no remote calls.
+    s = (
+      await converse(
+        s.id,
+        owner.id,
+        {
+          revision: s.revision,
+          message: "Would I need a website or an app?",
+          mode: "conversation",
+        },
+        true,
+      )
+    ).session;
+    for (let i = 0; i < 14; i++)
+      s = (
+        await converse(
+          s.id,
+          owner.id,
+          { revision: s.revision, message: "Thanks.", mode: "conversation" },
+          true,
+        )
+      ).session;
     for (const message of [
-      "Would I need a website or an app for these offline inspection reports? Please number the two approaches.",
-      "What would the second option involve?",
-      "Would the first option be cheaper?",
+      "What would the second option we discussed earlier involve for offline inspections?",
+      "Would the first option be cheaper, and what remains unknown?",
+      "I no longer want a mobile app. I want a website for the first version.",
     ]) {
+      const baseline = await new MockProvider().infer(
+        Object.fromEntries(
+          s.answers.map((a) => [a.questionId, a.value]),
+        ) as import("../shared/src/index.js").Answers,
+        message,
+        s.messages.filter((m) => !m.excludedFromContext),
+        "conversation",
+      );
       const result = await converse(s.id, owner.id, {
         revision: s.revision,
         message,
@@ -85,6 +124,18 @@ if (!remoteEnabled(config)) {
         provider: result.provider,
         fallback: result.fallbackReason,
         reply: s.messages.at(-1)?.content,
+        baseline: baseline.reply,
+        review: {
+          schemaAndSafetyValidated: result.provider === "cloudflare",
+          humanQualityReview: "pending",
+          rubric: [
+            "correct alternative reference",
+            "current constraints retained",
+            "one useful question",
+            "no invented prices or commitments",
+            "correction remains unconfirmed",
+          ],
+        },
         proposals: s.evidence
           .filter((e) => e.status === "inferred")
           .map((e) => ({ key: e.key, value: e.value })),
@@ -103,6 +154,9 @@ if (!remoteEnabled(config)) {
       executed: true,
       configuration,
       synthetic: true,
+      successfulModelResponses: results.filter(
+        (r) => r.provider === "cloudflare" && !r.fallback,
+      ).length,
       calls: usages.length,
       maximumCalls: 3,
       results,

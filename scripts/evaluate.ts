@@ -157,3 +157,29 @@ for (const result of conversations.scenarios)
     }),
   );
 if (conversations.scenarios.some((s) => !s.passed)) process.exitCode = 1;
+
+const { plansConversationEvaluation } = await import(
+  "../backend/src/plans-evaluation.js"
+);
+const planConversations = await plansConversationEvaluation();
+await mkdir(".cache/qa/iteration007", { recursive: true });
+await writeFile(
+  ".cache/qa/iteration007/conversations.json",
+  JSON.stringify(
+    { generatedAt: new Date().toISOString(), ...planConversations },
+    null,
+    2,
+  ),
+);
+for (const result of planConversations.scenarios)
+  console.log(
+    JSON.stringify({
+      planConversation: result.id,
+      passed: result.passed,
+      failures: [
+        ...result.failures,
+        ...result.turns.flatMap((t) => t.failures),
+      ],
+    }),
+  );
+if (planConversations.scenarios.some((s) => !s.passed)) process.exitCode = 1;

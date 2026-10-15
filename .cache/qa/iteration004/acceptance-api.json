@@ -1,6 +1,6 @@
 {
   "policyVersion": "reliability-2",
-  "generatedAt": "2026-10-15T01:40:10.226Z",
+  "generatedAt": "2026-10-15T07:46:14.558Z",
   "cases": [
     {
       "id": "persisted:whitespace",
@@ -2484,10 +2484,10 @@
         "confirmedKeys": [
           "stage",
           "industry",
-          "tools",
           "workflowDetails",
-          "clarification",
-          "problems"
+          "tools",
+          "problems",
+          "clarification"
         ],
         "sessionPreserved": true
       },

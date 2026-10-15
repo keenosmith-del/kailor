@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model CostEstimate
- * 
+ *
  */
 export type CostEstimateModel = runtime.Types.Result.DefaultSelection<Prisma.$CostEstimatePayload>
 
@@ -122,55 +122,55 @@ export type CostEstimateAggregateArgs<ExtArgs extends runtime.Types.Extensions.I
   where?: Prisma.CostEstimateWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of CostEstimates to fetch.
    */
   orderBy?: Prisma.CostEstimateOrderByWithRelationInput | Prisma.CostEstimateOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.CostEstimateWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` CostEstimates from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` CostEstimates.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned CostEstimates
   **/
   _count?: true | CostEstimateCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to average
   **/
   _avg?: CostEstimateAvgAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to sum
   **/
   _sum?: CostEstimateSumAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: CostEstimateMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: CostEstimateMaxAggregateInputType
@@ -677,13 +677,13 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    * @example
    * // Get all CostEstimates
    * const costEstimates = await prisma.costEstimate.findMany()
-   * 
+   *
    * // Get first 10 CostEstimates
    * const costEstimates = await prisma.costEstimate.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const costEstimateWithIdOnly = await prisma.costEstimate.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends CostEstimateFindManyArgs>(args?: Prisma.SelectSubset<T, CostEstimateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CostEstimatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -697,7 +697,7 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    *     // ... data to create a CostEstimate
    *   }
    * })
-   * 
+   *
    */
   create<T extends CostEstimateCreateArgs>(args: Prisma.SelectSubset<T, CostEstimateCreateArgs<ExtArgs>>): Prisma.Prisma__CostEstimateClient<runtime.Types.Result.GetResult<Prisma.$CostEstimatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -711,7 +711,7 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends CostEstimateCreateManyArgs>(args?: Prisma.SelectSubset<T, CostEstimateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -725,7 +725,7 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many CostEstimates and only return the `id`
    * const costEstimateWithIdOnly = await prisma.costEstimate.createManyAndReturn({
    *   select: { id: true },
@@ -735,7 +735,7 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends CostEstimateCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, CostEstimateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CostEstimatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -749,7 +749,7 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    *     // ... filter to delete one CostEstimate
    *   }
    * })
-   * 
+   *
    */
   delete<T extends CostEstimateDeleteArgs>(args: Prisma.SelectSubset<T, CostEstimateDeleteArgs<ExtArgs>>): Prisma.Prisma__CostEstimateClient<runtime.Types.Result.GetResult<Prisma.$CostEstimatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -766,7 +766,7 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends CostEstimateUpdateArgs>(args: Prisma.SelectSubset<T, CostEstimateUpdateArgs<ExtArgs>>): Prisma.Prisma__CostEstimateClient<runtime.Types.Result.GetResult<Prisma.$CostEstimatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -780,7 +780,7 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends CostEstimateDeleteManyArgs>(args?: Prisma.SelectSubset<T, CostEstimateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -799,7 +799,7 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends CostEstimateUpdateManyArgs>(args: Prisma.SelectSubset<T, CostEstimateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -816,7 +816,7 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more CostEstimates and only return the `id`
    * const costEstimateWithIdOnly = await prisma.costEstimate.updateManyAndReturn({
    *   select: { id: true },
@@ -829,7 +829,7 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends CostEstimateUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, CostEstimateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CostEstimatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -918,7 +918,7 @@ export interface CostEstimateDelegate<ExtArgs extends runtime.Types.Extensions.I
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends CostEstimateGroupByArgs,
@@ -1100,31 +1100,31 @@ export type CostEstimateFindFirstArgs<ExtArgs extends runtime.Types.Extensions.I
   where?: Prisma.CostEstimateWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of CostEstimates to fetch.
    */
   orderBy?: Prisma.CostEstimateOrderByWithRelationInput | Prisma.CostEstimateOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for CostEstimates.
    */
   cursor?: Prisma.CostEstimateWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` CostEstimates from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` CostEstimates.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of CostEstimates.
    */
   distinct?: Prisma.CostEstimateScalarFieldEnum | Prisma.CostEstimateScalarFieldEnum[]
@@ -1152,31 +1152,31 @@ export type CostEstimateFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exten
   where?: Prisma.CostEstimateWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of CostEstimates to fetch.
    */
   orderBy?: Prisma.CostEstimateOrderByWithRelationInput | Prisma.CostEstimateOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for CostEstimates.
    */
   cursor?: Prisma.CostEstimateWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` CostEstimates from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` CostEstimates.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of CostEstimates.
    */
   distinct?: Prisma.CostEstimateScalarFieldEnum | Prisma.CostEstimateScalarFieldEnum[]
@@ -1204,31 +1204,31 @@ export type CostEstimateFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
   where?: Prisma.CostEstimateWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of CostEstimates to fetch.
    */
   orderBy?: Prisma.CostEstimateOrderByWithRelationInput | Prisma.CostEstimateOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing CostEstimates.
    */
   cursor?: Prisma.CostEstimateWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` CostEstimates from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` CostEstimates.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of CostEstimates.
    */
   distinct?: Prisma.CostEstimateScalarFieldEnum | Prisma.CostEstimateScalarFieldEnum[]

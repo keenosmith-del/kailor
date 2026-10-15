@@ -15,6 +15,7 @@ import {
 
 // Shared problem dimensions, deliberately independent of industry names.
 const dimensions: [ContextDimension, RegExp][] = [
+  ["ordering", /orders?|product variants?|artwork|fulfil|production process/i],
   [
     "data_capture",
     /\brecord\w*|\bcaptur\w*|\binspect\w*|\bforms?\b|data entry|quality control/i,
@@ -25,7 +26,10 @@ const dimensions: [ContextDimension, RegExp][] = [
   ["approvals", /approv|sign.off|review/i],
   ["reporting", /report|dashboard|summary|export|audit/i],
   ["automation", /automat|repetitive|copy|manual invoic/i],
-  ["presentation", /portfolio|website|showcase|professional presentation/i],
+  [
+    "presentation",
+    /portfolio|website|showcase|professional presentation|professional presence/i,
+  ],
   ["application", /application|\bapp\b|functionality|software product/i],
   [
     "offline",
@@ -68,7 +72,7 @@ export function contextualStatements(
                       overrides[c.facet] !== c.value,
                   )
                 ? ("superseded" as const)
-                : /\b(?:might|maybe|what if|hypothetical|whether|if I|used to|thinking about)\b/i.test(
+                : /\b(?:might|maybe|what if|hypothetical|whether|if I|used to|thinking about|eventually|planning to|stopped using)\b/i.test(
                       text,
                     )
                   ? ("hypothetical" as const)
@@ -92,6 +96,13 @@ export function contextualStatements(
   );
 }
 export const contextualQuestions: Question[] = [
+  {
+    id: "orderWorkflow",
+    title: "How should a customer order move from customization to fulfilment?",
+    hint: "Describe product variants, artwork or file uploads, approval, payment, production and delivery. Which step is essential for the first version, and which tools do you use today?",
+    type: "text",
+    optional: true,
+  },
   {
     id: "offlineDetails",
     title:
@@ -173,6 +184,12 @@ export function contextualGaps(
     // A skipped/uncertain response ends this prompt too. No reload or rejection loop.
     if (!(id in a) && !supplied) gaps.push({ id, score, reason });
   };
+  if (dims.has("ordering"))
+    add(
+      "orderWorkflow",
+      790,
+      "Ordering, customization and fulfilment determine the useful workflow",
+    );
   if (dims.has("offline"))
     add(
       "offlineDetails",

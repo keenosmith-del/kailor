@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model Recommendation
- * 
+ *
  */
 export type RecommendationModel = runtime.Types.Result.DefaultSelection<Prisma.$RecommendationPayload>
 
@@ -116,43 +116,43 @@ export type RecommendationAggregateArgs<ExtArgs extends runtime.Types.Extensions
   where?: Prisma.RecommendationWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Recommendations to fetch.
    */
   orderBy?: Prisma.RecommendationOrderByWithRelationInput | Prisma.RecommendationOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.RecommendationWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Recommendations from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Recommendations.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned Recommendations
   **/
   _count?: true | RecommendationCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: RecommendationMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: RecommendationMaxAggregateInputType
@@ -1146,13 +1146,13 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    * @example
    * // Get all Recommendations
    * const recommendations = await prisma.recommendation.findMany()
-   * 
+   *
    * // Get first 10 Recommendations
    * const recommendations = await prisma.recommendation.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const recommendationWithIdOnly = await prisma.recommendation.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends RecommendationFindManyArgs>(args?: Prisma.SelectSubset<T, RecommendationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecommendationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -1166,7 +1166,7 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... data to create a Recommendation
    *   }
    * })
-   * 
+   *
    */
   create<T extends RecommendationCreateArgs>(args: Prisma.SelectSubset<T, RecommendationCreateArgs<ExtArgs>>): Prisma.Prisma__RecommendationClient<runtime.Types.Result.GetResult<Prisma.$RecommendationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -1180,7 +1180,7 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends RecommendationCreateManyArgs>(args?: Prisma.SelectSubset<T, RecommendationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -1194,7 +1194,7 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many Recommendations and only return the `id`
    * const recommendationWithIdOnly = await prisma.recommendation.createManyAndReturn({
    *   select: { id: true },
@@ -1204,7 +1204,7 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends RecommendationCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, RecommendationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecommendationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -1218,7 +1218,7 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... filter to delete one Recommendation
    *   }
    * })
-   * 
+   *
    */
   delete<T extends RecommendationDeleteArgs>(args: Prisma.SelectSubset<T, RecommendationDeleteArgs<ExtArgs>>): Prisma.Prisma__RecommendationClient<runtime.Types.Result.GetResult<Prisma.$RecommendationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -1235,7 +1235,7 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends RecommendationUpdateArgs>(args: Prisma.SelectSubset<T, RecommendationUpdateArgs<ExtArgs>>): Prisma.Prisma__RecommendationClient<runtime.Types.Result.GetResult<Prisma.$RecommendationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -1249,7 +1249,7 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends RecommendationDeleteManyArgs>(args?: Prisma.SelectSubset<T, RecommendationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -1268,7 +1268,7 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends RecommendationUpdateManyArgs>(args: Prisma.SelectSubset<T, RecommendationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -1285,7 +1285,7 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more Recommendations and only return the `id`
    * const recommendationWithIdOnly = await prisma.recommendation.updateManyAndReturn({
    *   select: { id: true },
@@ -1298,7 +1298,7 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends RecommendationUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, RecommendationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecommendationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -1387,7 +1387,7 @@ export interface RecommendationDelegate<ExtArgs extends runtime.Types.Extensions
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends RecommendationGroupByArgs,
@@ -1577,31 +1577,31 @@ export type RecommendationFindFirstArgs<ExtArgs extends runtime.Types.Extensions
   where?: Prisma.RecommendationWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Recommendations to fetch.
    */
   orderBy?: Prisma.RecommendationOrderByWithRelationInput | Prisma.RecommendationOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for Recommendations.
    */
   cursor?: Prisma.RecommendationWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Recommendations from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Recommendations.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Recommendations.
    */
   distinct?: Prisma.RecommendationScalarFieldEnum | Prisma.RecommendationScalarFieldEnum[]
@@ -1629,31 +1629,31 @@ export type RecommendationFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ext
   where?: Prisma.RecommendationWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Recommendations to fetch.
    */
   orderBy?: Prisma.RecommendationOrderByWithRelationInput | Prisma.RecommendationOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for Recommendations.
    */
   cursor?: Prisma.RecommendationWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Recommendations from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Recommendations.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Recommendations.
    */
   distinct?: Prisma.RecommendationScalarFieldEnum | Prisma.RecommendationScalarFieldEnum[]
@@ -1681,31 +1681,31 @@ export type RecommendationFindManyArgs<ExtArgs extends runtime.Types.Extensions.
   where?: Prisma.RecommendationWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of Recommendations to fetch.
    */
   orderBy?: Prisma.RecommendationOrderByWithRelationInput | Prisma.RecommendationOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing Recommendations.
    */
   cursor?: Prisma.RecommendationWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` Recommendations from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` Recommendations.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of Recommendations.
    */
   distinct?: Prisma.RecommendationScalarFieldEnum | Prisma.RecommendationScalarFieldEnum[]

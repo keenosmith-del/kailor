@@ -40,6 +40,15 @@ export type Session = {
   definitionVersion: string;
   synthetic: boolean;
   subject: { name: string };
+  planId?: string;
+  plan?: {
+    id: string;
+    title: string;
+    description: string;
+    archivedAt: string | null;
+    revision: number;
+  };
+  planProposals?: PlanProposal[];
   answers: {
     questionId: string;
     value: AnswerValue;
@@ -94,9 +103,31 @@ export type Report = {
     usefulness?: string;
   }[];
 };
+export const turnIntent = z.enum([
+  "greeting",
+  "description",
+  "question",
+  "comparison",
+  "recommendation",
+  "assessment",
+  "correction",
+  "summary",
+  "new_plan",
+  "plan_switch",
+  "cross_plan_comparison",
+  "off_topic",
+]);
 export const chatOutputSchema = z
   .object({
     reply: z.string().min(1).max(3000),
+    intent: turnIntent.optional(),
+    planProposal: z
+      .object({
+        title: z.string().trim().min(1).max(150),
+        quote: z.string().min(1).max(1000),
+      })
+      .strict()
+      .optional(),
     followUp: z
       .object({
         questionId: z.string().max(80),
@@ -145,6 +176,7 @@ export const chatInput = mutationSchema
   .strict();
 
 export type ContextDimension =
+  | "ordering"
   | "data_capture"
   | "communication"
   | "scheduling"
@@ -348,4 +380,103 @@ export type Completion = {
     | "unsupported";
   reasons: string[];
   recoveryQuestion: Question | null;
+};
+
+export const planCreateInput = z
+  .object({
+    title: z.string().trim().min(1).max(150),
+    description: z.string().trim().max(1000).default(""),
+    creationKey: z.uuid(),
+  })
+  .strict();
+export const planUpdateInput = mutationSchema
+  .extend({
+    title: z.string().trim().min(1).max(150).optional(),
+    description: z.string().trim().max(1000).optional(),
+    archived: z.boolean().optional(),
+  })
+  .strict();
+export const preferenceInput = mutationSchema
+  .extend({
+    key: z.enum(["communicationStyle", "implementationPreference"]),
+    value: z
+      .enum([
+        "plain-language",
+        "technical-detail",
+        "existing-tools-first",
+        "custom-when-justified",
+      ])
+      .nullable(),
+  })
+  .strict()
+  .refine(
+    (p) =>
+      p.value === null ||
+      (p.key === "communicationStyle"
+        ? ["plain-language", "technical-detail"]
+        : ["existing-tools-first", "custom-when-justified"]
+      ).includes(p.value),
+    "Choose a value for this preference",
+  );
+export type PlanItem = {
+  lastSessionId: string | null;
+  id: string;
+  title: string;
+  description: string;
+  archivedAt: string | null;
+  revision: number;
+  updatedAt: string;
+  sessions: {
+    id: string;
+    updatedAt: string;
+    knowledgeRevision: number;
+    synthetic: boolean;
+  }[];
+  _count?: { sessions: number };
+};
+export type PlansResponse = {
+  plans: PlanItem[];
+  selection: { activePlanId: string | null; revision: number };
+  nextCursor: string | null;
+};
+export type Preference = { key: string; value: string; revision: number };
+export type PlanProposal = {
+  id: string;
+  title: string;
+  description: string;
+  kind: string;
+  sourceMessageId: string;
+  status: string;
+};
+export type MemoryExcerpt = {
+  sourceMessageId: string;
+  role: string;
+  ordinal: number;
+  text: string;
+  category: "alternative" | "question" | "decision" | "discussion";
+  temporal: "current-or-discussed" | "historical-or-planned" | "superseded";
+  truncated: boolean;
+};
+export type PersonalMemory = {
+  planId: string;
+  sessionId: string;
+  summary?: {
+    id: string;
+    version: number;
+    knowledgeRevision: number;
+    throughOrdinal: number;
+    entries: MemoryExcerpt[];
+  };
+  retrieved: { role: string; content: string; id: string }[];
+  preferences: Preference[];
+};
+export type PlanUnderstanding = {
+  plan: { id: string; title: string; archivedAt: string | null };
+  sessions: { id: string; updatedAt: string }[];
+  confirmed: { key: string; value: AnswerValue; evidenceIds: string[] }[];
+  pending: Evidence[];
+  readiness: Readiness;
+  corrections: DiscoveryContext["corrections"];
+  summary: PersonalMemory["summary"] | null;
+  unknowns: string[];
 };

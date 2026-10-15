@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model ConversationMessage
- * 
+ *
  */
 export type ConversationMessageModel = runtime.Types.Result.DefaultSelection<Prisma.$ConversationMessagePayload>
 
@@ -39,6 +39,8 @@ export type ConversationMessageMinAggregateOutputType = {
   sessionId: string | null
   role: string | null
   ordinal: number | null
+  intent: string | null
+  excludedFromContext: boolean | null
   content: string | null
   provider: string | null
   createdAt: Date | null
@@ -49,6 +51,8 @@ export type ConversationMessageMaxAggregateOutputType = {
   sessionId: string | null
   role: string | null
   ordinal: number | null
+  intent: string | null
+  excludedFromContext: boolean | null
   content: string | null
   provider: string | null
   createdAt: Date | null
@@ -59,6 +63,8 @@ export type ConversationMessageCountAggregateOutputType = {
   sessionId: number
   role: number
   ordinal: number
+  intent: number
+  excludedFromContext: number
   content: number
   provider: number
   createdAt: number
@@ -79,6 +85,8 @@ export type ConversationMessageMinAggregateInputType = {
   sessionId?: true
   role?: true
   ordinal?: true
+  intent?: true
+  excludedFromContext?: true
   content?: true
   provider?: true
   createdAt?: true
@@ -89,6 +97,8 @@ export type ConversationMessageMaxAggregateInputType = {
   sessionId?: true
   role?: true
   ordinal?: true
+  intent?: true
+  excludedFromContext?: true
   content?: true
   provider?: true
   createdAt?: true
@@ -99,6 +109,8 @@ export type ConversationMessageCountAggregateInputType = {
   sessionId?: true
   role?: true
   ordinal?: true
+  intent?: true
+  excludedFromContext?: true
   content?: true
   provider?: true
   createdAt?: true
@@ -112,55 +124,55 @@ export type ConversationMessageAggregateArgs<ExtArgs extends runtime.Types.Exten
   where?: Prisma.ConversationMessageWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ConversationMessages to fetch.
    */
   orderBy?: Prisma.ConversationMessageOrderByWithRelationInput | Prisma.ConversationMessageOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the start position
    */
   cursor?: Prisma.ConversationMessageWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ConversationMessages from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ConversationMessages.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Count returned ConversationMessages
   **/
   _count?: true | ConversationMessageCountAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to average
   **/
   _avg?: ConversationMessageAvgAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to sum
   **/
   _sum?: ConversationMessageSumAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the minimum value
   **/
   _min?: ConversationMessageMinAggregateInputType
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
+   *
    * Select which fields to find the maximum value
   **/
   _max?: ConversationMessageMaxAggregateInputType
@@ -196,6 +208,8 @@ export type ConversationMessageGroupByOutputType = {
   sessionId: string
   role: string
   ordinal: number
+  intent: string
+  excludedFromContext: boolean
   content: string
   provider: string
   createdAt: Date
@@ -229,6 +243,8 @@ export type ConversationMessageWhereInput = {
   sessionId?: Prisma.StringFilter<"ConversationMessage"> | string
   role?: Prisma.StringFilter<"ConversationMessage"> | string
   ordinal?: Prisma.IntFilter<"ConversationMessage"> | number
+  intent?: Prisma.StringFilter<"ConversationMessage"> | string
+  excludedFromContext?: Prisma.BoolFilter<"ConversationMessage"> | boolean
   content?: Prisma.StringFilter<"ConversationMessage"> | string
   provider?: Prisma.StringFilter<"ConversationMessage"> | string
   createdAt?: Prisma.DateTimeFilter<"ConversationMessage"> | Date | string
@@ -240,6 +256,8 @@ export type ConversationMessageOrderByWithRelationInput = {
   sessionId?: Prisma.SortOrder
   role?: Prisma.SortOrder
   ordinal?: Prisma.SortOrder
+  intent?: Prisma.SortOrder
+  excludedFromContext?: Prisma.SortOrder
   content?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -255,6 +273,8 @@ export type ConversationMessageWhereUniqueInput = Prisma.AtLeast<{
   sessionId?: Prisma.StringFilter<"ConversationMessage"> | string
   role?: Prisma.StringFilter<"ConversationMessage"> | string
   ordinal?: Prisma.IntFilter<"ConversationMessage"> | number
+  intent?: Prisma.StringFilter<"ConversationMessage"> | string
+  excludedFromContext?: Prisma.BoolFilter<"ConversationMessage"> | boolean
   content?: Prisma.StringFilter<"ConversationMessage"> | string
   provider?: Prisma.StringFilter<"ConversationMessage"> | string
   createdAt?: Prisma.DateTimeFilter<"ConversationMessage"> | Date | string
@@ -266,6 +286,8 @@ export type ConversationMessageOrderByWithAggregationInput = {
   sessionId?: Prisma.SortOrder
   role?: Prisma.SortOrder
   ordinal?: Prisma.SortOrder
+  intent?: Prisma.SortOrder
+  excludedFromContext?: Prisma.SortOrder
   content?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -284,6 +306,8 @@ export type ConversationMessageScalarWhereWithAggregatesInput = {
   sessionId?: Prisma.StringWithAggregatesFilter<"ConversationMessage"> | string
   role?: Prisma.StringWithAggregatesFilter<"ConversationMessage"> | string
   ordinal?: Prisma.IntWithAggregatesFilter<"ConversationMessage"> | number
+  intent?: Prisma.StringWithAggregatesFilter<"ConversationMessage"> | string
+  excludedFromContext?: Prisma.BoolWithAggregatesFilter<"ConversationMessage"> | boolean
   content?: Prisma.StringWithAggregatesFilter<"ConversationMessage"> | string
   provider?: Prisma.StringWithAggregatesFilter<"ConversationMessage"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ConversationMessage"> | Date | string
@@ -293,6 +317,8 @@ export type ConversationMessageCreateInput = {
   id?: string
   role: string
   ordinal: number
+  intent?: string
+  excludedFromContext?: boolean
   content: string
   provider: string
   createdAt?: Date | string
@@ -304,6 +330,8 @@ export type ConversationMessageUncheckedCreateInput = {
   sessionId: string
   role: string
   ordinal: number
+  intent?: string
+  excludedFromContext?: boolean
   content: string
   provider: string
   createdAt?: Date | string
@@ -313,6 +341,8 @@ export type ConversationMessageUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   ordinal?: Prisma.IntFieldUpdateOperationsInput | number
+  intent?: Prisma.StringFieldUpdateOperationsInput | string
+  excludedFromContext?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -324,6 +354,8 @@ export type ConversationMessageUncheckedUpdateInput = {
   sessionId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   ordinal?: Prisma.IntFieldUpdateOperationsInput | number
+  intent?: Prisma.StringFieldUpdateOperationsInput | string
+  excludedFromContext?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -334,6 +366,8 @@ export type ConversationMessageCreateManyInput = {
   sessionId: string
   role: string
   ordinal: number
+  intent?: string
+  excludedFromContext?: boolean
   content: string
   provider: string
   createdAt?: Date | string
@@ -343,6 +377,8 @@ export type ConversationMessageUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   ordinal?: Prisma.IntFieldUpdateOperationsInput | number
+  intent?: Prisma.StringFieldUpdateOperationsInput | string
+  excludedFromContext?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -353,6 +389,8 @@ export type ConversationMessageUncheckedUpdateManyInput = {
   sessionId?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   ordinal?: Prisma.IntFieldUpdateOperationsInput | number
+  intent?: Prisma.StringFieldUpdateOperationsInput | string
+  excludedFromContext?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -378,6 +416,8 @@ export type ConversationMessageCountOrderByAggregateInput = {
   sessionId?: Prisma.SortOrder
   role?: Prisma.SortOrder
   ordinal?: Prisma.SortOrder
+  intent?: Prisma.SortOrder
+  excludedFromContext?: Prisma.SortOrder
   content?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -392,6 +432,8 @@ export type ConversationMessageMaxOrderByAggregateInput = {
   sessionId?: Prisma.SortOrder
   role?: Prisma.SortOrder
   ordinal?: Prisma.SortOrder
+  intent?: Prisma.SortOrder
+  excludedFromContext?: Prisma.SortOrder
   content?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -402,6 +444,8 @@ export type ConversationMessageMinOrderByAggregateInput = {
   sessionId?: Prisma.SortOrder
   role?: Prisma.SortOrder
   ordinal?: Prisma.SortOrder
+  intent?: Prisma.SortOrder
+  excludedFromContext?: Prisma.SortOrder
   content?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -457,6 +501,8 @@ export type ConversationMessageCreateWithoutSessionInput = {
   id?: string
   role: string
   ordinal: number
+  intent?: string
+  excludedFromContext?: boolean
   content: string
   provider: string
   createdAt?: Date | string
@@ -466,6 +512,8 @@ export type ConversationMessageUncheckedCreateWithoutSessionInput = {
   id?: string
   role: string
   ordinal: number
+  intent?: string
+  excludedFromContext?: boolean
   content: string
   provider: string
   createdAt?: Date | string
@@ -505,6 +553,8 @@ export type ConversationMessageScalarWhereInput = {
   sessionId?: Prisma.StringFilter<"ConversationMessage"> | string
   role?: Prisma.StringFilter<"ConversationMessage"> | string
   ordinal?: Prisma.IntFilter<"ConversationMessage"> | number
+  intent?: Prisma.StringFilter<"ConversationMessage"> | string
+  excludedFromContext?: Prisma.BoolFilter<"ConversationMessage"> | boolean
   content?: Prisma.StringFilter<"ConversationMessage"> | string
   provider?: Prisma.StringFilter<"ConversationMessage"> | string
   createdAt?: Prisma.DateTimeFilter<"ConversationMessage"> | Date | string
@@ -514,6 +564,8 @@ export type ConversationMessageCreateManySessionInput = {
   id?: string
   role: string
   ordinal: number
+  intent?: string
+  excludedFromContext?: boolean
   content: string
   provider: string
   createdAt?: Date | string
@@ -523,6 +575,8 @@ export type ConversationMessageUpdateWithoutSessionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   ordinal?: Prisma.IntFieldUpdateOperationsInput | number
+  intent?: Prisma.StringFieldUpdateOperationsInput | string
+  excludedFromContext?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -532,6 +586,8 @@ export type ConversationMessageUncheckedUpdateWithoutSessionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   ordinal?: Prisma.IntFieldUpdateOperationsInput | number
+  intent?: Prisma.StringFieldUpdateOperationsInput | string
+  excludedFromContext?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -541,6 +597,8 @@ export type ConversationMessageUncheckedUpdateManyWithoutSessionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   ordinal?: Prisma.IntFieldUpdateOperationsInput | number
+  intent?: Prisma.StringFieldUpdateOperationsInput | string
+  excludedFromContext?: Prisma.BoolFieldUpdateOperationsInput | boolean
   content?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -553,6 +611,8 @@ export type ConversationMessageSelect<ExtArgs extends runtime.Types.Extensions.I
   sessionId?: boolean
   role?: boolean
   ordinal?: boolean
+  intent?: boolean
+  excludedFromContext?: boolean
   content?: boolean
   provider?: boolean
   createdAt?: boolean
@@ -564,6 +624,8 @@ export type ConversationMessageSelectCreateManyAndReturn<ExtArgs extends runtime
   sessionId?: boolean
   role?: boolean
   ordinal?: boolean
+  intent?: boolean
+  excludedFromContext?: boolean
   content?: boolean
   provider?: boolean
   createdAt?: boolean
@@ -575,6 +637,8 @@ export type ConversationMessageSelectUpdateManyAndReturn<ExtArgs extends runtime
   sessionId?: boolean
   role?: boolean
   ordinal?: boolean
+  intent?: boolean
+  excludedFromContext?: boolean
   content?: boolean
   provider?: boolean
   createdAt?: boolean
@@ -586,12 +650,14 @@ export type ConversationMessageSelectScalar = {
   sessionId?: boolean
   role?: boolean
   ordinal?: boolean
+  intent?: boolean
+  excludedFromContext?: boolean
   content?: boolean
   provider?: boolean
   createdAt?: boolean
 }
 
-export type ConversationMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sessionId" | "role" | "ordinal" | "content" | "provider" | "createdAt", ExtArgs["result"]["conversationMessage"]>
+export type ConversationMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sessionId" | "role" | "ordinal" | "intent" | "excludedFromContext" | "content" | "provider" | "createdAt", ExtArgs["result"]["conversationMessage"]>
 export type ConversationMessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   session?: boolean | Prisma.DiscoverySessionDefaultArgs<ExtArgs>
 }
@@ -612,6 +678,8 @@ export type $ConversationMessagePayload<ExtArgs extends runtime.Types.Extensions
     sessionId: string
     role: string
     ordinal: number
+    intent: string
+    excludedFromContext: boolean
     content: string
     provider: string
     createdAt: Date
@@ -694,13 +762,13 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    * @example
    * // Get all ConversationMessages
    * const conversationMessages = await prisma.conversationMessage.findMany()
-   * 
+   *
    * // Get first 10 ConversationMessages
    * const conversationMessages = await prisma.conversationMessage.findMany({ take: 10 })
-   * 
+   *
    * // Only select the `id`
    * const conversationMessageWithIdOnly = await prisma.conversationMessage.findMany({ select: { id: true } })
-   * 
+   *
    */
   findMany<T extends ConversationMessageFindManyArgs>(args?: Prisma.SelectSubset<T, ConversationMessageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
@@ -714,7 +782,7 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    *     // ... data to create a ConversationMessage
    *   }
    * })
-   * 
+   *
    */
   create<T extends ConversationMessageCreateArgs>(args: Prisma.SelectSubset<T, ConversationMessageCreateArgs<ExtArgs>>): Prisma.Prisma__ConversationMessageClient<runtime.Types.Result.GetResult<Prisma.$ConversationMessagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -728,7 +796,7 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    *     // ... provide data here
    *   ]
    * })
-   *     
+   *
    */
   createMany<T extends ConversationMessageCreateManyArgs>(args?: Prisma.SelectSubset<T, ConversationMessageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -742,7 +810,7 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Create many ConversationMessages and only return the `id`
    * const conversationMessageWithIdOnly = await prisma.conversationMessage.createManyAndReturn({
    *   select: { id: true },
@@ -752,7 +820,7 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   createManyAndReturn<T extends ConversationMessageCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, ConversationMessageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationMessagePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
@@ -766,7 +834,7 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    *     // ... filter to delete one ConversationMessage
    *   }
    * })
-   * 
+   *
    */
   delete<T extends ConversationMessageDeleteArgs>(args: Prisma.SelectSubset<T, ConversationMessageDeleteArgs<ExtArgs>>): Prisma.Prisma__ConversationMessageClient<runtime.Types.Result.GetResult<Prisma.$ConversationMessagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -783,7 +851,7 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   update<T extends ConversationMessageUpdateArgs>(args: Prisma.SelectSubset<T, ConversationMessageUpdateArgs<ExtArgs>>): Prisma.Prisma__ConversationMessageClient<runtime.Types.Result.GetResult<Prisma.$ConversationMessagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
@@ -797,7 +865,7 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    *     // ... provide filter here
    *   }
    * })
-   * 
+   *
    */
   deleteMany<T extends ConversationMessageDeleteManyArgs>(args?: Prisma.SelectSubset<T, ConversationMessageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -816,7 +884,7 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    *     // ... provide data here
    *   }
    * })
-   * 
+   *
    */
   updateMany<T extends ConversationMessageUpdateManyArgs>(args: Prisma.SelectSubset<T, ConversationMessageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
@@ -833,7 +901,7 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    *     // ... provide data here
    *   ]
    * })
-   * 
+   *
    * // Update zero or more ConversationMessages and only return the `id`
    * const conversationMessageWithIdOnly = await prisma.conversationMessage.updateManyAndReturn({
    *   select: { id: true },
@@ -846,7 +914,7 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    * })
    * Note, that providing `undefined` is treated as the value not being there.
    * Read more here: https://pris.ly/d/null-undefined
-   * 
+   *
    */
   updateManyAndReturn<T extends ConversationMessageUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, ConversationMessageUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationMessagePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
@@ -935,7 +1003,7 @@ export interface ConversationMessageDelegate<ExtArgs extends runtime.Types.Exten
    *     _all: true
    *   },
    * })
-   * 
+   *
   **/
   groupBy<
     T extends ConversationMessageGroupByArgs,
@@ -1043,6 +1111,8 @@ export interface ConversationMessageFieldRefs {
   readonly sessionId: Prisma.FieldRef<"ConversationMessage", 'String'>
   readonly role: Prisma.FieldRef<"ConversationMessage", 'String'>
   readonly ordinal: Prisma.FieldRef<"ConversationMessage", 'Int'>
+  readonly intent: Prisma.FieldRef<"ConversationMessage", 'String'>
+  readonly excludedFromContext: Prisma.FieldRef<"ConversationMessage", 'Boolean'>
   readonly content: Prisma.FieldRef<"ConversationMessage", 'String'>
   readonly provider: Prisma.FieldRef<"ConversationMessage", 'String'>
   readonly createdAt: Prisma.FieldRef<"ConversationMessage", 'DateTime'>
@@ -1116,31 +1186,31 @@ export type ConversationMessageFindFirstArgs<ExtArgs extends runtime.Types.Exten
   where?: Prisma.ConversationMessageWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ConversationMessages to fetch.
    */
   orderBy?: Prisma.ConversationMessageOrderByWithRelationInput | Prisma.ConversationMessageOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for ConversationMessages.
    */
   cursor?: Prisma.ConversationMessageWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ConversationMessages from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ConversationMessages.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of ConversationMessages.
    */
   distinct?: Prisma.ConversationMessageScalarFieldEnum | Prisma.ConversationMessageScalarFieldEnum[]
@@ -1168,31 +1238,31 @@ export type ConversationMessageFindFirstOrThrowArgs<ExtArgs extends runtime.Type
   where?: Prisma.ConversationMessageWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ConversationMessages to fetch.
    */
   orderBy?: Prisma.ConversationMessageOrderByWithRelationInput | Prisma.ConversationMessageOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for searching for ConversationMessages.
    */
   cursor?: Prisma.ConversationMessageWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ConversationMessages from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ConversationMessages.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of ConversationMessages.
    */
   distinct?: Prisma.ConversationMessageScalarFieldEnum | Prisma.ConversationMessageScalarFieldEnum[]
@@ -1220,31 +1290,31 @@ export type ConversationMessageFindManyArgs<ExtArgs extends runtime.Types.Extens
   where?: Prisma.ConversationMessageWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-   * 
+   *
    * Determine the order of ConversationMessages to fetch.
    */
   orderBy?: Prisma.ConversationMessageOrderByWithRelationInput | Prisma.ConversationMessageOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-   * 
+   *
    * Sets the position for listing ConversationMessages.
    */
   cursor?: Prisma.ConversationMessageWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Take `±n` ConversationMessages from the position of the cursor.
    */
   take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-   * 
+   *
    * Skip the first `n` ConversationMessages.
    */
   skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
+   *
    * Filter by unique combinations of ConversationMessages.
    */
   distinct?: Prisma.ConversationMessageScalarFieldEnum | Prisma.ConversationMessageScalarFieldEnum[]
