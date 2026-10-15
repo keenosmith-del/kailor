@@ -33,6 +33,7 @@ model Subject {
   sessions DiscoverySession[]
 }
 model Plan {
+  sources ProjectSource[]
   id String @id @default(uuid())
   adminId String
   admin AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
@@ -289,4 +290,17 @@ model AccountInvite {
   usedAt DateTime?
   createdBy String
   createdAt DateTime @default(now())
+}
+
+model ProjectSource {
+  id String @id @default(uuid())
+  planId String
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  title String
+  kind String
+  content String
+  url String?
+  status String
+  createdAt DateTime @default(now())
+  @@index([planId, createdAt])
 }

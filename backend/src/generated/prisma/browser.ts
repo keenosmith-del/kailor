@@ -132,3 +132,8 @@ export type AuditEvent = Prisma.AuditEventModel
  *
  */
 export type AccountInvite = Prisma.AccountInviteModel
+/**
+ * Model ProjectSource
+ *
+ */
+export type ProjectSource = Prisma.ProjectSourceModel

@@ -1,26 +1,24 @@
 import "./Canvas.css";
-import { ArrowRight } from "lucide-react";
-import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import type { Session } from "../../../../shared/src/index";
 import { Link } from "react-router";
+import type { Session } from "../../../../shared/src/index";
 import type { Next } from "../../types/session";
 import { api, sessionHref } from "../../services/api";
 import { ErrorBox } from "../../components/ErrorBox/ErrorBox";
-import { errorMessage } from "../../utils/errorMessage";
+type Node = {
+  id: string;
+  title: string;
+  status: string;
+  purpose: string;
+  evidence: string[];
+  dependencies: string[];
+  alternatives: string[];
+};
 type CanvasData = {
-  existing: string[];
-  existingOrigin?: string;
-  components: {
-    id: string;
-    title: string;
-    kind: string;
-    complexity: string;
-    delivery?: string;
-    rationale?: string;
-    dependencies: string[];
-    evidence: string[];
-  }[];
+  graph: {
+    nodes: Node[];
+    edges: { from: string; to: string; label: string }[];
+  };
   note: string;
 };
 export function Canvas({
@@ -34,105 +32,143 @@ export function Canvas({
   busy: boolean;
   next: Next;
 }) {
-  const [canvas, setCanvas] = useState<CanvasData | null>(null),
-    [error, setError] = useState("");
+  const [data, setData] = useState<CanvasData | null>(null);
+  const [selected, setSelected] = useState("");
+  const [error, setError] = useState("");
   useEffect(() => {
-    setCanvas(null);
+    let current = true;
+    setData(null);
+    setError("");
     void api<CanvasData>(`/sessions/${session.id}/canvas`)
-      .then(setCanvas)
-      .catch((e) => setError(errorMessage(e)));
+      .then((r) => {
+        if (current) {
+          setData(r);
+          setSelected(r.graph.nodes[0]?.id ?? "");
+        }
+      })
+      .catch((e) => {
+        if (current) setError(e.message);
+      });
+    return () => {
+      current = false;
+    };
   }, [session.id, session.revision]);
+  const active = data?.graph.nodes.find((n) => n.id === selected);
   return (
     <section className="canvas">
-      <h1>
-        Connecting
-        <br />
-        the possibilities.
-      </h1>
-      <p className="lead">
-        A considered system, built around what you already have.
-      </p>
+      <header>
+        <p className="eyebrow">Solution canvas</p>
+        <h1>See how it could fit together.</h1>
+        <p className="lead">
+          Select a step to explore its purpose, alternatives and open decisions.
+        </p>
+      </header>
       <ErrorBox error={error} />
-      {canvas && (
-        <>
-          <div className="canvas-existing">
-            <p className="eyebrow">your starting point</p>
-            {canvas.existingOrigin === "described" && (
-              <p className="muted">
-                Channels described in your answers; interpretation remains open
-                to review.
-              </p>
-            )}
-            {canvas.existing
-              .filter((x) => x !== "none")
-              .map((x) => (
-                <span className="pill" key={x}>
-                  {x}
-                </span>
-              ))}
-            {!canvas.existing.some((x) => x !== "none") && (
-              <p className="muted">No existing online presence confirmed.</p>
-            )}
-          </div>
-          <div className="canvas-grid">
-            {canvas.components.map((c, i) => (
-              <motion.article
-                className={`component-card ${c.kind}`}
-                key={c.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.07 }}
-              >
-                <span className="badge">
-                  {c.kind === "future"
-                    ? "future proposal"
-                    : c.delivery?.includes("exploratory")
-                      ? "exploratory"
-                      : c.kind}
-                </span>
-                <h2>{c.title}</h2>
-                <p className="muted">{c.complexity}</p>
-                <details>
-                  <summary>Evidence & dependencies</summary>
-                  {c.rationale && <p>{c.rationale}</p>}
-                  {c.delivery && <p>Delivery: {c.delivery}</p>}
-                  {c.evidence.map((e) => (
-                    <p key={e}>{e}</p>
+      {!data && !error && (
+        <p role="status">Connecting your project information…</p>
+      )}
+      {data && (
+        <div className="canvas-workspace">
+          <div
+            className="canvas-map"
+            role="group"
+            aria-label="Project workflow"
+          >
+            {data.graph.nodes.map((n) => (
+              <div className="canvas-step" key={n.id}>
+                <button
+                  className={`canvas-node ${n.status}`}
+                  aria-pressed={selected === n.id}
+                  onClick={() => setSelected(n.id)}
+                >
+                  <small>
+                    {n.status === "reported"
+                      ? "You described"
+                      : n.status === "exploratory"
+                        ? "Possibility to explore"
+                        : "Proposed · verify before use"}
+                  </small>
+                  <strong>{n.title}</strong>
+                </button>
+                {data.graph.edges
+                  .filter((e) => e.from === n.id)
+                  .map((e) => (
+                    <button
+                      className="canvas-edge"
+                      key={`${e.from}-${e.to}`}
+                      onClick={() => setSelected(e.to)}
+                      aria-label={`${n.title} connects to ${data.graph.nodes.find((x) => x.id === e.to)?.title}: ${e.label}`}
+                    >
+                      ↓ {e.label} →{" "}
+                      {data.graph.nodes.find((x) => x.id === e.to)?.title}
+                    </button>
                   ))}
-                  <ul>
-                    {c.dependencies.map((d) => (
-                      <li key={d}>{d}</li>
-                    ))}
-                  </ul>
-                </details>
-              </motion.article>
+              </div>
             ))}
           </div>
-          {!canvas.components.length && (
-            <div className="quiet-card">
-              Continue discovery to identify components supported by your
-              answers.
-            </div>
-          )}
-          <p className="fine-print">{canvas.note}</p>
-        </>
+          <aside className="canvas-detail" aria-label="Selected component">
+            {active && (
+              <>
+                <p className="eyebrow">
+                  {active.status === "reported"
+                    ? "User-reported information"
+                    : "Unverified proposal"}
+                </p>
+                <h2>{active.title}</h2>
+                <p>{active.purpose}</p>
+                {!!active.dependencies.length && (
+                  <>
+                    <h3>Before choosing</h3>
+                    <ul>
+                      {active.dependencies.map((x, i) => (
+                        <li key={i}>{x}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+                {!!active.alternatives.length && (
+                  <>
+                    <h3>Alternatives</h3>
+                    <ul>
+                      {active.alternatives
+                        .filter((x) => !x.startsWith("Reference "))
+                        .map((x, i) => (
+                          <li key={i}>{x}</li>
+                        ))}
+                    </ul>
+                  </>
+                )}
+                {!!active.evidence.length && (
+                  <details>
+                    <summary>Supporting information</summary>
+                    {active.evidence.map((x, i) => (
+                      <p key={i}>{x.replace(/^\w+: /, "")}</p>
+                    ))}
+                  </details>
+                )}
+                <Link
+                  className="button"
+                  to={`${sessionHref(session.id, "chat")}?component=${encodeURIComponent(active.title)}`}
+                >
+                  Discuss this step
+                </Link>
+              </>
+            )}
+          </aside>
+        </div>
       )}
-      {next.readiness.canAssess ? (
-        <button
-          className="button primary"
-          disabled={busy}
-          onClick={() => void assess()}
-        >
-          Prepare analysis <ArrowRight size={17} />
-        </button>
-      ) : (
-        <p className="lead">
-          {next.readiness.reasons.join(". ")}{" "}
-          <Link className="text-link" to={sessionHref(session.id, "discovery")}>
-            Return to discovery
-          </Link>
-        </p>
-      )}
+      <div className="canvas-actions">
+        <p className="fine-print">{data?.note}</p>
+        {next.readiness.canAssess && (
+          <button
+            className="button"
+            disabled={busy}
+            onClick={() => void assess().catch((e) => setError(e.message))}
+          >
+            Save an assessment
+          </button>
+        )}
+      </div>
     </section>
   );
 }

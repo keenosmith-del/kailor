@@ -50,6 +50,12 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
       ]);
     else if (!result.has(key)) result.set(key, value);
   };
+  if (
+    /^(?:can|could|would|should|what|how|is|are|do|does)\b/i.test(
+      message.trim(),
+    )
+  )
+    return [];
   const current = currentStatements(message);
   const text =
     current.length === clausesOf(message).length
@@ -57,11 +63,28 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
       : current.join(". ");
   if (!text) return [];
   if (
+    /\b(?:no business idea|don['’]t have (?:a |any )?business(?: idea)?|starting from nothing)\b/i.test(
+      text,
+    )
+  )
+    add("stage", "uncertain");
+  if (
+    !/^(?:I am|I'm) (?:not (?:very )?technical|unsure|uncertain|not sure)/i.test(
+      text,
+    ) &&
     /\b(?:I am|I'm|I run|I own|we run|we are|I coordinate|I work on my own)\b/i.test(
       text,
     )
   )
-    add("industry", text);
+    add(
+      "industry",
+      current.find(
+        (c) =>
+          /\b(?:I am|I'm|I run|I own|we run|we are|I coordinate|I work on my own)\b/i.test(
+            c,
+          ) && !/not (?:very )?technical|unsure|uncertain|not sure/i.test(c),
+      ) ?? text,
+    );
   const claims = claimsFromText(text, "chat");
   if (
     claims.some((c) =>
@@ -151,12 +174,15 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
       add("request", clause);
     }
     if (
+      !/not (?:very )?technical|technical confidence|manage (?:it |something )?from my phone|simple.*manage.*phone/i.test(
+        clause,
+      ) &&
       /(?:I want|I need|we want|we need|goal|mostly want|wants to)/i.test(
         clause,
       )
     )
       if (
-        !/^(?:I|we) (?:want|need)(?: something| it)? (?:affordable|cheap|inexpensive|simple|a small amount|a limited budget|quickly|soon|privacy)/i.test(
+        !/^(?:I|we) (?:want|need)(?: something| it)? (?:affordable|cheap|inexpensive|simple|a small amount|a limited budget|quickly|soon|privacy)\b/i.test(
           clause,
         ) ||
         /\bto (?:build|improve|automate|record|manage|reduce)\b/i.test(clause)
@@ -171,14 +197,39 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
     )
       add("workflowDetails", clause);
   }
-  if (goalClauses.length > 1) result.set("goals", text);
+  if (goalClauses.length > 1) result.set("goals", goalClauses.join(". "));
   if (problems.length) add("problems", problems);
   if (
-    /affordable|limited budget|small amount|only spend|can't afford|cannot afford|don't want|do not want|privacy|accessibility|not complicated|no pupil data|review|approval/i.test(
+    problems.includes("booking") &&
+    /\d[\d\s–-]*appointments?/i.test(text) &&
+    /manual|missed|no.shows?|cancellations?/i.test(text)
+  )
+    add(
+      "bookingDetails",
+      current
+        .filter(
+          (c) =>
+            /book|appointment|enquir|no.show|cancell|reminder/i.test(c) &&
+            !/^(?:I|we) (?:want|need)/i.test(c),
+        )
+        .join(". "),
+    );
+
+  if (
+    /not (?:very )?technical|technical confidence|manage.*phone|mobile.friendly|maintain.*myself|affordable|limited budget|small amount|only spend|can't afford|cannot afford|don't want|do not want|privacy|accessibility|not complicated|no pupil data|review|approval/i.test(
       text,
     )
   )
-    add("constraints", text);
+    add(
+      "constraints",
+      current
+        .filter((c) =>
+          /not (?:very )?technical|technical confidence|manage.*phone|mobile.friendly|maintain.*myself|affordable|limited budget|small amount|only spend|can.t afford|cannot afford|don.t want|do not want|privacy|accessibility|not complicated|no pupil data|review|approval/i.test(
+            c,
+          ),
+        )
+        .join(". ") || text,
+    );
   if (
     /budget|only spend|small amount|affordable|can't afford|cannot afford/i.test(
       text,
@@ -246,8 +297,7 @@ export function signalAnswers(a: Answers, includeDetails = true): Answers {
   for (const key of roots) {
     if (typeof a[key] !== "string" || !a[key]) continue;
     for (const p of extractCandidates(String(a[key]))) {
-      if (p.key === "industry" || p.key === "constraints" || p.key === "budget")
-        continue;
+      if (p.key === "industry" || p.key === "budget") continue;
       if (p.key in a) continue; // An explicit selection (including skip/none) always wins.
       if (Array.isArray(p.value))
         result[p.key] = [

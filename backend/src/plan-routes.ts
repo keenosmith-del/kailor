@@ -1,6 +1,10 @@
+import { remoteEnabled } from "./ai.js";
+import { config } from "./config.js";
+import { sourceRouter } from "./source-routes.js";
+import { customerReport, reportSummary } from "../../shared/src/report.js";
 import { Router } from "express";
 import { z } from "zod";
-import { clearConversation } from "./session-service.js";
+import { clearConversation, restartDiscovery } from "./session-service.js";
 import * as plans from "./plan-service.js";
 import { db } from "./db.js";
 import { AppError } from "./errors.js";
@@ -12,6 +16,7 @@ import {
   mutationSchema,
 } from "../../shared/src/index.js";
 export const planRouter = Router();
+planRouter.use(sourceRouter);
 const id = z.uuid();
 const owner = (res: { locals: Record<string, any> }) =>
   String(res.locals.adminId ?? res.locals.guestId);
@@ -138,6 +143,7 @@ planRouter.get("/plans/:id/reports", async (req, res) => {
     select: {
       id: true,
       createdAt: true,
+      content: true,
       assessment: {
         select: { sessionId: true, summary: true, knowledgeRevision: true },
       },
@@ -146,7 +152,16 @@ planRouter.get("/plans/:id/reports", async (req, res) => {
     take: 21,
   });
   res.json({
-    reports: reports.slice(0, 20),
+    reports: reports.slice(0, 20).map(({ content, ...row }) => {
+      const report = customerReport(content as unknown as Report);
+      return {
+        ...row,
+        title: report.title,
+        assessmentType: report.assessmentType ?? "business",
+        status: report.status,
+        summary: reportSummary(report),
+      };
+    }),
     nextCursor: reports.length > 20 ? reports[19].id : null,
   });
 });
@@ -211,4 +226,54 @@ planRouter.post("/sessions/:id/conversation/clear", async (req, res) => {
       input.revision,
     ),
   );
+});
+
+planRouter.post("/sessions/:id/discovery/restart", async (req, res) => {
+  const input = mutationSchema.strict().parse(req.body);
+  res.json(
+    await restartDiscovery(id.parse(req.params.id), owner(res), input.revision),
+  );
+});
+
+planRouter.get("/model-status", async (_req, res) => {
+  const guest = !!res.locals.guestId;
+  res.json({
+    configured:
+      remoteEnabled(config) &&
+      (!guest || config.AI_ALLOW_GUEST_REMOTE === "true"),
+    guest,
+    provider: "Cloudflare",
+    scope:
+      "Configuration only; reachability and usage limits are checked per reply",
+  });
+});
+
+// Chat and Discovery need freshness only, not the full immutable report payload.
+planRouter.get("/sessions/:id/report-status", async (req, res) => {
+  const report = await db.reportSnapshot.findFirst({
+    where: {
+      assessment: {
+        sessionId: id.parse(req.params.id),
+        session: { adminId: owner(res) },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      assessment: {
+        select: {
+          knowledgeRevision: true,
+          session: { select: { knowledgeRevision: true } },
+        },
+      },
+    },
+  });
+  if (!report)
+    throw new AppError(404, "report_missing", "Prepare an assessment first");
+  res.json({
+    reportId: report.id,
+    stale:
+      report.assessment.knowledgeRevision !==
+      report.assessment.session.knowledgeRevision,
+  });
 });

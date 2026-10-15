@@ -21,6 +21,7 @@ const envSchema = z.object({
   ADMIN_EMAIL: z.email().default("founder@kailor.local"),
   ADMIN_PASSWORD: z.string().default(""),
   AI_PROVIDER: z.enum(["mock", "cloudflare"]).default("mock"),
+  AI_ALLOW_GUEST_REMOTE: z.enum(["true", "false"]).default("true"),
   AI_ALLOW_REMOTE: z.enum(["true", "false"]).default("false"),
   CLOUDFLARE_ACCOUNT_ID: z.string().default(""),
   CLOUDFLARE_API_TOKEN: z.string().default(""),

@@ -512,7 +512,7 @@ describe("real PostgreSQL API vertical slice", () => {
     await db.subject.delete({ where: { id: subject.id } });
     await db.adminUser.delete({ where: { id: other.id } });
   });
-  it("forces guest inference local even when a service caller omits forceMock", async () => {
+  it("enforces guest remote opt-out even when a service caller omits forceMock", async () => {
     const guest = request.agent(app);
     const r = await guest
       .post("/api/guest/sessions")
@@ -521,6 +521,7 @@ describe("real PostgreSQL API vertical slice", () => {
     expect(r.status).toBe(201);
     guestOwners.push(r.body.adminId);
     const original = {
+      AI_ALLOW_GUEST_REMOTE: config.AI_ALLOW_GUEST_REMOTE,
       AI_PROVIDER: config.AI_PROVIDER,
       AI_ALLOW_REMOTE: config.AI_ALLOW_REMOTE,
       CLOUDFLARE_ACCOUNT_ID: config.CLOUDFLARE_ACCOUNT_ID,
@@ -530,6 +531,7 @@ describe("real PostgreSQL API vertical slice", () => {
     let calls = 0;
     try {
       Object.assign(config, {
+        AI_ALLOW_GUEST_REMOTE: "false",
         AI_PROVIDER: "cloudflare",
         AI_ALLOW_REMOTE: "true",
         CLOUDFLARE_ACCOUNT_ID: "test-only",
@@ -567,7 +569,7 @@ describe("real PostgreSQL API vertical slice", () => {
       (await db.discoverySession.findUniqueOrThrow({ where: { id: guestId } }))
         .adminId,
     );
-    expect(created.body.synthetic).toBe(true);
+    expect(created.body.synthetic).toBe(false);
     expect(created.headers["set-cookie"][0]).toContain("Path=/api/guest");
     expect((await guest.get("/api/cases")).status).toBe(401);
     expect(

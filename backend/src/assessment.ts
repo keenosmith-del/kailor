@@ -1,9 +1,19 @@
+import { displayEvidence } from "../../shared/src/report.js";
+import {
+  opportunityDirections,
+  explorationKeys,
+  isExploration,
+} from "./exploration.js";
 import type {
   Answers,
   Recommendation,
   Report,
 } from "../../shared/src/index.js";
-import { signalAnswers, buildContext } from "./context-extraction.js";
+import {
+  signalAnswers,
+  buildContext,
+  extractCandidates,
+} from "./context-extraction.js";
 import { evaluateEvidence } from "./evidence-policy.js";
 import { usableAnswers } from "./input-quality.js";
 import type { Evidence, AnswerStates } from "../../shared/src/index.js";
@@ -68,20 +78,27 @@ export function recommend(
       serviceId: id,
       problem,
       solution:
-        id === "integration" && !existingBooking
-          ? "Workflow feasibility and integration review"
-          : s.name,
+        id === "booking"
+          ? "Hosted booking service"
+          : id === "integration" && !existingBooking
+            ? "Workflow feasibility and integration review"
+            : s.name,
       evidence: keys
         .filter((k) => confirmed[k] !== undefined)
         .map(
           (k) =>
             `${k}: ${Array.isArray(confirmed[k]) ? (confirmed[k] as string[]).join(", ") : confirmed[k]}`,
         ),
-      benefits: [s.description],
+      benefits: [
+        id === "booking"
+          ? "A shareable booking page may reduce manual appointment messages. Test availability and reminder settings with the selected service."
+          : s.description,
+      ],
       alternatives:
         id === "booking" || (existingBooking && id === "integration")
           ? [
               "Improve availability and reminders in the current workflow first",
+              "Share a hosted booking link through existing channels; a full website may be unnecessary initially",
               "Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls",
               "Add booking to an existing website only if that channel is useful",
               "Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially",
@@ -131,7 +148,7 @@ export function recommend(
               ]
             : id === "booking" || (existingBooking && id === "integration")
               ? [
-                  "Current provider permissions and export/integration support",
+                  `${existingBooking ? "Current" : "Selected"} provider permissions and export/integration support`,
                   "Availability, reminders and cancellation policy",
                   "Vendor subscription terms and ongoing support",
                 ]
@@ -192,140 +209,267 @@ export function createReport(
     evidence,
     states,
   );
-  const matchedCases = matches.map(
-    ({
-      id,
-      title,
-      sourceType,
-      reasons,
-      reviewStatus,
-      reviewVersion,
-      sourceRunId,
-      limitations,
-      usefulness,
-    }) => ({
-      id,
-      title,
-      sourceType,
-      reasons,
-      approvalStatus: reviewStatus,
-      reviewVersion: reviewVersion ?? 0,
-      sourceRunId: sourceRunId ?? null,
-      outcomeVerification: "unverified" as const,
-      limitations,
-      usefulness,
-    }),
-  );
-  const val = (key: string) =>
-    states[key] && states[key] !== "answered"
-      ? `${states[key].replace("_", " ")} — no factual value inferred`
-      : Array.isArray(a[key])
-        ? (a[key] as string[]).join(", ")
-        : String(a[key] ?? "Not confirmed");
+  const matchedCases = matches
+    .slice(0, 3)
+    .map(
+      ({
+        id,
+        title,
+        sourceType,
+        reasons,
+        reviewStatus,
+        reviewVersion,
+        sourceRunId,
+        limitations,
+        usefulness,
+      }) => ({
+        id,
+        title,
+        sourceType,
+        reasons,
+        approvalStatus: reviewStatus,
+        reviewVersion: reviewVersion ?? 0,
+        sourceRunId: sourceRunId ?? null,
+        outcomeVerification: "unverified" as const,
+        limitations,
+        usefulness,
+      }),
+    );
+  const exploratory = isExploration(a);
+  const idea = a.stage === "starting";
+  const context = buildContext(a, evidence);
+  const value = (key: string) =>
+    typeof signals[key] === "string"
+      ? key === "industry"
+        ? String(
+            extractCandidates(String(signals[key])).find(
+              (p) => p.key === "industry",
+            )?.value ?? signals[key],
+          )
+        : String(signals[key])
+      : Array.isArray(signals[key])
+        ? (signals[key] as string[]).join(", ")
+        : null;
+  const known = (keys: string[]) => [
+    ...new Set(keys.flatMap((k) => (value(k) ? [value(k)!] : []))),
+  ];
+  const directions = opportunityDirections(a);
+  const explorationProfile = [
+    ...known(explorationKeys.filter((k) => k !== "opportunityStyle")),
+    ...(a.opportunityStyle && a.opportunityStyle !== "explore"
+      ? [
+          `You chose to explore ${directions[0]?.title.toLowerCase() ?? "this format"}. This is a preference for a trial, not evidence of demand.`,
+        ]
+      : []),
+  ];
+  const type = exploratory
+    ? "exploration"
+    : idea
+      ? "idea"
+      : a.stage === "specific"
+        ? "solution"
+        : "business";
   return {
-    title: "Your way forward",
-    status: readiness.canAssess
-      ? readiness.state === "deeper"
-        ? "draft solution evaluation — consultant review required"
-        : "qualified preliminary draft — consultant review required"
-      : "internal discovery notes — insufficient evidence, not an assessment",
+    presentationVersion: 2,
+    assessmentType: type,
+    title: exploratory
+      ? "Your opportunity exploration"
+      : idea
+        ? "Your idea — first validation steps"
+        : recommendations.some((r) => r.serviceId === "booking")
+          ? "Simplifying appointment management"
+          : a.stage === "specific"
+            ? "Your solution — scope and next steps"
+            : "Your business — practical improvements",
+    status: "Preliminary assessment · not human-reviewed",
     synthetic,
     revision,
     createdAt: new Date().toISOString(),
     recommendations,
     matchedCases,
-    sections: [
-      {
-        title: "Your Situation",
-        paragraphs: [
-          `Context: ${buildContext(a, evidence).activity || "Not yet understood"}`,
-          `Starting point: ${val("stage")}`,
-          `Goal: ${a.goals ? val("goals") : a.request ? val("request") : signals.goals ? `Described in a confirmed answer: ${signals.goals}` : val("frustrations")}`,
-        ],
-      },
-      {
-        title: "Current Position",
-        paragraphs: [
-          `Presence: ${signals.presence ? `Described channels: ${String(signals.presence)}` : "Not confirmed"}`,
-          `Tools: ${a.tools ? val("tools") : signals.tools ? `Described in a confirmed answer: ${signals.tools}` : "Not confirmed"}`,
-          `User-selected challenges: ${val("problems")}`,
-          ...buildContext(a, evidence).corrections.map(
-            (c) =>
-              `Confirmed correction: current ${c.facet} is ${c.currentValue}. Earlier statements are source history, not current facts.`,
-          ),
-          ...(signals.bookingStatus
-            ? [
-                `Current booking provider: self-reported ${signals.bookingStatus}; takes precedence over earlier tool descriptions.`,
-              ]
-            : []),
-          ...(a.websiteStatus
-            ? [
-                `Website status: self-reported ${val("websiteStatus")}; no technical inspection.`,
-              ]
-            : []),
-          ...(a.websiteUrl
-            ? [
-                `Supplied website: ${val("websiteUrl")}. URL syntax validated only; not fetched, inspected or audited.`,
-              ]
-            : []),
-        ],
-      },
-      {
-        title: "Opportunities",
-        paragraphs: recommendations.length
-          ? recommendations.map((r) => r.problem)
-          : [
-              "There is not yet enough confirmed evidence for a solution recommendation. Continue discovery.",
-            ],
-      },
-      {
-        title: "Recommended Solutions",
-        paragraphs: recommendations.flatMap((r) => [
-          `${r.solution}${r.optional ? " (optional)" : ""} — ${r.delivery}`,
-          r.problem,
-          `Evidence: ${r.evidence.join("; ")}`,
-          `Potential benefit: ${r.benefits.join("; ")}`,
-          `Confidence: ${r.confidence}`,
-        ]),
-      },
-      {
-        title: "Possible Approaches",
-        paragraphs: recommendations.flatMap((r) => [
-          `${r.solution}: ${r.alternatives.join("; ")}`,
-          `Complexity: ${r.complexity}. Dependencies: ${r.dependencies.join("; ")}`,
-        ]),
-      },
-      {
-        title: "Costs & Considerations",
-        paragraphs: [
-          `Budget: ${val("budget")}`,
-          `Constraints: ${val("constraints")}`,
-          ...recommendations.map(
-            (r) =>
-              `${r.solution}: ${r.estimate.status}${r.estimate.implementationLow !== null ? ` — ${r.estimate.currency} ${r.estimate.implementationLow}–${r.estimate.implementationHigh}` : ""}. Recurring costs: vendor quote required.`,
-          ),
-          "All estimates are drafts. Implementation, third-party subscriptions, hosting, domain renewal and recurring maintenance require separate review. Optional future enhancements need their own scope.",
-        ],
-      },
-      {
-        title: "Your Way Forward",
-        paragraphs: [
-          `Timing: ${val("timing")}`,
-          `Readiness: ${readiness.canAssess ? (readiness.state === "deeper" ? "deeper evaluation available" : "qualified preliminary assessment available") : "more information required"}. ${readiness.reasons.join(". ")}`,
-          ...readiness.uncertainties,
-          ...(readiness.criticalUnknowns ?? []).map(
-            (item) => `Before implementation: ${item}`,
-          ),
-          "Review the evidence and unresolved assumptions with the consultant. Choose the smallest useful first step. Confirm scope and costs before implementation.",
-          ...recommendations.flatMap((r) =>
-            r.nextSteps.map((step) => `${r.solution}: ${step}`),
-          ),
-          ...matchedCases.map(
-            (c) =>
-              `Reference only (${c.sourceType}): ${c.title}. ${c.reasons.join("; ")}. No implementation results or ROI are asserted.`,
-          ),
-        ],
-      },
-    ],
+    sections:
+      exploratory || idea
+        ? [
+            {
+              title: "Executive overview",
+              paragraphs: [
+                exploratory
+                  ? "This exploration helps you choose a small next step. It does not assume you have a business, skills, resources or a budget you have not described."
+                  : "Your concept is a starting hypothesis. Test the problem and intended audience before investing in implementation.",
+              ],
+            },
+            {
+              title: "Your starting point",
+              paragraphs: (exploratory
+                ? explorationProfile
+                : known(["idea", "progress", "constraints"])
+              ).length
+                ? exploratory
+                  ? explorationProfile
+                  : known(["idea", "progress", "constraints"])
+                : [
+                    "Your preferences remain open. Uncertainty is a valid starting point.",
+                  ],
+            },
+            {
+              title: "Possibilities to explore",
+              paragraphs: exploratory
+                ? directions.map((d) => `${d.title}. ${d.description}`)
+                : [
+                    "Identify who experiences the problem and how they solve it today. Compare your concept with that current alternative.",
+                  ],
+            },
+            {
+              title: "What these possibilities mean",
+              paragraphs: [
+                "These are illustrative possibilities, not personalised recommendations or validated market demand. No income, customer interest or technical feasibility is promised.",
+              ],
+            },
+            {
+              title: "A low-commitment experiment",
+              paragraphs: [
+                idea
+                  ? "Choose one assumption about the problem or intended users. Speak with a possible user about what they do today. Try a sketch or manual demonstration and record what you learn before specifying a product."
+                  : "Choose one direction that interests you. Speak with one possible user about their current experience. Make a simple sketch or manual trial using resources you already have. Decide what you want to learn and record what actually happened.",
+              ],
+            },
+            {
+              title: "Open questions",
+              paragraphs: idea
+                ? [
+                    "Who experiences the problem, and what do they use today?",
+                    "Which assumption could you test before spending money?",
+                    "What constraints would shape a first trial?",
+                    "What result would help you continue, change or stop?",
+                  ]
+                : [
+                    "Which activities would you enjoy trying?",
+                    "What time and resources can you safely set aside?",
+                    "Would you prefer online, local or a mix?",
+                    "What evidence would help you continue, change direction or stop?",
+                  ],
+            },
+            {
+              title: "Your next decision",
+              paragraphs: [
+                "Discuss one possibility in Chat or select a node in Solution canvas. You can change your starting situation in Discovery whenever your understanding changes. No software purchase or custom development is needed to begin exploring.",
+              ],
+            },
+          ]
+        : [
+            {
+              title: "Executive overview",
+              paragraphs: [
+                recommendations.length
+                  ? `Start with ${recommendations
+                      .filter((r) => !r.optional)
+                      .map((r) => r.solution.toLowerCase())
+                      .join(
+                        " and ",
+                      )}. Validate a small change before expanding scope.`
+                  : "We can clarify the next useful step from your current information.",
+                "Based on information you provided. No consultant review, market validation or technical audit has occurred.",
+              ],
+            },
+            {
+              title: "Current situation",
+              paragraphs: [
+                ...known(["industry", "idea", "request"]),
+                ...known(["tools"]),
+                ...(!value("tools")
+                  ? ["Your current tools are still to be confirmed."]
+                  : []),
+                ...known(["goals"]),
+              ],
+            },
+            {
+              title: "Challenges and opportunities",
+              paragraphs: [
+                ...new Set(recommendations.map((r) => r.problem)),
+                ...known([
+                  ...(signals.bookingDetails ? [] : ["workflowDetails"]),
+                  "bookingDetails",
+                  "invoiceDetails",
+                  "contentDetails",
+                ]),
+              ],
+            },
+            {
+              title: "Recommended direction",
+              paragraphs: recommendations.flatMap((r) => [
+                r.solution,
+                r.problem,
+                ...r.benefits,
+              ]),
+            },
+            {
+              title: "Alternative approaches",
+              paragraphs: recommendations.flatMap((r) => [
+                r.solution,
+                ...r.alternatives,
+              ]),
+            },
+            {
+              title: "Benefits and trade-offs",
+              paragraphs: recommendations.flatMap((r) => [
+                ...r.benefits,
+                `Complexity: ${r.complexity}.`,
+              ]),
+            },
+            {
+              title: "Costs and ongoing considerations",
+              paragraphs: [
+                ...known(["budget", "constraints"]),
+                ...recommendations.map((r) =>
+                  r.estimate.implementationLow !== null
+                    ? `${r.solution}: indicative implementation range ${r.estimate.currency} ${r.estimate.implementationLow}–${r.estimate.implementationHigh}; validate scope before quoting.`
+                    : `${r.solution}: implementation costs need a defined scope and quotation.`,
+                ),
+                "Subscriptions, message charges, transaction fees and ongoing maintenance depend on the selected service, plan and usage. Verify current terms before committing.",
+              ],
+            },
+            {
+              title: "Dependencies and risks",
+              paragraphs: [
+                ...new Set(recommendations.flatMap((r) => r.dependencies)),
+                "Provider integrations, permissions, data export, privacy and accessibility must be checked. Suggested connections have not been technically verified.",
+              ],
+            },
+            {
+              title: "Practical roadmap",
+              paragraphs: [
+                "1. Choose one outcome to improve and record how the process works today.",
+                "2. Try the smallest useful change with a few real tasks. Compare suitable existing tools before custom development.",
+                "3. Check costs, permissions and maintenance with the selected provider. Review the trial before expanding.",
+                ...known(["timing"]),
+              ],
+            },
+            {
+              title: "Open questions and next decisions",
+              paragraphs: [
+                ...readiness.uncertainties,
+                ...(readiness.criticalUnknowns ?? []),
+                "Which option best fits how you want to work and maintain the solution?",
+              ],
+            },
+            {
+              title: "Supporting evidence",
+              paragraphs: [
+                "The situation and objectives above come from your supplied project information. Proposed solutions are interpretations, not confirmed requirements.",
+                ...[
+                  ...new Set(
+                    recommendations.flatMap((r) =>
+                      r.evidence.map(displayEvidence),
+                    ),
+                  ),
+                ],
+                ...(matchedCases.length
+                  ? [
+                      "Relevant reference patterns informed comparison only. They are unverified examples, not evidence of customer results.",
+                    ]
+                  : []),
+              ],
+            },
+          ],
   };
 }

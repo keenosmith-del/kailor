@@ -276,3 +276,12 @@
 .application-workspace .chat-form textarea:focus-visible {
   outline: none;
 }
+.inline-confirmations > summary {
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 10px 0;
+}
+.inline-confirmations[open] > summary {
+  margin-bottom: 10px;
+}

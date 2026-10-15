@@ -419,7 +419,8 @@ export const ModelName = {
   CaseIntelligenceRecord: 'CaseIntelligenceRecord',
   AiUsageRecord: 'AiUsageRecord',
   AuditEvent: 'AuditEvent',
-  AccountInvite: 'AccountInvite'
+  AccountInvite: 'AccountInvite',
+  ProjectSource: 'ProjectSource'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -435,7 +436,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "adminUser" | "authSession" | "subject" | "plan" | "accountSettings" | "accountPreference" | "conversationSummary" | "planActionProposal" | "discoverySession" | "discoveryAnswer" | "conversationMessage" | "evidence" | "assessment" | "service" | "recommendation" | "costEstimate" | "reportSnapshot" | "scenarioTemplate" | "simulationRun" | "caseIntelligenceRecord" | "aiUsageRecord" | "auditEvent" | "accountInvite"
+    modelProps: "adminUser" | "authSession" | "subject" | "plan" | "accountSettings" | "accountPreference" | "conversationSummary" | "planActionProposal" | "discoverySession" | "discoveryAnswer" | "conversationMessage" | "evidence" | "assessment" | "service" | "recommendation" | "costEstimate" | "reportSnapshot" | "scenarioTemplate" | "simulationRun" | "caseIntelligenceRecord" | "aiUsageRecord" | "auditEvent" | "accountInvite" | "projectSource"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2141,6 +2142,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ProjectSource: {
+      payload: Prisma.$ProjectSourcePayload<ExtArgs>
+      fields: Prisma.ProjectSourceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProjectSourceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSourcePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProjectSourceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSourcePayload>
+        }
+        findFirst: {
+          args: Prisma.ProjectSourceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSourcePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProjectSourceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSourcePayload>
+        }
+        findMany: {
+          args: Prisma.ProjectSourceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSourcePayload>[]
+        }
+        create: {
+          args: Prisma.ProjectSourceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSourcePayload>
+        }
+        createMany: {
+          args: Prisma.ProjectSourceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProjectSourceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSourcePayload>[]
+        }
+        delete: {
+          args: Prisma.ProjectSourceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSourcePayload>
+        }
+        update: {
+          args: Prisma.ProjectSourceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSourcePayload>
+        }
+        deleteMany: {
+          args: Prisma.ProjectSourceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProjectSourceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProjectSourceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSourcePayload>[]
+        }
+        upsert: {
+          args: Prisma.ProjectSourceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSourcePayload>
+        }
+        aggregate: {
+          args: Prisma.ProjectSourceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProjectSource>
+        }
+        groupBy: {
+          args: Prisma.ProjectSourceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectSourceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProjectSourceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectSourceCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2493,6 +2568,20 @@ export const AccountInviteScalarFieldEnum = {
 export type AccountInviteScalarFieldEnum = (typeof AccountInviteScalarFieldEnum)[keyof typeof AccountInviteScalarFieldEnum]
 
 
+export const ProjectSourceScalarFieldEnum = {
+  id: 'id',
+  planId: 'planId',
+  title: 'title',
+  kind: 'kind',
+  content: 'content',
+  url: 'url',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type ProjectSourceScalarFieldEnum = (typeof ProjectSourceScalarFieldEnum)[keyof typeof ProjectSourceScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2797,6 +2886,7 @@ export type GlobalOmitConfig = {
   aiUsageRecord?: Prisma.AiUsageRecordOmit
   auditEvent?: Prisma.AuditEventOmit
   accountInvite?: Prisma.AccountInviteOmit
+  projectSource?: Prisma.ProjectSourceOmit
 }
 
 /* Types for Logging */

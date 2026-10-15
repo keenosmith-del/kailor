@@ -1,3 +1,8 @@
+import {
+  explorationQuestion,
+  explorationKeys,
+  isExploration,
+} from "./exploration.js";
 import type {
   Answers,
   DiscoveryPlan,
@@ -184,6 +189,22 @@ export function planDiscovery(
     })
     .filter((r) => r.score > 0)
     .sort((x, y) => y.score - x.score || x.id.localeCompare(y.id));
+  if (isExploration(a)) {
+    const exploratory = explorationQuestion(raw, states);
+    ranking.splice(
+      0,
+      ranking.length,
+      ...(exploratory
+        ? [
+            {
+              id: exploratory.id,
+              score: 1000,
+              reasons: ["Explore preferences without assuming a business"],
+            },
+          ]
+        : []),
+    );
+  }
   const top = ranking[0];
   let question = top ? definitions.find((q) => q.id === top.id)! : null;
   // Preliminary analysis is available immediately; only material clarifications remain in the path.
@@ -222,7 +243,7 @@ export function planDiscovery(
   );
   return {
     revision,
-    plannerVersion: "plans-memory-4",
+    plannerVersion: "consulting-5",
     question,
     active,
     answered: Object.keys(a).filter((k) => states[k] === "answered").length,
@@ -247,38 +268,51 @@ export function planDiscovery(
         reason: m.reasons[0],
       })),
     ),
-    suggestedPrompts: [
-      ...new Set([
-        ...(context.directions.includes("invoices")
-          ? ["What could I automate without replacing my tools?"]
-          : []),
-        ...(context.dimensions?.includes("offline")
-          ? ["What are the tradeoffs of working offline?"]
-          : []),
-        ...(context.directions.includes("booking")
-          ? [
-              s.bookingStatus === "existing"
-                ? "Could my current provider handle reminders and cancellations?"
-                : "Would an existing booking tool be enough?",
-            ]
-          : []),
-        ...(context.dimensions?.includes("presentation")
-          ? [
-              s.websiteStatus === "existing"
-                ? "Would improving my current site be enough?"
-                : "What content would a simple website need?",
-            ]
-          : []),
-        ...(context.dimensions?.includes("application") &&
-        s.appPreference !== "declined"
-          ? ["What's the smallest version I could build?"]
-          : []),
-        ...(question ? [`I'd like to discuss: ${question.title}`] : []),
-        ...(!decision.objectiveKnown
-          ? ["Can you help me work out what this would need?"]
-          : []),
-      ]),
-    ].slice(0, 3),
+    suggestedPrompts: isExploration(a)
+      ? [
+          "I don’t have a business idea. Help me explore possible opportunities.",
+          "What is a small experiment I could try without committing money?",
+        ]
+      : [
+          ...new Set([
+            ...(context.directions.includes("invoices")
+              ? ["What could I automate without replacing my tools?"]
+              : []),
+            ...(context.dimensions?.includes("offline")
+              ? ["What are the tradeoffs of working offline?"]
+              : []),
+            ...(context.directions.includes("booking")
+              ? [
+                  s.bookingStatus === "existing"
+                    ? "Could my current provider handle reminders and cancellations?"
+                    : "Would an existing booking tool be enough?",
+                ]
+              : []),
+            ...(context.dimensions?.includes("presentation")
+              ? [
+                  s.websiteStatus === "existing"
+                    ? "Would improving my current site be enough?"
+                    : "What content would a simple website need?",
+                ]
+              : []),
+            ...(context.dimensions?.includes("application") &&
+            s.appPreference !== "declined"
+              ? ["What's the smallest version I could build?"]
+              : []),
+            ...(question ? [`I'd like to discuss: ${question.title}`] : []),
+            ...(!decision.objectiveKnown
+              ? [
+                  a.stage === "established"
+                    ? "Help me identify one practical improvement in what I already do."
+                    : a.stage === "specific"
+                      ? "Help me clarify the requirements and smallest useful scope."
+                      : a.stage === "starting"
+                        ? "Help me test this idea before investing in implementation."
+                        : "Can you help me explore possible business directions and what might fit my interests?",
+                ]
+              : []),
+          ]),
+        ].slice(0, 3),
     provenance: {
       source: "deterministic",
       definitionVersion: version,

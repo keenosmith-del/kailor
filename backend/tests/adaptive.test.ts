@@ -15,7 +15,7 @@ describe("adaptive intelligence behavioral evaluation", () => {
   it.each([
     ["specific", "request"],
     ["starting", "idea"],
-    ["uncertain", "frustrations"],
+    ["uncertain", "motivation"],
     ["established", "industry"],
   ])("starts %s at %s", (stage, id) =>
     expect(planDiscovery({ stage }).question?.id).toBe(id),

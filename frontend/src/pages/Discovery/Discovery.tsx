@@ -199,6 +199,11 @@ export function Discovery({
   }
   return (
     <div className="discovery-layout">
+      <div className="discovery-progress" role="status">
+        {session.answers.length
+          ? `${session.answers.length} responses saved · Questions adapt as we go`
+          : "Choose your starting point"}
+      </div>
       <aside className="discovery-mascot">
         <Mascot
           state="attentive"
@@ -215,6 +220,18 @@ export function Discovery({
           busy={busy}
         >
           <div aria-busy={busy}>
+            {question?.id !== "stage" && (
+              <button
+                className="text-link"
+                disabled={busy}
+                onClick={() => {
+                  setEditing("stage");
+                  setRecovering(false);
+                }}
+              >
+                Change starting situation
+              </button>
+            )}
             {question ? (
               <>
                 <h1>{question.title}</h1>
@@ -450,7 +467,7 @@ export function Discovery({
                   </p>
                 )}
                 <p className="question-description">
-                  {next.readiness.reasons.join(". ")}
+                  {next.readiness.reasons.join(" ")}
                 </p>
                 <div className="actions">
                   <button
@@ -491,7 +508,7 @@ export function Discovery({
                     ? "I’ve put together an initial assessment based on what you’ve shared. We can keep exploring, or take a look."
                     : next.readiness.canAssess
                       ? "There’s enough context for an initial assessment. We can keep exploring, or prepare it when you’re ready."
-                      : next.readiness.reasons.join(". ")}
+                      : next.readiness.reasons.join(" ")}
                 </p>
                 {ready ? (
                   <Link
@@ -515,7 +532,7 @@ export function Discovery({
               <div className="readiness">
                 <p className="question-description">
                   An initial assessment is available.{" "}
-                  {next.readiness.uncertainties.join(". ")}
+                  {next.readiness.uncertainties.join(" ")}
                 </p>
                 {ready ? (
                   <Link

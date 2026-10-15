@@ -251,8 +251,17 @@ export function evaluateEvidence(
       )
     );
   const unknowns = ["constraints", "budget", "tools", "timing"]
-    .filter((k) => !raw[k])
-    .map((k) => `${k}: ${states[k] ?? "not provided"}`);
+    .filter((k) => !a[k])
+    .map(
+      (k) =>
+        ({
+          constraints:
+            "Any practical limits or support you need are still open.",
+          budget: "Your budget or investment range is not yet confirmed.",
+          tools: "Your current tools would help us compare options.",
+          timing: "Your preferred timing is still open.",
+        })[k]!,
+    );
   const reasons = !situationKnown
     ? ["Describe what you are working on or experiencing"]
     : !objectiveKnown
@@ -270,7 +279,7 @@ export function evaluateEvidence(
                 "This request needs qualified specialist review; a normal technology recommendation is not defensible",
               ]
             : [
-                "Useful situation and objective evidence support a qualified initial direction",
+                "We have enough information for an initial assessment. Open questions will be made clear",
               ];
   return {
     answers: a,

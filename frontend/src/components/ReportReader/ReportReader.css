@@ -1,0 +1,54 @@
+.report-reader {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.report-reader header {
+  padding: 20px 0 30px;
+}
+.report-reader h1 {
+  font-size: clamp(28px, 3.6vw, 44px);
+  line-height: 1.18;
+  letter-spacing: -0.04em;
+}
+.report-reader .report-status {
+  font-size: 12px;
+  color: var(--muted);
+}
+.report-reader nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding-bottom: 25px;
+}
+.report-reader nav a {
+  color: var(--muted);
+  font-size: 12px;
+  padding: 5px 0;
+}
+.report-reader nav a:hover {
+  color: var(--color-charcoal);
+}
+.report-reader section {
+  padding: 25px 0;
+  border-top: 1px solid #7772;
+  scroll-margin-top: 24px;
+}
+.report-reader h2 {
+  font-size: 22px;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+.report-reader p {
+  font-size: 15px;
+  line-height: 1.85;
+  max-width: 68ch;
+  overflow-wrap: anywhere;
+}
+.report-reader details {
+  padding: 25px 0;
+}
+.report-reader summary {
+  cursor: pointer;
+  font-size: 14px;
+}

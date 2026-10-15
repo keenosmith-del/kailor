@@ -13,7 +13,7 @@ export function useAuthentication(
   const [params] = useSearchParams();
   const requested = params.get("returnTo") ?? "/app/chat";
   const returnTo =
-    /^\/(?:app\/[^?#]+|workspace|plans(?:\/[^?#]*)?|sessions\/[^?#]+)$/.test(
+    /^\/(?:app\/[^?#]+|preview\/[a-f0-9-]+\/account|workspace|plans(?:\/[^?#]*)?|sessions\/[^?#]+)$/.test(
       requested,
     )
       ? requested

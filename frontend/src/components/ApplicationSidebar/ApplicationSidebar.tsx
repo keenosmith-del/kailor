@@ -1,3 +1,5 @@
+import { ConversationHistory } from "../../pages/Application/ConversationHistory";
+import type { Session } from "../../../../shared/src/index";
 import "./ApplicationSidebar.css";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
@@ -27,6 +29,8 @@ export const applicationPages = [
   { view: "sources", label: "Sources", icon: FolderOpen },
 ];
 type Props = {
+  session: Session | null;
+  onNewConversation: () => Promise<void>;
   account: Account | null;
   guest: boolean;
   view: string;
@@ -98,7 +102,6 @@ export function ApplicationSidebar(props: Props) {
     <>
       <header className="application-header">
         <div className="application-wordmark">
-          <Link to={props.href("chat")}>kailor</Link>
           <button
             ref={trigger}
             className="application-icon"
@@ -109,6 +112,7 @@ export function ApplicationSidebar(props: Props) {
           >
             <MoreHorizontal size={21} />
           </button>
+          <Link to={props.href("chat")}>kailor</Link>
         </div>
         <span className="application-project-title">{props.title}</span>
       </header>
@@ -269,6 +273,14 @@ export function ApplicationSidebar(props: Props) {
                       <Pencil size={14} />
                     </button>
                   </>
+                )}
+                {project.id === props.activeId && props.session && (
+                  <ConversationHistory
+                    session={props.session}
+                    busy={props.busy}
+                    onNew={props.onNewConversation}
+                    onNavigate={() => setOpen(false)}
+                  />
                 )}
               </div>
             ))}

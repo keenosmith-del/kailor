@@ -1,3 +1,5 @@
+import { canvasGraph } from "./canvas-model.js";
+import { customerReport, reportSummary } from "../../shared/src/report.js";
 import { routeTurn, safeModelIntent, applicationReply } from "./turn-intent.js";
 import {
   updateConversationMemory,
@@ -25,6 +27,7 @@ import type { Prisma } from "./generated/prisma/client.js";
 import { AppError } from "./errors.js";
 import {
   activeQuestions,
+  questions,
   relevant,
   validateAnswer,
   version,
@@ -381,7 +384,7 @@ export async function reserveUsage(id: string, mode: string) {
 export async function converse(
   id: string,
   adminId: string,
-  input: { revision: number; message: string; mode: string },
+  input: { revision: number; message: string; mode: string; reportId?: string },
   forceMock = false,
 ) {
   const s = await getSession(id, adminId);
@@ -412,9 +415,41 @@ export async function converse(
     "cross_plan_comparison",
   ].includes(routed.intent);
   const messageQuality = evaluateInput(input.message, "", "chat");
+  const personalMemory: import("../../shared/src/index.js").PersonalMemory =
+    await readPersonalMemory(s, input.message).catch(() => ({
+      planId: s.planId,
+      sessionId: s.id,
+      retrieved: [],
+      preferences: [],
+    }));
+  let selectedReport: Report | undefined;
+  if (
+    input.reportId ||
+    /assess|report|analys|recommendation/i.test(input.message)
+  ) {
+    const snapshot = await db.reportSnapshot.findFirst({
+      where: {
+        ...(input.reportId ? { id: input.reportId } : {}),
+        assessment: { session: { planId: s.planId, adminId } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    if (!snapshot && input.reportId)
+      throw new AppError(404, "not_found", "Report not found in this project");
+    if (snapshot) {
+      const report = customerReport(snapshot.content as unknown as Report);
+      selectedReport = report;
+      personalMemory.retrieved.push({
+        id: snapshot.id,
+        role: "assistant",
+        content: `[Selected saved report; historical advice, not current facts] ${JSON.stringify({ title: report.title, date: report.createdAt, summary: reportSummary(report), sections: report.sections.filter((x) => /recommend|alternative|cost|question|decision/i.test(x.title)) }).slice(0, 4000)}`,
+      });
+    }
+  }
   const sensitive = containsSensitiveData(
     JSON.stringify({
       message: input.message,
+      memory: personalMemory,
       context: answersOf(s),
       history: s.messages
         .filter((m) => !m.excludedFromContext)
@@ -425,7 +460,7 @@ export async function converse(
     !forceMock &&
     !applicationTurn &&
     routed.intent !== "greeting" &&
-    !guest &&
+    (!guest || config.AI_ALLOW_GUEST_REMOTE === "true") &&
     messageQuality.accepted &&
     messageQuality.disposition !== "off_topic" &&
     !sensitive &&
@@ -456,14 +491,6 @@ export async function converse(
             : remoteEnabled(config)
               ? "budget_exhausted_or_simulation"
               : "remote_disabled";
-  const personalMemory = await readPersonalMemory(s, input.message).catch(
-    () => ({
-      planId: s.planId,
-      sessionId: s.id,
-      retrieved: [],
-      preferences: [],
-    }),
-  );
   const result = await inferSafely(
     provider,
     answersOf(s),
@@ -473,12 +500,10 @@ export async function converse(
     {
       plan: currentPlan,
       memory: personalMemory,
-      recommendations: recommend(
-        answersOf(s),
-        undefined,
-        evidenceOf(s),
-        statesOf(s),
-      ),
+      selectedReport,
+      recommendations:
+        selectedReport?.recommendations ??
+        recommend(answersOf(s), undefined, evidenceOf(s), statesOf(s)),
     },
   );
   if (reservation)
@@ -565,13 +590,6 @@ export async function converse(
         },
       });
       createdProposals++;
-    }
-    if (!createdProposals && result.output.proposals.length) {
-      result.output.reply = previousEvidence.some(
-        (e) => e.active && e.status === "inferred",
-      )
-        ? "Those details are already pending below. Confirm or dismiss the saved proposals when you are ready."
-        : `There are no new details to confirm from that message. Your saved context is unchanged.${currentPlan.question ? ` We can next explore: ${currentPlan.question.title}` : " We can discuss the available options or return to discovery."}`;
     }
     if (intent.intent === "new_plan" && intent.proposal) {
       await tx.planActionProposal.updateMany({
@@ -788,7 +806,7 @@ export async function nextForSession(
   const saved = s.planState as unknown as DiscoveryPlan | null;
   if (
     saved?.revision === s.revision &&
-    saved.plannerVersion === "plans-memory-4" &&
+    saved.plannerVersion === "consulting-5" &&
     saved.questionStates &&
     saved.completion
   )
@@ -888,7 +906,7 @@ export async function assess(id: string, adminId: string, revision: number) {
     const savedPlan = s.planState as unknown as DiscoveryPlan | null;
     const plan =
       savedPlan?.revision === s.revision &&
-      savedPlan.plannerVersion === "plans-memory-4"
+      savedPlan.plannerVersion === "consulting-5"
         ? savedPlan
         : await persistPlan(tx, id);
     if (!plan.readiness.canAssess) {
@@ -1000,6 +1018,10 @@ export async function canvas(id: string, adminId: string) {
     revision: s.revision,
     readiness,
     source: snapshot && readiness.canAssess ? "snapshot" : "validated-preview",
+    graph: canvasGraph(
+      evaluateEvidence(answersOf(s), evidenceOf(s), statesOf(s)).answers,
+      content,
+    ),
     existing: (evaluateEvidence(answersOf(s), evidenceOf(s), statesOf(s))
       .answers.presence ?? []) as string[],
     existingOrigin: answersOf(s).presence
@@ -1070,8 +1092,8 @@ export async function simulate(
     // Additional fixture details are voluntary context, not required form completion.
     for (const [key, value] of Object.entries(persona.answers)) {
       if (key in answersOf(s)) continue;
-      const q = activeQuestions(signalAnswers(answersOf(s))).find(
-        (q) => q.id === key,
+      const q = questions.find(
+        (q) => q.id === key && relevant(q, signalAnswers(answersOf(s))),
       );
       if (!q) continue;
       s = await submitAnswer(s.id, adminId, {
@@ -1215,6 +1237,66 @@ export async function clearConversation(
           history: "retained-excluded",
           confirmedFacts: "preserved",
         }),
+      },
+    });
+  });
+  return getSession(id, adminId);
+}
+
+export async function restartDiscovery(
+  id: string,
+  adminId: string,
+  revision: number,
+) {
+  await db.$transaction(async (tx) => {
+    const s = await lock(tx, id, adminId, revision);
+    const guidedKeys = [
+      ...new Set(
+        s.evidence.filter((e) => e.source === "guided").map((e) => e.key),
+      ),
+    ];
+    const keep = s.evidence.filter(
+      (e) => e.active && e.status === "confirmed" && e.source !== "guided",
+    );
+    await tx.discoveryAnswer.deleteMany({ where: { sessionId: id } });
+    await tx.evidence.updateMany({
+      where: { sessionId: id, active: true, source: "guided" },
+      data: { active: false, status: "superseded" },
+    });
+    // Chat-confirmed facts remain authoritative. Stage is deliberately reset so the journey can change.
+    for (const e of keep.filter((e) => e.key !== "stage"))
+      await tx.discoveryAnswer.create({
+        data: {
+          sessionId: id,
+          questionId: e.key,
+          value: e.value!,
+          responseState: "answered",
+        },
+      });
+    await tx.evidence.updateMany({
+      where: { sessionId: id, key: "stage", active: true },
+      data: { active: false, status: "superseded" },
+    });
+    await tx.conversationSummary.updateMany({
+      where: { sessionId: id, superseded: false },
+      data: { superseded: true },
+    });
+    await tx.discoverySession.update({
+      where: { id },
+      data: {
+        revision: { increment: 1 },
+        knowledgeRevision: { increment: 1 },
+        planState: json(null),
+        contextState: json(null),
+      },
+    });
+    await persistPlan(tx, id);
+    await tx.auditEvent.create({
+      data: {
+        actorId: adminId,
+        action: "discovery.restarted",
+        entityId: id,
+        details: json({ guidedKeys, preservedChatFacts: keep.length }),
       },
     });
   });

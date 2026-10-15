@@ -53,11 +53,11 @@ export function App() {
         <Route path="/preview/plans" element={<Plans />} />
         <Route
           path="/preview/:view"
-          element={<ApplicationWorkspace account={null} />}
+          element={<ApplicationWorkspace account={account ?? null} />}
         />
         <Route
           path="/preview/:id/:view"
-          element={<ApplicationWorkspace account={null} />}
+          element={<ApplicationWorkspace account={account ?? null} />}
         />
         <Route
           path="/app/:view"

@@ -89,6 +89,8 @@ export type Recommendation = {
 };
 export type ReportSection = { title: string; paragraphs: string[] };
 export type Report = {
+  presentationVersion?: number;
+  assessmentType?: "exploration" | "idea" | "business" | "solution";
   title: string;
   status: string;
   synthetic: boolean;
@@ -176,6 +178,7 @@ export const answerInput = mutationSchema
   .strict();
 export const chatInput = mutationSchema
   .extend({
+    reportId: z.uuid().optional(),
     message: z.string().trim().min(1).max(4000),
     mode: z.enum(["conversation", "analysis"]).default("conversation"),
   })
@@ -252,6 +255,7 @@ export type DiscoveryContext = {
   }[];
 };
 export type Readiness = {
+  unknownFields?: string[];
   state:
     | "needs_information"
     | "preliminary"

@@ -6,7 +6,7 @@ export const sessionHref = (id: string, view: string) => {
   return `${window.location.pathname.startsWith("/preview/") ? "/preview" : "/app"}/${id}/${destination}`;
 };
 const endpoint = (path: string) =>
-  `/api${window.location.pathname.startsWith("/preview/") && ["/sessions", "/plans", "/preferences"].some((prefix) => path.startsWith(prefix)) ? "/guest" : ""}${path}`;
+  `/api${window.location.pathname.startsWith("/preview/") && ["/sessions", "/plans", "/preferences", "/model-status"].some((prefix) => path.startsWith(prefix)) ? "/guest" : ""}${path}`;
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -69,4 +69,22 @@ export async function downloadReport(id: string, reportId?: string) {
   a.download = "kailor-analysis-draft.pdf";
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export async function uploadSource(planId: string, file: File) {
+  if (file.size > 65536) throw new Error("Files must be smaller than 64 KB.");
+  const response = await fetch(endpoint(`/plans/${planId}/sources/file`), {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/octet-stream",
+      "X-File-Name": file.name.replace(/[^\x20-\x7e]/g, "_"),
+    },
+    body: file,
+  });
+  if (!response.ok) {
+    const payload = await response.json().catch(() => null);
+    throw new Error(payload?.error?.message ?? "Could not extract this file.");
+  }
+  return response.json();
 }

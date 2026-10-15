@@ -1,3 +1,5 @@
+> **Current refinement (15 October 2026):** See [implementation and deployment](docs/refinement/IMPLEMENTATION.md), [architecture audit](docs/refinement/AUDIT.md) and [executed verification](docs/refinement/TESTING.md). These supersede older iteration descriptions of the conversation dropdown, slide report, guest-only local routing and unsupported account transfer. Apply the additive ProjectSource migration before using the resource library. GitHub OAuth and binary PDF/Word ingestion remain unavailable; text/CSV extraction and explicit guest-project transfer are implemented.
+
 # kailor
 
 The current project workspace uses Chat as the signed-in entry, shared sidebar navigation, project/conversation history, Discovery, Canvas, Analysis and Sources. Guest entry resumes one temporary project directly in Discovery. The backend Plan model and existing intelligence remain. See [iteration 011: implementation, changed files, verification and limits](docs/iterations/011-project-workspace.md). The former founder dashboard is now at `/founder`; `/workspace` redirects to Chat.

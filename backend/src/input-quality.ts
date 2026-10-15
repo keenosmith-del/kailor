@@ -5,6 +5,7 @@ import type {
 } from "../../shared/src/index.js";
 const choiceKeys = new Set([
   "stage",
+  "opportunityStyle",
   "kind",
   "presence",
   "problems",

@@ -78,7 +78,7 @@ export function evaluateReliabilityCase(c: ReliabilityCase) {
     disposition: quality.disposition,
     confirmedEvidence: usableAnswers(a, states),
     usableFacts: quality.usableFacts,
-    unknowns: plan.readiness.uncertainties,
+    unknowns: plan.readiness.unknownFields ?? [],
     readiness: plan.readiness.state,
     completion: plan.completion.state,
     assessmentPermitted: plan.readiness.canAssess,
@@ -108,7 +108,7 @@ export function evaluateReliabilityCase(c: ReliabilityCase) {
     if (actual.services.includes(id))
       failures.push(`unsupported service ${id}`);
   for (const key of c.expected.unknowns)
-    if (!actual.unknowns.some((x) => x.startsWith(key + ":")))
+    if (!actual.unknowns.some((x) => x === key))
       failures.push(`missing unknown ${key}`);
   if (!c.expected.canAssess && actual.recommendationsPermitted)
     failures.push("recommendations bypassed readiness evidence gates");

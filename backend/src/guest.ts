@@ -7,7 +7,7 @@ import rateLimit from "express-rate-limit";
 import { db } from "./db.js";
 import { config } from "./config.js";
 import { AppError } from "./errors.js";
-import { tokenHash } from "./auth.js";
+import { tokenHash, requireAccount } from "./auth.js";
 import * as sessions from "./session-service.js";
 import {
   evidenceBatchInput,
@@ -82,9 +82,87 @@ guestRouter.post(
     }
     res
       .status(201)
-      .json(await sessions.createSession(owner, "My project", true, true));
+      .json(await sessions.createSession(owner, "My project", false, true));
   },
 );
+// Both independent HTTP-only cookies are required. A logged-in account alone cannot claim a guest project.
+guestRouter.post("/transfer", requireAccount, async (req, res) => {
+  const input = z
+    .object({
+      consent: z.literal(true),
+      transferKey: z.uuid(),
+      planId: z.uuid(),
+    })
+    .strict()
+    .parse(req.body);
+  const accountId = String(res.locals.adminId);
+  const result = await db.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "AdminUser" WHERE id = ${accountId} FOR UPDATE`;
+    const completed = await tx.auditEvent.findFirst({
+      where: {
+        actorId: accountId,
+        action: "guest.transferred",
+        entityId: input.planId,
+        details: { path: ["transferKey"], equals: input.transferKey },
+      },
+    });
+    if (completed)
+      return completed.details as { planId: string; sessionId: string };
+    const guestId = res.locals.guestId as string | undefined;
+    if (!guestId)
+      throw new AppError(
+        401,
+        "preview_expired",
+        "The guest session is no longer available. Transfer requires its active browser session.",
+      );
+    await tx.$queryRaw`SELECT id FROM "AdminUser" WHERE id = ${guestId} FOR UPDATE`;
+    await tx.$queryRaw`SELECT id FROM "Plan" WHERE id = ${input.planId} FOR UPDATE`;
+    const plan = await tx.plan.findFirst({
+      where: { id: input.planId, adminId: guestId, admin: { isGuest: true } },
+      include: {
+        sessions: {
+          select: { id: true },
+          orderBy: { updatedAt: "desc" },
+          take: 1,
+        },
+      },
+    });
+    const sessionId = plan?.lastSessionId ?? plan?.sessions[0]?.id;
+    if (!plan || !sessionId)
+      throw new AppError(404, "not_found", "Guest project not found");
+    // Existing composite FK has ON UPDATE CASCADE: ownership moves for every conversation atomically.
+    await tx.accountSettings.updateMany({
+      where: { adminId: guestId },
+      data: { activePlanId: null, revision: { increment: 1 } },
+    });
+    await tx.plan.update({
+      where: { id: plan.id },
+      data: { adminId: accountId, revision: { increment: 1 } },
+    });
+    await tx.authSession.deleteMany({ where: { adminId: guestId } });
+    const details = {
+      transferKey: input.transferKey,
+      planId: plan.id,
+      sessionId,
+    };
+    await tx.auditEvent.create({
+      data: {
+        actorId: accountId,
+        action: "guest.transferred",
+        entityId: plan.id,
+        details,
+      },
+    });
+    return details;
+  });
+  res.clearCookie("kailor_guest", {
+    path: "/api/guest",
+    httpOnly: true,
+    sameSite: "strict",
+    secure: config.NODE_ENV === "production",
+  });
+  res.json(result);
+});
 guestRouter.use((_req, res, next) => {
   if (!res.locals.guestId)
     throw new AppError(
@@ -121,7 +199,7 @@ guestRouter.post("/sessions/:id/chat", async (req, res) =>
       id.parse(req.params.id),
       res.locals.guestId,
       chatInput.parse(req.body),
-      true,
+      config.AI_ALLOW_GUEST_REMOTE !== "true",
     ),
   ),
 );

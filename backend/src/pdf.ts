@@ -1,6 +1,8 @@
+import { customerReport } from "../../shared/src/report.js";
 import PDFDocument from "pdfkit";
 import type { Report } from "../../shared/src/index.js";
 export async function renderPdf(report: Report): Promise<Buffer> {
+  report = customerReport(report);
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: "A4",
@@ -14,11 +16,7 @@ export async function renderPdf(report: Report): Promise<Buffer> {
     doc.on("error", reject);
     doc.font("Helvetica-Bold").fontSize(28).fillColor("#252722").text("kailor");
     doc.moveDown(0.5).fontSize(19).text(report.title);
-    doc
-      .font("Helvetica")
-      .fontSize(10)
-      .fillColor("#666666")
-      .text(`${report.status} | revision ${report.revision}`);
+    doc.font("Helvetica").fontSize(10).fillColor("#666666").text(report.status);
     doc.text(
       `Prepared ${report.createdAt.slice(0, 10)}${report.synthetic ? " | SYNTHETIC ASSESSMENT — no commercial results" : ""}`,
     );

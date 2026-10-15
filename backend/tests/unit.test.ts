@@ -31,7 +31,7 @@ describe("versioned discovery", () => {
   it.each([
     ["established", "tools"],
     ["starting", "idea"],
-    ["uncertain", "frustrations"],
+    ["uncertain", "motivation"],
     ["specific", "request"],
   ])("routes %s through %s", (stage, id) => {
     expect(activeQuestions({ stage }).map((q) => q.id)).toContain(id);
@@ -296,13 +296,18 @@ describe("report and authentication", () => {
   });
   it("uses the same evidence-backed recommendations in the snapshot and report sections", () => {
     const r = createReport(personas[0].answers, 4, true, seededCases);
-    expect(r.sections).toHaveLength(7);
+    expect(r.sections).toHaveLength(11);
     expect(r.synthetic).toBe(true);
     expect(r.revision).toBe(4);
     for (const recommendation of r.recommendations)
-      expect(r.sections[3].paragraphs.join(" ")).toContain(
-        recommendation.evidence[0],
-      );
+      expect(
+        r.sections.find((s) => s.title === "Recommended direction")!.paragraphs,
+      ).toContain(recommendation.solution);
+    expect(
+      r.sections
+        .find((s) => s.title === "Supporting evidence")!
+        .paragraphs.join(" "),
+    ).toContain(String(personas[0].answers.goals));
   });
   it("generates a real PDF from the report snapshot", async () => {
     const pdf = await renderPdf(

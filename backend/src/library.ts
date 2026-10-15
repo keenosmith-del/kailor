@@ -130,6 +130,17 @@ export function matchCases(
     )
     .filter(
       (c) =>
+        !decision.directions.length ||
+        c.pattern.patterns.some((service) =>
+          decision.directions.some(
+            (d) =>
+              d.services.includes(service) ||
+              (d.id === "booking" && service === "booking"),
+          ),
+        ),
+    )
+    .filter(
+      (c) =>
         !(c.pattern.unsuitableConstraints ?? []).some((term) =>
           String(a.constraints ?? "")
             .toLowerCase()
@@ -185,7 +196,7 @@ export function matchCases(
         c.pattern.industry !== "cross-industry" &&
         has("industry", c.pattern.industry)
       ) {
-        score++;
+        score += 3;
         reasons.push(`Related context: ${c.pattern.industry}`);
       }
       for (const g of c.pattern.goals)
@@ -229,6 +240,21 @@ export function matchCases(
     })
     .filter((c) => c.score >= 4)
     .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
+    .filter((candidate, index, ranked) => {
+      const signature = (c: CaseRecord) =>
+        JSON.stringify({
+          patterns: [...c.pattern.patterns].sort(),
+          problems: [...c.pattern.problems].sort(),
+          tools: [...c.pattern.tools].sort(),
+          gaps: c.pattern.followUpDimensions ?? [],
+          approaches: c.pattern.approaches ?? [],
+        });
+      return (
+        ranked.findIndex(
+          (other) => signature(other) === signature(candidate),
+        ) === index
+      );
+    })
     .slice(0, 4);
 }
 export const seededCases: CaseRecord[] = scenarios.map((s) => ({

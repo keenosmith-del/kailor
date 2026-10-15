@@ -16,7 +16,7 @@ const scenarios = [
       },
       {
         message: "I want a personal website for my photography work.",
-        reply: /confirm/i,
+        reply: /review.*suggested project details|confirm.*proposed change/i,
         keys: ["goals"],
       },
     ],
@@ -81,12 +81,12 @@ const scenarios = [
     turns: [
       {
         message: "I want a mobile application for my business.",
-        reply: /confirm/i,
+        reply: /review.*suggested project details|confirm.*proposed change/i,
         keys: ["appPreference", "request"],
       },
       {
         message: "Actually, I think a website would be enough.",
-        reply: /confirm/i,
+        reply: /review.*suggested project details|confirm.*proposed change/i,
         keys: ["appPreference", "websitePreference"],
       },
     ],
@@ -101,7 +101,7 @@ const scenarios = [
       },
       {
         message: "I want a personal website for my photography work.",
-        reply: /confirm/i,
+        reply: /review.*suggested project details|confirm.*proposed change/i,
         keys: ["goals"],
       },
     ],

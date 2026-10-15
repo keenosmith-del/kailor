@@ -1,3 +1,8 @@
+import {
+  explorationQuestions,
+  explorationKeys,
+  isExploration,
+} from "./exploration.js";
 import { signalAnswers } from "./context-extraction.js";
 import type { Answers, Question, AnswerValue } from "../../shared/src/index.js";
 import { contextualQuestions } from "./contextual-intelligence.js";
@@ -260,6 +265,7 @@ export const questions: Question[] = [
     type: "text",
     optional: true,
   },
+  ...explorationQuestions,
   ...contextualQuestions,
   {
     id: "appPreference",
@@ -275,6 +281,7 @@ export const questions: Question[] = [
   },
 ];
 export function relevant(q: Question, a: Answers) {
+  if (explorationKeys.includes(q.id)) return a.stage === "uncertain";
   if (q.id === "scopeDetails" && a.appPreference === "declined") return false;
   return (
     !q.when ||
@@ -286,7 +293,11 @@ export function relevant(q: Question, a: Answers) {
   );
 }
 export function activeQuestions(a: Answers) {
-  return questions.filter((q) => relevant(q, a));
+  return questions.filter(
+    (q) =>
+      relevant(q, a) &&
+      (!isExploration(a) || q.id === "stage" || explorationKeys.includes(q.id)),
+  );
 }
 export function nextQuestion(a: Answers) {
   return (

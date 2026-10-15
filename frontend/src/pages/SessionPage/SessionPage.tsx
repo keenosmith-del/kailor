@@ -1,5 +1,4 @@
 import "./SessionPage.css";
-import { ConversationHistory } from "../Application/ConversationHistory";
 import {
   AnimatePresence,
   motion,
@@ -25,12 +24,12 @@ import { Discovery } from "../Discovery/Discovery";
 import type { Next } from "../../types/session";
 import { ErrorBox } from "../../components/ErrorBox/ErrorBox";
 import { errorMessage } from "../../utils/errorMessage";
-import { pruneDrafts } from "../../utils/drafts";
+import { clearDrafts, pruneDrafts } from "../../utils/drafts";
 async function readSession(id: string) {
   const [session, next, report] = await Promise.all([
     api<Session>(`/sessions/${id}`),
     api<Next>(`/sessions/${id}/next`),
-    api<{ stale: boolean }>(`/sessions/${id}/report`).catch(() => null),
+    api<{ stale: boolean }>(`/sessions/${id}/report-status`).catch(() => null),
   ]);
   if (session.revision !== next.revision)
     throw new Error(
@@ -86,12 +85,9 @@ export function SessionPage({
         : activeView;
   const navigate = useNavigate();
   const loadedSessionId = useRef("");
-  const restartPending = useRef(false);
-  const restartKey = useRef(crypto.randomUUID());
   const loadSequence = useRef(0);
   const currentRoute = useRef(id);
   currentRoute.current = id;
-  const [restarting, setRestarting] = useState(false);
   const [reportVersion, setReportVersion] = useState(0);
   const [session, setSession] = useState<Session | null>(null),
     [next, setNext] = useState<Next | null>(null),
@@ -110,7 +106,6 @@ export function SessionPage({
       document.removeEventListener("visibilitychange", pruneDrafts);
     };
   }, []);
-  const guest = window.location.pathname.startsWith("/preview/");
   const reload = useCallback(async () => {
     const sequence = ++loadSequence.current;
     const data = await readSession(id);
@@ -156,74 +151,27 @@ export function SessionPage({
     setReportVersion((version) => version + 1);
   }
   async function restart() {
-    if (busy || restartPending.current) return;
-    restartPending.current = true;
-    setRestarting(true);
-    setBusy(true);
-    setError("");
-    try {
-      const result =
-        session?.planId && session.plan
-          ? await api<{ sessionId: string }>(
-              `/plans/${session.planId}/sessions`,
-              "POST",
-              {
-                revision: session.plan.revision,
-                creationKey: restartKey.current,
-              },
-            )
-          : null;
-      const created = result
-        ? { id: result.sessionId }
-        : await api<Session>(
-            "/sessions",
-            "POST",
-            guest ? {} : { name: session?.subject.name ?? "New discovery" },
-          );
-      const data = await readSession(created.id);
-      restartKey.current = crypto.randomUUID();
-      // Keep the previous discovery and its scoped draft available when returning.
-      // Keep the old page present until the new session is ready for a crossfade.
-      loadedSessionId.current = created.id;
-      setSession(data.session);
-      onSession(data.session);
+    if (!session || busy) return;
+    if (
+      session.answers.length &&
+      !window.confirm(
+        "Start Discovery from the beginning? Guided answers and their confirmed details will be retired. Chat-confirmed facts, conversations and saved reports stay saved.",
+      )
+    )
+      return;
+    const success = await act(() =>
+      api(`/sessions/${id}/discovery/restart`, "POST", {
+        revision: session.revision,
+      }),
+    );
+    if (success) {
+      clearDrafts(id);
       onProjectChange();
-      setNext(data.next);
-      setReady(data.ready);
-      navigate(
-        sessionHref(
-          created.id,
-          view === "conversation" ? "conversation" : "discovery",
-        ),
-      );
-    } catch (e) {
-      setError(errorMessage(e));
-    } finally {
-      restartPending.current = false;
-      setRestarting(false);
-      setBusy(false);
     }
   }
   return (
     <section className={`session-shell view-${view}`} aria-label={activeView}>
-      {session?.id === id && view === "conversation" && (
-        <ConversationHistory
-          session={session}
-          busy={busy}
-          onNew={async () => {
-            setError("");
-            setBusy(true);
-            try {
-              await onNewConversation();
-            } catch (e) {
-              setError(errorMessage(e));
-            } finally {
-              setBusy(false);
-            }
-          }}
-        />
-      )}
-      {session?.id === id && view === "discovery" && !guest && (
+      {session?.id === id && view === "discovery" && (
         <div className="discovery-session-actions">
           <button
             className="text-link"
@@ -231,7 +179,7 @@ export function SessionPage({
             onClick={() => void restart()}
           >
             <RotateCcw size={14} />
-            {restarting ? "Opening…" : "New discovery"}
+            Start from beginning
           </button>
         </div>
       )}

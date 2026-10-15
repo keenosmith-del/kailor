@@ -1,62 +1,108 @@
-.pill {
-  display: inline-flex;
-  background: var(--surface);
-  border: 1px solid white;
-  margin: 0 12px 12px 0;
-  font-size: 12px;
-}
-.pill {
-  border-radius: var(--control-radius);
-  padding: 7px 12px;
-}
 .canvas {
-  max-width: 1060px;
-  margin: 70px auto 0;
+  max-width: 1180px;
+  margin: 24px auto;
 }
-.canvas-grid {
+.canvas header h1 {
+  font-size: clamp(28px, 3.4vw, 42px);
+  line-height: 1.2;
+}
+.canvas .lead {
+  font-size: 15px;
+  max-width: 650px;
+}
+.canvas-workspace {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(270px, 0.8fr);
+  gap: 32px;
+  margin-top: 26px;
 }
-.component-card {
-  padding: 0;
-  min-width: 0;
+.canvas-map {
+  max-height: 61dvh;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 12px;
+  background-image: radial-gradient(#a59a872d 1px, transparent 1px);
+  background-size: 18px 18px;
+  border-radius: 24px;
 }
-.component-card h2 {
-  margin: 20px 0;
+.canvas-step {
+  margin: 0 0 15px;
 }
-.component-card p,
-.component-card details {
-  font-size: 12px;
-  overflow-wrap: anywhere;
+.application-workspace .canvas-node {
+  display: grid;
+  text-align: left;
+  width: 100%;
+  padding: 18px 22px;
+  gap: 6px;
+  background: #fffefc;
+  border: 1px solid transparent;
+  border-radius: 20px;
 }
-.component-card ul {
-  padding-left: 17px;
+.canvas-node small {
+  color: var(--muted);
+  font-size: 10px;
 }
-@media (max-width: 1000px) {
-  .canvas-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.canvas-node strong {
+  font-size: 15px;
+  font-weight: 500;
+}
+.application-workspace .canvas-node[aria-pressed="true"] {
+  border-color: #9d8b6e;
+  background: #f4eee3;
+}
+.canvas-node.exploratory {
+  border-style: dashed;
+}
+.canvas-edge {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: left;
+  padding: 8px 12px;
+  width: 100%;
+}
+.canvas-detail {
+  max-height: 61dvh;
+  overflow: auto;
+  padding: 20px 8px;
+}
+.canvas-detail h2 {
+  font-size: 24px;
+}
+.canvas-detail h3 {
+  font-size: 14px;
+  margin-top: 25px;
+}
+.canvas-detail :is(p, li) {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.canvas-detail ul {
+  padding-left: 18px;
+}
+.canvas-detail .button {
+  margin-top: 20px;
+}
+.canvas-actions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 @media (max-width: 700px) {
-  .canvas {
-    margin-top: 40px;
-  }
-  .canvas-grid {
+  .canvas-workspace {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 12px;
   }
-}
-.canvas h1 {
-  font-size: clamp(30px, 3.5vw, 46px);
-}
-.canvas {
-  margin-top: 32px;
-}
-.canvas-existing {
-  padding: 16px 0;
-  margin-top: 16px;
-}
-.canvas-grid {
-  gap: 24px;
-  margin: 24px 0;
+  .canvas-map {
+    max-height: 40dvh;
+  }
+  .canvas-detail {
+    max-height: none;
+  }
+  .canvas-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }

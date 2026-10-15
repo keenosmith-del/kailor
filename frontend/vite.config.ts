@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
-    proxy: { "/api": "http://127.0.0.1:5050" },
+    proxy: { "/api": process.env.KAILOR_API_ORIGIN ?? "http://127.0.0.1:5050" },
   },
   build: { sourcemap: false },
 });

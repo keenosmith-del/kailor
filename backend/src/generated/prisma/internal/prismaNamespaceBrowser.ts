@@ -73,7 +73,8 @@ export const ModelName = {
   CaseIntelligenceRecord: 'CaseIntelligenceRecord',
   AiUsageRecord: 'AiUsageRecord',
   AuditEvent: 'AuditEvent',
-  AccountInvite: 'AccountInvite'
+  AccountInvite: 'AccountInvite',
+  ProjectSource: 'ProjectSource'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -403,6 +404,20 @@ export const AccountInviteScalarFieldEnum = {
 } as const
 
 export type AccountInviteScalarFieldEnum = (typeof AccountInviteScalarFieldEnum)[keyof typeof AccountInviteScalarFieldEnum]
+
+
+export const ProjectSourceScalarFieldEnum = {
+  id: 'id',
+  planId: 'planId',
+  title: 'title',
+  kind: 'kind',
+  content: 'content',
+  url: 'url',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type ProjectSourceScalarFieldEnum = (typeof ProjectSourceScalarFieldEnum)[keyof typeof ProjectSourceScalarFieldEnum]
 
 
 export const SortOrder = {

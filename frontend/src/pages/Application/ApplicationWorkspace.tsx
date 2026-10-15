@@ -115,6 +115,20 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
       })
       .catch((e) => setEntryError(e.message));
   }
+  useEffect(() => {
+    if (!id || !["settings", "account"].includes(view)) return;
+    let current = true;
+    void api<Session>(`/sessions/${id}`)
+      .then((value) => {
+        if (current) loadedSession(value);
+      })
+      .catch((e) => {
+        if (current) setEntryError(e.message);
+      });
+    return () => {
+      current = false;
+    };
+  }, [id, view]);
   async function createProject(firstMessage = "") {
     const result = await projects.create(
       title.trim() ||
@@ -165,6 +179,8 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
   return (
     <main className={`application-workspace application-view-${view}`}>
       <ApplicationSidebar
+        session={session?.id === id ? session : null}
+        onNewConversation={newConversation}
         account={account}
         guest={guest}
         view={view}
@@ -207,7 +223,7 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
         ) : view === "settings" ? (
           <SettingsPage key={guest ? "guest" : account?.email} guest={guest} />
         ) : view === "account" ? (
-          <AccountPage account={account} guest={guest} />
+          <AccountPage account={account} guest={guest} session={session} />
         ) : id ? (
           <SessionPage
             sessionId={id}

@@ -1,3 +1,5 @@
+import { ProjectSources } from "./ProjectSources";
+import { ReportReader } from "../../components/ReportReader/ReportReader";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { Download, FileText } from "lucide-react";
@@ -7,6 +9,10 @@ import { ErrorBox } from "../../components/ErrorBox/ErrorBox";
 import { errorMessage } from "../../utils/errorMessage";
 type Snapshot = {
   id: string;
+  title: string;
+  summary: string;
+  status: string;
+  assessmentType: string;
   createdAt: string;
   assessment: { sessionId: string; summary: string; knowledgeRevision: number };
 };
@@ -55,11 +61,12 @@ export function ProjectReports({
       setBusy(false);
     }
   }
+  const Heading = sources ? "h1" : "h2";
   return (
     <section
       className={`project-reports ${sources ? "application-sources" : ""}`}
     >
-      <h1>{sources ? "Sources" : "Analysis history"}</h1>
+      <Heading>{sources ? "Sources" : "Analysis history"}</Heading>
       <p className="lead">
         {sources
           ? "Saved material from this project, ready to revisit and discuss."
@@ -72,12 +79,8 @@ export function ProjectReports({
           an analysis when you're ready.
         </p>
       )}
-      {sources && (
-        <p className="source-capabilities">
-          Generated analyses and PDF reports are available here. Document
-          uploads and PDF/CSV ingestion are not yet supported.
-        </p>
-      )}
+      {sources && <ProjectSources session={session} />}
+      {sources && <h2>Generated assessments and PDFs</h2>}
       <div className="source-list">
         {rows.map((row) => (
           <article className="source-row" key={row.id}>
@@ -89,9 +92,21 @@ export function ProjectReports({
                 aria-expanded={selected === row.id}
                 onClick={() => void open(row.id)}
               >
-                Analysis · {new Date(row.createdAt).toLocaleString()}
+                {row.title}
               </button>
-              <p>{row.assessment.summary}</p>
+              <p>
+                {new Date(row.createdAt).toLocaleDateString()} ·{" "}
+                {row.assessmentType === "exploration"
+                  ? "Opportunity exploration"
+                  : "Initial assessment"}
+              </p>
+              <p>{row.summary}</p>
+              <Link
+                className="text-link"
+                to={`${sessionHref(session.id, "chat")}?report=${row.id}`}
+              >
+                Discuss in Chat
+              </Link>
             </div>
             <button
               className="application-icon"
@@ -145,16 +160,11 @@ export function ProjectReports({
               Download PDF
             </button>
           </div>
-          <h2>{historic.title}</h2>
-          {historic.sections.map((section) => (
-            <section key={section.title}>
-              <h3>{section.title}</h3>
-              {section.paragraphs.map((p, i) => (
-                <p key={i}>{p}</p>
-              ))}
-            </section>
-          ))}
-          <Link className="button" to={sessionHref(session.id, "chat")}>
+          <ReportReader report={historic} />
+          <Link
+            className="button"
+            to={`${sessionHref(session.id, "chat")}?report=${selected}`}
+          >
             Discuss in Chat
           </Link>
         </section>

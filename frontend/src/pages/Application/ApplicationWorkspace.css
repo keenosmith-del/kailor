@@ -294,3 +294,111 @@
     gap: 10px;
   }
 }
+.application-workspace .discovery-action {
+  color: var(--color-charcoal);
+  background: #fffefcbf;
+  border: 1px solid transparent;
+}
+.application-workspace .discovery-action:hover:not(:disabled) {
+  background: #fff;
+}
+.application-workspace .discovery-action:first-child {
+  background: #ede7dc;
+}
+.application-workspace .discovery-action:disabled {
+  opacity: 0.45;
+}
+.application-workspace .text-link {
+  text-decoration: none;
+}
+.application-workspace :is(button, a, input, textarea, select):focus-visible {
+  outline: 2px solid #8c7251;
+  outline-offset: 4px;
+}
+.discovery-progress {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: var(--muted);
+  margin: 8px 0 20px;
+}
+.application-workspace .question-input textarea {
+  background: #fffefc;
+  border-radius: 25px;
+  padding: 20px 24px;
+  min-height: 140px;
+  resize: vertical;
+}
+.application-personal label {
+  display: grid;
+  gap: 12px;
+  margin-block: 30px;
+  font-size: 14px;
+}
+.application-personal details {
+  padding: 18px 0;
+  border-bottom: 1px solid #7772;
+}
+.application-personal summary {
+  cursor: pointer;
+  font-size: 14px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .application-workspace *,
+  .application-workspace *::before,
+  .application-workspace *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+.project-sources {
+  margin: 20px 0 45px;
+}
+.project-sources h2 {
+  font-size: 22px;
+}
+.project-sources label {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.project-sources form {
+  max-width: 600px;
+}
+.source-upload {
+  max-width: 600px;
+}
+.source-preview pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.8;
+  max-height: 400px;
+  overflow: auto;
+}
+@media (max-width: 700px) {
+  .application-workspace .discovery-mascot {
+    height: 100px;
+    min-height: 100px;
+    max-height: 100px;
+    margin: 0 0 10px;
+  }
+  .discovery-progress {
+    margin: 4px 0 12px;
+  }
+  .application-workspace .question-section h1 {
+    font-size: clamp(27px, 7vw, 34px);
+  }
+  .application-workspace .question-description {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .application-workspace .question-input textarea {
+    min-height: 110px;
+  }
+  .application-workspace .discovery-layout {
+    min-height: 0;
+  }
+}

@@ -8,10 +8,12 @@ export function ConversationHistory({
   session,
   busy,
   onNew,
+  onNavigate,
 }: {
   session: Session;
   busy: boolean;
   onNew: () => Promise<void>;
+  onNavigate?: () => void;
 }) {
   const navigate = useNavigate();
   const [rows, setRows] = useState<{ id: string; updatedAt: string }[]>([]);
@@ -38,31 +40,26 @@ export function ConversationHistory({
         sessionId: id,
       });
       navigate(sessionHref(id, "chat"));
+      onNavigate?.();
     } catch (e) {
       setError(errorMessage(e));
     }
   }
   return (
     <div className="conversation-toolbar">
-      <label className="sr-only" htmlFor="conversation-history">
-        Conversation history
-      </label>
-      <select
-        id="conversation-history"
-        disabled={busy}
-        value={session.id}
-        onChange={(e) => void select(e.target.value)}
-      >
-        {!rows.some((r) => r.id === session.id) && (
-          <option value={session.id}>Current conversation</option>
-        )}
+      <nav aria-label="Project conversations" className="sidebar-conversations">
         {rows.map((r) => (
-          <option key={r.id} value={r.id}>
-            {r.id === session.id ? "Current conversation" : "Conversation"} ·{" "}
-            {new Date(r.updatedAt).toLocaleString()}
-          </option>
+          <button
+            key={r.id}
+            disabled={busy}
+            aria-current={r.id === session.id ? "true" : undefined}
+            onClick={() => void select(r.id)}
+          >
+            {r.id === session.id ? "Active conversation" : "Conversation"}
+            <small>{new Date(r.updatedAt).toLocaleDateString()}</small>
+          </button>
         ))}
-      </select>
+      </nav>
       {cursor && (
         <button
           className="text-link"
@@ -76,7 +73,11 @@ export function ConversationHistory({
       <button
         className="text-link"
         disabled={busy || !!session.plan?.archivedAt}
-        onClick={() => void onNew()}
+        onClick={() =>
+          void onNew()
+            .then(() => onNavigate?.())
+            .catch((e) => setError(errorMessage(e)))
+        }
       >
         <Plus size={15} />
         New conversation

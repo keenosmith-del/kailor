@@ -1,3 +1,5 @@
+import { customerReport } from "../../shared/src/report.js";
+import type { Report } from "../../shared/src/index.js";
 import { resolveOption, type Turn } from "./conversation-context.js";
 import type {
   Answers,
@@ -17,10 +19,34 @@ export function localReply(
   savedPlan?: DiscoveryPlan,
   suppliedRecommendations?: Recommendation[],
   history: Turn[] = [],
+  suppliedReport?: Report,
 ) {
   const quality = evaluateInput(message, "", "chat"),
     plan = savedPlan ?? planDiscovery(context);
   const text = message.trim();
+  if (
+    suppliedReport &&
+    /explain|summari[sz]|assess|report|analysis/i.test(text) &&
+    suppliedReport.assessmentType === "exploration"
+  ) {
+    const report = customerReport(suppliedReport);
+    return `This saved report is an exploration profile, rather than a plan for an established business. ${report.sections.find((s) => s.title === "Your starting point")?.paragraphs.join(" ") ?? "Your starting preferences remain open."}\n\nThe possibilities are examples to test, not validated demand or promises of income. A small conversation, sketch or manual trial can help you learn before committing money. Which possibility would you like to try first?`;
+  }
+
+  if (
+    /no business idea|don.t have (?:a |any )?(?:business|idea)|explore possible opportunit|explore possible (?:business )?directions|what might fit my interests|starting from nothing/i.test(
+      text,
+    ) ||
+    (context.stage === "uncertain" &&
+      /explor|direction|start|experiment/i.test(text))
+  )
+    return "You don’t need an idea yet. We can explore small service, product or sharing experiments without treating them as proven opportunities. Start by noticing a task someone struggles with, or something you enjoy learning. There is no need to commit money before testing interest.\n\nWould you rather help someone, make something, or explore examples first?";
+  if (
+    /book|appointment|scheduling/i.test(text) &&
+    /explain|how|website|cost|price|should|compare|build/i.test(text)
+  )
+    return "A hosted booking page gives customers a link to view availability and request or confirm an appointment, depending on the service. You can share that link through Instagram and WhatsApp Business without building a full website. A website may be useful later if you need more information or a separate presence.\n\nCheck whether a provider supports your appointment types, calendar, reminders and cancellation rules. Reminders may use email, SMS or other supported channels; WhatsApp automation is not assumed. Compare subscription fees, message charges and any payment fees before choosing. Custom software adds development and maintenance work and needs a clear gap in existing tools.\n\nWould you prefer customers to confirm a time directly, or send a request for you to approve?";
+
   if (
     /would I need to learn|do I need to (?:learn|code)|need.*web development/i.test(
       text,
@@ -125,6 +151,15 @@ export function localReply(
             .join("; ")
     }\n\n${plan.context.pending.length ? `${plan.context.pending.length} proposed details still need confirmation. ` : ""}${plan.readiness.canAssess ? "You can prepare an initial assessment or continue exploring." : (plan.question?.title ?? "We still need a concrete situation and objective.")}`;
   }
+  if (/explain.*(?:assessment|report|analysis)/i.test(text) && suppliedReport) {
+    const report = customerReport(suppliedReport);
+    return `${report.title}. ${report.sections[0]?.paragraphs.join(" ") ?? "This is a preliminary assessment."}\n\n${report.recommendations
+      .slice(0, 2)
+      .map((r) => `${r.solution}: ${r.problem}`)
+      .join(
+        " ",
+      )} Costs and provider compatibility still need to be checked. Which part would you like to look at more closely?`;
+  }
   if (/why.*recommend|explain.*recommendation/i.test(text)) {
     const recommendation = suppliedRecommendations?.[0];
     return recommendation
@@ -213,7 +248,7 @@ export function localReply(
         : /look more professional|bookings? easier/i.test(text)
           ? "If confirmed, a simple portfolio website and an existing booking service are worth comparing before custom development. Would you prefer customers to book a time directly, or contact you first?"
           : plan.question?.title;
-    return `I understood your ${topics.join(", ")}. Confirm the details below so I can use them in an assessment.${followUp ? `\n\n${followUp}` : ""}`;
+    return `Thanks — that helps clarify your ${topics.join(", ")}. You can review the suggested project details below when ready.${followUp ? `\n\n${followUp}` : ""}`;
   }
   if (mode === "analysis") {
     const approaches = (suppliedRecommendations ?? recommend(context))
