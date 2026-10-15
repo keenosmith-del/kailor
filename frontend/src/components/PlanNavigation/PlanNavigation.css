@@ -1,0 +1,46 @@
+.plan-navigation {
+  max-width: 1350px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.plan-navigation .plan-manager {
+  flex-basis: 100%;
+  max-width: 850px;
+}
+@media (max-width: 700px) {
+  .plan-navigation {
+    margin-top: 20px;
+    gap: 12px;
+  }
+}
+.plan-navigation {
+  margin: 0 auto 10px;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+}
+.plan-navigation > span {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 65%;
+}
+.plan-dialog {
+  width: min(850px, calc(100vw - 32px));
+  max-height: 85dvh;
+  border: 0;
+  border-radius: 16px;
+  padding: 24px;
+  background: var(--paper);
+  color: var(--color-charcoal);
+  overflow-y: auto;
+}
+.plan-dialog::backdrop {
+  background: #e6e0d4;
+}
+@media (max-width: 700px) {
+  .plan-navigation {
+    margin-bottom: 0;
+  }
+}

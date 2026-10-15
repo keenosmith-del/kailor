@@ -641,13 +641,48 @@ describe("real PostgreSQL API vertical slice", () => {
       200,
     );
     const environment = config.NODE_ENV;
+    const host = config.HOST;
     config.NODE_ENV = "production";
+    config.HOST = "0.0.0.0";
     try {
       expect((await guest.get(`/api/guest/sessions/${guestId}`)).status).toBe(
-        404,
+        200,
       );
+      expect(
+        (await guest.get(`/api/guest/sessions/${guestId}/report`)).status,
+      ).toBe(200);
+      const publicGuest = await request(app)
+        .post("/api/guest/sessions")
+        .set("Origin", origin)
+        .send({})
+        .expect(201);
+      guestOwners.push(publicGuest.body.adminId);
+      const publicCookie = publicGuest.headers["set-cookie"][0];
+      expect(publicCookie).toContain("Secure");
+      expect(publicCookie).toContain("HttpOnly");
+      expect(publicCookie).toContain("SameSite=Strict");
+      expect(publicCookie).toContain("Path=/api/guest");
+      const cookieHeader = publicCookie.split(";")[0];
+      await request(app)
+        .get(`/api/guest/sessions/${publicGuest.body.id}`)
+        .set("Cookie", cookieHeader)
+        .expect(200);
+      await request(app)
+        .get(`/api/guest/sessions/${guestId}`)
+        .set("Cookie", cookieHeader)
+        .expect(404);
+      await request(app)
+        .get("/api/auth/me")
+        .set("Cookie", cookieHeader.replace("kailor_guest=", "kailor_session="))
+        .expect(401);
+      await request(app)
+        .post("/api/guest/sessions")
+        .set("Origin", "https://evil.example")
+        .send({})
+        .expect(403);
     } finally {
       config.NODE_ENV = environment;
+      config.HOST = host;
     }
   }, 30000);
   it("revokes access on logout", async () => {

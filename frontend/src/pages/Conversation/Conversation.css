@@ -1,0 +1,332 @@
+@media (max-width: 700px) {
+  .conversation-layout {
+    display: flex;
+    flex-direction: column;
+    margin-top: 25px;
+  }
+  .conversation-mascot {
+    position: relative;
+    top: auto;
+    width: 180px;
+    align-self: center;
+    margin: 0;
+  }
+  .conversation h1 {
+    font-size: 38px;
+  }
+  .conversation .muted {
+    font-size: 14px;
+  }
+  .message {
+    max-width: 100%;
+  }
+  .message p {
+    font-size: 14px;
+  }
+  .chat-form {
+    position: relative;
+  }
+}
+.plan-proposal {
+  padding: 20px 0;
+}
+.suggestions button {
+  min-height: var(--control-height);
+  padding: var(--control-padding);
+  font-size: var(--control-font);
+  line-height: 1.4;
+  border-radius: var(--control-radius);
+  gap: 7px;
+  background: var(--surface);
+  color: var(--color-charcoal);
+  border: 1px solid var(--surface-edge);
+  box-shadow: none;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+.suggestions button:hover:not(:disabled) {
+  background: var(--surface-hover);
+  transform: none;
+}
+.plan-proposal button {
+  min-height: var(--control-height);
+}
+.view-conversation {
+  height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+.view-conversation .session-navigation,
+.view-conversation .plan-navigation {
+  flex: none;
+}
+.view-conversation .preview-note {
+  display: none;
+}
+.view-conversation > .session-view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.view-conversation .session-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.conversation-layout {
+  display: grid;
+  grid-template-columns: 44% minmax(0, 1fr);
+  gap: 5%;
+  width: 100%;
+  max-width: 1420px;
+  height: 100%;
+  min-height: 0;
+  margin: 0 auto;
+}
+.conversation-mascot {
+  position: static;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+.conversation-mascot > img {
+  width: 100%;
+  height: 100%;
+  max-height: 76dvh;
+  object-fit: contain;
+  display: block;
+}
+.conversation {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  padding: 0;
+}
+.conversation-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: none;
+}
+.conversation-heading h1 {
+  font-size: 23px;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+.chat-history {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  padding: 12px 10px 20px 0;
+}
+.empty-chat {
+  padding: 28px 0;
+}
+.empty-chat > svg {
+  display: none;
+}
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+.suggestions button {
+  text-align: left;
+}
+.message {
+  position: relative;
+  padding: 12px 0 12px 43px;
+  overflow-wrap: anywhere;
+}
+.message.user {
+  padding-left: 36px;
+  text-align: right;
+  margin-left: 15%;
+}
+.message small {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.message p {
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-bottom: 0;
+}
+.message-avatar {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.proposal {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  background: var(--paper);
+  border-radius: 10px;
+}
+.proposal .confirmation-label {
+  font-size: 11px;
+  color: var(--muted);
+}
+.proposal p {
+  font-size: 12px;
+  margin: 4px 0;
+}
+.proposal .actions {
+  gap: 8px;
+}
+.proposal button {
+  font-size: 12px;
+}
+.plan-proposal,
+.conversation-readiness {
+  margin: 14px 0;
+  padding: 12px;
+  background: var(--paper);
+  border-radius: 10px;
+  font-size: 13px;
+}
+.conversation-readiness p,
+.plan-proposal p {
+  margin-bottom: 8px;
+}
+.conversation .fine-print {
+  margin: 10px 0;
+}
+.chat-form {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 0;
+  padding: 8px;
+  background: var(--paper);
+  border: 1px solid var(--surface-edge);
+  border-radius: 12px;
+}
+.chat-form textarea {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  min-height: 36px;
+  max-height: 144px;
+  resize: none;
+  overflow-y: auto;
+  margin: 0;
+  padding: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  background: var(--paper);
+  border: 0;
+}
+.chat-form .actions {
+  margin: 0;
+  flex: none;
+}
+.clear-confirmation {
+  flex: none;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  background: #eee8dc;
+  font-size: 12px;
+  max-height: 36dvh;
+  overflow-y: auto;
+}
+.clear-confirmation p {
+  margin-bottom: 4px;
+}
+.view-conversation > .error,
+.view-conversation > .processing {
+  flex: none;
+  padding: 8px 12px;
+  margin: 4px auto;
+  font-size: 12px;
+}
+@media (max-width: 1000px) {
+  .conversation-layout {
+    grid-template-columns: 36% minmax(0, 1fr);
+    gap: 4%;
+  }
+}
+@media (max-width: 700px) {
+  .conversation-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 92px minmax(0, 1fr);
+    gap: 0;
+  }
+  .conversation-mascot {
+    height: 92px;
+  }
+  .conversation-mascot > img {
+    height: 92px;
+    width: 150px;
+  }
+  .conversation-heading h1 {
+    font-size: 20px;
+  }
+  .conversation .chat-form textarea {
+    font-size: 16px;
+  }
+  .view-conversation {
+    padding-inline: 18px;
+  }
+}
+@media (pointer: coarse) {
+  .suggestions button {
+    min-height: 44px;
+  }
+}
+@media (max-height: 500px) and (max-width: 700px) {
+  .conversation-layout {
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .conversation-mascot {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .suggestions button {
+    min-height: 44px;
+  }
+}
+
+.view-conversation {
+  position: relative;
+}
+.view-conversation > .error,
+.view-conversation > .processing {
+  position: absolute;
+  right: var(--space);
+  top: 102px;
+  z-index: 3;
+  width: min(560px, 48%);
+  background: #fff8ed;
+}
+@media (max-width: 700px) {
+  .view-conversation > .error,
+  .view-conversation > .processing {
+    right: 18px;
+    top: 122px;
+    width: calc(100% - 36px);
+  }
+}

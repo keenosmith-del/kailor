@@ -18,11 +18,6 @@ import {
 import { renderPdf } from "./pdf.js";
 export const guestRouter = Router();
 guestRouter.use((_req, res, next) => {
-  if (
-    config.NODE_ENV === "production" ||
-    !["127.0.0.1", "localhost", "::1"].includes(config.HOST)
-  )
-    throw new AppError(404, "not_found", "Preview is unavailable");
   res.setHeader("Cache-Control", "no-store");
   next();
 });
@@ -52,7 +47,7 @@ guestRouter.post(
     message: {
       error: {
         code: "rate_limited",
-        message: "Preview creation limit reached. Please return later.",
+        message: "Discovery creation limit reached. Please return later.",
       },
     },
   }),
@@ -79,6 +74,7 @@ guestRouter.post(
       owner = admin.id;
       res.cookie("kailor_guest", token, {
         httpOnly: true,
+        secure: config.NODE_ENV === "production",
         sameSite: "strict",
         path: "/api/guest",
         maxAge: 86400000,
@@ -86,9 +82,7 @@ guestRouter.post(
     }
     res
       .status(201)
-      .json(
-        await sessions.createSession(owner, "Guest discovery preview", true),
-      );
+      .json(await sessions.createSession(owner, "Guest discovery", true));
   },
 );
 guestRouter.use((_req, res, next) => {
@@ -96,7 +90,7 @@ guestRouter.use((_req, res, next) => {
     throw new AppError(
       401,
       "preview_expired",
-      "Your preview has expired. Start a new discovery.",
+      "Your guest session has expired. Start a new discovery.",
     );
   next();
 });

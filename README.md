@@ -90,7 +90,7 @@ This is a local private initial build, not a public deployment. Estimates requir
 
 The root page now opens a three-scene scroll story using the supplied static mascot. Start discovering or Skip to discovery enters a persisted local guest preview without founder permissions. The private founder workspace remains at `/workspace`. Assessment preparation stays in discovery until the user chooses Explore the analysis; Start again creates a new session.
 
-Run `npm run db:generate` and `npm run db:migrate` before starting an existing checkout; iteration 002 adds the guest-principal flag. Guest preview is disabled in production mode and when the configured API host is not loopback. It always uses mock chat and seed references. See [iteration 002](docs/iterations/002-immersive-experience.md) for verification, changed files and limitations.
+Run `npm run db:generate` and `npm run db:migrate` before starting an existing checkout; iteration 002 adds the guest-principal flag. Guest discovery now works in production as well as locally, using the existing isolated guest principal, seed references and local conversation guidance. Production guest cookies require HTTPS. See [introduction controls and guest entry](docs/iterations/009-introduction-controls-and-guest-entry.md) for current behaviour and authentication limitations; iteration 002 records the original local-only implementation.
 
 ## Iteration 003 — adaptive intelligence
 

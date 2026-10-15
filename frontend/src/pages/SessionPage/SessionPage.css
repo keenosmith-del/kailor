@@ -1,0 +1,7 @@
+/* Session view shell. Shared navigation and spacing are in styles/layout.css. */
+.session-content {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}

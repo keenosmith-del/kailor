@@ -46,13 +46,13 @@ Every successful answer/chat/confirmation mutation returns or contains the refre
 
 Sessions accept no client-supplied synthetic flag. The internal simulator creates synthetic sessions deliberately. Cases are a single-consultant library; tenant-isolated case review is not implemented.
 
-## Local guest preview routes (iteration 002)
+## Guest discovery routes (introduced in iteration 002, public entry in iteration 009)
 
 `POST /api/guest/sessions` accepts `{}` and creates a synthetic persisted preview. A separate 24-hour HttpOnly guest cookie identifies its restricted owner. The frontend uses `/preview/:id/:view`; it does not redirect into the founder login.
 
 Under `/api/guest`, the following existing session operation shapes are available: `GET /sessions/:id`, `GET /sessions/:id/next`, `PUT /sessions/:id/answers`, `POST /sessions/:id/chat`, `POST /sessions/:id/evidence/:evidenceId`, `POST /sessions/:id/evidence`, `POST /sessions/:id/assessment`, `GET /sessions/:id/canvas`, `GET /sessions/:id/report`, and `GET /sessions/:id/report.pdf`. Each enforces guest ownership. No session listing, case review/retrieval, persona, simulation or admin endpoints are available through this router. Unknown preview routes return 404.
 
-The same Origin and validation rules apply. Guest chat forces development/mock mode and references are seed-only. Cookie expiry returns 401 with a restart instruction. Production mode or a configured API host outside localhost/127.0.0.1/::1 returns 404 for all preview operations. Preview creation is capped at 20 per IP/hour in the current single-process local server.
+The same Origin and validation rules apply. Guest chat forces development/mock mode and references are seed-only. Cookie expiry returns 401 with a restart instruction. Guest routes work in production and with non-loopback API hosts; new production guest cookies are Secure and require HTTPS. Creation is capped at 20 per IP/hour in the current single-process server. Account credentials never authorize guest access; every session and plan lookup remains scoped to its guest owner.
 
 Preparing an assessment returns data only; it does not mandate frontend navigation. Restarts create new sessions, leaving old reports intact. No registration endpoints were added.
 

@@ -1,0 +1,23 @@
+.account-invites {
+  max-width: 600px;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.account-invites summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+.account-invites form {
+  display: flex;
+  gap: 10px;
+  align-items: end;
+  margin: 12px 0;
+}
+.account-invites input {
+  display: block;
+  margin: 5px 0 0;
+  width: 100%;
+}
+.account-invites code {
+  overflow-wrap: anywhere;
+}

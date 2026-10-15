@@ -1,0 +1,62 @@
+.pill {
+  display: inline-flex;
+  background: var(--surface);
+  border: 1px solid white;
+  margin: 0 12px 12px 0;
+  font-size: 12px;
+}
+.pill {
+  border-radius: var(--control-radius);
+  padding: 7px 12px;
+}
+.canvas {
+  max-width: 1060px;
+  margin: 70px auto 0;
+}
+.canvas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.component-card {
+  padding: 0;
+  min-width: 0;
+}
+.component-card h2 {
+  margin: 20px 0;
+}
+.component-card p,
+.component-card details {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.component-card ul {
+  padding-left: 17px;
+}
+@media (max-width: 1000px) {
+  .canvas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  .canvas {
+    margin-top: 40px;
+  }
+  .canvas-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+.canvas h1 {
+  font-size: clamp(30px, 3.5vw, 46px);
+}
+.canvas {
+  margin-top: 32px;
+}
+.canvas-existing {
+  padding: 16px 0;
+  margin-top: 16px;
+}
+.canvas-grid {
+  gap: 24px;
+  margin: 24px 0;
+}

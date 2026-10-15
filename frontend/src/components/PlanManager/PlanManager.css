@@ -1,0 +1,80 @@
+.plan-manager {
+  min-width: 0;
+}
+.plan-manager form {
+  max-width: 650px;
+}
+.plan-row {
+  overflow-wrap: anywhere;
+}
+.plan-row summary,
+.account-preferences summary {
+  cursor: pointer;
+  padding: 12px 0;
+}
+.plan-row input:not([type="checkbox"]) {
+  max-width: 650px;
+}
+.plan-row details .text-link,
+.plan-understanding > .text-link {
+  display: inline-block;
+  margin: 6px 12px 6px 0;
+  min-height: 44px;
+}
+.plan-compare-choice {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 13px;
+}
+.plan-compare-choice input {
+  width: 18px;
+}
+.plan-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+.plan-comparison > p {
+  grid-column: 1 / -1;
+}
+.plan-comparison p,
+.plan-understanding p {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .plan-comparison {
+    grid-template-columns: 1fr;
+  }
+  .plan-manager input,
+  .plan-manager textarea,
+  .plan-manager select {
+    font-size: 16px;
+  }
+}
+.plan-manager {
+  padding: 16px 0;
+}
+.plan-manager h2 {
+  font-size: 26px;
+}
+.plan-manager form {
+  margin: 16px 0;
+}
+.plan-row {
+  padding: 12px 0;
+}
+.plan-manager button {
+  min-height: var(--control-height);
+}
+@media (pointer: coarse) {
+  .plan-manager button {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 700px) {
+  .plan-manager button {
+    min-height: 44px;
+  }
+}

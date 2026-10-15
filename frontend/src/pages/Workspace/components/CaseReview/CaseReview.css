@@ -1,0 +1,10 @@
+.case-review {
+  padding: 20px 0;
+}
+.case-review .badge {
+  margin-left: 20px;
+}
+.case-review textarea {
+  font-family: monospace;
+  font-size: 12px;
+}

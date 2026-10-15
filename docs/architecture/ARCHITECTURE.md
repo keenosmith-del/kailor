@@ -30,15 +30,15 @@ The app is local-first in deployment, not offline-first. Reverse proxy, TLS, bac
 
 Version sources: [Prisma 7 upgrade guide](https://www.prisma.io/docs/guides/upgrade-prisma-orm/v7), [Cloudflare REST guide](https://developers.cloudflare.com/workers-ai/get-started/rest-api/). The initial Prisma diff command produced no SQL despite exit 0 in this environment; the checked-in relational SQL was constructed and verified by applying it to PostgreSQL and exercising the actual Prisma client.
 
-## Iteration 002: local guest preview boundary
+## Guest discovery boundary (iterations 002 and 009)
 
-The immersive introduction is accessible without founder authentication. Its discovery actions create a real database session through `/api/guest/sessions`. Guest principals reuse the existing ownership relationship with a new `AdminUser.isGuest` flag; this is a minimal local-preview boundary, not public account registration. Their login is disabled and private authentication rejects guest principals even if a guest token is supplied under the founder cookie name.
+The immersive introduction is accessible without account authentication. Its discovery action creates a real database session through `/api/guest/sessions` for visitors, while signed-in users retain account-owned discovery. Guest principals reuse the existing ownership relationship with `AdminUser.isGuest`. Their password login is disabled and private authentication rejects guest principals even if a guest token is supplied under the account cookie name.
 
-`guest.ts` exposes only an allowlist of owned-session discovery, answer, chat, evidence, assessment, canvas, report and PDF operations. A separate hashed-token `kailor_guest` cookie is HttpOnly, SameSite=Strict, scoped to `/api/guest`, and expires in 24 hours. Founder cookies are never used as guest authority. Production mode and non-loopback configured API hosts disable all guest routes. Existing origin/body validation and request limits apply, plus a 20-per-hour preview creation limit.
+`guest.ts` exposes an allowlist of owner-scoped discovery, answer, chat, evidence, assessment, canvas, report, PDF and plan operations. A separate hashed-token `kailor_guest` cookie is HttpOnly, SameSite=Strict, scoped to `/api/guest`, and expires in 24 hours. Account cookies are never used as guest authority. Iteration 009 enables these routes in production and with non-loopback API hosts, adding Secure to production guest cookies. Existing origin/body validation and request limits apply, plus a 20-per-IP/hour discovery creation limit.
 
 Guest reference retrieval is restricted to public seeded definitions; reviewed founder cases are excluded. Guest chat always forces the labelled deterministic provider, so it cannot spend a Cloudflare budget. Guest sessions/reports are synthetic previews and cannot approve cases or execute the simulator. The private workspace remains at `/workspace`, with its existing login and sign-out.
 
-Guest records persist after token expiry and restarts; there is no automatic retention cleanup or public guest recovery UI. Public deployment needs a separately designed identity/retention/rate-limit boundary. `202610130003_guest_preview` adds the role flag without removing previous records.
+Guest records persist after token expiry and restarts; there is no automatic retention cleanup, guest-to-account transfer or public guest recovery UI. Multi-instance deployment requires shared rate-limit storage and reviewed proxy configuration. Production uses HTTPS and the configured exact origin. `202610130003_guest_preview` added the role flag without removing previous records; iteration 009 needs no new migration.
 
 Assessment generation and report navigation are now separate frontend actions. Reports remain immutable backend revision snapshots; readiness is a current-snapshot projection, refreshed after mutations. Navigation and restarts preserve session ownership and history.
 

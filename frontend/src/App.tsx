@@ -1,11 +1,14 @@
-import { PlanManager, PlanLanding } from "./Plans";
+import { Plans } from "./pages/Plans/Plans";
+import { PlanLanding } from "./pages/PlanLanding/PlanLanding";
 import { useEffect, useState, type ReactNode } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router";
-import { api } from "./api";
-import { Auth, type Account } from "./Auth";
-import { Intro } from "./Intro";
-import { SessionPage } from "./SessionPage";
-import { Workspace } from "./Workspace";
+import { api } from "./services/api";
+import { Auth } from "./pages/Auth/Auth";
+import type { Account } from "./types/account";
+import { Intro } from "./pages/Intro/Intro";
+import { SessionPage } from "./pages/SessionPage/SessionPage";
+import { Workspace } from "./pages/Workspace/Workspace";
+import { Footer } from "./components/Footer/Footer";
 function Protected({
   account,
   children,
@@ -36,38 +39,27 @@ export function App() {
     <Protected account={account}>{children}</Protected>
   );
   return (
-    <Routes>
-      <Route path="/" element={<Intro />} />
-      <Route path="/sign-in" element={<Auth onLogin={setAccount} />} />
-      <Route
-        path="/create-account"
-        element={<Auth signup onLogin={setAccount} />}
-      />
-      <Route path="/preview/plans/:planId" element={<PlanLanding />} />
-      <Route
-        path="/preview/plans"
-        element={
-          <main className="session-shell">
-            <PlanManager />
-          </main>
-        }
-      />
-      <Route path="/preview/:id/:view" element={<SessionPage />} />
-      <Route path="/plans/:planId" element={protect(<PlanLanding />)} />
-      <Route
-        path="/plans"
-        element={protect(
-          <main className="session-shell">
-            <PlanManager />
-          </main>,
-        )}
-      />
-      <Route
-        path="/workspace"
-        element={protect(<Workspace founder={account?.role === "admin"} />)}
-      />
-      <Route path="/sessions/:id/:view" element={protect(<SessionPage />)} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <div className="app-shell">
+      <Routes>
+        <Route path="/" element={<Intro />} />
+        <Route path="/sign-in" element={<Auth onLogin={setAccount} />} />
+        <Route
+          path="/create-account"
+          element={<Auth signup onLogin={setAccount} />}
+        />
+        <Route path="/preview/plans/:planId" element={<PlanLanding />} />
+        <Route path="/preview/plans" element={<Plans />} />
+        <Route path="/preview/:id/:view" element={<SessionPage />} />
+        <Route path="/plans/:planId" element={protect(<PlanLanding />)} />
+        <Route path="/plans" element={protect(<Plans />)} />
+        <Route
+          path="/workspace"
+          element={protect(<Workspace founder={account?.role === "admin"} />)}
+        />
+        <Route path="/sessions/:id/:view" element={protect(<SessionPage />)} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      <Footer />
+    </div>
   );
 }

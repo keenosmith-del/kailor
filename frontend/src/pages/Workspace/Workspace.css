@@ -1,0 +1,57 @@
+.workspace {
+  padding: 75px var(--space);
+  max-width: 1400px;
+  margin: auto;
+}
+.workspace-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+}
+.persona {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  text-align: left;
+  font-size: 13px;
+}
+@media (max-width: 1000px) {
+  .workspace-grid {
+    gap: 40px;
+  }
+}
+@media (max-width: 700px) {
+  .workspace {
+    padding-top: 50px;
+  }
+  .workspace-grid {
+    grid-template-columns: 1fr;
+    gap: 45px;
+  }
+}
+.workspace h1 {
+  font-size: clamp(30px, 3.5vw, 46px);
+}
+.workspace {
+  padding-top: 0;
+}
+.workspace-grid {
+  gap: 32px;
+}
+
+.workspace-grid {
+  margin-top: 20px;
+}
+.personal-workspace .workspace-grid {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 850px;
+}
+.section-heading {
+  margin-top: 28px;
+}
+.review-section {
+  margin-top: 36px;
+}
+.persona {
+  padding: 10px 0;
+  min-height: 44px;
+}

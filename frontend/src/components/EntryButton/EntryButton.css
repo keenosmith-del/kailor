@@ -1,0 +1,78 @@
+/* Shared by introduction and authentication controls; unrelated controls retain
+   their existing styles. Do not combine with .button or .surface-button. */
+.entry-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--control-height);
+  padding: 7px 18px;
+  border: 0;
+  border-radius: 9999px;
+  box-shadow: none;
+  font-size: var(--control-font);
+  line-height: 1.4;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform 200ms ease,
+    background-color 200ms ease,
+    color 200ms ease;
+}
+.entry-button--text {
+  background: transparent;
+  color: #5f5b54;
+}
+.entry-button--light {
+  background: #fffefc;
+  color: var(--color-charcoal);
+}
+.entry-button > img,
+.entry-button > svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  object-fit: contain;
+}
+.entry-button__arrow {
+  transition: transform 200ms ease;
+}
+.entry-button:focus-visible {
+  outline: 2px solid #9a8974;
+  outline-offset: 3px;
+}
+.entry-button:disabled {
+  cursor: not-allowed;
+}
+@media (hover: hover) and (pointer: fine) {
+  .entry-button:not(:disabled):hover {
+    transform: translateY(-2px);
+  }
+  .entry-button--text:not(:disabled):hover {
+    background: transparent;
+    color: var(--color-charcoal);
+  }
+  .entry-button--light:not(:disabled):hover {
+    background: #fff;
+    color: #4c4a44;
+  }
+  .entry-button:not(:disabled):hover > .entry-button__arrow {
+    transform: translateX(4px);
+  }
+}
+@media (max-width: 700px), (pointer: coarse) {
+  .entry-button {
+    min-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .entry-button,
+  .entry-button__arrow {
+    transition: none;
+  }
+  .entry-button:not(:disabled):hover,
+  .entry-button:not(:disabled):hover > .entry-button__arrow {
+    transform: none;
+  }
+}

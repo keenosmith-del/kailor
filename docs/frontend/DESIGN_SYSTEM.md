@@ -1,4 +1,6 @@
-# kailor experience design — iteration 008
+# kailor experience design
+
+Iteration 009 adds the scoped introduction/authentication pill controls described below; it supersedes the earlier corner/hover treatment only for those entry actions.
 
 Iteration 008 section 44 supersedes every earlier instruction for glass surfaces. **Glassmorphism is removed throughout kailor.** Do not add backdrop filters, frosted panels, translucent controls, heavy shadows, oversized pills, decorative dots/dividers or ArrowUpRight. Earlier iteration records describe historical decisions, not the current design contract.
 
@@ -12,7 +14,13 @@ Shared cues are cream `#faf7f0`, paper `#fffdf8`, charcoal `#302f2a`, muted `#77
 
 `frontend/src/styles.css` centralizes `--surface`, `--surface-edge`, `--surface-hover`, `--control-height`, `--control-padding`, `--control-font`, `--control-radius` and spacing tokens. `.button` and `.surface-button` share opaque paper surfaces, subtle warm edges, 13px labels, 7px × 12px padding, a 34px desktop minimum height and 9px corners. Primary controls use charcoal and cream; secondary controls use paper. Hover changes color, without a large lift or shadow. Disabled controls retain their label and visibly reduce opacity. Keyboard focus uses a visible 2px warm outline with offset, including inputs and choices. Mobile and coarse-pointer controls have a minimum 44px height; inputs remain at least comfortable form height and mobile composer text is 16px.
 
-Introduction actions, authentication, Discovery choices/actions, suggestions, evidence confirmation, plan controls, workspace actions, Canvas and Analysis use the same system. Functional headings and form/action gaps are reduced; the character keeps intentional whitespace. Input backgrounds, dialogue surfaces and modal backdrops are opaque. Native dialog focus handling supports the constrained, internally scrolling plan selector.
+Discovery choices/actions, suggestions, evidence confirmation, plan controls, workspace actions, Canvas and Analysis use the system above. Introduction and authentication entry actions use the scoped pill treatment below. Functional headings and form/action gaps are reduced; the character keeps intentional whitespace. Input backgrounds, dialogue surfaces and modal backdrops are opaque. Native dialog focus handling supports the constrained, internally scrolling plan selector.
+
+### Introduction and authentication entry controls (iteration 009)
+
+`frontend/src/components/EntryButton/EntryButton.css` defines `.entry-button`, `.entry-button--text`, `.entry-button--light` and `.entry-button__arrow`. These actions use `9999px` corners, existing control height/font variables, 7px × 18px padding, 8px icon gaps, and 200ms transitions. Do not combine them with `.button` or `.surface-button`, whose compact 9px radius and hover reset caused the previous introduction controls to lose their pill treatment. Unrelated application controls retain their existing styling.
+
+Text actions remain transparent and move from softer charcoal to the existing charcoal on hover. Light actions use `#fffefc`, changing to white and slightly lighter charcoal. Fine-pointer hover lifts the button 2px and moves only its arrow 4px right. The profile image reuses `/svgs/profile.svg` at 17px with contain sizing; arrows use the installed Lucide `ArrowRight`. Touch/mobile hit areas are at least 44px; keyboard focus retains a 2px warm outline. Reduced motion disables both lift and arrow movement. Account links remain outside scene transitions. Scene 3 retains its CTA placement; the user's concurrent refinement labels it “Continue” and omits the account-requirement note.
 
 ## Conversation geometry
 
