@@ -9,6 +9,7 @@ import { Intro } from "./pages/Intro/Intro";
 import { SessionPage } from "./pages/SessionPage/SessionPage";
 import { Workspace } from "./pages/Workspace/Workspace";
 import { Footer } from "./components/Footer/Footer";
+import { PageTransition } from "./components/PageTransition/PageTransition";
 function Protected({
   account,
   children,
@@ -40,6 +41,7 @@ export function App() {
   );
   return (
     <div className="app-shell">
+      <PageTransition />
       <Routes>
         <Route path="/" element={<Intro />} />
         <Route path="/sign-in" element={<Auth onLogin={setAccount} />} />

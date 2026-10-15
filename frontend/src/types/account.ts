@@ -1,1 +1,5 @@
-export type Account = { email: string; role: "admin" | "member" };
+export type Account = {
+  email: string;
+  role: "admin" | "member";
+  name?: string | null;
+};

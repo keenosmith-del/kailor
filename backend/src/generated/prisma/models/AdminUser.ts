@@ -29,6 +29,7 @@ export type AdminUserMinAggregateOutputType = {
   isGuest: boolean | null
   id: string | null
   email: string | null
+  name: string | null
   passwordHash: string | null
   createdAt: Date | null
 }
@@ -38,6 +39,7 @@ export type AdminUserMaxAggregateOutputType = {
   isGuest: boolean | null
   id: string | null
   email: string | null
+  name: string | null
   passwordHash: string | null
   createdAt: Date | null
 }
@@ -47,6 +49,7 @@ export type AdminUserCountAggregateOutputType = {
   isGuest: number
   id: number
   email: number
+  name: number
   passwordHash: number
   createdAt: number
   _all: number
@@ -58,6 +61,7 @@ export type AdminUserMinAggregateInputType = {
   isGuest?: true
   id?: true
   email?: true
+  name?: true
   passwordHash?: true
   createdAt?: true
 }
@@ -67,6 +71,7 @@ export type AdminUserMaxAggregateInputType = {
   isGuest?: true
   id?: true
   email?: true
+  name?: true
   passwordHash?: true
   createdAt?: true
 }
@@ -76,6 +81,7 @@ export type AdminUserCountAggregateInputType = {
   isGuest?: true
   id?: true
   email?: true
+  name?: true
   passwordHash?: true
   createdAt?: true
   _all?: true
@@ -158,6 +164,7 @@ export type AdminUserGroupByOutputType = {
   isGuest: boolean
   id: string
   email: string
+  name: string | null
   passwordHash: string
   createdAt: Date
   _count: AdminUserCountAggregateOutputType | null
@@ -188,6 +195,7 @@ export type AdminUserWhereInput = {
   isGuest?: Prisma.BoolFilter<"AdminUser"> | boolean
   id?: Prisma.StringFilter<"AdminUser"> | string
   email?: Prisma.StringFilter<"AdminUser"> | string
+  name?: Prisma.StringNullableFilter<"AdminUser"> | string | null
   passwordHash?: Prisma.StringFilter<"AdminUser"> | string
   createdAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
   sessions?: Prisma.AuthSessionListRelationFilter
@@ -202,6 +210,7 @@ export type AdminUserOrderByWithRelationInput = {
   isGuest?: Prisma.SortOrder
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  name?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   sessions?: Prisma.AuthSessionOrderByRelationAggregateInput
@@ -219,6 +228,7 @@ export type AdminUserWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.AdminUserWhereInput | Prisma.AdminUserWhereInput[]
   role?: Prisma.StringFilter<"AdminUser"> | string
   isGuest?: Prisma.BoolFilter<"AdminUser"> | boolean
+  name?: Prisma.StringNullableFilter<"AdminUser"> | string | null
   passwordHash?: Prisma.StringFilter<"AdminUser"> | string
   createdAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
   sessions?: Prisma.AuthSessionListRelationFilter
@@ -233,6 +243,7 @@ export type AdminUserOrderByWithAggregationInput = {
   isGuest?: Prisma.SortOrder
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  name?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.AdminUserCountOrderByAggregateInput
@@ -248,6 +259,7 @@ export type AdminUserScalarWhereWithAggregatesInput = {
   isGuest?: Prisma.BoolWithAggregatesFilter<"AdminUser"> | boolean
   id?: Prisma.StringWithAggregatesFilter<"AdminUser"> | string
   email?: Prisma.StringWithAggregatesFilter<"AdminUser"> | string
+  name?: Prisma.StringNullableWithAggregatesFilter<"AdminUser"> | string | null
   passwordHash?: Prisma.StringWithAggregatesFilter<"AdminUser"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AdminUser"> | Date | string
 }
@@ -257,6 +269,7 @@ export type AdminUserCreateInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionCreateNestedManyWithoutAdminInput
@@ -271,6 +284,7 @@ export type AdminUserUncheckedCreateInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutAdminInput
@@ -285,6 +299,7 @@ export type AdminUserUpdateInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUpdateManyWithoutAdminNestedInput
@@ -299,6 +314,7 @@ export type AdminUserUncheckedUpdateInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutAdminNestedInput
@@ -313,6 +329,7 @@ export type AdminUserCreateManyInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
 }
@@ -322,6 +339,7 @@ export type AdminUserUpdateManyMutationInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -331,6 +349,7 @@ export type AdminUserUncheckedUpdateManyInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -340,6 +359,7 @@ export type AdminUserCountOrderByAggregateInput = {
   isGuest?: Prisma.SortOrder
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -349,6 +369,7 @@ export type AdminUserMaxOrderByAggregateInput = {
   isGuest?: Prisma.SortOrder
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -358,6 +379,7 @@ export type AdminUserMinOrderByAggregateInput = {
   isGuest?: Prisma.SortOrder
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  name?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -373,6 +395,10 @@ export type StringFieldUpdateOperationsInput = {
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -454,6 +480,7 @@ export type AdminUserCreateWithoutSessionsInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   discoveries?: Prisma.DiscoverySessionCreateNestedManyWithoutAdminInput
@@ -467,6 +494,7 @@ export type AdminUserUncheckedCreateWithoutSessionsInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   discoveries?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutAdminInput
@@ -496,6 +524,7 @@ export type AdminUserUpdateWithoutSessionsInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   discoveries?: Prisma.DiscoverySessionUpdateManyWithoutAdminNestedInput
@@ -509,6 +538,7 @@ export type AdminUserUncheckedUpdateWithoutSessionsInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   discoveries?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutAdminNestedInput
@@ -522,6 +552,7 @@ export type AdminUserCreateWithoutPlansInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionCreateNestedManyWithoutAdminInput
@@ -535,6 +566,7 @@ export type AdminUserUncheckedCreateWithoutPlansInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutAdminInput
@@ -564,6 +596,7 @@ export type AdminUserUpdateWithoutPlansInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUpdateManyWithoutAdminNestedInput
@@ -577,6 +610,7 @@ export type AdminUserUncheckedUpdateWithoutPlansInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutAdminNestedInput
@@ -590,6 +624,7 @@ export type AdminUserCreateWithoutSettingsInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionCreateNestedManyWithoutAdminInput
@@ -603,6 +638,7 @@ export type AdminUserUncheckedCreateWithoutSettingsInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutAdminInput
@@ -632,6 +668,7 @@ export type AdminUserUpdateWithoutSettingsInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUpdateManyWithoutAdminNestedInput
@@ -645,6 +682,7 @@ export type AdminUserUncheckedUpdateWithoutSettingsInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutAdminNestedInput
@@ -658,6 +696,7 @@ export type AdminUserCreateWithoutPreferencesInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionCreateNestedManyWithoutAdminInput
@@ -671,6 +710,7 @@ export type AdminUserUncheckedCreateWithoutPreferencesInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutAdminInput
@@ -700,6 +740,7 @@ export type AdminUserUpdateWithoutPreferencesInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUpdateManyWithoutAdminNestedInput
@@ -713,6 +754,7 @@ export type AdminUserUncheckedUpdateWithoutPreferencesInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutAdminNestedInput
@@ -726,6 +768,7 @@ export type AdminUserCreateWithoutDiscoveriesInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionCreateNestedManyWithoutAdminInput
@@ -739,6 +782,7 @@ export type AdminUserUncheckedCreateWithoutDiscoveriesInput = {
   isGuest?: boolean
   id?: string
   email: string
+  name?: string | null
   passwordHash: string
   createdAt?: Date | string
   sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutAdminInput
@@ -768,6 +812,7 @@ export type AdminUserUpdateWithoutDiscoveriesInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUpdateManyWithoutAdminNestedInput
@@ -781,6 +826,7 @@ export type AdminUserUncheckedUpdateWithoutDiscoveriesInput = {
   isGuest?: Prisma.BoolFieldUpdateOperationsInput | boolean
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutAdminNestedInput
@@ -852,6 +898,7 @@ export type AdminUserSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   isGuest?: boolean
   id?: boolean
   email?: boolean
+  name?: boolean
   passwordHash?: boolean
   createdAt?: boolean
   sessions?: boolean | Prisma.AdminUser$sessionsArgs<ExtArgs>
@@ -867,6 +914,7 @@ export type AdminUserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   isGuest?: boolean
   id?: boolean
   email?: boolean
+  name?: boolean
   passwordHash?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["adminUser"]>
@@ -876,6 +924,7 @@ export type AdminUserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   isGuest?: boolean
   id?: boolean
   email?: boolean
+  name?: boolean
   passwordHash?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["adminUser"]>
@@ -885,11 +934,12 @@ export type AdminUserSelectScalar = {
   isGuest?: boolean
   id?: boolean
   email?: boolean
+  name?: boolean
   passwordHash?: boolean
   createdAt?: boolean
 }
 
-export type AdminUserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"role" | "isGuest" | "id" | "email" | "passwordHash" | "createdAt", ExtArgs["result"]["adminUser"]>
+export type AdminUserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"role" | "isGuest" | "id" | "email" | "name" | "passwordHash" | "createdAt", ExtArgs["result"]["adminUser"]>
 export type AdminUserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.AdminUser$sessionsArgs<ExtArgs>
   discoveries?: boolean | Prisma.AdminUser$discoveriesArgs<ExtArgs>
@@ -915,6 +965,7 @@ export type $AdminUserPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     isGuest: boolean
     id: string
     email: string
+    name: string | null
     passwordHash: string
     createdAt: Date
   }, ExtArgs["result"]["adminUser"]>
@@ -1349,6 +1400,7 @@ export interface AdminUserFieldRefs {
   readonly isGuest: Prisma.FieldRef<"AdminUser", 'Boolean'>
   readonly id: Prisma.FieldRef<"AdminUser", 'String'>
   readonly email: Prisma.FieldRef<"AdminUser", 'String'>
+  readonly name: Prisma.FieldRef<"AdminUser", 'String'>
   readonly passwordHash: Prisma.FieldRef<"AdminUser", 'String'>
   readonly createdAt: Prisma.FieldRef<"AdminUser", 'DateTime'>
 }

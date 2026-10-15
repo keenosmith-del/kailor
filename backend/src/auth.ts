@@ -108,7 +108,7 @@ export async function login(email: string, password: string, res: Response) {
     },
   });
   authCookie(res, token);
-  return { email: admin.email, role: admin.role };
+  return { email: admin.email, role: admin.role, name: admin.name };
 }
 
 export function requireAdmin(_req: Request, res: Response, next: NextFunction) {
@@ -121,13 +121,16 @@ export async function register(
   password: string,
   invite: string,
   res: Response,
+  name?: string,
 ) {
   const normalized = email.trim().toLowerCase();
   const passwordHash = await hashPassword(password);
   try {
     await db.$transaction(async (tx) => {
       if (config.REGISTRATION_POLICY === "closed") throw new Error("closed");
-      if (config.REGISTRATION_POLICY === "invite") {
+      // Public self-registration never requires an invitation. Continue to
+      // validate explicitly supplied codes for existing invitation clients.
+      if (invite) {
         const result = await tx.accountInvite.updateMany({
           where: {
             tokenHash: tokenHash(invite),
@@ -140,14 +143,14 @@ export async function register(
         if (result.count !== 1) throw new Error("invite");
       }
       await tx.adminUser.create({
-        data: { email: normalized, passwordHash, role: "member" },
+        data: { email: normalized, passwordHash, role: "member", name },
       });
     });
   } catch {
     throw new AppError(
       400,
       "registration_unavailable",
-      "Account could not be created. Check your invitation or contact the founder.",
+      "Account could not be created. Check your details or try signing in.",
     );
   }
   return login(normalized, password, res);

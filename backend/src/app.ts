@@ -163,7 +163,9 @@ app.post(
   },
 );
 app.get("/api/auth/policy", (_req, res) =>
-  res.json({ registration: config.REGISTRATION_POLICY }),
+  res.json({
+    registration: config.REGISTRATION_POLICY === "closed" ? "closed" : "public",
+  }),
 );
 app.post(
   "/api/auth/register",
@@ -173,13 +175,22 @@ app.post(
       .object({
         email: z.email().max(254),
         password: z.string().min(12).max(128),
+        name: z.string().trim().min(2).max(150).optional(),
         invite: z.string().max(256).default(""),
       })
       .strict()
       .parse(req.body);
     res
       .status(201)
-      .json(await register(input.email, input.password, input.invite, res));
+      .json(
+        await register(
+          input.email,
+          input.password,
+          input.invite,
+          res,
+          input.name,
+        ),
+      );
   },
 );
 app.use("/api/guest", guestRouter);
@@ -192,7 +203,7 @@ app.get("/api/auth/me", async (_req, res) => {
   const admin = await db.adminUser.findUniqueOrThrow({
     where: { id: res.locals.adminId },
   });
-  res.json({ email: admin.email, role: admin.role });
+  res.json({ email: admin.email, role: admin.role, name: admin.name });
 });
 app.post("/api/auth/logout", async (req, res) => {
   await db.authSession.deleteMany({

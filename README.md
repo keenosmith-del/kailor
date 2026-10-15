@@ -119,3 +119,7 @@ Iteration 005 adds contextual operational gaps, separate knowledge/report revisi
 ## Iteration 008
 
 Conversation now has a fixed sitting mascot, inline confirmations and a stationary shell with internal transcript scrolling. Shared controls are compact and opaque; glassmorphism is removed. Sign in and invited signup are functional, new accounts have member access, and founder tools require server-side admin authorization. Cloudflare's 70B fast JSON-mode model is configured and bounded live synthetic responses were verified. See [the implementation and validation report](docs/iterations/008-ai-conversation-and-auth.md), including setup, exact test results and remaining launch limitations. Run `npm run db:migrate` for the additive account/context migration; it preserves only the existing configured founder and does not reseed data.
+
+## Authentication visual replication (iteration 010)
+
+Sign in and Create account now use kai's split-screen authentication styling with kailor's unamused mascot. Registration stores a full name, validates password confirmation and creates member accounts without an invitation. Existing sign-in and guest discovery remain functional. Apply the additive account-name migration and regenerate Prisma; no reset/reseed is needed. GitHub OAuth is not implemented in kailor and its control is explicitly unavailable. See [implementation, configuration and verification](docs/iterations/010-kai-authentication-replication.md).

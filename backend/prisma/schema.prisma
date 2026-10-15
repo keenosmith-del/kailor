@@ -11,6 +11,7 @@ model AdminUser {
   isGuest Boolean @default(false)
   id String @id @default(uuid())
   email String @unique
+  name String?
   passwordHash String
   sessions AuthSession[]
   discoveries DiscoverySession[]

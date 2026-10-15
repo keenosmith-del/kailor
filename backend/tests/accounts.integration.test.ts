@@ -56,8 +56,7 @@ afterAll(async () => {
   await db.adminUser.deleteMany({ where: { id: { in: owners } } });
   await db.$disconnect();
 });
-it("requires a valid invitation by default without revealing account existence", async () => {
-  expect(config.REGISTRATION_POLICY).toBe("invite");
+it("rejects explicitly supplied invalid legacy invitations without revealing account existence", async () => {
   const r = await member
     .post("/api/auth/register")
     .set("Origin", origin)

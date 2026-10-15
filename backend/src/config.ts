@@ -16,7 +16,8 @@ const envSchema = z.object({
   HOST: z.string().default("127.0.0.1"),
   APP_ORIGIN: z.string().url().default("http://127.0.0.1:5173"),
   NODE_ENV: z.string().default("development"),
-  REGISTRATION_POLICY: z.enum(["invite", "closed", "public"]).default("invite"),
+  // "invite" remains a compatible legacy value; self-registration is public.
+  REGISTRATION_POLICY: z.enum(["invite", "closed", "public"]).default("public"),
   ADMIN_EMAIL: z.email().default("founder@kailor.local"),
   ADMIN_PASSWORD: z.string().default(""),
   AI_PROVIDER: z.enum(["mock", "cloudflare"]).default("mock"),

@@ -38,7 +38,9 @@ SessionTransition now crossfades opacity only, without translating/scaling the w
 
 ## Authentication and workspace
 
-Dedicated sign-in and invited account creation use cream/paper columns at larger sizes and a single readable mobile composition. Email begins blank, fields have real labels, password-manager autocomplete and visible focus. The member workspace contains owned plans and preferences. Founder tools and invitation issuance are visible only to founders and independently protected by server middleware. No email verification or recovery success is simulated.
+Dedicated sign-in and public account creation now replicate kai's authentication CSS: equal cream/paper columns, 390px form width, 53px rounded inputs, 48px pill actions, matching focus/hover styles, and 900px/480px responsive breakpoints. Both use the unchanged unamused mascot on the left and centered `k ᐧ ai ᐧ lor` above the form description. These pages use scoped `Auth.css` rather than the introduction's `.entry-button` treatment. Registration includes full name and password confirmation; invitation/recovery messaging is removed. GitHub remains explicitly unavailable until real OAuth infrastructure is added. The shared footer occupies only the bottom-left authentication grid area, keeping the right panel full height. Shared 280ms route fades retain mounted session state and respect reduced motion. See [iteration 010](../iterations/010-kai-authentication-replication.md).
+
+Email begins blank, fields have real labels and password-manager autocomplete. Member plan ownership and founder tools remain independently protected by server middleware. No email verification or recovery success is simulated.
 
 ## Validation and limits
 
