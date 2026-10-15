@@ -11,12 +11,13 @@ export function useAuthentication(
 ) {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const requested = params.get("returnTo") ?? "/workspace";
-  const returnTo = /^\/(?:workspace|plans(?:\/[^?#]*)?|sessions\/[^?#]+)$/.test(
-    requested,
-  )
-    ? requested
-    : "/workspace";
+  const requested = params.get("returnTo") ?? "/app/chat";
+  const returnTo =
+    /^\/(?:app\/[^?#]+|workspace|plans(?:\/[^?#]*)?|sessions\/[^?#]+)$/.test(
+      requested,
+    )
+      ? requested
+      : "/app/chat";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

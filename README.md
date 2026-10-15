@@ -1,5 +1,7 @@
 # kailor
 
+The current project workspace uses Chat as the signed-in entry, shared sidebar navigation, project/conversation history, Discovery, Canvas, Analysis and Sources. Guest entry resumes one temporary project directly in Discovery. The backend Plan model and existing intelligence remain. See [iteration 011: implementation, changed files, verification and limits](docs/iterations/011-project-workspace.md). The former founder dashboard is now at `/founder`; `/workspace` redirects to Chat.
+
 Iteration 007 is a private, AI-assisted technology consultancy platform with independently owned business/project plans, persistent conversation memory, guided Discovery, confirmation-gated evidence, Solution Canvas, immutable assessments and PDF export. Plans can be created, renamed, resumed, archived, restored and explicitly compared without merging their knowledge.
 
 Cloudflare inference remains opt-in and founder-only. Deterministic evaluation passes do not establish live model quality. See the [iteration 007 implementation and execution report](docs/iterations/007-conversational-memory-and-plans.md).
@@ -13,7 +15,7 @@ npm run db:migrate
 npm run dev
 ```
 
-Existing data needs the additive plans-and-memory migration; do not reset or reseed the database. Open `/workspace` for private founder access and plan management. Existing session URLs still work.
+Existing data needs the additive plans-and-memory migration; do not reset or reseed the database. Open `/app/chat` for the application or `/founder` for private founder tools. Existing session URLs still work.
 
 ## First installation
 

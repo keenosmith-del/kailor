@@ -223,6 +223,19 @@ app.get("/api/sessions", async (_req, res) =>
     }),
   ),
 );
+app.post("/api/sessions/entry", async (req, res) => {
+  z.object({})
+    .strict()
+    .parse(req.body ?? {});
+  res.json(
+    await sessions.createSession(
+      String(res.locals.adminId),
+      "New project",
+      false,
+      true,
+    ),
+  );
+});
 app.post("/api/sessions", async (req, res) => {
   const input = z
     .object({ name: z.string().trim().min(1).max(150) })

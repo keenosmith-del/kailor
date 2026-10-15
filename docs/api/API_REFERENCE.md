@@ -123,3 +123,13 @@ Archived sessions/reports remain readable. Answer/chat/evidence/assessment chang
 `POST /auth/invites` is founder-only, accepts `{email}`, and returns a one-time code plus expiry duration; the code must be shared privately and is stored only as a hash. Founder-only middleware also protects cases/reviews, personas, scenarios and simulations. Other authenticated endpoints retain ownership checks; members receive 403 for founder operations, 404 for another owner's resources and 401 for missing/expired sessions.
 
 `POST /sessions/:id/conversation/clear` accepts `{revision}` and returns the session. The guest counterpart is under `/guest`. It locks/checks ownership and revision, hides and excludes retained messages from future context, supersedes summaries and retires pending evidence/proposals. Confirmed answers, knowledge revision and reports are preserved. Stale revision returns 409. `hiddenFromTranscript` is included on message records so archived transcript data is distinguishable from active messages. New conversation uses existing `POST /plans/:id/sessions` with a stable creation key and plan revision.
+
+## Project workspace additions (iteration 011)
+
+The UI calls existing Plans projects; API names remain compatible. `POST /api/sessions/entry` accepts an empty object and requires an account cookie plus exact Origin. Under an owner lock it resumes the selected active conversation, falls back to recent work, or creates the first project/session. Existing `POST /api/sessions` retains its fresh-session behavior.
+
+`POST /api/guest/sessions` now resumes the guest's active temporary project under the same lock. Guest project creation (including accepting a new-project proposal) returns 409 when a project already exists. Existing records are preserved.
+
+`POST /api/plans/:id/sessions` accepts optional `carryContext: boolean` alongside required `revision` and `creationKey`. Default false preserves compatibility; true copies guided answers and active confirmed evidence from the project's last selected session, with inherited provenance. It does not copy pending evidence or transcripts.
+
+`GET /api/plans/:id/reports/:reportId/pdf` downloads that immutable snapshot, verifying owner and matching project. The corresponding allowlisted guest route is `/api/guest/plans/:id/reports/:reportId/pdf`. Existing JSON report history and latest-session PDF endpoints are unchanged. No file ingestion or guest transfer endpoint is introduced.

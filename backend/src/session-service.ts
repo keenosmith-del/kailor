@@ -115,8 +115,28 @@ export async function createSession(
   adminId: string,
   name: string,
   synthetic = false,
+  resumeExisting = false,
 ) {
   return db.$transaction(async (tx) => {
+    if (resumeExisting) {
+      await tx.$queryRaw`SELECT id FROM "AdminUser" WHERE id = ${adminId} FOR UPDATE`;
+      const selection = await tx.accountSettings.findUnique({
+        where: { adminId },
+        include: { activePlan: true },
+      });
+      const prior = await tx.discoverySession.findFirst({
+        where: {
+          adminId,
+          plan: { archivedAt: null },
+          ...(selection?.activePlan?.lastSessionId
+            ? { id: selection.activePlan.lastSessionId }
+            : {}),
+        },
+        orderBy: { updatedAt: "desc" },
+        include,
+      });
+      if (prior) return prior;
+    }
     const plan = await tx.plan.create({
       data: { adminId, title: name, creationKey: randomUUID() },
     });

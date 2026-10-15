@@ -82,7 +82,7 @@ guestRouter.post(
     }
     res
       .status(201)
-      .json(await sessions.createSession(owner, "Guest discovery", true));
+      .json(await sessions.createSession(owner, "My project", true, true));
   },
 );
 guestRouter.use((_req, res, next) => {

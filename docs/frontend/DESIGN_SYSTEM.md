@@ -45,3 +45,7 @@ Email begins blank, fields have real labels and password-manager autocomplete. M
 ## Validation and limits
 
 See [iteration 008](../iterations/008-ai-conversation-and-auth.md) for the current browser matrix, geometry evidence and automated results. Browser viewport testing does not establish physical iPhone keyboard or formal screen-reader behavior. Preserve the original artwork; no replacement illustrations, generated characters, video or sprite animation were introduced.
+
+## Project application shell (iteration 011)
+
+ApplicationWorkspace scopes the cream/charcoal palette, `#fffefc` pill controls and rounded inputs to application pages. ApplicationSidebar supplies a 250ms cream overlay drawer with restrained backdrop blur, focus trapping and scroll lock, plus accessible icon navigation (hidden on mobile). It never changes the content width. Chat uses an 820px content column, head mascot/avatar and bottom composer with separately reserved footer space. New turns anchor near their start rather than following the bottom of long replies. Existing Discovery compositions and introduction/authentication layouts remain. Page fades and thinking animation respect existing reduced-motion rules. See [iteration 011](../iterations/011-project-workspace.md).

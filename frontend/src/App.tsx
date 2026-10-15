@@ -1,3 +1,4 @@
+import { ApplicationWorkspace } from "./pages/Application/ApplicationWorkspace";
 import { Plans } from "./pages/Plans/Plans";
 import { PlanLanding } from "./pages/PlanLanding/PlanLanding";
 import { useEffect, useState, type ReactNode } from "react";
@@ -6,7 +7,6 @@ import { api } from "./services/api";
 import { Auth } from "./pages/Auth/Auth";
 import type { Account } from "./types/account";
 import { Intro } from "./pages/Intro/Intro";
-import { SessionPage } from "./pages/SessionPage/SessionPage";
 import { Workspace } from "./pages/Workspace/Workspace";
 import { Footer } from "./components/Footer/Footer";
 import { PageTransition } from "./components/PageTransition/PageTransition";
@@ -51,14 +51,42 @@ export function App() {
         />
         <Route path="/preview/plans/:planId" element={<PlanLanding />} />
         <Route path="/preview/plans" element={<Plans />} />
-        <Route path="/preview/:id/:view" element={<SessionPage />} />
+        <Route
+          path="/preview/:view"
+          element={<ApplicationWorkspace account={null} />}
+        />
+        <Route
+          path="/preview/:id/:view"
+          element={<ApplicationWorkspace account={null} />}
+        />
+        <Route
+          path="/app/:view"
+          element={protect(<ApplicationWorkspace account={account ?? null} />)}
+        />
+        <Route
+          path="/app/:id/:view"
+          element={protect(<ApplicationWorkspace account={account ?? null} />)}
+        />
         <Route path="/plans/:planId" element={protect(<PlanLanding />)} />
         <Route path="/plans" element={protect(<Plans />)} />
         <Route
           path="/workspace"
-          element={protect(<Workspace founder={account?.role === "admin"} />)}
+          element={protect(<Navigate to="/app/chat" replace />)}
         />
-        <Route path="/sessions/:id/:view" element={protect(<SessionPage />)} />
+        <Route
+          path="/sessions/:id/:view"
+          element={protect(<ApplicationWorkspace account={account ?? null} />)}
+        />
+        <Route
+          path="/founder"
+          element={protect(
+            account?.role === "admin" ? (
+              <Workspace founder />
+            ) : (
+              <Navigate to="/app/chat" replace />
+            ),
+          )}
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Footer />

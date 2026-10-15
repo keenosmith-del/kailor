@@ -420,7 +420,7 @@ describe("draft lifecycle", () => {
       },
     });
     vi.stubGlobal("sessionStorage", proxy);
-    return await import("../../frontend/src/drafts.js");
+    return await import("../../frontend/src/utils/drafts.js");
   }
   it("retains unsent text for a mode switch at the same knowledge revision", async () => {
     const d = await storage();

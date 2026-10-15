@@ -4,6 +4,8 @@ import { clearConversation } from "./session-service.js";
 import * as plans from "./plan-service.js";
 import { db } from "./db.js";
 import { AppError } from "./errors.js";
+import { renderPdf } from "./pdf.js";
+import type { Report } from "../../shared/src/index.js";
 import {
   planCreateInput,
   planUpdateInput,
@@ -109,7 +111,7 @@ planRouter.get("/plans/:id/sessions", async (req, res) => {
 });
 planRouter.post("/plans/:id/sessions", async (req, res) => {
   const input = mutationSchema
-    .extend({ creationKey: id })
+    .extend({ creationKey: id, carryContext: z.boolean().optional() })
     .strict()
     .parse(req.body);
   res
@@ -120,6 +122,7 @@ planRouter.post("/plans/:id/sessions", async (req, res) => {
         owner(res),
         input.revision,
         input.creationKey,
+        input.carryContext,
       ),
     );
 });
@@ -146,6 +149,21 @@ planRouter.get("/plans/:id/reports", async (req, res) => {
     reports: reports.slice(0, 20),
     nextCursor: reports.length > 20 ? reports[19].id : null,
   });
+});
+planRouter.get("/plans/:id/reports/:reportId/pdf", async (req, res) => {
+  const report = await db.reportSnapshot.findFirst({
+    where: {
+      id: id.parse(req.params.reportId),
+      assessment: {
+        session: { planId: id.parse(req.params.id), adminId: owner(res) },
+      },
+    },
+  });
+  if (!report) throw new AppError(404, "not_found", "Report not found");
+  res
+    .type("application/pdf")
+    .attachment("kailor-analysis-draft.pdf")
+    .send(await renderPdf(report.content as unknown as Report));
 });
 planRouter.get("/plans/:id/reports/:reportId", async (req, res) => {
   const report = await db.reportSnapshot.findFirst({

@@ -293,6 +293,53 @@ export async function readPersonalMemory(
         take: 6,
       })
     : [];
+  // Bounded prior discussion and saved reports are references, never new confirmed facts.
+  // Both predicates are required: a project ID alone must not grant cross-owner access.
+  const siblings =
+    terms.length || references
+      ? await db.conversationMessage.findMany({
+          where: {
+            session: { planId: s.planId, adminId: s.adminId },
+            sessionId: { not: s.id },
+            excludedFromContext: false,
+            ...(terms.length
+              ? {
+                  OR: terms.map((term) => ({
+                    content: { contains: term, mode: "insensitive" as const },
+                  })),
+                }
+              : {}),
+          },
+          orderBy: { createdAt: "desc" },
+          take: 3,
+          select: { id: true, role: true, content: true },
+        })
+      : [];
+  retrieved.push(
+    ...siblings.map((m) => ({
+      ...m,
+      content: `[Earlier conversation in this project; unconfirmed historical reference] ${m.content.slice(0, 1200)}`,
+    })),
+  );
+  if (/analys|assess|report|recommend/i.test(message)) {
+    const report = await db.reportSnapshot.findFirst({
+      where: {
+        assessment: { session: { planId: s.planId, adminId: s.adminId } },
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        createdAt: true,
+        assessment: { select: { summary: true } },
+      },
+    });
+    if (report)
+      retrieved.push({
+        id: report.id,
+        role: "assistant",
+        content: `[Saved project analysis from ${report.createdAt.toISOString()}; historical recommendations, not current confirmed facts] ${report.assessment.summary.slice(0, 2000)}`,
+      });
+  }
   let retrievedSize = 0;
   const boundedRetrieved = retrieved.filter((m) => {
     if (retrievedSize + m.content.length > 6000) return false;

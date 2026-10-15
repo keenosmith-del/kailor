@@ -1,7 +1,13 @@
 import "./Conversation.css";
 import { useNavigate } from "react-router";
-import { ArrowRight, MessageCircle } from "lucide-react";
-import { useState, useEffect, useRef, type FormEvent } from "react";
+import { ArrowUp } from "lucide-react";
+import {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  type FormEvent,
+} from "react";
 import { mascotAssets } from "../../components/Mascot/mascot-assets";
 import { Link } from "react-router";
 import { conversationSuggestions } from "../../../../shared/src/conversation";
@@ -15,7 +21,15 @@ export function Conversation({
   next,
   assess,
   ready,
-}: SessionProps & { next: Next; assess: () => Promise<void>; ready: boolean }) {
+  initialMessage = "",
+  onInitialMessageConsumed,
+}: SessionProps & {
+  next: Next;
+  assess: () => Promise<void>;
+  ready: boolean;
+  initialMessage?: string;
+  onInitialMessageConsumed?: () => void;
+}) {
   const navigate = useNavigate();
   const labels: Record<string, string> = {
     industry: "Activity",
@@ -56,7 +70,12 @@ export function Conversation({
   const [notice, setNotice] = useState("");
   const input = useRef<HTMLTextAreaElement>(null);
   const history = useRef<HTMLDivElement>(null);
-  const followBottom = useRef(true);
+  const shouldAnchor = useRef(visibleMessages.length > 0);
+  const pendingFrom = useRef(visibleMessages.length);
+  const [pendingMessage, setPendingMessage] = useState("");
+  const [anchorSpace, setAnchorSpace] = useState(0);
+  const tail = useRef<HTMLDivElement>(null);
+  const initialSent = useRef(false);
   const [editing, setEditing] = useState<Record<string, string>>({});
   const providerNotice =
     notice ||
@@ -67,10 +86,33 @@ export function Conversation({
   const suggestions = session.planProposals?.length
     ? []
     : conversationSuggestions(next, visibleMessages);
+  useLayoutEffect(() => {
+    const element = history.current;
+    if (!element || !shouldAnchor.current) return;
+    const user = Array.from(
+      element.querySelectorAll<HTMLElement>(".message.user"),
+    ).at(-1);
+    if (!user || !tail.current) return;
+    const turnHeight =
+      tail.current.getBoundingClientRect().bottom -
+      user.getBoundingClientRect().top;
+    setAnchorSpace(Math.max(0, element.clientHeight - turnHeight - 24));
+    const frame = requestAnimationFrame(() => {
+      if (shouldAnchor.current)
+        element.scrollTop +=
+          user.getBoundingClientRect().top -
+          element.getBoundingClientRect().top -
+          12;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [pendingMessage, session.messages.length]);
   useEffect(() => {
-    if (followBottom.current && history.current)
-      history.current.scrollTop = history.current.scrollHeight;
-  }, [session.messages.length, busy]);
+    if (initialMessage && !initialSent.current) {
+      initialSent.current = true;
+      onInitialMessageConsumed?.();
+      void sendText(initialMessage);
+    }
+  }, [initialMessage]);
   useEffect(() => {
     setMessage(
       String(
@@ -99,16 +141,24 @@ export function Conversation({
   }
   async function send(e: FormEvent) {
     e.preventDefault();
-    if (!message.trim() || busy || sending.current) return;
+    await sendText(message);
+  }
+  async function sendText(text: string) {
+    if (!text.trim() || busy || sending.current) return;
     sending.current = true;
+    shouldAnchor.current = true;
+    pendingFrom.current = visibleMessages.length;
+    setPendingMessage(text.trim());
+    draft("");
+    let completed = false;
     try {
-      await act(async () => {
+      completed = await act(async () => {
         const response = await api<{
           provider: string;
           fallbackReason: string | null;
         }>(`/sessions/${session.id}/chat`, "POST", {
           revision: session.revision,
-          message,
+          message: text,
           mode: "conversation",
         });
         setNotice(
@@ -121,22 +171,16 @@ export function Conversation({
       });
     } finally {
       sending.current = false;
-      input.current?.focus();
+      setPendingMessage("");
+      if (!completed) draft(text);
+      input.current?.focus({ preventScroll: true });
     }
   }
   return (
     <div className="conversation-layout">
-      <aside className="conversation-mascot">
-        <img
-          src="/mascot/other/kailor-sitting.png"
-          alt="kailor sitting beside the conversation"
-          width="1024"
-          height="1024"
-        />
-      </aside>
       <div className="conversation">
         <div className="conversation-heading">
-          <h1>Conversation</h1>
+          <h1>Chat</h1>
           <button
             className="text-link"
             disabled={busy}
@@ -149,20 +193,37 @@ export function Conversation({
           className="chat-history"
           aria-live="polite"
           ref={history}
-          onScroll={() => {
-            const element = history.current;
-            if (element)
-              followBottom.current =
-                element.scrollHeight -
-                  element.scrollTop -
-                  element.clientHeight <
-                80;
+          onWheel={() => {
+            shouldAnchor.current = false;
+          }}
+          onTouchStart={() => {
+            shouldAnchor.current = false;
+          }}
+          onKeyDown={(e) => {
+            if (
+              [
+                "PageUp",
+                "PageDown",
+                "ArrowUp",
+                "ArrowDown",
+                "Home",
+                "End",
+              ].includes(e.key)
+            )
+              shouldAnchor.current = false;
+          }}
+          onPointerDown={() => {
+            shouldAnchor.current = false;
           }}
         >
-          {!visibleMessages.length && (
+          {!visibleMessages.length && !pendingMessage && (
             <div className="empty-chat">
-              <MessageCircle size={26} />
-              <p>What’s on your mind?</p>
+              <img src={mascotAssets.head} alt="" width="76" height="76" />
+              <h2>What would you like to explore?</h2>
+              <p>
+                Start with an idea, a challenge, or a question. We can work
+                through it together.
+              </p>
               <div className="suggestions">
                 {suggestions.map((p) => (
                   <button
@@ -306,29 +367,60 @@ export function Conversation({
               )}
             </article>
           ))}
-          {busy && (
-            <p className="muted" role="status">
-              Saving and processing your request…
-            </p>
+          {pendingMessage &&
+            !visibleMessages
+              .slice(pendingFrom.current)
+              .some(
+                (m, i) => m.role === "user" && m.content === pendingMessage,
+              ) && (
+              <article className="message user">
+                <small>You</small>
+                <p>{pendingMessage}</p>
+              </article>
+            )}
+          {pendingMessage && (
+            <article className="message assistant thinking" role="status">
+              <img
+                className="message-avatar"
+                src={mascotAssets.head}
+                alt=""
+                width="32"
+                height="32"
+              />
+              <small>kailor</small>
+              <p>
+                Thinking
+                <span className="thinking-dots" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span className="sr-only">…</span>
+              </p>
+            </article>
           )}
           {session.planProposals?.map((proposal) => (
             <section className="plan-proposal" key={proposal.id}>
               <p>
-                Start a separate plan for <strong>{proposal.title}</strong>?
+                Start a separate project for <strong>{proposal.title}</strong>?
               </p>
               <p className="muted">{proposal.description}</p>
               <div className="actions">
                 {(
                   [
-                    ["create", "Create separate plan"],
-                    ["continue_current", "Keep discussing current plan"],
+                    ["create", "Create separate project"],
+                    ["continue_current", "Keep discussing this project"],
                     ["cancel", "Cancel"],
                   ] as const
                 ).map(([decision, label]) => (
                   <button
                     key={decision}
                     className="button"
-                    disabled={busy}
+                    disabled={
+                      busy ||
+                      (decision === "create" &&
+                        window.location.pathname.startsWith("/preview/"))
+                    }
                     onClick={() =>
                       void act(async () => {
                         const result = await api<{
@@ -354,22 +446,24 @@ export function Conversation({
               </div>
             </section>
           ))}
-          {!!visibleMessages.length && !!next.suggestedPrompts.length && (
-            <div className="suggestions">
-              {suggestions.map((p) => (
-                <button
-                  key={p.message}
-                  disabled={busy}
-                  onClick={() => {
-                    draft(p.message);
-                    input.current?.focus();
-                  }}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
-          )}
+          {!!visibleMessages.length &&
+            !pendingMessage &&
+            !!next.suggestedPrompts.length && (
+              <div className="suggestions">
+                {suggestions.map((p) => (
+                  <button
+                    key={p.message}
+                    disabled={busy}
+                    onClick={() => {
+                      draft(p.message);
+                      input.current?.focus();
+                    }}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            )}
           {providerNotice && (
             <p className="fine-print" role="status">
               {providerNotice}
@@ -409,6 +503,11 @@ export function Conversation({
               </div>
             </div>
           )}
+          <div ref={tail} />
+          <div
+            style={{ height: anchorSpace, flexShrink: 0 }}
+            aria-hidden="true"
+          />
         </div>
         {clearing && (
           <div
@@ -478,10 +577,11 @@ export function Conversation({
           />
           <div className="actions">
             <button
-              className="button primary"
+              className="button primary chat-send"
               disabled={busy || !message.trim()}
             >
-              Send <ArrowRight size={17} />
+              <span className="sr-only">Send message</span>
+              <ArrowUp size={19} />
             </button>
           </div>
         </form>

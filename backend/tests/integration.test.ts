@@ -636,7 +636,7 @@ describe("real PostgreSQL API vertical slice", () => {
       .post("/api/guest/sessions")
       .set("Origin", origin)
       .send({});
-    expect(restarted.body.id).not.toBe(guestId);
+    expect(restarted.body.id).toBe(guestId); // Entry resumes the one temporary project.
     expect((await guest.get(`/api/guest/sessions/${guestId}`)).status).toBe(
       200,
     );

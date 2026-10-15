@@ -10,7 +10,7 @@ export function PageTransition() {
     previous.current = pathname;
     // Session views already crossfade inside SessionPage.
     const session =
-      /^\/(?:preview|sessions)\/([^/]+)\/(?:discovery|conversation|canvas|report)$/;
+      /^\/(?:preview|sessions|app)\/([^/]+)\/(?:chat|discovery|conversation|canvas|report|analysis|sources)$/;
     const oldSession = from.match(session);
     const nextSession = pathname.match(session);
     if (
@@ -19,7 +19,13 @@ export function PageTransition() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     )
       return;
-    const page = document.querySelector(".app-shell > main");
+    const page =
+      document.querySelector(
+        ".application-body > .application-personal, .application-body > .project-start",
+      ) ??
+      (document.querySelector(".application-workspace")
+        ? null
+        : document.querySelector(".app-shell > main"));
     const animation = page?.animate([{ opacity: 0 }, { opacity: 1 }], {
       duration: 280,
       easing: "ease-out",

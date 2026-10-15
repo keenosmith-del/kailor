@@ -127,6 +127,15 @@ export async function createPlan(
         select: planSelect,
       });
     }
+    const principal = await tx.adminUser.findUniqueOrThrow({
+      where: { id: adminId },
+    });
+    if (principal.isGuest && (await tx.plan.count({ where: { adminId } })))
+      throw new AppError(
+        409,
+        "guest_project_limit",
+        "Your temporary project is already open. Sign in to create more projects.",
+      );
     const p = await tx.plan.create({ data: { adminId, ...input } });
     const session = await tx.discoverySession.create({
       data: {
@@ -258,8 +267,10 @@ export async function newDiscovery(
   adminId: string,
   revision: number,
   creationKey: string,
+  carryContext = false,
 ) {
   return db.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "AdminUser" WHERE id = ${adminId} FOR UPDATE`;
     await tx.$queryRaw`SELECT id FROM "Plan" WHERE id = ${id} FOR UPDATE`;
     const p = await ownedPlan(id, adminId, tx);
     active(p);
@@ -287,6 +298,50 @@ export async function newDiscovery(
         subject: { create: { name: p.title } },
       },
     });
+    if (carryContext && p.lastSessionId) {
+      // Serialize the snapshot with Chat/Discovery mutations in the source session.
+      await tx.$queryRaw`SELECT id FROM "DiscoverySession" WHERE id = ${p.lastSessionId} AND "adminId" = ${adminId} FOR UPDATE`;
+      // Copy only authoritative answers and confirmed evidence inside this owned project.
+      const previous = await tx.discoverySession.findFirstOrThrow({
+        where: { id: p.lastSessionId, planId: id, adminId },
+        include: {
+          answers: true,
+          evidence: { where: { active: true, status: "confirmed" } },
+        },
+      });
+      await tx.discoveryAnswer.createMany({
+        data: previous.answers.map((a) => ({
+          sessionId: session.id,
+          questionId: a.questionId,
+          value: json(a.value),
+          skipped: a.skipped,
+          responseState: a.responseState,
+          ...(a.quality ? { quality: json(a.quality) } : {}),
+        })),
+      });
+      await tx.evidence.createMany({
+        data: previous.evidence.map((e) => ({
+          sessionId: session.id,
+          key: e.key,
+          value: json(e.value),
+          status: e.status,
+          source: e.source,
+          active: true,
+          provenance: json({
+            ...((e.provenance as object) ?? {}),
+            inheritedFromSessionId: previous.id,
+            inheritedFromEvidenceId: e.id,
+          }),
+        })),
+      });
+      await tx.discoverySession.update({
+        where: { id: session.id },
+        data: {
+          synthetic: previous.synthetic,
+          knowledgeRevision: previous.knowledgeRevision,
+        },
+      });
+    }
     await tx.plan.update({
       where: { id },
       data: { lastSessionId: session.id, revision: { increment: 1 } },
@@ -459,6 +514,15 @@ export async function decideProposal(
       );
     let created = null;
     if (decision === "create") {
+      const principal = await tx.adminUser.findUniqueOrThrow({
+        where: { id: adminId },
+      });
+      if (principal.isGuest)
+        throw new AppError(
+          409,
+          "guest_project_limit",
+          "Sign in to create another project. Your temporary project stays saved separately.",
+        );
       const p = await tx.plan.create({
         data: {
           adminId,

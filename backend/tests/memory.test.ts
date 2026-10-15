@@ -8,7 +8,7 @@ import {
   readDraft,
   saveDraft,
   clearDrafts,
-} from "../../frontend/src/drafts.js";
+} from "../../frontend/src/utils/drafts.js";
 it.each([
   ["I'm also starting a t-shirt printing business.", "new_plan"],
   [

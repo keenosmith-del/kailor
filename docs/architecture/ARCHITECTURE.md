@@ -71,3 +71,7 @@ Versioned session summaries and query-scoped older retrieval complement confirme
 ## Iteration 008 accounts and conversational epochs
 
 Private API access uses requireAccount; founder routes additionally requireAdmin. New AdminUser rows default to member despite the legacy model name. AccountInvite stores only a token hash, bound email, expiry and consumption timestamp. Registration consumes an invitation and creates a member in one transaction. Clear conversation retains messages while marking them hidden/excluded and superseding summaries; confirmed facts and report snapshots retain their knowledge revision. See [ADR 014](../decisions/014-accounts-and-opaque-conversation.md).
+
+## Project workspace (iteration 011)
+
+Projects are the user-facing name for existing owned Plans. ApplicationWorkspace and ApplicationSidebar provide one stable shell for account and guest routes. Chat/Discovery/Canvas/Analysis/Sources share a selected DiscoverySession; Settings and Account reuse existing preferences and identity. Explicit new conversations can inherit confirmed knowledge with provenance, while transcripts and reports retain their own session history. Bounded same-owner/project historical retrieval does not merge projects. Guest entry resumes one temporary project. The former dashboard is admin-only at `/founder`; `/workspace` enters Chat. No storage migration is introduced. See the [audit, relationships, routes and verification](../iterations/011-project-workspace.md).

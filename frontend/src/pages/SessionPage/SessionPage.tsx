@@ -1,5 +1,5 @@
 import "./SessionPage.css";
-import { PlanNavigation } from "../../components/PlanNavigation/PlanNavigation";
+import { ConversationHistory } from "../Application/ConversationHistory";
 import {
   AnimatePresence,
   motion,
@@ -14,9 +14,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { Link, NavLink, useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import type { Session } from "../../../../shared/src/index";
 import { Analysis } from "../Analysis/Analysis";
+import { ProjectReports } from "../Application/ProjectReports";
 import { api, sessionHref } from "../../services/api";
 import { Canvas } from "../Canvas/Canvas";
 import { Conversation } from "../Conversation/Conversation";
@@ -53,16 +54,36 @@ function SessionTransition({ children }: { children: ReactNode }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: reduced ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: reduced ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>
   );
 }
 
-export function SessionPage() {
-  const reduced = useReducedMotion();
-  const { id = "", view = "discovery" } = useParams();
+export function SessionPage({
+  sessionId: id,
+  activeView,
+  onSession,
+  initialMessage,
+  onInitialMessageConsumed,
+  onNewConversation,
+  onProjectChange,
+}: {
+  sessionId: string;
+  activeView: string;
+  onSession: (session: Session) => void;
+  initialMessage: string;
+  onInitialMessageConsumed: () => void;
+  onNewConversation: () => Promise<void>;
+  onProjectChange: () => void;
+}) {
+  const view =
+    activeView === "chat"
+      ? "conversation"
+      : activeView === "analysis"
+        ? "report"
+        : activeView;
   const navigate = useNavigate();
   const loadedSessionId = useRef("");
   const restartPending = useRef(false);
@@ -71,6 +92,7 @@ export function SessionPage() {
   const currentRoute = useRef(id);
   currentRoute.current = id;
   const [restarting, setRestarting] = useState(false);
+  const [reportVersion, setReportVersion] = useState(0);
   const [session, setSession] = useState<Session | null>(null),
     [next, setNext] = useState<Next | null>(null),
     [error, setError] = useState(""),
@@ -96,6 +118,7 @@ export function SessionPage() {
       return;
     loadedSessionId.current = id;
     setSession(data.session);
+    onSession(data.session);
     setNext(data.next);
     setReady(data.ready);
   }, [id]);
@@ -130,6 +153,7 @@ export function SessionPage() {
     );
     setProcessing("");
     if (!success) throw new Error("Assessment could not be prepared");
+    setReportVersion((version) => version + 1);
   }
   async function restart() {
     if (busy || restartPending.current) return;
@@ -162,6 +186,8 @@ export function SessionPage() {
       // Keep the old page present until the new session is ready for a crossfade.
       loadedSessionId.current = created.id;
       setSession(data.session);
+      onSession(data.session);
+      onProjectChange();
       setNext(data.next);
       setReady(data.ready);
       navigate(
@@ -179,67 +205,41 @@ export function SessionPage() {
     }
   }
   return (
-    <main className={`session-shell view-${view}`}>
-      <nav className="session-navigation" aria-label="Discovery views">
-        <Link className="home-link" to="/">
-          kailor
-        </Link>
-        <div>
-          {["discovery", "conversation", "canvas", "report"].map((v) => (
-            <NavLink
-              key={v}
-              className="session-nav-link"
-              to={sessionHref(id, v)}
-            >
-              {v === "report"
-                ? "Analysis"
-                : v === "canvas"
-                  ? "Solution canvas"
-                  : v[0].toUpperCase() + v.slice(1)}
-            </NavLink>
-          ))}
-        </div>
-        <motion.button
-          className="surface-button compact-button answer-control"
-          whileHover={busy || reduced ? undefined : { y: -2, scale: 1.015 }}
-          whileTap={busy || reduced ? undefined : { scale: 0.94 }}
-          transition={{ duration: reduced ? 0 : 0.2 }}
-          aria-label={
-            restarting
-              ? "Starting a new discovery"
-              : view === "conversation"
-                ? "New conversation in this plan"
-                : "New discovery in this plan"
-          }
-          disabled={busy || !!session?.plan?.archivedAt}
-          onClick={() => void restart()}
-        >
-          <motion.span
-            aria-hidden="true"
-            animate={{ rotate: restarting && !reduced ? -360 : 0 }}
-            transition={{ duration: reduced ? 0 : 0.5 }}
-          >
-            <RotateCcw size={12} strokeWidth={1.5} />
-          </motion.span>
-          {view === "conversation" ? "New conversation" : "New discovery"}
-        </motion.button>
-      </nav>
-      {session?.id === id && (
-        <PlanNavigation
-          sessionId={id}
-          planId={session.planId}
-          title={session.plan?.title ?? session.subject.name}
+    <section className={`session-shell view-${view}`} aria-label={activeView}>
+      {session?.id === id && view === "conversation" && (
+        <ConversationHistory
+          session={session}
           busy={busy}
-          onChange={() => void reload()}
+          onNew={async () => {
+            setError("");
+            setBusy(true);
+            try {
+              await onNewConversation();
+            } catch (e) {
+              setError(errorMessage(e));
+            } finally {
+              setBusy(false);
+            }
+          }}
         />
       )}
+      {session?.id === id && view === "discovery" && !guest && (
+        <div className="discovery-session-actions">
+          <button
+            className="text-link"
+            disabled={busy}
+            onClick={() => void restart()}
+          >
+            <RotateCcw size={14} />
+            {restarting ? "Opening…" : "New discovery"}
+          </button>
+        </div>
+      )}
       {session?.plan?.archivedAt && (
-        <p className="preview-note">
-          This plan is archived. Its history is available; restore it under
-          Change plan to continue.
+        <p className="notice">
+          This project is archived. Its saved history is available.
         </p>
       )}
-      {guest && <p className="preview-note">Guest discovery</p>}
       <ErrorBox error={error} />
       {processing && (
         <p className="processing" role="status">
@@ -271,6 +271,8 @@ export function SessionPage() {
                   next={next}
                   busy={busy}
                   act={act}
+                  initialMessage={initialMessage}
+                  onInitialMessageConsumed={onInitialMessageConsumed}
                 />
               ) : view === "canvas" ? (
                 <Canvas
@@ -279,13 +281,21 @@ export function SessionPage() {
                   assess={assess}
                   busy={busy}
                 />
+              ) : view === "sources" ? (
+                <ProjectReports session={session} sources />
               ) : view === "report" ? (
-                <Analysis
-                  session={session}
-                  next={next}
-                  assess={assess}
-                  busy={busy}
-                />
+                <div className="analysis-page">
+                  <Analysis
+                    session={session}
+                    next={next}
+                    assess={assess}
+                    busy={busy}
+                  />
+                  <ProjectReports
+                    session={session}
+                    refreshVersion={reportVersion}
+                  />
+                </div>
               ) : (
                 <p>Choose a discovery view.</p>
               )}
@@ -299,6 +309,6 @@ export function SessionPage() {
             : "Gathering your context…"}
         </div>
       )}
-    </main>
+    </section>
   );
 }

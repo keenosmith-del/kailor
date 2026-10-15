@@ -1,5 +1,10 @@
-export const sessionHref = (id: string, view: string) =>
-  `${window.location.pathname.startsWith("/preview/") ? "/preview" : "/sessions"}/${id}/${view}`;
+export const sessionHref = (id: string, view: string) => {
+  const destination =
+    ({ conversation: "chat", report: "analysis" } as Record<string, string>)[
+      view
+    ] ?? view;
+  return `${window.location.pathname.startsWith("/preview/") ? "/preview" : "/app"}/${id}/${destination}`;
+};
 const endpoint = (path: string) =>
   `/api${window.location.pathname.startsWith("/preview/") && ["/sessions", "/plans", "/preferences"].some((prefix) => path.startsWith(prefix)) ? "/guest" : ""}${path}`;
 export class ApiError extends Error {
@@ -29,7 +34,7 @@ export async function api<T>(
   if (!response.ok) {
     if (
       response.status === 401 &&
-      /^\/(workspace|plans|sessions)(?:\/|$)/.test(window.location.pathname)
+      /^\/(app|workspace|plans|sessions)(?:\/|$)/.test(window.location.pathname)
     ) {
       window.location.replace(
         `/sign-in?returnTo=${encodeURIComponent(window.location.pathname)}`,
@@ -47,8 +52,11 @@ export async function api<T>(
   }
   return response.status === 204 ? (undefined as T) : response.json();
 }
-export async function downloadReport(id: string) {
-  const response = await fetch(endpoint(`/sessions/${id}/report.pdf`), {
+export async function downloadReport(id: string, reportId?: string) {
+  const path = reportId
+    ? `/plans/${id}/reports/${reportId}/pdf`
+    : `/sessions/${id}/report.pdf`;
+  const response = await fetch(endpoint(path), {
     credentials: "same-origin",
   });
   if (!response.ok)
