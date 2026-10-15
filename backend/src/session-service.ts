@@ -396,7 +396,9 @@ export async function converse(
     JSON.stringify({
       message: input.message,
       context: answersOf(s),
-      history: s.messages.map((m) => m.content),
+      history: s.messages
+        .filter((m) => !m.excludedFromContext)
+        .map((m) => m.content),
     }),
   );
   const reservation =
@@ -1153,4 +1155,48 @@ export async function simulate(
       readiness: evaluateReadiness(answersOf(s), evidenceOf(s), statesOf(s)),
     };
   }
+}
+
+// Clear the conversational epoch, retaining immutable records and confirmed knowledge.
+export async function clearConversation(
+  id: string,
+  adminId: string,
+  revision: number,
+) {
+  await db.$transaction(async (tx) => {
+    await lock(tx, id, adminId, revision);
+    await tx.conversationMessage.updateMany({
+      where: { sessionId: id },
+      data: { excludedFromContext: true, hiddenFromTranscript: true },
+    });
+    await tx.conversationSummary.updateMany({
+      where: { sessionId: id },
+      data: { superseded: true },
+    });
+    await tx.evidence.updateMany({
+      where: { sessionId: id, status: "inferred", active: true },
+      data: { active: false },
+    });
+    await tx.planActionProposal.updateMany({
+      where: { sessionId: id, status: "pending" },
+      data: { status: "cancelled", decidedAt: new Date() },
+    });
+    await tx.discoverySession.update({
+      where: { id },
+      data: { revision: { increment: 1 } },
+    });
+    await persistPlan(tx, id);
+    await tx.auditEvent.create({
+      data: {
+        actorId: adminId,
+        action: "conversation.cleared",
+        entityId: id,
+        details: json({
+          history: "retained-excluded",
+          confirmedFacts: "preserved",
+        }),
+      },
+    });
+  });
+  return getSession(id, adminId);
 }

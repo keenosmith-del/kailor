@@ -90,6 +90,24 @@ it("migrates representative legacy sessions separately without changing messages
         "utf8",
       ),
     );
+    await client.query(
+      await readFile(
+        `${root}/202610150002_accounts_and_invites/migration.sql`,
+        "utf8",
+      ),
+    );
+    expect(
+      (await client.query('SELECT role FROM "AdminUser"')).rows.every(
+        (r) => r.role === "member",
+      ),
+    ).toBe(true);
+    expect(
+      (
+        await client.query(
+          'SELECT "hiddenFromTranscript" FROM "ConversationMessage"',
+        )
+      ).rows[0].hiddenFromTranscript,
+    ).toBe(false);
     const plans = (await client.query('SELECT * FROM "Plan" ORDER BY id')).rows;
     expect(plans).toHaveLength(3);
     expect(new Set(plans.map((p) => p.id)).size).toBe(3);

@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import type { Report, Session } from "../../shared/src/index";
 import { Link } from "react-router";
 import type { Next } from "./types";
-import { api, downloadReport, sessionHref } from "./api";
+import { api, ApiError, downloadReport, sessionHref } from "./api";
 import { ErrorBox, errorMessage } from "./ui";
 export function Analysis({
   session,
@@ -38,7 +38,10 @@ export function Analysis({
       `/sessions/${session.id}/report`,
     )
       .then(setReport)
-      .catch((e) => setError(errorMessage(e)));
+      .catch((e) => {
+        if (!(e instanceof ApiError && e.code === "report_missing"))
+          setError(errorMessage(e));
+      });
   }, [session.id, session.revision]);
   function move(delta: number) {
     setIndex((i) => Math.max(0, Math.min(6, i + delta)));

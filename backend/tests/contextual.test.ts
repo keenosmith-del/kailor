@@ -287,8 +287,14 @@ describe("untrusted model boundary", () => {
         "conversation",
         { plan: planDiscovery(field) },
       );
-      expect(result.provider).toBe("mock-development");
-      expect(result.fallbackReason).toBeTruthy();
+      if (output.proposals.length) {
+        expect(result.provider).toBe("cloudflare");
+        expect(result.output.proposals).toEqual([]);
+        expect(result.output.reply).toBe(output.reply);
+      } else {
+        expect(result.provider).toBe("mock-development");
+        expect(result.fallbackReason).toBeTruthy();
+      }
     },
   );
   it("allows rewording only the current contextual gap when explicitly requested", async () => {

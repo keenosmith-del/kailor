@@ -7,13 +7,14 @@ import { clearDrafts } from "./drafts";
 import type { Report } from "../../shared/src/index";
 import { api } from "./api";
 import { ErrorBox, errorMessage } from "./ui";
-export function Workspace() {
+export function Workspace({ founder = false }: { founder?: boolean }) {
   const [personas, setPersonas] = useState<{ id: string; name: string }[]>([]),
     [cases, setCases] = useState<CaseItem[]>([]),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
   const navigate = useNavigate();
   const load = useCallback(async () => {
+    if (!founder) return;
     try {
       const [p, c] = await Promise.all([
         api<typeof personas>("/personas"),
@@ -24,7 +25,7 @@ export function Workspace() {
     } catch (e) {
       setError(errorMessage(e));
     }
-  }, []);
+  }, [founder]);
   useEffect(() => {
     void load();
   }, [load]);
@@ -54,7 +55,7 @@ export function Workspace() {
     }
   }
   return (
-    <main className="workspace">
+    <main className={`workspace ${founder ? "" : "personal-workspace"}`}>
       <nav className="session-navigation" aria-label="Private workspace">
         <Link className="home-link" to="/">
           kailor
@@ -70,57 +71,58 @@ export function Workspace() {
           Sign out
         </button>
       </nav>
-      <p className="eyebrow">your workspace</p>
-      <h1>
-        Make room for
-        <br />
-        what comes next.
-      </h1>
+
+      <h1>Your workspace</h1>
       <ErrorBox error={error} />
+      {founder && <InviteForm />}
       <div className="workspace-grid">
         <PlanManager />
-        <aside className="quiet-card">
-          <p className="eyebrow">learning thoughtfully</p>
-          <h2>Try a different perspective.</h2>
-          <p>
-            Synthetic personas exercise the same discovery and assessment
-            services. They do not represent real clients or results.
-          </p>
-          {personas.map((p) => (
-            <button
-              className="persona"
-              disabled={busy}
-              key={p.id}
-              onClick={() => void simulate(p.id)}
-            >
-              {p.name}
-              <ArrowRight size={16} />
-            </button>
-          ))}
-        </aside>
-      </div>
-      <section className="review-section">
-        <h2>Reference knowledge review</h2>
-        <p className="muted">
-          Sanitize the reusable pattern before approval. Source classification
-          is preserved.
-        </p>
-        {cases
-          .filter((c) => c.sourceType !== "seed")
-          .map((c) => (
-            <CaseReview
-              key={`${c.id}:${c.reviewVersion ?? 0}`}
-              item={c}
-              related={cases}
-              onSaved={load}
-            />
-          ))}
-        {!cases.some((c) => c.sourceType !== "seed") && (
-          <p className="muted">
-            Run a synthetic persona to create a pending reference.
-          </p>
+        {founder && (
+          <aside className="quiet-card">
+            <p className="eyebrow">learning thoughtfully</p>
+            <h2>Try a different perspective.</h2>
+            <p>
+              Synthetic personas exercise the same discovery and assessment
+              services. They do not represent real clients or results.
+            </p>
+            {personas.map((p) => (
+              <button
+                className="persona"
+                disabled={busy}
+                key={p.id}
+                onClick={() => void simulate(p.id)}
+              >
+                {p.name}
+                <ArrowRight size={16} />
+              </button>
+            ))}
+          </aside>
         )}
-      </section>
+      </div>
+      {founder && (
+        <section className="review-section">
+          <h2>Reference knowledge review</h2>
+          <p className="muted">
+            Sanitize the reusable pattern before approval. Source classification
+            is preserved.
+          </p>
+          {cases
+            .filter((c) => c.sourceType !== "seed")
+            .map((c) => (
+              <CaseReview
+                key={`${c.id}:${c.reviewVersion ?? 0}`}
+                item={c}
+                related={cases}
+                onSaved={load}
+              />
+            ))}
+          {!cases.some((c) => c.sourceType !== "seed") && (
+            <p className="muted">
+              Run a synthetic persona to create a pending reference.
+            </p>
+          )}
+        </section>
+      )}
     </main>
   );
 }
@@ -581,6 +583,57 @@ function CaseReview({
           Reject
         </button>
       </div>
+    </details>
+  );
+}
+
+function InviteForm() {
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  return (
+    <details className="account-invites">
+      <summary>Invite someone</summary>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (busy) return;
+          setBusy(true);
+          setError("");
+          setCode("");
+          void api<{ invite: string }>("/auth/invites", "POST", {
+            email: email.trim().toLowerCase(),
+          })
+            .then((r) => setCode(r.invite))
+            .catch((e) => setError(errorMessage(e)))
+            .finally(() => setBusy(false));
+        }}
+      >
+        <label>
+          Email
+          <input
+            type="email"
+            autoComplete="off"
+            value={email}
+            required
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setCode("");
+            }}
+          />
+        </label>
+        <button className="button" disabled={busy}>
+          {busy ? "Creating…" : "Create invitation"}
+        </button>
+      </form>
+      <ErrorBox error={error} />
+      {code && (
+        <p role="status">
+          Share this invitation privately with {email}. It expires in seven days
+          and can be used once: <code>{code}</code>
+        </p>
+      )}
     </details>
   );
 }

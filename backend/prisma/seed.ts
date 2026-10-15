@@ -12,7 +12,11 @@ try {
   const passwordHash = await hashPassword(config.ADMIN_PASSWORD);
   await db.adminUser.upsert({
     where: { email: config.ADMIN_EMAIL },
-    create: { email: config.ADMIN_EMAIL, passwordHash },
+    create: {
+      email: config.ADMIN_EMAIL.toLowerCase(),
+      passwordHash,
+      role: "admin",
+    },
     update: { passwordHash },
   });
   for (const service of services)

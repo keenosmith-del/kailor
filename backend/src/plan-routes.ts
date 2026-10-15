@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
+import { clearConversation } from "./session-service.js";
 import * as plans from "./plan-service.js";
 import { db } from "./db.js";
 import { AppError } from "./errors.js";
@@ -182,3 +183,14 @@ planRouter.post(
     );
   },
 );
+
+planRouter.post("/sessions/:id/conversation/clear", async (req, res) => {
+  const input = mutationSchema.strict().parse(req.body);
+  res.json(
+    await clearConversation(
+      id.parse(req.params.id),
+      owner(res),
+      input.revision,
+    ),
+  );
+});

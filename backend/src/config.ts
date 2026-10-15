@@ -16,13 +16,16 @@ const envSchema = z.object({
   HOST: z.string().default("127.0.0.1"),
   APP_ORIGIN: z.string().url().default("http://127.0.0.1:5173"),
   NODE_ENV: z.string().default("development"),
+  REGISTRATION_POLICY: z.enum(["invite", "closed", "public"]).default("invite"),
   ADMIN_EMAIL: z.email().default("founder@kailor.local"),
   ADMIN_PASSWORD: z.string().default(""),
   AI_PROVIDER: z.enum(["mock", "cloudflare"]).default("mock"),
   AI_ALLOW_REMOTE: z.enum(["true", "false"]).default("false"),
   CLOUDFLARE_ACCOUNT_ID: z.string().default(""),
   CLOUDFLARE_API_TOKEN: z.string().default(""),
-  CLOUDFLARE_MODEL: z.string().default("@cf/meta/llama-3.1-8b-instruct-fp8"),
+  CLOUDFLARE_MODEL: z
+    .string()
+    .default("@cf/meta/llama-3.3-70b-instruct-fp8-fast"),
   AI_MAX_CALLS_PER_SESSION: z.coerce.number().int().min(0).max(100).default(5),
   AI_MAX_CALLS_PER_DAY: z.coerce.number().int().min(0).max(1000).default(20),
   AI_MAX_OUTPUT_TOKENS: z.coerce.number().int().min(128).max(2048).default(600),

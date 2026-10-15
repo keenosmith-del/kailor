@@ -35,7 +35,11 @@ const email = `contextual-${Date.now()}@kailor.local`,
 beforeAll(async () => {
   owner = (
     await db.adminUser.create({
-      data: { email, passwordHash: await hashPassword(password) },
+      data: {
+        role: "admin",
+        email,
+        passwordHash: await hashPassword(password),
+      },
     })
   ).id;
   for (const s of services)

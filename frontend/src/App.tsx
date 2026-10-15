@@ -1,35 +1,49 @@
 import { PlanManager, PlanLanding } from "./Plans";
-import { ArrowRight } from "lucide-react";
-import { useEffect, useState, type FormEvent } from "react";
-import { Navigate, Route, Routes } from "react-router";
+import { useEffect, useState, type ReactNode } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router";
 import { api } from "./api";
+import { Auth, type Account } from "./Auth";
 import { Intro } from "./Intro";
 import { SessionPage } from "./SessionPage";
-import { ErrorBox, errorMessage } from "./ui";
 import { Workspace } from "./Workspace";
+function Protected({
+  account,
+  children,
+}: {
+  account: Account | null | undefined;
+  children: ReactNode;
+}) {
+  const location = useLocation();
+  if (account === undefined)
+    return <p className="loading">Opening your workspace…</p>;
+  return account ? (
+    children
+  ) : (
+    <Navigate
+      to={`/sign-in?returnTo=${encodeURIComponent(location.pathname)}`}
+      replace
+    />
+  );
+}
 export function App() {
-  const [auth, setAuth] = useState<boolean | null>(null);
+  const [account, setAccount] = useState<Account | null>();
   useEffect(() => {
-    api("/auth/me")
-      .then(() => setAuth(true))
-      .catch(() => setAuth(false));
+    void api<Account>("/auth/me")
+      .then(setAccount)
+      .catch(() => setAccount(null));
   }, []);
+  const protect = (children: ReactNode) => (
+    <Protected account={account}>{children}</Protected>
+  );
   return (
     <Routes>
       <Route path="/" element={<Intro />} />
-      <Route path="/preview/plans/:planId" element={<PlanLanding />} />
+      <Route path="/sign-in" element={<Auth onLogin={setAccount} />} />
       <Route
-        path="/plans/:planId"
-        element={
-          auth === null ? (
-            <p>Opening plan…</p>
-          ) : auth ? (
-            <PlanLanding />
-          ) : (
-            <Login onLogin={() => setAuth(true)} />
-          )
-        }
+        path="/create-account"
+        element={<Auth signup onLogin={setAccount} />}
       />
+      <Route path="/preview/plans/:planId" element={<PlanLanding />} />
       <Route
         path="/preview/plans"
         element={
@@ -38,103 +52,22 @@ export function App() {
           </main>
         }
       />
+      <Route path="/preview/:id/:view" element={<SessionPage />} />
+      <Route path="/plans/:planId" element={protect(<PlanLanding />)} />
       <Route
         path="/plans"
-        element={
-          auth === null ? (
-            <div className="loading">Opening plans…</div>
-          ) : auth ? (
-            <main className="session-shell">
-              <PlanManager />
-            </main>
-          ) : (
-            <Login onLogin={() => setAuth(true)} />
-          )
-        }
+        element={protect(
+          <main className="session-shell">
+            <PlanManager />
+          </main>,
+        )}
       />
-      <Route path="/preview/:id/:view" element={<SessionPage />} />
       <Route
         path="/workspace"
-        element={
-          auth === null ? (
-            <div className="loading">Opening workspace…</div>
-          ) : auth ? (
-            <Workspace />
-          ) : (
-            <Login onLogin={() => setAuth(true)} />
-          )
-        }
+        element={protect(<Workspace founder={account?.role === "admin"} />)}
       />
-      <Route
-        path="/sessions/:id/:view"
-        element={
-          auth === null ? (
-            <div className="loading">Opening discovery…</div>
-          ) : auth ? (
-            <SessionPage />
-          ) : (
-            <Login onLogin={() => setAuth(true)} />
-          )
-        }
-      />
+      <Route path="/sessions/:id/:view" element={protect(<SessionPage />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
-  );
-}
-
-function Login({ onLogin }: { onLogin: () => void }) {
-  const [email, setEmail] = useState("founder@kailor.local"),
-    [password, setPassword] = useState(""),
-    [error, setError] = useState(""),
-    [busy, setBusy] = useState(false);
-  async function submit(e: FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setError("");
-    try {
-      await api("/auth/login", "POST", { email, password });
-      onLogin();
-    } catch (e) {
-      setError(errorMessage(e));
-    } finally {
-      setBusy(false);
-    }
-  }
-  return (
-    <main className="narrow login">
-      <p className="eyebrow">private access</p>
-      <h1>
-        A thoughtful
-        <br />
-        place to begin.
-      </h1>
-      <p className="lead">Sign in to the kailor consultant workspace.</p>
-      <form onSubmit={submit}>
-        <label>
-          Email
-          <input
-            type="email"
-            autoComplete="username"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>
-        <label>
-          Password
-          <input
-            type="password"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-        <ErrorBox error={error} />
-        <button className="button primary" disabled={busy}>
-          {busy ? "Signing in…" : "Sign in"} <ArrowRight size={18} />
-        </button>
-      </form>
-    </main>
   );
 }

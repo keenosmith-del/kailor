@@ -71,8 +71,15 @@ export function Intro() {
     setBusy(true);
     setError("");
     try {
-      const session = await api<Session>("/guest/sessions", "POST", {});
-      navigate(`/preview/${session.id}/discovery`);
+      const account = await api<{ email: string }>("/auth/me").catch(
+        () => null,
+      );
+      if (account) {
+        const session = await api<Session>("/sessions", "POST", {
+          name: "New plan",
+        });
+        navigate(`/sessions/${session.id}/discovery`);
+      } else navigate("/sign-in?returnTo=%2Fworkspace");
     } catch (e) {
       setError(errorMessage(e));
     } finally {
@@ -82,11 +89,9 @@ export function Intro() {
   return (
     <main className="intro-experience">
       <nav className="intro-account-controls" aria-label="Account controls">
-        <button aria-disabled="true" title="Public sign-in coming soon">
-          Sign in <span>coming soon</span>
-        </button>
-        <button aria-disabled="true" title="Public accounts coming soon">
-          Create account <span>coming soon</span>
+        <button onClick={() => navigate("/sign-in")}>Sign in</button>
+        <button onClick={() => navigate("/create-account")}>
+          Create account
         </button>
       </nav>
       <div
@@ -123,7 +128,7 @@ export function Intro() {
           {activeScene === 0 && (
             <Scene key={0} index={0}>
               <div className="intro-copy">
-                <h1 className="intro-primary-brand">k ᐧ ai ᐧ lor</h1>
+                <h1 className="intro-primary-brand">kailor</h1>
                 <p>
                   Whether you're starting something new, improving your online
                   presence, or reclaiming time from repetitive work, kailor
@@ -162,7 +167,7 @@ export function Intro() {
                   applications, integrations, and other possible solutions.
                 </p>
                 <button
-                  className="glass-button start-button"
+                  className="surface-button start-button"
                   disabled={busy}
                   onClick={() => void enter()}
                 >
@@ -177,7 +182,7 @@ export function Intro() {
         <div className="entry-error">
           <ErrorBox error={error} />
           <button
-            className="glass-button"
+            className="surface-button"
             disabled={busy}
             onClick={() => void enter()}
           >

@@ -27,6 +27,14 @@ export async function api<T>(
     body: body ? JSON.stringify(body) : undefined,
   });
   if (!response.ok) {
+    if (
+      response.status === 401 &&
+      /^\/(workspace|plans|sessions)(?:\/|$)/.test(window.location.pathname)
+    ) {
+      window.location.replace(
+        `/sign-in?returnTo=${encodeURIComponent(window.location.pathname)}`,
+      );
+    }
     const payload = await response.json().catch(() => ({
       error: { message: "The service could not be reached." },
     }));

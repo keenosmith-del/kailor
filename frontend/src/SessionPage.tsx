@@ -48,9 +48,9 @@ function SessionTransition({ children }: { children: ReactNode }) {
       className="session-view"
       aria-hidden={!present}
       inert={!present}
-      initial={{ opacity: 0, y: reduced ? 0 : 12, scale: reduced ? 1 : 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: reduced ? 0 : -6, scale: reduced ? 1 : 1.01 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       transition={{ duration: reduced ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
@@ -162,7 +162,12 @@ export function SessionPage() {
       setSession(data.session);
       setNext(data.next);
       setReady(data.ready);
-      navigate(sessionHref(created.id, "discovery"));
+      navigate(
+        sessionHref(
+          created.id,
+          view === "conversation" ? "conversation" : "discovery",
+        ),
+      );
     } catch (e) {
       setError(errorMessage(e));
     } finally {
@@ -193,14 +198,16 @@ export function SessionPage() {
           ))}
         </div>
         <motion.button
-          className="glass-button compact-button answer-control"
+          className="surface-button compact-button answer-control"
           whileHover={busy || reduced ? undefined : { y: -2, scale: 1.015 }}
           whileTap={busy || reduced ? undefined : { scale: 0.94 }}
           transition={{ duration: reduced ? 0 : 0.2 }}
           aria-label={
             restarting
               ? "Starting a new discovery"
-              : "New discovery in this plan"
+              : view === "conversation"
+                ? "New conversation in this plan"
+                : "New discovery in this plan"
           }
           disabled={busy || !!session?.plan?.archivedAt}
           onClick={() => void restart()}
@@ -212,7 +219,7 @@ export function SessionPage() {
           >
             <RotateCcw size={12} strokeWidth={1.5} />
           </motion.span>
-          New discovery
+          {view === "conversation" ? "New conversation" : "New discovery"}
         </motion.button>
       </nav>
       {session?.id === id && (

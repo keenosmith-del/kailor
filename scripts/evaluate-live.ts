@@ -15,7 +15,11 @@ const configuration = {
   credentialsPresent:
     !!config.CLOUDFLARE_ACCOUNT_ID && !!config.CLOUDFLARE_API_TOKEN,
 };
-const directory = ".cache/qa/iteration007";
+const natural = process.argv.includes("--natural");
+const artifactName = natural
+  ? "live-inference-natural.json"
+  : "live-inference.json";
+const directory = ".cache/qa/iteration008";
 await mkdir(directory, { recursive: true });
 if (!remoteEnabled(config)) {
   const result = {
@@ -26,7 +30,7 @@ if (!remoteEnabled(config)) {
   };
   console.log(JSON.stringify(result));
   await writeFile(
-    `${directory}/live-inference.json`,
+    `${directory}/${artifactName}`,
     JSON.stringify(result, null, 2),
   );
 } else if (!new URL(config.DATABASE_URL).pathname.endsWith("_test")) {
@@ -100,11 +104,17 @@ if (!remoteEnabled(config)) {
           true,
         )
       ).session;
-    for (const message of [
-      "What would the second option we discussed earlier involve for offline inspections?",
-      "Would the first option be cheaper, and what remains unknown?",
-      "I no longer want a mobile app. I want a website for the first version.",
-    ]) {
+    for (const message of natural
+      ? [
+          "Staff currently send inspection results through WhatsApp.",
+          "Not exactly. They contact the office on WhatsApp, but I record inspection results in a paper diary.",
+          "How would offline synchronization handle two people editing the same inspection?",
+        ]
+      : [
+          "What would the second option we discussed earlier involve for offline inspections?",
+          "Would the first option be cheaper, and what remains unknown?",
+          "I no longer want a mobile app. I want a website for the first version.",
+        ]) {
       const baseline = await new MockProvider().infer(
         Object.fromEntries(
           s.answers.map((a) => [a.questionId, a.value]),
@@ -165,14 +175,14 @@ if (!remoteEnabled(config)) {
         "Executed output record; human quality review still required. No commercial outcomes asserted.",
     };
     await writeFile(
-      `${directory}/live-inference.json`,
+      `${directory}/${artifactName}`,
       JSON.stringify(result, null, 2),
     );
     console.log(
       JSON.stringify({
         executed: true,
         calls: usages.length,
-        artifact: `${directory}/live-inference.json`,
+        artifact: `${directory}/${artifactName}`,
       }),
     );
   } finally {

@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { useState, useEffect, useRef, type FormEvent } from "react";
-import { Mascot } from "./Mascot";
+import { mascotAssets } from "./mascot-assets";
 import { Link } from "react-router";
 import { conversationSuggestions } from "../../shared/src/conversation";
 import { api, sessionHref } from "./api";
 import type { SessionProps, Next } from "./types";
-import { readDraft, saveDraft } from "./drafts";
+import { clearDrafts, readDraft, saveDraft } from "./drafts";
 export function Conversation({
   session,
   busy,
@@ -46,17 +46,26 @@ export function Conversation({
             ? "An existing website"
             : "An existing booking provider"
           : value;
-  const [message, setMessage] = useState(""),
-    [mode, setMode] = useState("conversation");
+  const [message, setMessage] = useState("");
+  const [clearing, setClearing] = useState(false);
+  const visibleMessages = session.messages.filter(
+    (m) => !m.hiddenFromTranscript,
+  );
   const sending = useRef(false);
   const [notice, setNotice] = useState("");
   const input = useRef<HTMLTextAreaElement>(null);
   const history = useRef<HTMLDivElement>(null);
   const followBottom = useRef(true);
   const [editing, setEditing] = useState<Record<string, string>>({});
+  const providerNotice =
+    notice ||
+    (visibleMessages.filter((m) => m.role === "assistant").at(-1)?.provider ===
+    "mock-development"
+      ? "Local guidance for this reply."
+      : "");
   const suggestions = session.planProposals?.length
     ? []
-    : conversationSuggestions(next, session.messages);
+    : conversationSuggestions(next, visibleMessages);
   useEffect(() => {
     if (followBottom.current && history.current)
       history.current.scrollTop = history.current.scrollHeight;
@@ -72,6 +81,12 @@ export function Conversation({
       ),
     );
   }, [session.id]);
+  useEffect(() => {
+    if (input.current) {
+      input.current.style.height = "auto";
+      input.current.style.height = `${Math.min(input.current.scrollHeight, 144)}px`;
+    }
+  }, [message]);
   function draft(text: string) {
     setMessage(text);
     saveDraft(
@@ -93,7 +108,7 @@ export function Conversation({
         }>(`/sessions/${session.id}/chat`, "POST", {
           revision: session.revision,
           message,
-          mode,
+          mode: "conversation",
         });
         setNotice(
           response.provider === "mock-development" &&
@@ -111,25 +126,23 @@ export function Conversation({
   return (
     <div className="conversation-layout">
       <aside className="conversation-mascot">
-        <Mascot
-          state={
-            busy
-              ? "thinking"
-              : ready
-                ? "completed"
-                : next.readiness.canAssess
-                  ? "recommendation"
-                  : "conversation"
-          }
+        <img
+          src="/mascot/other/kailor-sitting.png"
+          alt="kailor sitting beside the conversation"
+          width="1024"
+          height="1024"
         />
       </aside>
       <div className="conversation">
         <div className="conversation-heading">
-          <h1>Let’s talk it through.</h1>
-          <p className="muted">
-            Explore an idea, explain a workflow, or work toward an assessment
-            here.
-          </p>
+          <h1>Conversation</h1>
+          <button
+            className="text-link"
+            disabled={busy}
+            onClick={() => setClearing(true)}
+          >
+            Clear conversation
+          </button>
         </div>
         <div
           className="chat-history"
@@ -145,7 +158,7 @@ export function Conversation({
                 80;
           }}
         >
-          {!session.messages.length && (
+          {!visibleMessages.length && (
             <div className="empty-chat">
               <MessageCircle size={26} />
               <p>What’s on your mind?</p>
@@ -165,16 +178,131 @@ export function Conversation({
               </div>
             </div>
           )}
-          {session.messages.map((m) => (
+          {visibleMessages.map((m, index) => (
             <article className={`message ${m.role}`} key={m.id}>
-              <small>
-                {m.role === "user"
-                  ? "You"
-                  : m.provider === "mock-development"
-                    ? "kailor · local guidance"
-                    : "kailor"}
-              </small>
+              {m.role !== "user" && (
+                <img
+                  className="message-avatar"
+                  src={mascotAssets.head}
+                  alt=""
+                  width="32"
+                  height="32"
+                />
+              )}
+              <small>{m.role === "user" ? "You" : "kailor"}</small>
               <p>{m.content}</p>
+              {m.role !== "user" && (
+                <div className="inline-confirmations">
+                  {" "}
+                  {session.evidence
+                    .filter(
+                      (e) =>
+                        e.active &&
+                        e.status === "inferred" &&
+                        (e.provenance?.sourceMessageId ===
+                          visibleMessages[index - 1]?.id ||
+                          (!e.provenance?.sourceMessageId &&
+                            index === visibleMessages.length - 1)),
+                    )
+                    .map((e) => (
+                      <div className="proposal" key={e.id}>
+                        <span className="confirmation-label">
+                          {e.provenance?.conflicts?.length
+                            ? "Update your understanding"
+                            : "Is this right?"}
+                        </span>
+                        {e.provenance?.conflicts?.map((c) => (
+                          <p className="muted" key={c.id}>
+                            {c.message} Earlier: {c.previous.quote}
+                          </p>
+                        ))}
+                        <p>
+                          <strong>
+                            {labels[e.key] ??
+                              next.active.find((q) => q.id === e.key)?.title ??
+                              e.key}
+                            :
+                          </strong>{" "}
+                          {editing[e.id] !== undefined ? (
+                            <input
+                              aria-label={`Edit ${labels[e.key] ?? e.key}`}
+                              value={editing[e.id]}
+                              onChange={(event) =>
+                                setEditing((previous) => ({
+                                  ...previous,
+                                  [e.id]: event.target.value,
+                                }))
+                              }
+                            />
+                          ) : (
+                            displayValue(e.key, e.value)
+                          )}
+                        </p>
+                        <div className="actions">
+                          <button
+                            className="button"
+                            disabled={busy}
+                            onClick={() =>
+                              void act(() =>
+                                api(
+                                  `/sessions/${session.id}/evidence/${e.id}`,
+                                  "POST",
+                                  {
+                                    revision: session.revision,
+                                    accept: true,
+                                    ...(editing[e.id] !== undefined
+                                      ? { value: editing[e.id] }
+                                      : {}),
+                                  },
+                                ),
+                              )
+                            }
+                          >
+                            {e.provenance?.conflicts?.length
+                              ? "Confirm correction"
+                              : "Confirm"}
+                          </button>
+                          <button
+                            className="text-link"
+                            disabled={busy}
+                            onClick={() =>
+                              void act(() =>
+                                api(
+                                  `/sessions/${session.id}/evidence/${e.id}`,
+                                  "POST",
+                                  {
+                                    revision: session.revision,
+                                    accept: false,
+                                  },
+                                ),
+                              )
+                            }
+                          >
+                            Dismiss
+                          </button>
+                          {typeof e.value === "string" &&
+                            !e.key.endsWith("Status") &&
+                            !e.key.endsWith("Preference") &&
+                            !["stage", "kind"].includes(e.key) && (
+                              <button
+                                type="button"
+                                className="text-link"
+                                disabled={busy}
+                                onClick={() =>
+                                  setEditing((previous) => ({
+                                    ...previous,
+                                    [e.id]: String(e.value),
+                                  }))
+                                }
+                              >
+                                Edit
+                              </button>
+                            )}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </article>
           ))}
           {busy && (
@@ -182,230 +310,142 @@ export function Conversation({
               Saving and processing your request…
             </p>
           )}
-        </div>
-        {session.planProposals?.map((proposal) => (
-          <section className="plan-proposal" key={proposal.id}>
-            <p>
-              Start a separate plan for <strong>{proposal.title}</strong>?
-            </p>
-            <p className="muted">{proposal.description}</p>
-            <div className="actions">
-              {(
-                [
-                  ["create", "Create separate plan"],
-                  ["continue_current", "Keep discussing current plan"],
-                  ["cancel", "Cancel"],
-                ] as const
-              ).map(([decision, label]) => (
-                <button
-                  key={decision}
-                  className="button"
-                  disabled={busy}
-                  onClick={() =>
-                    void act(async () => {
-                      const result = await api<{
-                        plan: { lastSessionId: string } | null;
-                      }>(
-                        `/sessions/${session.id}/plan-proposals/${proposal.id}`,
-                        "POST",
-                        { revision: session.revision, decision },
-                      );
-                      if (result.plan?.lastSessionId)
-                        navigate(
-                          sessionHref(
-                            result.plan.lastSessionId,
-                            "conversation",
-                          ),
+          {session.planProposals?.map((proposal) => (
+            <section className="plan-proposal" key={proposal.id}>
+              <p>
+                Start a separate plan for <strong>{proposal.title}</strong>?
+              </p>
+              <p className="muted">{proposal.description}</p>
+              <div className="actions">
+                {(
+                  [
+                    ["create", "Create separate plan"],
+                    ["continue_current", "Keep discussing current plan"],
+                    ["cancel", "Cancel"],
+                  ] as const
+                ).map(([decision, label]) => (
+                  <button
+                    key={decision}
+                    className="button"
+                    disabled={busy}
+                    onClick={() =>
+                      void act(async () => {
+                        const result = await api<{
+                          plan: { lastSessionId: string } | null;
+                        }>(
+                          `/sessions/${session.id}/plan-proposals/${proposal.id}`,
+                          "POST",
+                          { revision: session.revision, decision },
                         );
-                    })
-                  }
+                        if (result.plan?.lastSessionId)
+                          navigate(
+                            sessionHref(
+                              result.plan.lastSessionId,
+                              "conversation",
+                            ),
+                          );
+                      })
+                    }
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </section>
+          ))}
+          {!!visibleMessages.length && !!next.suggestedPrompts.length && (
+            <div className="suggestions">
+              {suggestions.map((p) => (
+                <button
+                  key={p.message}
+                  disabled={busy}
+                  onClick={() => {
+                    draft(p.message);
+                    input.current?.focus();
+                  }}
                 >
-                  {label}
+                  {p.label}
                 </button>
               ))}
             </div>
-          </section>
-        ))}
-        {session.evidence.filter((e) => e.active && e.status === "inferred")
-          .length > 1 && (
-          <div className="actions">
-            <button
-              className="button"
-              disabled={busy}
-              onClick={() =>
-                void act(() =>
-                  api(`/sessions/${session.id}/evidence`, "POST", {
-                    revision: session.revision,
-                    ids: session.evidence
-                      .filter((e) => e.active && e.status === "inferred")
-                      .slice(0, 8)
-                      .map((e) => e.id),
-                    accept: true,
-                  }),
-                )
-              }
-            >
-              Confirm these details
-            </button>
-            <button
-              className="text-link"
-              disabled={busy}
-              onClick={() =>
-                void act(() =>
-                  api(`/sessions/${session.id}/evidence`, "POST", {
-                    revision: session.revision,
-                    ids: session.evidence
-                      .filter((e) => e.active && e.status === "inferred")
-                      .slice(0, 8)
-                      .map((e) => e.id),
-                    accept: false,
-                  }),
-                )
-              }
-            >
-              Dismiss these details
-            </button>
-          </div>
-        )}
-        {session.evidence
-          .filter((e) => e.active && e.status === "inferred")
-          .map((e) => (
-            <div className="proposal" key={e.id}>
-              <span className="confirmation-label">
-                {e.provenance?.conflicts?.length
-                  ? "Update your understanding"
-                  : "Is this right?"}
-              </span>
-              {e.provenance?.conflicts?.map((c) => (
-                <p className="muted" key={c.id}>
-                  {c.message} Earlier: {c.previous.quote}
-                </p>
-              ))}
+          )}
+          {providerNotice && (
+            <p className="fine-print" role="status">
+              {providerNotice}
+            </p>
+          )}
+          {next.readiness.canAssess && (
+            <div className="conversation-readiness" role="status">
               <p>
-                <strong>
-                  {labels[e.key] ??
-                    next.active.find((q) => q.id === e.key)?.title ??
-                    e.key}
-                  :
-                </strong>{" "}
-                {editing[e.id] !== undefined ? (
-                  <input
-                    aria-label={`Edit ${labels[e.key] ?? e.key}`}
-                    value={editing[e.id]}
-                    onChange={(event) =>
-                      setEditing((previous) => ({
-                        ...previous,
-                        [e.id]: event.target.value,
-                      }))
-                    }
-                  />
-                ) : (
-                  displayValue(e.key, e.value)
-                )}
+                {ready
+                  ? "Your initial assessment is ready."
+                  : "I have enough information to prepare an initial assessment."}
               </p>
               <div className="actions">
-                <button
-                  className="button"
-                  disabled={busy}
-                  onClick={() =>
-                    void act(() =>
-                      api(`/sessions/${session.id}/evidence/${e.id}`, "POST", {
-                        revision: session.revision,
-                        accept: true,
-                        ...(editing[e.id] !== undefined
-                          ? { value: editing[e.id] }
-                          : {}),
-                      }),
-                    )
-                  }
-                >
-                  {e.provenance?.conflicts?.length
-                    ? "Confirm correction"
-                    : "Confirm"}
-                </button>
+                {ready ? (
+                  <Link
+                    className="button"
+                    to={sessionHref(session.id, "report")}
+                  >
+                    Explore the analysis
+                  </Link>
+                ) : (
+                  <button
+                    className="button"
+                    disabled={busy}
+                    onClick={() => void assess().catch(() => {})}
+                  >
+                    Prepare assessment
+                  </button>
+                )}
                 <button
                   className="text-link"
                   disabled={busy}
-                  onClick={() =>
-                    void act(() =>
-                      api(`/sessions/${session.id}/evidence/${e.id}`, "POST", {
-                        revision: session.revision,
-                        accept: false,
-                      }),
-                    )
-                  }
+                  onClick={() => input.current?.focus()}
                 >
-                  Dismiss
+                  Continue conversation
                 </button>
-                {typeof e.value === "string" &&
-                  !e.key.endsWith("Status") &&
-                  !e.key.endsWith("Preference") &&
-                  !["stage", "kind"].includes(e.key) && (
-                    <button
-                      type="button"
-                      className="text-link"
-                      disabled={busy}
-                      onClick={() =>
-                        setEditing((previous) => ({
-                          ...previous,
-                          [e.id]: String(e.value),
-                        }))
-                      }
-                    >
-                      Edit
-                    </button>
-                  )}
               </div>
             </div>
-          ))}
-        {!!session.messages.length && !!next.suggestedPrompts.length && (
-          <div className="suggestions">
-            {suggestions.map((p) => (
-              <button
-                key={p.message}
-                disabled={busy}
-                onClick={() => {
-                  draft(p.message);
-                  input.current?.focus();
-                }}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-        )}
-        {notice && (
-          <p className="fine-print" role="status">
-            {notice}
-          </p>
-        )}
-        {next.readiness.canAssess && (
-          <div className="conversation-readiness" role="status">
+          )}
+        </div>
+        {clearing && (
+          <div
+            className="clear-confirmation"
+            role="region"
+            aria-label="Clear conversation"
+          >
             <p>
-              {ready
-                ? "Your initial assessment is ready."
-                : "I have enough information to prepare an initial assessment."}
+              Clear this transcript and its AI context? History stays archived.
+              Confirmed facts and reports stay saved. Your active draft will be
+              discarded.
             </p>
             <div className="actions">
-              {ready ? (
-                <Link className="button" to={sessionHref(session.id, "report")}>
-                  Explore the analysis
-                </Link>
-              ) : (
-                <button
-                  className="button"
-                  disabled={busy}
-                  onClick={() => void assess().catch(() => {})}
-                >
-                  Prepare assessment
-                </button>
-              )}
               <button
-                className="text-link"
+                className="button"
                 disabled={busy}
-                onClick={() => input.current?.focus()}
+                onClick={() =>
+                  void act(async () => {
+                    await api(
+                      `/sessions/${session.id}/conversation/clear`,
+                      "POST",
+                      { revision: session.revision },
+                    );
+                    clearDrafts(session.id);
+                    setMessage("");
+                    setNotice("");
+                    setClearing(false);
+                  })
+                }
               >
-                Continue conversation
+                Clear conversation
+              </button>
+              <button
+                autoFocus
+                className="text-link"
+                onClick={() => setClearing(false)}
+              >
+                Cancel
               </button>
             </div>
           </div>
@@ -430,19 +470,12 @@ export function Conversation({
               }
             }}
             maxLength={4000}
-            rows={3}
+            rows={1}
             value={message}
             onChange={(e) => draft(e.target.value)}
-            placeholder="What are you working on, or hoping to change?"
+            placeholder="Message kailor…"
           />
           <div className="actions">
-            <label className="mode">
-              Depth{" "}
-              <select value={mode} onChange={(e) => setMode(e.target.value)}>
-                <option value="conversation">Conversation</option>
-                <option value="analysis">Explore alternatives</option>
-              </select>
-            </label>
             <button
               className="button primary"
               disabled={busy || !message.trim()}
@@ -451,11 +484,6 @@ export function Conversation({
             </button>
           </div>
         </form>
-        <p className="fine-print">
-          Review extracted details before confirming. Local preview uses limited
-          language rules; AI assistance is available only through the authorized
-          founder configuration.
-        </p>
       </div>
     </div>
   );

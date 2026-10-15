@@ -7,6 +7,7 @@ datasource db {
   provider = "postgresql"
 }
 model AdminUser {
+  role String @default("member")
   isGuest Boolean @default(false)
   id String @id @default(uuid())
   email String @unique
@@ -140,6 +141,7 @@ model DiscoveryAnswer {
   @@unique([sessionId, questionId])
 }
 model ConversationMessage {
+  hiddenFromTranscript Boolean @default(false)
   id String @id @default(uuid())
   sessionId String
   session DiscoverySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
@@ -276,5 +278,14 @@ model AuditEvent {
   action String
   entityId String
   details Json
+  createdAt DateTime @default(now())
+}
+
+model AccountInvite {
+  tokenHash String @id
+  email String
+  expiresAt DateTime
+  usedAt DateTime?
+  createdBy String
   createdAt DateTime @default(now())
 }

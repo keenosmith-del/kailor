@@ -240,7 +240,8 @@ describe("adaptive intelligence behavioral evaluation", () => {
         [],
         "conversation",
       );
-      expect(r.fallbackReason).toBeTruthy();
+      expect(r.output.proposals).toEqual([]);
+      expect(r.output.reply).toBe("Bad");
     }
   });
   it("stores explainable priorities and deterministic provenance without confidence probabilities", () => {

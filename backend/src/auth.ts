@@ -46,7 +46,7 @@ export function authCookie(
     maxAge,
   });
 }
-export async function requireAdmin(
+export async function requireAccount(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -61,6 +61,7 @@ export async function requireAdmin(
   if (!auth || auth.admin.isGuest || auth.expiresAt <= new Date())
     throw new AppError(401, "unauthorized", "Your session has expired");
   res.locals.adminId = auth.adminId;
+  res.locals.role = auth.admin.role;
   next();
 }
 export function sameOrigin(req: Request, _res: Response, next: NextFunction) {
@@ -83,7 +84,9 @@ export function sameOrigin(req: Request, _res: Response, next: NextFunction) {
   next();
 }
 export async function login(email: string, password: string, res: Response) {
-  const admin = await db.adminUser.findUnique({ where: { email } });
+  const admin = await db.adminUser.findFirst({
+    where: { email: { equals: email.trim(), mode: "insensitive" } },
+  });
   const dummy = "00000000000000000000000000000000:" + "0".repeat(128);
   const valid = await verifyPassword(
     password,
@@ -105,5 +108,47 @@ export async function login(email: string, password: string, res: Response) {
     },
   });
   authCookie(res, token);
-  return { email: admin.email };
+  return { email: admin.email, role: admin.role };
+}
+
+export function requireAdmin(_req: Request, res: Response, next: NextFunction) {
+  if (res.locals.role !== "admin")
+    throw new AppError(403, "forbidden", "Founder access is required");
+  next();
+}
+export async function register(
+  email: string,
+  password: string,
+  invite: string,
+  res: Response,
+) {
+  const normalized = email.trim().toLowerCase();
+  const passwordHash = await hashPassword(password);
+  try {
+    await db.$transaction(async (tx) => {
+      if (config.REGISTRATION_POLICY === "closed") throw new Error("closed");
+      if (config.REGISTRATION_POLICY === "invite") {
+        const result = await tx.accountInvite.updateMany({
+          where: {
+            tokenHash: tokenHash(invite),
+            email: normalized,
+            usedAt: null,
+            expiresAt: { gt: new Date() },
+          },
+          data: { usedAt: new Date() },
+        });
+        if (result.count !== 1) throw new Error("invite");
+      }
+      await tx.adminUser.create({
+        data: { email: normalized, passwordHash, role: "member" },
+      });
+    });
+  } catch {
+    throw new AppError(
+      400,
+      "registration_unavailable",
+      "Account could not be created. Check your invitation or contact the founder.",
+    );
+  }
+  return login(normalized, password, res);
 }

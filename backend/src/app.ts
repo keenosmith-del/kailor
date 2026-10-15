@@ -7,15 +7,17 @@ import express from "express";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import { z, ZodError } from "zod";
-import { randomUUID } from "node:crypto";
+import { randomUUID, randomBytes } from "node:crypto";
 import { db } from "./db.js";
-import { logger } from "./config.js";
+import { config, logger } from "./config.js";
 import { AppError } from "./errors.js";
 import {
   authCookie,
   cookieToken,
   login,
   requireAdmin,
+  requireAccount,
+  register,
   sameOrigin,
   tokenHash,
 } from "./auth.js";
@@ -123,6 +125,10 @@ app.get("/api/health", async (_req, res) => {
 app.use(
   "/api",
   sameOrigin,
+  (_req, res, next) => {
+    res.setHeader("Cache-Control", "no-store");
+    next();
+  },
   rateLimit({
     windowMs: 60_000,
     limit: 180,
@@ -156,8 +162,28 @@ app.post(
     res.json(await login(input.email, input.password, res));
   },
 );
+app.get("/api/auth/policy", (_req, res) =>
+  res.json({ registration: config.REGISTRATION_POLICY }),
+);
+app.post(
+  "/api/auth/register",
+  rateLimit({ windowMs: 15 * 60_000, limit: 10 }),
+  async (req, res) => {
+    const input = z
+      .object({
+        email: z.email().max(254),
+        password: z.string().min(12).max(128),
+        invite: z.string().max(256).default(""),
+      })
+      .strict()
+      .parse(req.body);
+    res
+      .status(201)
+      .json(await register(input.email, input.password, input.invite, res));
+  },
+);
 app.use("/api/guest", guestRouter);
-app.use("/api", requireAdmin, (_req, res, next) => {
+app.use("/api", requireAccount, (_req, res, next) => {
   res.setHeader("Cache-Control", "no-store");
   next();
 });
@@ -166,7 +192,7 @@ app.get("/api/auth/me", async (_req, res) => {
   const admin = await db.adminUser.findUniqueOrThrow({
     where: { id: res.locals.adminId },
   });
-  res.json({ email: admin.email });
+  res.json({ email: admin.email, role: admin.role });
 });
 app.post("/api/auth/logout", async (req, res) => {
   await db.authSession.deleteMany({
@@ -282,6 +308,32 @@ app.get("/api/sessions/:id/report.pdf", async (req, res) => {
     .type("application/pdf")
     .attachment("kailor-analysis-draft.pdf")
     .send(await renderPdf(report.content));
+});
+app.use(
+  [
+    "/api/scenarios",
+    "/api/personas",
+    "/api/simulations",
+    "/api/cases",
+    "/api/auth/invites",
+  ],
+  requireAdmin,
+);
+app.post("/api/auth/invites", async (req, res) => {
+  const { email } = z
+    .object({ email: z.email().max(254) })
+    .strict()
+    .parse(req.body);
+  const token = randomBytes(32).toString("hex");
+  await db.accountInvite.create({
+    data: {
+      tokenHash: tokenHash(token),
+      email: email.toLowerCase(),
+      expiresAt: new Date(Date.now() + 7 * 86400000),
+      createdBy: res.locals.adminId,
+    },
+  });
+  res.status(201).json({ invite: token, expiresInDays: 7 });
 });
 app.get("/api/scenarios", async (_req, res) =>
   res.json(await db.scenarioTemplate.findMany({ orderBy: { title: "asc" } })),

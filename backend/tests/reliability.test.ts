@@ -284,7 +284,7 @@ describe("conversation and provider quality boundary", () => {
       ],
     },
   ])(
-    "invalid structured provider facts fall back safely: %#",
+    "invalid structured facts are excluded while safe conversational text survives: %#",
     async (output) => {
       const message =
         output.proposals.map((p) => p.quote).join(". ") || "Hello";
@@ -295,8 +295,14 @@ describe("conversation and provider quality boundary", () => {
         [],
         "conversation",
       );
-      expect(result.provider).toBe("mock-development");
-      expect(result.fallbackReason).toBeTruthy();
+      if (output.proposals.length) {
+        expect(result.provider).toBe("contract-test");
+        expect(result.output.proposals).toEqual([]);
+        expect(result.output.reply).toBe(output.reply);
+      } else {
+        expect(result.provider).toBe("mock-development");
+        expect(result.fallbackReason).toBeTruthy();
+      }
     },
   );
   it("rejects a schema-valid current-status proposal that contradicts its own quote", async () => {
@@ -321,12 +327,9 @@ describe("conversation and provider quality boundary", () => {
       [],
       "conversation",
     );
-    expect(result.provider).toBe("mock-development");
-    expect(result.fallbackReason).toBeTruthy();
-    expect(result.output.proposals).toContainEqual({
-      key: "websiteStatus",
-      value: "absent",
-    });
+    expect(result.provider).toBe("contract-test");
+    expect(result.fallbackReason).toBeNull();
+    expect(result.output.proposals).toEqual([]);
   });
   it("accepts a grounded real-provider quote while keeping it unconfirmed", async () => {
     const message = "I want a portfolio to show my completed photography work";

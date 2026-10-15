@@ -68,7 +68,7 @@ const record = (
   });
 beforeAll(async () => {
   const owner = await db.adminUser.create({
-    data: { email, passwordHash: await hashPassword(password) },
+    data: { role: "admin", email, passwordHash: await hashPassword(password) },
   });
   adminId = owner.id;
   owners.push(adminId);

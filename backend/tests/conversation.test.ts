@@ -269,6 +269,99 @@ it("rejects model proposals quoted from a question rather than treating them as 
     [],
     "conversation",
   );
-  expect(result.provider).toBe("mock-development");
+  expect(result.provider).toBe("test-model");
   expect(result.output.proposals).toEqual([]);
+  expect(result.output.reply).toBe(
+    "Would you use WhatsApp for customer enquiries?",
+  );
+});
+
+it("accepts Cloudflare JSON-object responses with independently validated state proposals", async () => {
+  let body: any;
+  const provider = new CloudflareProvider(
+    {
+      account: "test",
+      token: "test",
+      model: "test",
+      maxTokens: 600,
+      timeoutMs: 100,
+    },
+    async (_url, init) => {
+      body = JSON.parse(String(init?.body));
+      return Response.json({
+        success: true,
+        result: {
+          response: {
+            reply:
+              "Offline edits need an explicit conflict resolution policy. Which record should take priority?",
+            proposals: [],
+          },
+        },
+      });
+    },
+  );
+  const result = await inferSafely(
+    provider,
+    {},
+    "How do offline edits synchronize?",
+    [],
+    "conversation",
+  );
+  expect(result.provider).toBe("cloudflare");
+  expect(result.output.reply).toContain("conflict resolution");
+  expect(body.response_format).toEqual({ type: "json_object" });
+});
+it("preserves a useful technical response while rejecting ungrounded extraction", async () => {
+  const reply =
+    "Keep a version on each record and flag conflicting edits for review instead of silently overwriting them.";
+  const result = await inferSafely(
+    {
+      name: "provider-neutral",
+      infer: async () => ({
+        reply,
+        proposals: [
+          {
+            key: "tools",
+            value: "A fictional tool",
+            quote: "A fictional tool",
+          },
+        ],
+      }),
+    },
+    {},
+    "How do we avoid overwriting offline changes?",
+    [],
+    "conversation",
+  );
+  expect(result.provider).toBe("provider-neutral");
+  expect(result.output.reply).toBe(reply);
+  expect(result.output.proposals).toEqual([]);
+  expect(result.fallbackReason).toBeNull();
+});
+it("grounds a natural clarification in the latest message while leaving acceptance explicit", async () => {
+  const message = "Not exactly. I record appointments in a paper diary.";
+  const result = await inferSafely(
+    {
+      name: "provider-neutral",
+      infer: async () => ({
+        reply:
+          "Thanks for clarifying. WhatsApp is the contact channel and the diary holds appointments. What makes that process difficult?",
+        proposals: [
+          {
+            key: "tools",
+            value: "I record appointments in a paper diary.",
+            quote: "I record appointments in a paper diary.",
+            basis: "explicit" as const,
+          },
+        ],
+      }),
+    },
+    {},
+    message,
+    [{ role: "assistant", content: "Are you using WhatsApp for bookings?" }],
+    "conversation",
+  );
+  expect(result.provider).toBe("provider-neutral");
+  expect(result.output.proposals[0].value).toContain("paper diary");
+  expect(result.output.proposals[0]).not.toHaveProperty("confirmed");
 });

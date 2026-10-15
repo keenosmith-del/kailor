@@ -259,7 +259,7 @@ export function Discovery({
                         return (
                           <motion.label
                             key={o.value}
-                            className={`choice glass-button ${selected ? "selected" : ""}`}
+                            className={`choice surface-button ${selected ? "selected" : ""}`}
                             whileHover={
                               busy || reduced
                                 ? undefined

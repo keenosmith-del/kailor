@@ -56,7 +56,13 @@ export type Session = {
     responseState?: AnswerState;
     quality?: InputQuality;
   }[];
-  messages: { id: string; role: string; content: string; provider: string }[];
+  messages: {
+    hiddenFromTranscript?: boolean;
+    id: string;
+    role: string;
+    content: string;
+    provider: string;
+  }[];
   evidence: Evidence[];
 };
 export type Recommendation = {

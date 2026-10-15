@@ -21,7 +21,11 @@ let adminId: string,
   revision = 0;
 beforeAll(async () => {
   const admin = await db.adminUser.create({
-    data: { email: adminEmail, passwordHash: await hashPassword(password) },
+    data: {
+      role: "admin",
+      email: adminEmail,
+      passwordHash: await hashPassword(password),
+    },
   });
   adminId = admin.id;
   for (const s of services)

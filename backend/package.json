@@ -7,8 +7,8 @@
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/backend/src/index.js",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run tests/unit.test.ts tests/adaptive.test.ts tests/reliability.test.ts tests/contextual.test.ts tests/conversation.test.ts tests/memory.test.ts",
-    "test:integration": "vitest run --no-file-parallelism tests/integration.test.ts tests/reliability.integration.test.ts tests/contextual.integration.test.ts tests/plans.integration.test.ts tests/migration.integration.test.ts"
+    "test": "AI_PROVIDER=mock AI_ALLOW_REMOTE=false AI_MAX_CALLS_PER_SESSION=5 AI_MAX_CALLS_PER_DAY=20 vitest run tests/unit.test.ts tests/adaptive.test.ts tests/reliability.test.ts tests/contextual.test.ts tests/conversation.test.ts tests/memory.test.ts",
+    "test:integration": "AI_PROVIDER=mock AI_ALLOW_REMOTE=false AI_MAX_CALLS_PER_SESSION=5 AI_MAX_CALLS_PER_DAY=20 vitest run --no-file-parallelism tests/integration.test.ts tests/reliability.integration.test.ts tests/contextual.integration.test.ts tests/plans.integration.test.ts tests/migration.integration.test.ts tests/accounts.integration.test.ts"
   },
   "dependencies": {
     "@kailor/shared": "*",

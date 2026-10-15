@@ -255,9 +255,10 @@ describe("AI boundaries", () => {
         },
       }),
     );
-    expect(
-      (await inferSafely(provider, {}, "Hello", [], "conversation")).provider,
-    ).toBe("mock-development");
+    const result = await inferSafely(provider, {}, "Hello", [], "conversation");
+    expect(result.provider).toBe("cloudflare");
+    expect(result.output.proposals).toEqual([]);
+    expect(result.output.reply).toBe("Here is a proposal");
   });
   it("passes context and bounded output settings to the official REST contract", async () => {
     let body: any;
