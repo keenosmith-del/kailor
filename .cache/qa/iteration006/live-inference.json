@@ -1,0 +1,9 @@
+{
+  "executed": false,
+  "configuration": {
+    "provider": "mock",
+    "optIn": false,
+    "credentialsPresent": false
+  },
+  "status": "Live model quality unverified: configured remote opt-in and credentials are required"
+}

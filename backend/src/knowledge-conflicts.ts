@@ -59,15 +59,24 @@ export function claimsFromText(text: string, key: string): FactClaim[] {
       )
     )
       add("booking", "existing", clause);
+    if (
+      /\b(?:actually|instead)\b/i.test(clause) &&
+      /\b(?:a website would be enough|a website is enough|website instead of (?:an? )?(?:app|application))\b/i.test(
+        clause,
+      )
+    ) {
+      add("websitePreference", "requested", clause);
+      add("appPreference", "declined", clause);
+    }
     for (const [facet, term] of [
       ["ai", "AI"],
       ["automation", "automat(?:ion|ing|e)"],
       ["websitePreference", "website"],
-      ["appPreference", "(?:mobile app|web app|app|application)"],
+      ["appPreference", "(?:booking app|mobile app|web app|app|application)"],
     ] as const) {
       if (
         new RegExp(
-          `\\b(?:don't|do not) (?:want|need) (?:any |a |an )?(?:${term})\\b|\\bno ${term}\\b`,
+          `\\b(?:don't|do not|no longer) (?:want|need) (?:any |a |an )?(?:${term})\\b|\\bno ${term}\\b`,
           "i",
         ).test(clause)
       )

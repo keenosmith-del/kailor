@@ -326,7 +326,7 @@ describe("untrusted model boundary", () => {
       ).fallbackReason,
     ).toBeTruthy();
   });
-  it("minimizes provider history and unnecessary address/budget fields", async () => {
+  it("bounds provider history and minimizes unnecessary address/budget fields", async () => {
     let sent = "";
     const p = new CloudflareProvider(
       {
@@ -357,7 +357,7 @@ describe("untrusted model boundary", () => {
       [{ role: "user", content: "Old private note" }],
       "conversation",
     );
-    expect(sent).not.toContain("Old private note");
+    expect(sent).toContain("Old private note");
     expect(sent).not.toContain("private.example");
     expect(sent).not.toContain("R500");
   });

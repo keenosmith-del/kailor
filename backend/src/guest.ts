@@ -1,3 +1,4 @@
+import { evidenceReviewInput } from "../../shared/src/index.js";
 import { Router } from "express";
 import { randomBytes, randomUUID } from "node:crypto";
 import { z } from "zod";
@@ -129,10 +130,7 @@ guestRouter.post("/sessions/:id/chat", async (req, res) =>
   ),
 );
 guestRouter.post("/sessions/:id/evidence/:evidenceId", async (req, res) => {
-  const input = mutationSchema
-    .extend({ accept: z.boolean() })
-    .strict()
-    .parse(req.body);
+  const input = evidenceReviewInput.parse(req.body);
   res.json(
     await sessions.confirmEvidence(
       id.parse(req.params.id),
@@ -140,6 +138,7 @@ guestRouter.post("/sessions/:id/evidence/:evidenceId", async (req, res) => {
       id.parse(req.params.evidenceId),
       input.revision,
       input.accept,
+      input.value,
     ),
   );
 });

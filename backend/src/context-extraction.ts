@@ -19,6 +19,21 @@ import {
   contextualGaps,
 } from "./contextual-intelligence.js";
 
+export function currentStatements(message: string): string[] {
+  return clausesOf(message)
+    .filter(
+      (c) =>
+        !/^(?:can|could|would|should|what|how|is|are|do|does)\b/i.test(c) &&
+        !/start with something smaller/i.test(c),
+    )
+    .filter(
+      (c) =>
+        !/\b(?:might|maybe|what if|hypothetically|whether|if I|used to|thinking about)\b/i.test(
+          c,
+        ),
+    );
+}
+
 // Extraction is separate from quality and reply generation. Clauses retain negation and modality.
 export function extractCandidates(message: string): ChatOutput["proposals"] {
   if (!evaluateInput(message, "", "chat").usableFacts) return [];
@@ -35,18 +50,7 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
       ]);
     else if (!result.has(key)) result.set(key, value);
   };
-  const current = clausesOf(message)
-    .filter(
-      (c) =>
-        !/^(?:can|could|would|should|what|how|is|are|do|does)\b/i.test(c) &&
-        !/start with something smaller/i.test(c),
-    )
-    .filter(
-      (c) =>
-        !/\b(?:might|maybe|what if|hypothetically|whether|if I|used to|thinking about)\b/i.test(
-          c,
-        ),
-    );
+  const current = currentStatements(message);
   const text =
     current.length === clausesOf(message).length
       ? message.trim()
@@ -109,13 +113,13 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
     )
       continue;
     if (
-      /portfolio|professional presence|credible gallery|showcase|present.*work|website for.*(?:photography|work|business)/i.test(
+      /portfolio|browse.*(?:work|products)|see my products|showcase|look more professional|professional presence|credible gallery|showcase|present.*work|website for.*(?:photography|work|business)/i.test(
         clause,
       )
     )
       problems.push("credibility");
     if (
-      /manual bookings?|bookings? manually|appointments? (?:through|via)|easier.*book|manage.*appointments?|booking.*(?:difficult|friction|cancellations?|missed)|appointments?.*(?:difficult|missed)|customer reminders/i.test(
+      /manual bookings?|bookings? easier|take bookings? through|bookings? manually|appointments? (?:through|via)|easier.*book|manage.*appointments?|booking.*(?:difficult|friction|cancellations?|missed)|appointments?.*(?:difficult|missed)|customer reminders/i.test(
         clause,
       )
     )

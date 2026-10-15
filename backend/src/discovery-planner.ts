@@ -70,7 +70,8 @@ export function planDiscovery(
       };
       const gap = gaps.find((g) => g.id === q.id);
       if (gap) rank(gap.score, gap.reason);
-      if (q.id === "stage") rank(1000, "Select the starting context");
+      if (q.id === "stage" && !decision.situationKnown)
+        rank(1000, "Select the starting context");
       if (q.id === "request" && a.stage === "specific")
         rank(900, "Describe the exact requirement before business details");
       if (q.id === "idea" && a.stage === "starting")

@@ -7,7 +7,7 @@
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/backend/src/index.js",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run tests/unit.test.ts tests/adaptive.test.ts tests/reliability.test.ts tests/contextual.test.ts",
+    "test": "vitest run tests/unit.test.ts tests/adaptive.test.ts tests/reliability.test.ts tests/contextual.test.ts tests/conversation.test.ts",
     "test:integration": "vitest run --no-file-parallelism tests/integration.test.ts tests/reliability.integration.test.ts tests/contextual.integration.test.ts"
   },
   "dependencies": {

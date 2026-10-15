@@ -1,3 +1,4 @@
+import { evidenceReviewInput } from "../../shared/src/index.js";
 import { containsSensitiveData } from "./conversation-guidance.js";
 import { evaluateInput } from "./input-quality.js";
 import { evaluateReadiness } from "./discovery-readiness.js";
@@ -226,10 +227,7 @@ app.post("/api/sessions/:id/chat", async (req, res) =>
   ),
 );
 app.post("/api/sessions/:id/evidence/:evidenceId", async (req, res) => {
-  const input = mutationSchema
-    .extend({ accept: z.boolean() })
-    .strict()
-    .parse(req.body);
+  const input = evidenceReviewInput.parse(req.body);
   res.json(
     await sessions.confirmEvidence(
       idSchema.parse(req.params.id),
@@ -237,6 +235,7 @@ app.post("/api/sessions/:id/evidence/:evidenceId", async (req, res) => {
       idSchema.parse(req.params.evidenceId),
       input.revision,
       input.accept,
+      input.value,
     ),
   );
 });

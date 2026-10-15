@@ -14,7 +14,7 @@ const configuration = {
   credentialsPresent:
     !!config.CLOUDFLARE_ACCOUNT_ID && !!config.CLOUDFLARE_API_TOKEN,
 };
-const directory = ".cache/qa/iteration005";
+const directory = ".cache/qa/iteration006";
 await mkdir(directory, { recursive: true });
 if (!remoteEnabled(config)) {
   const result = {
@@ -70,9 +70,9 @@ if (!remoteEnabled(config)) {
         "I inspect machinery and want staff to record work offline from phones",
     });
     for (const message of [
-      "Ask me a useful follow-up question about the offline requirement.",
-      "What if I wanted an online-only tool instead?",
-      "I do not want AI in the solution.",
+      "Would I need a website or an app for these offline inspection reports? Please number the two approaches.",
+      "What would the second option involve?",
+      "Would the first option be cheaper?",
     ]) {
       const result = await converse(s.id, owner.id, {
         revision: s.revision,

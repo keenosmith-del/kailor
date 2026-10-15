@@ -84,3 +84,9 @@ Failed synthetic runs can return null assessment/report and are not reusable. Re
 - Model chat output may include `followUp {questionId,title,hint}` only for an explicitly requested current contextual text gap. It never directly changes confirmed answers.
 
 All founder routes remain behind existing authentication/origin controls. Guest paths are unchanged and force local inference/seed-only references.
+
+## Iteration 006 evidence edits and Conversation
+
+The existing single-evidence POST accepts `{revision, accept, value?}` through shared strict `evidenceReviewInput`. Optional `value` is an edited string/string-array, validated for that evidence key by the existing answer writer. On acceptance it records user-edited confirmation provenance and retains the original proposal inactive. Both founder and guest routes enforce their existing ownership/origin/revision checks. Grouped confirmation is unchanged.
+
+Chat response still returns `session`, `provider`, `fallbackReason` and quality. The frontend identifies local guidance and does not silently retry failed requests. Conversation uses existing assessment and report endpoints, with preparation and navigation as separate explicit actions. No new chat-readiness or summary endpoint was added. Activity revision remains the mutation concurrency token; confirmed material knowledge controls snapshot freshness.

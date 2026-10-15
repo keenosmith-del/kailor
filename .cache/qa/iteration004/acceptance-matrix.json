@@ -1,6 +1,6 @@
 {
   "policyVersion": "reliability-2",
-  "generatedAt": "2026-10-14T22:58:21.866Z",
+  "generatedAt": "2026-10-15T01:40:23.191Z",
   "cases": [
     {
       "id": "whitespace",
@@ -5472,8 +5472,8 @@
           "industry",
           "tools",
           "workflowDetails",
-          "problems",
-          "clarification"
+          "clarification",
+          "problems"
         ],
         "sessionPreserved": true
       },
@@ -5648,7 +5648,7 @@
     }
   ],
   "apiExecution": {
-    "generatedAt": "2026-10-14T22:57:29.529Z",
+    "generatedAt": "2026-10-15T01:40:10.226Z",
     "complete": true,
     "executions": [
       {

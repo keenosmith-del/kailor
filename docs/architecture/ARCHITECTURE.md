@@ -57,3 +57,7 @@ A normal assessment is created only after checking the current saved plan inside
 ## Iteration 005
 
 Contextual dimensions and decision gaps are projections of the existing answers/evidence, not a second knowledge store. `contextual-intelligence.ts` supplies generic operational gaps; `solution-evaluation.ts` separates evidence-based service eligibility from approved-reference approach comparison. `revision` still protects every mutation; `knowledgeRevision` controls report reuse/freshness. Optional remote planning rewords only the current validated contextual gap and persists provenance. See [ADR 007](../decisions/007-contextual-knowledge-and-case-reasoning.md) and the [iteration record](../iterations/005-contextual-intelligence.md).
+
+## Iteration 006 conversation memory
+
+The existing AI adapter now receives bounded role-preserving transcript memory and an on-demand deterministic older-message digest. Session data is a separate untrusted message rather than system-policy interpolation. There is no summary table or migration. Both discovery inputs still share the same transactional evidence writer, readiness and immutable reports. See [ADR 008](../decisions/008-bounded-conversation-memory.md) and the [execution record](../iterations/006-conversational-intelligence.md).

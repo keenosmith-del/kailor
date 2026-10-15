@@ -211,6 +211,8 @@ export function SessionPage() {
               />
             ) : view === "conversation" ? (
               <Conversation
+                assess={assess}
+                ready={ready}
                 session={session}
                 next={next}
                 busy={busy}

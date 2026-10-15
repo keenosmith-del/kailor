@@ -1058,3 +1058,55 @@ select:focus {
 }
 @media (prefers-reduced-motion: reduce) {
 }
+
+/* Conversation refinements, intentionally scoped to this view. */
+.conversation .chat-history {
+  max-height: 54svh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.conversation .confirmation-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+.conversation .proposal {
+  margin: 12px 0;
+  padding: 12px 0;
+}
+.conversation .proposal .actions button,
+.conversation-readiness button,
+.conversation-readiness a {
+  min-height: 44px;
+}
+.conversation .proposal input {
+  width: 100%;
+}
+.conversation-readiness {
+  margin: 24px 0;
+}
+.conversation .chat-form textarea {
+  min-height: 100px;
+  max-height: 35svh;
+  resize: vertical;
+  scroll-margin-bottom: 24px;
+}
+.conversation .chat-form button {
+  min-height: 44px;
+}
+.conversation .suggestions button {
+  white-space: normal;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .conversation .chat-history {
+    max-height: 48dvh;
+  }
+  .conversation .chat-form {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  .conversation .chat-form textarea {
+    font-size: 16px;
+  }
+}

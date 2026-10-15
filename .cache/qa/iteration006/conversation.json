@@ -1,0 +1,311 @@
+{
+  "generatedAt": "2026-10-15T01:40:23.230Z",
+  "kind": "deterministic multi-turn expectations; live model quality unverified",
+  "scenarios": [
+    {
+      "id": "casual-to-portfolio",
+      "passed": true,
+      "readyPassed": true,
+      "turns": [
+        {
+          "message": "Hi.",
+          "reply": "Hi. kailor helps you work out useful technology or workflow changes. What are you working on?",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        },
+        {
+          "message": "How are you?",
+          "reply": "I'm here and ready to help. What are you thinking of building or improving?",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        },
+        {
+          "message": "I'm thinking about building a portfolio.",
+          "reply": "We can explore it together. Are you creating something new or improving something you already do?",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        },
+        {
+          "message": "I want a personal website for my photography work.",
+          "reply": "I understood your website preference, objectives, workflow problems. Confirm the details below so I can use them in an assessment.\n\nWhat should the website do, and who will maintain its content?",
+          "proposals": [
+            {
+              "key": "websitePreference",
+              "value": "requested"
+            },
+            {
+              "key": "goals",
+              "value": "I want a personal website for my photography work."
+            },
+            {
+              "key": "problems",
+              "value": [
+                "credibility"
+              ]
+            },
+            {
+              "key": "clarification",
+              "value": "I want a personal website for my photography work."
+            }
+          ],
+          "passed": true,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "id": "numbered-comparison",
+      "passed": true,
+      "readyPassed": true,
+      "turns": [
+        {
+          "message": "Would I need a website or an app?",
+          "reply": "1. A website: a proportionate starting point for presenting products or work and receiving enquiries. Existing booking tools can be linked where relevant.\n2. A mobile application: worth exploring when users need repeat interactions, device features or offline workflows. It adds development and maintenance work.\n\nWhat should people be able to do? These are alternatives to explore, not confirmed scope or priced recommendations.",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        },
+        {
+          "message": "What would the second one involve?",
+          "reply": "The second option was: A mobile application: worth exploring when users need repeat interactions, device features or offline workflows. It adds development and maintenance work.\n\nWe would define the essential workflow, check existing tools against it, then identify any configuration or custom work. Which capability should we examine first?",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        },
+        {
+          "message": "Would the first one be cheaper?",
+          "reply": "The first option was: A website: a proportionate starting point for presenting products or work and receiving enquiries. Existing booking tools can be linked where relevant.\n\nAn existing service or smaller website often involves less custom development, but there is no approved price comparison yet. We need scope and recurring fees to compare fairly.",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "id": "nail-business",
+      "passed": true,
+      "readyPassed": true,
+      "turns": [
+        {
+          "message": "I run a small nail business on my own. I advertise on Instagram and take bookings through WhatsApp.",
+          "reply": "I understood your activity, current channels, current tools. Confirm the details below so I can use them in an assessment.\n\nWhat would you most like to improve about how customers find you or book?",
+          "proposals": [
+            {
+              "key": "industry",
+              "value": "I run a small nail business on my own. I advertise on Instagram and take bookings through WhatsApp."
+            },
+            {
+              "key": "presence",
+              "value": [
+                "instagram"
+              ]
+            },
+            {
+              "key": "tools",
+              "value": "I advertise on Instagram and take bookings through WhatsApp."
+            },
+            {
+              "key": "problems",
+              "value": [
+                "booking"
+              ]
+            }
+          ],
+          "passed": true,
+          "failures": []
+        },
+        {
+          "message": "I want to look more professional and make bookings easier, but I don't want an expensive application.",
+          "reply": "I understood your objectives, workflow problems, constraints. Confirm the details below so I can use them in an assessment.\n\nIf confirmed, a simple portfolio website and an existing booking service are worth comparing before custom development. Would you prefer customers to book a time directly, or contact you first?",
+          "proposals": [
+            {
+              "key": "goals",
+              "value": "I want to look more professional and make bookings easier,"
+            },
+            {
+              "key": "problems",
+              "value": [
+                "credibility",
+                "booking"
+              ]
+            },
+            {
+              "key": "constraints",
+              "value": "I want to look more professional and make bookings easier, but I don't want an expensive application."
+            },
+            {
+              "key": "clarification",
+              "value": "I want to look more professional and make bookings easier, but I don't want an expensive application."
+            }
+          ],
+          "passed": true,
+          "failures": []
+        },
+        {
+          "message": "Thanks.",
+          "reply": "You're welcome. We can keep exploring or prepare an assessment when there is enough confirmed information.",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "id": "unknown-domain",
+      "passed": true,
+      "readyPassed": true,
+      "turns": [
+        {
+          "message": "I coordinate safety inspections at agricultural equipment sites, and technicians need to complete reports even when they're offline.",
+          "reply": "I understood your activity. Confirm the details below so I can use them in an assessment.\n\nWhat must work without a connection, and what happens when it returns?",
+          "proposals": [
+            {
+              "key": "industry",
+              "value": "I coordinate safety inspections at agricultural equipment sites, and technicians need to complete reports even when they're offline."
+            }
+          ],
+          "passed": true,
+          "failures": []
+        },
+        {
+          "message": "What if I wanted online-only reports instead?",
+          "reply": "Offline use needs local storage, synchronization and a way to resolve conflicting edits. This is a possibility until you confirm it; which tasks would need to work without a connection?",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "id": "change-of-mind",
+      "passed": true,
+      "readyPassed": true,
+      "turns": [
+        {
+          "message": "I want a mobile application for my business.",
+          "reply": "I understood your application scope, requested scope, objectives. Confirm the details below so I can use them in an assessment.\n\nWhat must the first version do, and who will use it?",
+          "proposals": [
+            {
+              "key": "appPreference",
+              "value": "requested"
+            },
+            {
+              "key": "request",
+              "value": "I want a mobile application for my business."
+            },
+            {
+              "key": "goals",
+              "value": "I want a mobile application for my business."
+            },
+            {
+              "key": "problems",
+              "value": [
+                "custom"
+              ]
+            },
+            {
+              "key": "clarification",
+              "value": "I want a mobile application for my business."
+            }
+          ],
+          "passed": true,
+          "failures": []
+        },
+        {
+          "message": "Actually, I think a website would be enough.",
+          "reply": "That could change the scope. Review and confirm the proposed change below before I replace the earlier requirement.",
+          "proposals": [
+            {
+              "key": "websitePreference",
+              "value": "requested"
+            },
+            {
+              "key": "appPreference",
+              "value": "declined"
+            }
+          ],
+          "passed": true,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "id": "off-topic-recovery",
+      "passed": true,
+      "readyPassed": true,
+      "turns": [
+        {
+          "message": "Write me a poem about the ocean.",
+          "reply": "kailor helps investigate technology, products and workflows. Tell me what you would like to build or improve.",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        },
+        {
+          "message": "I want a personal website for my photography work.",
+          "reply": "I understood your website preference, objectives, workflow problems. Confirm the details below so I can use them in an assessment.\n\nWhat should the website do, and who will maintain its content?",
+          "proposals": [
+            {
+              "key": "websitePreference",
+              "value": "requested"
+            },
+            {
+              "key": "goals",
+              "value": "I want a personal website for my photography work."
+            },
+            {
+              "key": "problems",
+              "value": [
+                "credibility"
+              ]
+            },
+            {
+              "key": "clarification",
+              "value": "I want a personal website for my photography work."
+            }
+          ],
+          "passed": true,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "id": "historical-and-hypothetical",
+      "passed": true,
+      "readyPassed": true,
+      "turns": [
+        {
+          "message": "I used to use WhatsApp for bookings.",
+          "reply": "I will distinguish what exists today from possibilities. What is the current situation and desired change?",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        },
+        {
+          "message": "Would WhatsApp work for bookings?",
+          "reply": "Where are you right now?",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        }
+      ]
+    },
+    {
+      "id": "ambiguous-reference",
+      "passed": true,
+      "readyPassed": true,
+      "turns": [
+        {
+          "message": "What would the second one involve?",
+          "reply": "Which two approaches are you referring to? I do not have a clearly numbered comparison in the recent conversation.",
+          "proposals": [],
+          "passed": true,
+          "failures": []
+        }
+      ]
+    }
+  ]
+}

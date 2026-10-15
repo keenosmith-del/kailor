@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-15",
+  "baseline": {
+    "typecheck": "passed",
+    "unitTests": 228,
+    "evaluation": "passed",
+    "build": "passed"
+  },
+  "final": {
+    "typecheck": "passed",
+    "unitTests": 250,
+    "integrationTests": 112,
+    "integrationDatabase": "kailor_test",
+    "personaCases": 14,
+    "reliabilityCases": 57,
+    "intelligenceCases": 15,
+    "conversationScenarios": 8,
+    "learningChecks": "passed",
+    "build": "passed",
+    "diffCheck": "passed"
+  },
+  "live": {
+    "executed": false,
+    "reason": "provider mock; remote opt-in false; credentials absent"
+  },
+  "browser": {
+    "chatOnlyAssessment": "passed",
+    "explicitAnalysisNavigation": "passed",
+    "staleDraftRecovery": "passed",
+    "manualRetry": "passed",
+    "contextualSuggestionDraft": "passed",
+    "desktopEnterSubmit": "passed",
+    "secondOptionReference": "passed",
+    "desktopViewport": "1280x900",
+    "mobileViewport": "390x844",
+    "mobileHorizontalOverflow": false
+  },
+  "unverified": [
+    "live model quality",
+    "account billing enforcement",
+    "real-device keyboard occlusion",
+    "full tablet/browser/accessibility matrix",
+    "offline network UI simulation",
+    "visual PDF rerender"
+  ]
+}

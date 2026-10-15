@@ -514,3 +514,207 @@ describe("contextual PostgreSQL acceptance", () => {
     );
   });
 });
+
+// Fresh session, no guided answers: exercise the same persisted assessment pipeline.
+it("iteration 006 completes nail-business discovery through chat, edits evidence, preserves no-op freshness and exports PDF", async () => {
+  let s = await createSession(owner, "Iteration 006 chat-only synthetic", true);
+  for (const message of [
+    "I run a small nail business on my own. I advertise on Instagram and take bookings through WhatsApp.",
+    "I want to look more professional and make bookings easier, but I don't want an expensive application.",
+  ]) {
+    s = (
+      await converse(
+        s.id,
+        owner,
+        { revision: s.revision, message, mode: "conversation" },
+        true,
+      )
+    ).session;
+    const pending = s.evidence.filter(
+      (e) => e.active && e.status === "inferred",
+    );
+    expect(pending.length).toBeGreaterThan(0);
+    expect((await nextForSession(s.id, owner)).readiness.canAssess).toBe(false);
+    s = await confirmBatch(
+      s.id,
+      owner,
+      s.revision,
+      pending.map((e) => e.id),
+      true,
+    );
+  }
+  expect(s.answers.some((a) => a.questionId === "stage")).toBe(false);
+  expect(answersOf(s).tools).toContain("WhatsApp");
+  expect((await nextForSession(s.id, owner)).readiness.canAssess).toBe(true);
+  const old = await assess(s.id, owner, s.revision);
+  expect(
+    old.content.recommendations.some((r) =>
+      ["website", "portfolio", "booking"].includes(r.serviceId),
+    ),
+  ).toBe(true);
+  expect(old.content.recommendations.every((r) => r.evidence.length > 0)).toBe(
+    true,
+  );
+  for (const message of [
+    "Thanks.",
+    "Can you explain the first recommendation?",
+  ]) {
+    s = (
+      await converse(
+        s.id,
+        owner,
+        { revision: s.revision, message, mode: "conversation" },
+        true,
+      )
+    ).session;
+    expect((await getReport(s.id, owner)).stale).toBe(false);
+  }
+  expect((await canvas(s.id, owner)).source).toBe("snapshot");
+  const pdf = await client.get(`/api/sessions/${s.id}/report.pdf`);
+  expect(pdf.status).toBe(200);
+  expect(pdf.headers["content-type"]).toContain("application/pdf");
+  // Real HTTP edit validates, confirms and updates shared knowledge in one transaction.
+  s = (
+    await converse(
+      s.id,
+      owner,
+      {
+        revision: s.revision,
+        message: "I want a website for my photography work.",
+        mode: "conversation",
+      },
+      true,
+    )
+  ).session;
+  const proposal = s.evidence.find(
+    (e) => e.active && e.status === "inferred" && e.key === "goals",
+  );
+  expect(proposal).toBeTruthy();
+  const edited = await client
+    .post(`/api/sessions/${s.id}/evidence/${proposal!.id}`)
+    .set("Origin", config.APP_ORIGIN)
+    .send({
+      revision: s.revision,
+      accept: true,
+      value: "I want a portfolio website for my nail designs and bookings",
+    });
+  expect(edited.status).toBe(200);
+  expect(answersOf(edited.body).goals).toBe(
+    "I want a portfolio website for my nail designs and bookings",
+  );
+  expect((await getReport(s.id, owner)).stale).toBe(true);
+  expect((await getReport(s.id, owner)).content).toEqual(old.content);
+});
+
+it("iteration 006 keeps concurrent chat ordering and rejects stale retries without duplicate messages", async () => {
+  const s = await createSession(owner, "Iteration 006 concurrent chat", true);
+  const results = await Promise.allSettled(
+    ["Hi.", "How are you?"].map((message) =>
+      converse(
+        s.id,
+        owner,
+        { revision: s.revision, message, mode: "conversation" },
+        true,
+      ),
+    ),
+  );
+  expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+  const saved = await db.conversationMessage.findMany({
+    where: { sessionId: s.id },
+    orderBy: { ordinal: "asc" },
+  });
+  expect(saved.map((m) => m.role)).toEqual(["user", "assistant"]);
+  await expect(
+    converse(
+      s.id,
+      owner,
+      { revision: s.revision, message: "Hi.", mode: "conversation" },
+      true,
+    ),
+  ).rejects.toMatchObject({ status: 409 });
+  expect(
+    await db.conversationMessage.count({ where: { sessionId: s.id } }),
+  ).toBe(2);
+});
+
+it("iteration 006 confirms the exact website change-of-mind without retaining mobile scope", async () => {
+  let s = await createSession(owner, "Iteration 006 change of mind", true);
+  s = (
+    await converse(
+      s.id,
+      owner,
+      {
+        revision: s.revision,
+        message: "I want a mobile application for my business.",
+        mode: "conversation",
+      },
+      true,
+    )
+  ).session;
+  s = await confirmBatch(
+    s.id,
+    owner,
+    s.revision,
+    s.evidence
+      .filter((e) => e.active && e.status === "inferred")
+      .map((e) => e.id),
+    true,
+  );
+  // App preference alone is insufficient; supply a real situation and useful outcome through chat.
+  expect((await nextForSession(s.id, owner)).readiness.canAssess).toBe(false);
+  s = (
+    await converse(
+      s.id,
+      owner,
+      {
+        revision: s.revision,
+        message:
+          "I run a small photography studio. I want customers to browse my work and send enquiries.",
+        mode: "conversation",
+      },
+      true,
+    )
+  ).session;
+  s = await confirmBatch(
+    s.id,
+    owner,
+    s.revision,
+    s.evidence
+      .filter((e) => e.active && e.status === "inferred")
+      .map((e) => e.id),
+    true,
+  );
+  const old = await assess(s.id, owner, s.revision);
+  s = (
+    await converse(
+      s.id,
+      owner,
+      {
+        revision: s.revision,
+        message: "Actually, I think a website would be enough.",
+        mode: "conversation",
+      },
+      true,
+    )
+  ).session;
+  expect(answersOf(s).appPreference).toBe("requested");
+  const proposed = s.evidence.filter(
+    (e) => e.active && e.status === "inferred",
+  );
+  expect(
+    proposed.some((e) => e.key === "appPreference" && e.value === "declined"),
+  ).toBe(true);
+  s = await confirmBatch(
+    s.id,
+    owner,
+    s.revision,
+    proposed.map((e) => e.id),
+    true,
+  );
+  expect(answersOf(s).appPreference).toBe("declined");
+  expect((await getReport(s.id, owner)).stale).toBe(true);
+  expect((await getReport(s.id, owner)).content).toEqual(old.content);
+  expect(
+    (await canvas(s.id, owner)).components.some((c) => c.id === "mobile"),
+  ).toBe(false);
+});

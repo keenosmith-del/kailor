@@ -26,6 +26,18 @@ const envSchema = z.object({
   AI_MAX_CALLS_PER_SESSION: z.coerce.number().int().min(0).max(100).default(5),
   AI_MAX_CALLS_PER_DAY: z.coerce.number().int().min(0).max(1000).default(20),
   AI_MAX_OUTPUT_TOKENS: z.coerce.number().int().min(128).max(2048).default(600),
+  AI_CONTEXT_RECENT_MESSAGES: z.coerce
+    .number()
+    .int()
+    .min(2)
+    .max(30)
+    .default(12),
+  AI_CONTEXT_MAX_CHARACTERS: z.coerce
+    .number()
+    .int()
+    .min(1000)
+    .max(24000)
+    .default(12000),
   AI_TIMEOUT_MS: z.coerce.number().int().min(100).max(60000).default(15000),
   ESTIMATE_CURRENCY: z
     .string()

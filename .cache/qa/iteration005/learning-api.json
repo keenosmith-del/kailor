@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-14T22:58:33.368Z",
-  "sourceRunId": "f37ed648-5d00-46ee-9b32-ca14567ebf34",
-  "approvedCaseId": "4c4aab28-bfbc-43da-8d2e-d60d040e3a6e",
+  "generatedAt": "2026-10-15T01:40:02.107Z",
+  "sourceRunId": "b6219877-69a7-4d89-88e9-522f277b2ec1",
+  "approvedCaseId": "fe83e375-e295-4079-ab88-c6e353314578",
   "sourceType": "simulation",
   "reviewVersion": 1,
   "evaluation": {
@@ -25,7 +25,7 @@
         "status": "qualified preliminary draft — consultant review required",
         "synthetic": true,
         "revision": 1,
-        "createdAt": "2026-10-14T22:58:33.239Z",
+        "createdAt": "2026-10-15T01:40:01.981Z",
         "recommendations": [
           {
             "serviceId": "integration",
@@ -200,7 +200,7 @@
         "status": "qualified preliminary draft — consultant review required",
         "synthetic": true,
         "revision": 1,
-        "createdAt": "2026-10-14T22:58:33.241Z",
+        "createdAt": "2026-10-15T01:40:01.983Z",
         "recommendations": [
           {
             "serviceId": "integration",
@@ -221,24 +221,24 @@
               "Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls",
               "Add booking to an existing website only if that channel is useful",
               "Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially",
-              "Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): compare Configure current reminders and cancellation controls. Rationale to validate: Use an existing capability before buying or building a replacement"
+              "Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified): compare Configure current reminders and cancellation controls. Rationale to validate: Use an existing capability before buying or building a replacement"
             ],
             "complexity": "requires technical scoping",
             "dependencies": [
               "Current provider permissions and export/integration support",
               "Availability, reminders and cancellation policy",
               "Vendor subscription terms and ongoing support",
-              "Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): verify Verify current reminder controls and vendor permissions"
+              "Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified): verify Verify current reminder controls and vendor permissions"
             ],
             "confidence": "conditional — based on self-reported facts; consultant validation required",
             "delivery": "custom / exploratory",
             "nextSteps": [
-              "Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence. Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified) supports comparing Configure current reminders and cancellation controls, subject to its dependencies and current-client evidence.",
+              "Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence. Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified) supports comparing Configure current reminders and cancellation controls, subject to its dependencies and current-client evidence.",
               "Review this option with the consultant",
               "Validate constraints, budget and acceptance criteria",
-              "Reference-informed check — Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): Check whether existing reminder and cancellation settings solve the actual problem before adding another provider.",
-              "Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): limitation — Synthetic source; outcomes unverified",
-              "Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): limitation — Different provider permissions may prevent integration"
+              "Reference-informed check — Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified): Check whether existing reminder and cancellation settings solve the actual problem before adding another provider.",
+              "Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified): limitation — Synthetic source; outcomes unverified",
+              "Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified): limitation — Different provider permissions may prevent integration"
             ],
             "optional": false,
             "estimate": {
@@ -291,7 +291,7 @@
         ],
         "matchedCases": [
           {
-            "id": "4c4aab28-bfbc-43da-8d2e-d60d040e3a6e",
+            "id": "fe83e375-e295-4079-ab88-c6e353314578",
             "title": "Independent appointment workflow review",
             "sourceType": "simulation",
             "reasons": [
@@ -300,7 +300,7 @@
             ],
             "approvalStatus": "approved",
             "reviewVersion": 1,
-            "sourceRunId": "f37ed648-5d00-46ee-9b32-ca14567ebf34",
+            "sourceRunId": "b6219877-69a7-4d89-88e9-522f277b2ec1",
             "outcomeVerification": "unverified",
             "limitations": [
               "Synthetic source; outcomes unverified",
@@ -353,8 +353,8 @@
           {
             "title": "Possible Approaches",
             "paragraphs": [
-              "Business software integration: Improve availability and reminders in the current workflow first; Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls; Add booking to an existing website only if that channel is useful; Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially; Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): compare Configure current reminders and cancellation controls. Rationale to validate: Use an existing capability before buying or building a replacement",
-              "Complexity: requires technical scoping. Dependencies: Current provider permissions and export/integration support; Availability, reminders and cancellation policy; Vendor subscription terms and ongoing support; Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): verify Verify current reminder controls and vendor permissions",
+              "Business software integration: Improve availability and reminders in the current workflow first; Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls; Add booking to an existing website only if that channel is useful; Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially; Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified): compare Configure current reminders and cancellation controls. Rationale to validate: Use an existing capability before buying or building a replacement",
+              "Complexity: requires technical scoping. Dependencies: Current provider permissions and export/integration support; Availability, reminders and cancellation policy; Vendor subscription terms and ongoing support; Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified): verify Verify current reminder controls and vendor permissions",
               "Custom web application: Validate the initial workflow with approved templates and existing software; Prototype a small web application after defining essential users and features; Native mobile requires evidence of device-specific needs and partner feasibility review",
               "Complexity: requires technical scoping. Dependencies: Essential user roles and initial acceptance criteria; Data privacy, template ownership and review workflow; Hosting, export, maintenance and supported integrations"
             ]
@@ -381,12 +381,12 @@
               "Before implementation: Confirm reminder/cancellation workflow and provider terms",
               "Before implementation: Validate a small initial version and existing-tool alternatives",
               "Review the evidence and unresolved assumptions with the consultant. Choose the smallest useful first step. Confirm scope and costs before implementation.",
-              "Business software integration: Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence. Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified) supports comparing Configure current reminders and cancellation controls, subject to its dependencies and current-client evidence.",
+              "Business software integration: Prefer checking the existing provider: the client already has scheduling technology, so a replacement is not justified by the current evidence. Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified) supports comparing Configure current reminders and cancellation controls, subject to its dependencies and current-client evidence.",
               "Business software integration: Review this option with the consultant",
               "Business software integration: Validate constraints, budget and acceptance criteria",
-              "Business software integration: Reference-informed check — Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): Check whether existing reminder and cancellation settings solve the actual problem before adding another provider.",
-              "Business software integration: Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): limitation — Synthetic source; outcomes unverified",
-              "Business software integration: Reference 4c4aab28-bfbc-43da-8d2e-d60d040e3a6e v1 (simulation; outcome unverified): limitation — Different provider permissions may prevent integration",
+              "Business software integration: Reference-informed check — Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified): Check whether existing reminder and cancellation settings solve the actual problem before adding another provider.",
+              "Business software integration: Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified): limitation — Synthetic source; outcomes unverified",
+              "Business software integration: Reference fe83e375-e295-4079-ab88-c6e353314578 v1 (simulation; outcome unverified): limitation — Different provider permissions may prevent integration",
               "Custom web application: Prefer a feasibility check and existing-tool comparison before custom engineering; required capabilities and maintenance effort are not established.",
               "Custom web application: Review this option with the consultant",
               "Custom web application: Validate constraints, budget and acceptance criteria",

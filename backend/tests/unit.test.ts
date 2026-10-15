@@ -276,7 +276,8 @@ describe("AI boundaries", () => {
     });
     await provider.infer({ tools: "WhatsApp" }, "Hello", [], "conversation");
     expect(body.max_tokens).toBe(200);
-    expect(body.messages[0].content).toContain("WhatsApp");
+    expect(body.messages[0].content).not.toContain("WhatsApp");
+    expect(body.messages[1].content).toContain("WhatsApp");
   });
 });
 describe("report and authentication", () => {

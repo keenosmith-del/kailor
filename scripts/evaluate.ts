@@ -134,3 +134,26 @@ if (
   learning.result !== "improved"
 )
   process.exitCode = 1;
+
+const { conversationEvaluation } = await import(
+  "../backend/src/conversation-evaluation.js"
+);
+const conversations = await conversationEvaluation();
+await mkdir(".cache/qa/iteration006", { recursive: true });
+await writeFile(
+  ".cache/qa/iteration006/conversation.json",
+  JSON.stringify(
+    { generatedAt: new Date().toISOString(), ...conversations },
+    null,
+    2,
+  ),
+);
+for (const result of conversations.scenarios)
+  console.log(
+    JSON.stringify({
+      conversation: result.id,
+      passed: result.passed,
+      failures: result.turns.flatMap((t) => t.failures),
+    }),
+  );
+if (conversations.scenarios.some((s) => !s.passed)) process.exitCode = 1;

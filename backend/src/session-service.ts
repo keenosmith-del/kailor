@@ -241,6 +241,7 @@ export async function confirmEvidence(
   evidenceId: string,
   revision: number,
   accept: boolean,
+  editedValue?: AnswerValue,
 ) {
   await db.$transaction(async (tx) => {
     const s = await lock(tx, id, adminId, revision);
@@ -253,12 +254,21 @@ export async function confirmEvidence(
         tx,
         s,
         e.key,
-        e.value as AnswerValue,
+        editedValue ?? (e.value as AnswerValue),
         false,
         "chat-confirmed",
         undefined,
         true,
-        e.provenance as Evidence["provenance"],
+        editedValue === undefined
+          ? (e.provenance as Evidence["provenance"])
+          : {
+              ...(e.provenance as Evidence["provenance"]),
+              quote:
+                typeof editedValue === "string"
+                  ? editedValue
+                  : editedValue.join(", "),
+              basis: "user-edited-confirmation",
+            },
       );
     else {
       await tx.evidence.update({
@@ -340,7 +350,8 @@ export async function converse(
   const reservation =
     !forceMock &&
     !guest &&
-    messageQuality.usableFacts &&
+    messageQuality.accepted &&
+    messageQuality.disposition !== "off_topic" &&
     !sensitive &&
     remoteEnabled(config)
       ? await reserveUsage(id, input.mode)
@@ -352,6 +363,10 @@ export async function converse(
       model: config.CLOUDFLARE_MODEL,
       maxTokens: config.AI_MAX_OUTPUT_TOKENS,
       timeoutMs: config.AI_TIMEOUT_MS,
+      contextOptions: {
+        recentMessages: config.AI_CONTEXT_RECENT_MESSAGES,
+        maxCharacters: config.AI_CONTEXT_MAX_CHARACTERS,
+      },
     });
   else
     reason = sensitive

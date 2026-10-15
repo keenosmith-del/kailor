@@ -1,3 +1,4 @@
+import { resolveOption, type Turn } from "./conversation-context.js";
 import type {
   Answers,
   ChatOutput,
@@ -15,10 +16,72 @@ export function localReply(
   mode = "conversation",
   savedPlan?: DiscoveryPlan,
   suppliedRecommendations?: Recommendation[],
+  history: Turn[] = [],
 ) {
   const quality = evaluateInput(message, "", "chat"),
     plan = savedPlan ?? planDiscovery(context);
   const text = message.trim();
+  const reference = resolveOption(text, history);
+  if (reference)
+    return reference.option
+      ? `The ${reference.ordinal} option was: ${reference.option}\n\n${/cheap|cost|price/i.test(text) ? "An existing service or smaller website often involves less custom development, but there is no approved price comparison yet. We need scope and recurring fees to compare fairly." : "We would define the essential workflow, check existing tools against it, then identify any configuration or custom work. Which capability should we examine first?"}`
+      : "Which two approaches are you referring to? I do not have a clearly numbered comparison in the recent conversation.";
+  if (
+    /website or (?:an? )?app|website (?:rather than|instead of|versus|vs) (?:a )?(?:mobile )?app/i.test(
+      text,
+    )
+  )
+    return "1. A website: a proportionate starting point for presenting products or work and receiving enquiries. Existing booking tools can be linked where relevant.\n2. A mobile application: worth exploring when users need repeat interactions, device features or offline workflows. It adds development and maintenance work.\n\nWhat should people be able to do? These are alternatives to explore, not confirmed scope or priced recommendations.";
+  if (
+    /compare|existing booking tool be enough|cheapest approach|explore existing tools/i.test(
+      text,
+    )
+  ) {
+    const recommendations = suppliedRecommendations ?? recommend(context);
+    if (
+      /booking/i.test(text) &&
+      recommendations.some((r) => r.serviceId === "booking")
+    )
+      return "1. An existing booking service linked from your public presence: customers can choose available times, subject to checking the provider's features, fees and data portability.\n2. Keep WhatsApp enquiries with a clearer catalogue and booking process: less change, but you still manage availability manually.\n\nBoth could support your confirmed booking objective. Which would fit how you want customers to contact you? Pricing and integration details still need review.";
+    if (!recommendations.length)
+      return "We can compare approaches once your goal and current workflow are clearer. What should the solution help someone do?";
+    return (
+      recommendations
+        .slice(0, 2)
+        .map(
+          (r, i) =>
+            `${i + 1}. ${r.solution}: ${r.alternatives.slice(0, 2).join(" ")}`,
+        )
+        .join("\n") +
+      "\n\nThese directions come from your confirmed context. Costs need defined scope and vendor fees; no approved price comparison is available yet."
+    );
+  }
+  if (/how are you/i.test(text))
+    return "I'm here and ready to help. What are you thinking of building or improving?";
+  if (
+    /thinking about.*(?:portfolio|business)|don't know what.*looking for|help me (?:figure|work) it out/i.test(
+      text,
+    )
+  )
+    return "We can explore it together. Are you creating something new or improving something you already do?";
+  if (/can you explain what you understood/i.test(text))
+    return plan.context.pending.length
+      ? `These are proposed details from your messages: ${plan.context.pending.map((p) => `${p.key}: ${Array.isArray(p.value) ? p.value.join(", ") : p.value}`).join("; ")}. Confirm, edit or dismiss them before they become assessment evidence.`
+      : "There are no pending details. We can discuss your confirmed context or explore alternatives.";
+  if (/summari[sz]e|what.*understood/i.test(text))
+    return plan.context.activity
+      ? `Your confirmed situation: ${plan.context.activity}\n\n${plan.context.objectives.length ? `Objectives: ${plan.context.objectives.map((o) => o.value).join("; ")}. ` : ""}${plan.context.pending.length ? "Some proposed details still need your confirmation. " : ""}${plan.question?.title ?? "You can prepare an initial assessment or continue exploring."}`
+      : "We have not confirmed a situation yet. What are you working on?";
+  if (/why.*recommend|explain.*recommendation/i.test(text)) {
+    const recommendation = suppliedRecommendations?.[0];
+    return recommendation
+      ? `${recommendation.solution}: ${recommendation.problem}\n\nAlternatives to consider: ${recommendation.alternatives.slice(0, 2).join(" ")}. This is based on confirmed discovery evidence; final scope and pricing still require review.`
+      : "There is no evidence-backed recommendation yet. We can compare approaches once your goal and workflow are clearer.";
+  }
+  if (/prepare.*assessment|ready.*assess/i.test(text))
+    return plan.readiness.canAssess
+      ? "I have enough information to prepare an initial assessment. Use Prepare assessment below when you are ready."
+      : `We still need to clarify the assessment evidence. ${plan.question?.title ?? plan.readiness.reasons.join(". ")}`;
   if (
     /too expensive|can.t afford|cost too much|start with something smaller|smaller version/i.test(
       text,
@@ -68,7 +131,7 @@ export function localReply(
         ? "Hi. I have your saved context. Would you like to clarify a next step or correct an earlier answer?"
         : "Hi. kailor helps you work out useful technology or workflow changes. What are you working on?";
     if (/^(thanks(?:,? that makes sense)?|thank you)[.!]*$/i.test(text))
-      return "You're welcome. We can keep clarifying your situation or return to guided discovery.";
+      return "You're welcome. We can keep exploring or prepare an assessment when there is enough confirmed information.";
     if (/changed my mind/i.test(text))
       return "Which requirement or preference would you like to change? I'll ask you to confirm the updated information.";
     if (/explain|what do you mean/i.test(text))
@@ -91,7 +154,13 @@ export function localReply(
     const topics = [
       ...new Set(proposals.map((p) => labels[p.key] ?? "requirements")),
     ].slice(0, 3);
-    return `I understood an update to your ${topics.join(", ")}. Review the proposed details below and confirm the parts that are current.`;
+    const followUp =
+      /bookings? (?:through|via)|take bookings/i.test(text) && !context.goals
+        ? "What would you most like to improve about how customers find you or book?"
+        : /look more professional|bookings? easier/i.test(text)
+          ? "If confirmed, a simple portfolio website and an existing booking service are worth comparing before custom development. Would you prefer customers to book a time directly, or contact you first?"
+          : plan.question?.title;
+    return `I understood your ${topics.join(", ")}. Confirm the details below so I can use them in an assessment.${followUp ? `\n\n${followUp}` : ""}`;
   }
   if (mode === "analysis") {
     const approaches = (suppliedRecommendations ?? recommend(context))

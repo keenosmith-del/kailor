@@ -123,6 +123,9 @@ export type ChatOutput = z.infer<typeof chatOutputSchema>;
 export const mutationSchema = z.object({
   revision: z.number().int().nonnegative(),
 });
+export const evidenceReviewInput = mutationSchema
+  .extend({ accept: z.boolean(), value: answerValue.optional() })
+  .strict();
 export const answerInput = mutationSchema
   .extend({
     questionId: z.string().max(80),
