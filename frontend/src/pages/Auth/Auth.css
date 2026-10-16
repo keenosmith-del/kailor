@@ -228,7 +228,8 @@
 
 .auth-status.error {
   color: #905f44;
-  background: #fff1e5;
+  background: #fff;
+  box-shadow: 0 3px 12px #00000006;
 }
 
 .auth-status.success {
@@ -249,7 +250,7 @@
   .auth-page {
     grid-template-columns: 1fr;
     grid-template-rows: auto minmax(0, 1fr) auto;
-    background: var(--color-cream);
+    background: var(--page-background);
   }
 
   .auth-brand {

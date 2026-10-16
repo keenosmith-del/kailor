@@ -32,15 +32,12 @@ export function useDiscoveryEntry({ guestOnly = false } = {}) {
         });
       }
       if (!mounted.current) return;
-      // Explicit guest endpoint also works from / and authentication routes.
-      // Guest cookies and account cookies remain independent.
-      const session = account
-        ? await api<Session>("/sessions/entry", "POST", {})
-        : await api<Session>("/guest/sessions", "POST", {});
-      if (mounted.current)
-        navigate(
-          `/${account ? "sessions" : "preview"}/${session.id}/discovery`,
-        );
+      if (!account) {
+        navigate("/preview/discovery");
+        return;
+      }
+      const session = await api<Session>("/sessions/entry", "POST", {});
+      if (mounted.current) navigate(`/sessions/${session.id}/discovery`);
     } catch (e) {
       if (mounted.current) setError(errorMessage(e));
     } finally {

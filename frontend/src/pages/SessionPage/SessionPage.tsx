@@ -5,7 +5,7 @@ import {
   useIsPresent,
   useReducedMotion,
 } from "motion/react";
-import { RotateCcw } from "lucide-react";
+import { ConfirmDialog } from "../../components/ConfirmDialog/ConfirmDialog";
 import {
   useCallback,
   useEffect,
@@ -13,7 +13,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import type { Session } from "../../../../shared/src/index";
 import { Analysis } from "../Analysis/Analysis";
 import { ProjectReports } from "../Application/ProjectReports";
@@ -88,6 +88,7 @@ export function SessionPage({
   const loadSequence = useRef(0);
   const currentRoute = useRef(id);
   currentRoute.current = id;
+  const [restarting, setRestarting] = useState(false);
   const [reportVersion, setReportVersion] = useState(0);
   const [session, setSession] = useState<Session | null>(null),
     [next, setNext] = useState<Next | null>(null),
@@ -152,13 +153,10 @@ export function SessionPage({
   }
   async function restart() {
     if (!session || busy) return;
-    if (
-      session.answers.length &&
-      !window.confirm(
-        "Start Discovery from the beginning? Guided answers and their confirmed details will be retired. Chat-confirmed facts, conversations and saved reports stay saved.",
-      )
-    )
-      return;
+    setRestarting(true);
+  }
+  async function confirmRestart() {
+    if (!session || busy) return;
     const success = await act(() =>
       api(`/sessions/${id}/discovery/restart`, "POST", {
         revision: session.revision,
@@ -166,26 +164,45 @@ export function SessionPage({
     );
     if (success) {
       clearDrafts(id);
+      setRestarting(false);
       onProjectChange();
     }
   }
   return (
     <section className={`session-shell view-${view}`} aria-label={activeView}>
-      {session?.id === id && view === "discovery" && (
-        <div className="discovery-session-actions">
-          <button
-            className="text-link"
-            disabled={busy}
-            onClick={() => void restart()}
-          >
-            <RotateCcw size={14} />
-            Start from beginning
-          </button>
-        </div>
+      {restarting && (
+        <ConfirmDialog
+          title="Begin Discovery again?"
+          confirmLabel="Start from beginning"
+          busy={busy}
+          error={error}
+          onClose={() => setRestarting(false)}
+          onConfirm={() => void confirmRestart()}
+        >
+          <p>
+            Your guided answers will be cleared so you can explore from the
+            first question.
+          </p>
+          <p>
+            Chat-confirmed details, conversations, sources and saved reports
+            stay in this project.
+          </p>
+        </ConfirmDialog>
       )}
       {session?.plan?.archivedAt && (
         <p className="notice">
-          This project is archived. Its saved history is available.
+          This project is archived. Its saved history is available.{" "}
+          <Link
+            to={
+              window.location.pathname.startsWith("/preview/")
+                ? "/preview/discovery"
+                : "/plans"
+            }
+          >
+            {window.location.pathname.startsWith("/preview/")
+              ? "Guest journeys"
+              : "Manage projects to restore it"}
+          </Link>
         </p>
       )}
       <ErrorBox error={error} />
@@ -199,7 +216,10 @@ export function SessionPage({
           <SessionTransition key={`${session.id}:${view}`}>
             <fieldset
               className="session-content"
-              disabled={!!session.plan?.archivedAt}
+              disabled={
+                !!session.plan?.archivedAt &&
+                !["report", "sources"].includes(view)
+              }
             >
               {view === "discovery" ? (
                 <Discovery

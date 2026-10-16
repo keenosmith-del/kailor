@@ -1,3 +1,4 @@
+import { ConfirmDialog } from "../../components/ConfirmDialog/ConfirmDialog";
 import "./ApplicationWorkspace.css";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
@@ -41,6 +42,9 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
     !guest || !!id,
   );
   const [session, setSession] = useState<Session | null>(null);
+  const [exitingGuest, setExitingGuest] = useState(false);
+  const [exitBusy, setExitBusy] = useState(false);
+  const [exitError, setExitError] = useState("");
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState("");
   const [prompt, setPrompt] = useState("");
@@ -75,7 +79,7 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
     const previous = document.activeElement as HTMLElement | null;
     const body = document.querySelector<HTMLElement>(".application-body");
     const header = document.querySelector<HTMLElement>(".application-header");
-    const rail = document.querySelector<HTMLElement>(".application-rail");
+    const rail = document.querySelector<HTMLElement>(".application-navigation");
     const overflow = document.body.style.overflow;
     for (const element of [body, header, rail])
       if (element) element.inert = true;
@@ -146,16 +150,13 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
   }
   const conversationKey = useRef(crypto.randomUUID());
   const newConversationPending = useRef(false);
-  async function newConversation() {
-    if (!session?.plan || projects.busy || newConversationPending.current)
-      return;
+  async function newConversation(projectId = session?.planId) {
+    if (!projectId || projects.busy || newConversationPending.current) return;
     newConversationPending.current = true;
     try {
-      const latest = await api<{ revision: number }>(
-        `/plans/${session.planId}`,
-      );
+      const latest = await api<{ revision: number }>(`/plans/${projectId}`);
       const result = await api<{ sessionId: string }>(
-        `/plans/${session.planId}/sessions`,
+        `/plans/${projectId}/sessions`,
         "POST",
         {
           revision: latest.revision,
@@ -172,6 +173,7 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
           ? error.message
           : "Could not start a conversation.",
       );
+      throw error;
     } finally {
       newConversationPending.current = false;
     }
@@ -207,6 +209,10 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
         onRename={projects.rename}
         onNew={() => setCreating(true)}
         onMore={() => void projects.more()}
+        onExitGuest={() => {
+          setExitError("");
+          setExitingGuest(true);
+        }}
         onLogout={() =>
           void api("/auth/logout", "POST").then(() => {
             clearDrafts();
@@ -231,7 +237,7 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
             onSession={loadedSession}
             initialMessage={initialMessage}
             onInitialMessageConsumed={() => setInitialMessage("")}
-            onNewConversation={newConversation}
+            onNewConversation={() => newConversation()}
             onProjectChange={() => void projects.refresh()}
           />
         ) : projects.data && !guest ? (
@@ -279,6 +285,48 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
           </p>
         )}
       </div>
+      {exitingGuest && guest && (
+        <ConfirmDialog
+          title="Exit guest session?"
+          confirmLabel="Discard and exit"
+          busyLabel="Exiting…"
+          busy={exitBusy}
+          error={exitError}
+          onClose={() => setExitingGuest(false)}
+          onConfirm={() => {
+            if (exitBusy) return;
+            setExitBusy(true);
+            setExitError("");
+            void api<{ discardedSessionIds: string[] }>(
+              "/guest/logout",
+              "POST",
+              { discard: true },
+            )
+              .then(({ discardedSessionIds }) => {
+                discardedSessionIds.forEach((id) => clearDrafts(id));
+                window.location.assign("/");
+              })
+              .catch((error) => {
+                setExitError(
+                  error instanceof Error
+                    ? error.message
+                    : "Could not exit. Please try again.",
+                );
+                setExitBusy(false);
+              });
+          }}
+        >
+          <p>
+            This permanently discards all temporary guest projects, including
+            archived journeys, conversations, answers, documents and reports.
+            Nothing will be saved to an account.
+          </p>
+          <p>
+            To keep a project, cancel and use Account to sign in and transfer it
+            first.
+          </p>
+        </ConfirmDialog>
+      )}
       {creating && (
         <div
           className="project-dialog-backdrop"

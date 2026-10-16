@@ -1,18 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Plus } from "lucide-react";
-import type { Session } from "../../../../shared/src/index";
 import { api, sessionHref } from "../../services/api";
 import { errorMessage } from "../../utils/errorMessage";
 export function ConversationHistory({
-  session,
+  projectId,
+  activeSessionId,
   busy,
-  onNew,
   onNavigate,
 }: {
-  session: Session;
+  projectId: string;
+  activeSessionId?: string;
   busy: boolean;
-  onNew: () => Promise<void>;
   onNavigate?: () => void;
 }) {
   const navigate = useNavigate();
@@ -23,19 +21,34 @@ export function ConversationHistory({
     const result = await api<{
       sessions: typeof rows;
       nextCursor: string | null;
-    }>(`/plans/${session.planId}/sessions${cursor ? `?cursor=${cursor}` : ""}`);
+    }>(`/plans/${projectId}/sessions${cursor ? `?cursor=${cursor}` : ""}`);
     setRows((old) => (cursor ? [...old, ...result.sessions] : result.sessions));
     setCursor(result.nextCursor);
   }
   useEffect(() => {
     setRows([]);
     setError("");
-    void load().catch((e) => setError(errorMessage(e)));
-  }, [session.planId, session.id]);
+    let current = true;
+    void api<{ sessions: typeof rows; nextCursor: string | null }>(
+      `/plans/${projectId}/sessions`,
+    )
+      .then((result) => {
+        if (current) {
+          setRows(result.sessions);
+          setCursor(result.nextCursor);
+        }
+      })
+      .catch((e) => {
+        if (current) setError(errorMessage(e));
+      });
+    return () => {
+      current = false;
+    };
+  }, [projectId, activeSessionId]);
   async function select(id: string) {
     try {
       const data = await api<{ selection: { revision: number } }>("/plans");
-      await api(`/plans/${session.planId}/select`, "POST", {
+      await api(`/plans/${projectId}/select`, "POST", {
         revision: data.selection.revision,
         sessionId: id,
       });
@@ -52,11 +65,26 @@ export function ConversationHistory({
           <button
             key={r.id}
             disabled={busy}
-            aria-current={r.id === session.id ? "true" : undefined}
+            aria-label={`${r.id === activeSessionId ? "Active conversation" : "Conversation"} · ${new Date(r.updatedAt).toLocaleString()}`}
+            aria-current={r.id === activeSessionId ? "true" : undefined}
             onClick={() => void select(r.id)}
           >
-            {r.id === session.id ? "Active conversation" : "Conversation"}
-            <small>{new Date(r.updatedAt).toLocaleDateString()}</small>
+            <span className="conversation-title">
+              {r.id === activeSessionId
+                ? "Active conversation"
+                : "Conversation"}
+            </span>
+            <small>
+              <time
+                dateTime={r.updatedAt}
+                title={new Date(r.updatedAt).toLocaleString()}
+              >
+                {new Date(r.updatedAt).toLocaleDateString(undefined, {
+                  day: "numeric",
+                  month: "short",
+                })}
+              </time>
+            </small>
           </button>
         ))}
       </nav>
@@ -70,18 +98,6 @@ export function ConversationHistory({
           Older conversations
         </button>
       )}
-      <button
-        className="text-link"
-        disabled={busy || !!session.plan?.archivedAt}
-        onClick={() =>
-          void onNew()
-            .then(() => onNavigate?.())
-            .catch((e) => setError(errorMessage(e)))
-        }
-      >
-        <Plus size={15} />
-        New conversation
-      </button>
       {error && <p role="alert">{error}</p>}
     </div>
   );

@@ -1,3 +1,4 @@
+import { GuestJourneyEntry } from "./pages/Application/GuestJourneyEntry";
 import { ApplicationWorkspace } from "./pages/Application/ApplicationWorkspace";
 import { Plans } from "./pages/Plans/Plans";
 import { PlanLanding } from "./pages/PlanLanding/PlanLanding";
@@ -49,6 +50,7 @@ export function App() {
           path="/create-account"
           element={<Auth signup onLogin={setAccount} />}
         />
+        <Route path="/preview/discovery" element={<GuestJourneyEntry />} />
         <Route path="/preview/plans/:planId" element={<PlanLanding />} />
         <Route path="/preview/plans" element={<Plans />} />
         <Route

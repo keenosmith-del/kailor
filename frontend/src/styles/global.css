@@ -7,7 +7,8 @@
 :root {
   font-family: var(--font-sans);
   color: var(--color-charcoal);
-  background: var(--color-cream);
+  --page-background: #fafafa;
+  background: var(--page-background);
   font-synthesis: none;
   --paper: #fffdf8;
   --muted: #77736b;
@@ -327,5 +328,36 @@ select {
   .icon-button {
     width: 44px;
     height: 44px;
+  }
+}
+
+/* Native disclosure triangles are replaced by a light, unfilled chevron. */
+summary {
+  list-style: none;
+}
+summary::marker {
+  content: "";
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+summary::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 10px;
+  border-top: 1.25px solid currentColor;
+  border-right: 1.25px solid currentColor;
+  transform: rotate(45deg);
+  vertical-align: 2px;
+  transition: transform 0.18s ease;
+}
+details[open] > summary::before {
+  transform: rotate(135deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  summary::before {
+    transition: none;
   }
 }

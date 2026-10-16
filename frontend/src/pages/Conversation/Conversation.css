@@ -80,7 +80,7 @@
   padding: 8px 14px;
   font-size: 12px;
   border-radius: 999px;
-  background: #fffefc;
+  background: #fff;
 }
 .suggestions button:hover:not(:disabled) {
   background: #fff;
@@ -95,7 +95,7 @@
   margin: 14px 0 14px auto;
   max-width: 85%;
   width: fit-content;
-  background: #fffefc;
+  background: #fff;
   border-radius: 24px;
 }
 .message small {
@@ -120,7 +120,7 @@
 .proposal {
   margin: 14px 0 0;
   padding: 14px 16px;
-  background: #fffefc90;
+  background: #fff;
   border-radius: 22px;
 }
 .proposal .confirmation-label {
@@ -158,7 +158,7 @@
   gap: 8px;
   margin: 0;
   padding: 9px;
-  background: #fffefc;
+  background: #fff;
   border: 1px solid #e8e0d530;
   border-radius: 30px;
   box-shadow: 0 4px 24px #302f2a03;
@@ -193,7 +193,7 @@
   padding: 16px;
   margin: 8px 0;
   border-radius: 24px;
-  background: #eee8dc;
+  background: #fff;
   font-size: 12px;
   max-height: 36dvh;
   overflow-y: auto;
@@ -284,4 +284,148 @@
 }
 .inline-confirmations[open] > summary {
   margin-bottom: 10px;
+}
+
+/* A compact composer occupies its own row below the clipped transcript. */
+.application-workspace .conversation-layout,
+.application-workspace .conversation {
+  height: auto;
+  flex: 1;
+  overflow: hidden;
+}
+.application-workspace .empty-chat {
+  min-height: 100%;
+  padding: 18px 8px;
+}
+.application-workspace .empty-chat h2 {
+  font-size: clamp(24px, 2.5vw, 32px);
+  font-weight: 400;
+}
+.application-workspace .chat-history {
+  contain: layout;
+}
+.application-workspace .composer-notice {
+  flex: none;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+  padding: 6px 8px;
+  max-height: 12dvh;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+.application-workspace .chat-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  padding: 0;
+  min-height: 44px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  box-shadow: none;
+  background: #fff;
+}
+.application-workspace .chat-form textarea {
+  min-height: 42px;
+  max-height: 104px;
+  padding: 11px 4px 9px;
+  font-size: 14px;
+  line-height: 20px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.application-workspace .chat-form textarea:focus {
+  background: transparent;
+  border: 0;
+}
+.application-workspace .chat-form:focus-within {
+  border-color: #9a89743b;
+}
+.application-workspace .chat-form :is(.chat-attach, .chat-send) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  min-height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+}
+.application-workspace .chat-form .chat-attach {
+  color: var(--muted);
+}
+.application-workspace .chat-form .chat-send {
+  background: #f1f1f1;
+  color: var(--color-charcoal);
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  margin: 4px;
+}
+.application-workspace .chat-form .chat-send:hover:not(:disabled) {
+  background: #fff;
+}
+.application-workspace .chat-form .chat-send:disabled {
+  opacity: 0.4;
+}
+.application-workspace .chat-form .actions {
+  gap: 0;
+}
+@media (max-width: 700px) {
+  .application-workspace .chat-form textarea {
+    font-size: 16px;
+  }
+}
+@media (pointer: coarse) {
+  .application-workspace .chat-form :is(.chat-attach, .chat-send) {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+  .application-workspace .chat-form .chat-send {
+    margin: 0;
+    background: transparent;
+  }
+}
+@media (max-height: 600px) {
+  .empty-chat > img {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 12px;
+  }
+  .empty-chat > p {
+    margin-bottom: 12px;
+  }
+}
+.application-workspace .chat-form input[type="file"] {
+  display: none;
+}
+
+.application-workspace .chat-form .chat-attach:hover:not(:disabled) {
+  color: #80613b;
+  transform: scale(1.06);
+}
+.application-workspace .chat-form .chat-send:hover:not(:disabled) {
+  background: #fff;
+  transform: scale(1.04);
+}
+.confirm-dialog-actions button {
+  border-radius: 999px;
+  transition:
+    background-color 0.18s,
+    color 0.18s,
+    transform 0.18s;
+}
+.confirm-dialog-actions button:hover:not(:disabled) {
+  color: #80613b;
+  transform: translateY(-1px) scale(1.015);
+}
+.confirm-dialog-actions .confirm-dialog-submit:hover:not(:disabled) {
+  background: #e6e6e6;
 }

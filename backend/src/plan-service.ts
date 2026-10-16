@@ -171,8 +171,23 @@ export async function updatePlan(
   },
 ) {
   return db.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "AdminUser" WHERE id = ${adminId} FOR UPDATE`;
     await tx.$queryRaw`SELECT id FROM "Plan" WHERE id = ${id} FOR UPDATE`;
     const p = await ownedPlan(id, adminId, tx);
+    if (input.archived === false && p.archivedAt) {
+      const principal = await tx.adminUser.findUniqueOrThrow({
+        where: { id: adminId },
+      });
+      if (
+        principal.isGuest &&
+        (await tx.plan.count({ where: { adminId, archivedAt: null } }))
+      )
+        throw new AppError(
+          409,
+          "guest_project_limit",
+          "Guests can have one active project. Keep this archived journey in an account to continue it.",
+        );
+    }
     if (p.revision !== input.revision)
       throw new AppError(
         409,

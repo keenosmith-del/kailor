@@ -2,6 +2,8 @@
 
 # kailor
 
+For interface changes, follow the [kailor visual style reference](docs/style/README.md), which captures the current typography, colours, pill buttons, hover behaviour, spacing and interaction preferences.
+
 The current project workspace uses Chat as the signed-in entry, shared sidebar navigation, project/conversation history, Discovery, Canvas, Analysis and Sources. Guest entry resumes one temporary project directly in Discovery. The backend Plan model and existing intelligence remain. See [iteration 011: implementation, changed files, verification and limits](docs/iterations/011-project-workspace.md). The former founder dashboard is now at `/founder`; `/workspace` redirects to Chat.
 
 Iteration 007 is a private, AI-assisted technology consultancy platform with independently owned business/project plans, persistent conversation memory, guided Discovery, confirmation-gated evidence, Solution Canvas, immutable assessments and PDF export. Plans can be created, renamed, resumed, archived, restored and explicitly compared without merging their knowledge.

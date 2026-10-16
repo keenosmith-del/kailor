@@ -1,3 +1,4 @@
+import { ErrorBox } from "../../components/ErrorBox/ErrorBox";
 import "./Auth.css";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router";
@@ -145,9 +146,10 @@ export function Auth({
               </div>
             )}
             {(auth.error || auth.guest.error) && (
-              <p className="auth-status error" role="alert">
-                {auth.error || auth.guest.error}
-              </p>
+              <ErrorBox
+                className="auth-status"
+                error={auth.error || auth.guest.error}
+              />
             )}
             <button type="submit" className="auth-submit" disabled={disabled}>
               {auth.busy

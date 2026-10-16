@@ -1,3 +1,4 @@
+import { guestJourneys } from "./guest-journeys.js";
 import { planRouter } from "./plan-routes.js";
 import { evidenceReviewInput } from "../../shared/src/index.js";
 import { Router } from "express";
@@ -35,10 +36,58 @@ guestRouter.use(async (req, res, next) => {
         include: { admin: true },
       })
     : null;
-  if (auth && auth.admin.isGuest && auth.expiresAt > new Date())
+  if (auth && auth.admin.isGuest && auth.expiresAt > new Date()) {
     res.locals.guestId = auth.adminId;
+    res.locals.guestExpiresAt = auth.expiresAt;
+    res.locals.guestTokenHash = auth.tokenHash;
+  }
   next();
 });
+// Explicit exit discards only the principal authenticated by the guest cookie.
+guestRouter.post("/logout", async (req, res) => {
+  z.object({ discard: z.literal(true) })
+    .strict()
+    .parse(req.body);
+  const owner = res.locals.guestId as string | undefined;
+  const discardedSessionIds = owner
+    ? await db.$transaction(async (tx) => {
+        await tx.$queryRaw`SELECT id FROM "AdminUser" WHERE id = ${owner} FOR UPDATE`;
+        const auth = await tx.authSession.findFirst({
+          where: {
+            tokenHash: res.locals.guestTokenHash,
+            adminId: owner,
+            admin: { isGuest: true },
+            expiresAt: { gt: new Date() },
+          },
+        });
+        if (!auth) return [];
+        // Finish outstanding session writes before deleting their temporary context.
+        await tx.$queryRaw`SELECT id FROM "DiscoverySession" WHERE "adminId" = ${owner} FOR UPDATE`;
+        const sessions = await tx.discoverySession.findMany({
+          where: { adminId: owner },
+          select: { id: true, subjectId: true },
+        });
+        await tx.discoverySession.deleteMany({ where: { adminId: owner } });
+        await tx.subject.deleteMany({
+          where: {
+            id: { in: sessions.map((session) => session.subjectId) },
+            sessions: { none: {} },
+          },
+        });
+        await tx.auditEvent.deleteMany({ where: { actorId: owner } });
+        await tx.adminUser.deleteMany({ where: { id: owner, isGuest: true } });
+        return sessions.map((session) => session.id);
+      })
+    : [];
+  res.clearCookie("kailor_guest", {
+    path: "/api/guest",
+    httpOnly: true,
+    sameSite: "strict",
+    secure: config.NODE_ENV === "production",
+  });
+  res.json({ discardedSessionIds });
+});
+guestRouter.use(guestJourneys);
 guestRouter.post(
   "/sessions",
   rateLimit({

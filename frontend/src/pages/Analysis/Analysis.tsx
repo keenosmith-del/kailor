@@ -90,7 +90,7 @@ export function Analysis({
               {next.readiness.canAssess && (
                 <button
                   className="text-link"
-                  disabled={busy}
+                  disabled={busy || !!session.plan?.archivedAt}
                   onClick={() => void prepare()}
                 >
                   <RefreshCw size={14} /> Prepare a new version
@@ -107,7 +107,7 @@ export function Analysis({
           {next.readiness.canAssess ? (
             <button
               className="button primary"
-              disabled={busy}
+              disabled={busy || !!session.plan?.archivedAt}
               onClick={() => void prepare()}
             >
               Prepare initial assessment

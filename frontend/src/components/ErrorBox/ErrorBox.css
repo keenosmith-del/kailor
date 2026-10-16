@@ -1,7 +1,45 @@
 .error {
-  color: #905f44;
-  background: #fff8ed;
-  padding: 16px 20px;
-  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #535353;
+  background: #fff;
+  box-shadow: 0 3px 12px #00000006;
+  padding: 12px 16px;
+  border-radius: 24px;
   font-size: 13px;
+}
+.error > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.error .error-dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  margin: -6px -6px -6px 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #858585;
+  box-shadow: none;
+  transition: color 0.18s ease;
+}
+.error .error-dismiss:hover:not(:disabled) {
+  color: #454545;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+@media (pointer: coarse) {
+  .error .error-dismiss {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
 }

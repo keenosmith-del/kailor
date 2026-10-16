@@ -8,7 +8,7 @@
     "start": "node dist/backend/src/index.js",
     "typecheck": "tsc --noEmit",
     "test": "AI_PROVIDER=mock AI_ALLOW_REMOTE=false AI_MAX_CALLS_PER_SESSION=5 AI_MAX_CALLS_PER_DAY=20 vitest run tests/unit.test.ts tests/adaptive.test.ts tests/reliability.test.ts tests/contextual.test.ts tests/conversation.test.ts tests/memory.test.ts tests/refinement.test.ts",
-    "test:integration": "AI_PROVIDER=mock AI_ALLOW_REMOTE=false AI_MAX_CALLS_PER_SESSION=5 AI_MAX_CALLS_PER_DAY=20 vitest run --no-file-parallelism tests/integration.test.ts tests/reliability.integration.test.ts tests/contextual.integration.test.ts tests/plans.integration.test.ts tests/migration.integration.test.ts tests/accounts.integration.test.ts tests/public-registration.integration.test.ts tests/workspace.integration.test.ts tests/refinement.integration.test.ts"
+    "test:integration": "AI_PROVIDER=mock AI_ALLOW_REMOTE=false AI_MAX_CALLS_PER_SESSION=5 AI_MAX_CALLS_PER_DAY=20 vitest run --no-file-parallelism tests/integration.test.ts tests/reliability.integration.test.ts tests/contextual.integration.test.ts tests/plans.integration.test.ts tests/migration.integration.test.ts tests/accounts.integration.test.ts tests/public-registration.integration.test.ts tests/workspace.integration.test.ts tests/refinement.integration.test.ts tests/guest-journeys.integration.test.ts"
   },
   "dependencies": {
     "@kailor/shared": "*",

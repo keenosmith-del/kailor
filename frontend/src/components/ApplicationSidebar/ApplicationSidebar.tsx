@@ -1,8 +1,8 @@
 import { ConversationHistory } from "../../pages/Application/ConversationHistory";
-import type { Session } from "../../../../shared/src/index";
+import type { Session, PlanItem } from "../../../../shared/src/index";
 import "./ApplicationSidebar.css";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   MessageCircle,
   Compass,
@@ -17,8 +17,9 @@ import {
   User,
   LogOut,
   Check,
+  ChevronRight,
+  ChevronUp,
 } from "lucide-react";
-import type { PlanItem } from "../../../../shared/src/index";
 import type { Account } from "../../types/account";
 
 export const applicationPages = [
@@ -30,7 +31,7 @@ export const applicationPages = [
 ];
 type Props = {
   session: Session | null;
-  onNewConversation: () => Promise<void>;
+  onNewConversation: (projectId?: string) => Promise<void>;
   account: Account | null;
   guest: boolean;
   view: string;
@@ -45,9 +46,15 @@ type Props = {
   onNew: () => void;
   onMore: () => void;
   onLogout: () => void;
+  onExitGuest: () => void;
 };
 export function ApplicationSidebar(props: Props) {
+  const navigate = useNavigate();
+  const [conversationPending, setConversationPending] = useState(false);
+  const [conversationError, setConversationError] = useState("");
   const [open, setOpen] = useState(false);
+  const [profile, setProfile] = useState(false);
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
   const [renaming, setRenaming] = useState<PlanItem | null>(null);
   const [name, setName] = useState("");
   const trigger = useRef<HTMLButtonElement>(null);
@@ -55,27 +62,36 @@ export function ApplicationSidebar(props: Props) {
   const displayName = props.guest
     ? "Guest"
     : props.account?.name || props.account?.email || "Your account";
+  const close = () => {
+    setOpen(false);
+    setProfile(false);
+    setRenaming(null);
+  };
   useEffect(() => {
     if (!open) return;
     const previousOverflow = document.body.style.overflow;
-    const background = document.querySelector<HTMLElement>(".application-body");
-    const priorInert = background?.inert ?? false;
-    if (background) background.inert = true;
+    const backgrounds = [
+      ".application-body",
+      ".application-header",
+      ".app-shell > footer",
+    ].map((selector) => document.querySelector<HTMLElement>(selector));
+    const prior = backgrounds.map((element) => element?.inert ?? false);
+    backgrounds.forEach((element) => {
+      if (element) element.inert = true;
+    });
     document.body.style.overflow = "hidden";
-    const focusFrame = requestAnimationFrame(() =>
-      drawer.current?.querySelector<HTMLButtonElement>("button")?.focus(),
-    );
+    trigger.current?.focus();
     const key = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        setOpen(false);
+        close();
       }
       if (event.key !== "Tab") return;
       const nodes = Array.from(
         drawer.current?.querySelectorAll<HTMLElement>(
           "button:not(:disabled), a[href], input:not(:disabled)",
         ) ?? [],
-      );
+      ).filter((node) => node.getClientRects().length > 0);
       const first = nodes[0],
         last = nodes.at(-1);
       if (!drawer.current?.contains(document.activeElement)) {
@@ -91,9 +107,10 @@ export function ApplicationSidebar(props: Props) {
     };
     document.addEventListener("keydown", key);
     return () => {
-      cancelAnimationFrame(focusFrame);
       document.body.style.overflow = previousOverflow;
-      if (background) background.inert = priorInert;
+      backgrounds.forEach((element, index) => {
+        if (element) element.inert = prior[index];
+      });
       document.removeEventListener("keydown", key);
       trigger.current?.focus();
     };
@@ -101,113 +118,76 @@ export function ApplicationSidebar(props: Props) {
   return (
     <>
       <header className="application-header">
-        <div className="application-wordmark">
-          <button
-            ref={trigger}
-            className="application-icon"
-            aria-label="Open navigation"
-            aria-expanded={open}
-            aria-controls="application-sidebar"
-            onClick={() => setOpen(true)}
-          >
-            <MoreHorizontal size={21} />
-          </button>
-          <Link to={props.href("chat")}>kailor</Link>
-        </div>
         <span className="application-project-title">{props.title}</span>
       </header>
-      <nav
-        className="application-rail"
-        aria-label="Quick navigation"
-        inert={open}
-      >
-        {applicationPages.map(({ view, label, icon: Icon }) => (
-          <Link
-            key={view}
-            className="rail-link"
-            to={props.href(view)}
-            aria-label={label}
-            aria-current={props.view === view ? "page" : undefined}
-          >
-            <Icon size={19} strokeWidth={1.5} />
-            <span role="tooltip">{label}</span>
-          </Link>
-        ))}
-      </nav>
-      <div
-        className={`sidebar-overlay ${open ? "is-open" : ""}`}
-        inert={!open}
-        aria-hidden={!open}
-      >
+      {open && (
         <button
           className="sidebar-backdrop"
           tabIndex={-1}
-          aria-label="Close navigation"
-          onClick={() => setOpen(false)}
+          aria-label="Dismiss navigation backdrop"
+          onClick={close}
         />
-        <aside
-          id="application-sidebar"
-          ref={drawer}
-          className="application-sidebar"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navigation and projects"
-          onTransitionEnd={(event) => {
-            if (
-              open &&
-              event.target === event.currentTarget &&
-              !event.currentTarget.contains(document.activeElement)
-            )
-              event.currentTarget
-                .querySelector<HTMLButtonElement>("button")
-                ?.focus();
-          }}
-        >
-          <div className="sidebar-heading">
-            <span>kailor</span>
-            <button
-              className="application-icon"
-              aria-label="Close navigation"
-              onClick={() => setOpen(false)}
-            >
-              <X size={19} />
-            </button>
-          </div>
-          <nav aria-label="Application pages">
+      )}
+      <aside
+        ref={drawer}
+        id="application-sidebar"
+        className={`application-navigation ${open ? "is-open" : ""}`}
+        role={open ? "dialog" : undefined}
+        aria-modal={open ? true : undefined}
+        aria-label="Navigation and projects"
+      >
+        <div className="navigation-heading">
+          <button
+            ref={trigger}
+            className="application-icon"
+            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-expanded={open}
+            aria-controls="application-sidebar"
+            onClick={() => (open ? close() : setOpen(true))}
+          >
+            <MoreHorizontal size={20} />
+          </button>
+          <Link
+            className="navigation-brand"
+            to={props.href("chat")}
+            onClick={close}
+          >
+            kailor
+          </Link>
+        </div>
+        <div className="navigation-content">
+          <nav className="navigation-pages" aria-label="Application pages">
             {applicationPages.map(({ view, label, icon: Icon }) => (
               <Link
                 key={view}
                 to={props.href(view)}
+                aria-label={label}
                 aria-current={props.view === view ? "page" : undefined}
-                onClick={() => setOpen(false)}
+                onClick={close}
               >
                 <Icon size={18} strokeWidth={1.5} />
-                {label}
+                <span className="navigation-label" aria-hidden="true">
+                  {label}
+                </span>
               </Link>
             ))}
           </nav>
-          <div className="sidebar-projects">
+          <div className="sidebar-projects" hidden={!open}>
             <div className="sidebar-project-heading">
               <span>Projects</span>
-              {!props.guest && (
-                <button
-                  className="application-icon"
-                  aria-label="New project"
-                  onClick={() => {
-                    setOpen(false);
-                    props.onNew();
-                  }}
-                >
-                  <Plus size={18} />
-                </button>
-              )}
+              <button
+                className="application-icon"
+                aria-label="New project"
+                title="New project"
+                onClick={() => {
+                  close();
+                  if (props.guest) navigate("/preview/discovery");
+                  else props.onNew();
+                }}
+              >
+                <Plus size={15} />
+              </button>
             </div>
-            {props.guest && (
-              <p className="sidebar-hint">
-                One temporary project. Your work stays here when you switch
-                pages.
-              </p>
-            )}
             {props.projects.map((project) => (
               <div className="sidebar-project" key={project.id}>
                 {renaming?.id === project.id ? (
@@ -233,7 +213,7 @@ export function ApplicationSidebar(props: Props) {
                       disabled={props.busy || name.trim().length < 2}
                       aria-label="Save project name"
                     >
-                      <Check size={17} />
+                      <Check size={16} />
                     </button>
                     <button
                       type="button"
@@ -245,21 +225,36 @@ export function ApplicationSidebar(props: Props) {
                     </button>
                   </form>
                 ) : (
-                  <>
+                  <div className="sidebar-project-row">
+                    <button
+                      className="application-icon project-expand"
+                      aria-label={`${expanded.has(project.id) ? "Collapse" : "Expand"} conversations for ${project.title}`}
+                      aria-expanded={expanded.has(project.id)}
+                      aria-controls={`conversations-${project.id}`}
+                      onClick={() =>
+                        setExpanded((old) => {
+                          const next = new Set(old);
+                          if (next.has(project.id)) next.delete(project.id);
+                          else next.add(project.id);
+                          return next;
+                        })
+                      }
+                    >
+                      <ChevronRight size={14} strokeWidth={1.4} />
+                    </button>
                     <button
                       className="sidebar-project-select"
+                      title={project.title}
+                      aria-label={`Open project ${project.title}`}
                       aria-current={
                         project.id === props.activeId ? "true" : undefined
                       }
                       disabled={props.busy}
                       onClick={() => {
                         props.onSelect(project);
-                        setOpen(false);
+                        close();
                       }}
                     >
-                      {project.id === props.activeId && (
-                        <span className="project-dot" />
-                      )}
                       <span>{project.title}</span>
                     </button>
                     <button
@@ -270,20 +265,57 @@ export function ApplicationSidebar(props: Props) {
                         setName(project.title);
                       }}
                     >
-                      <Pencil size={14} />
+                      <Pencil size={13} />
                     </button>
-                  </>
+                    <button
+                      className="application-icon project-new-conversation"
+                      aria-label={`New conversation in ${project.title}`}
+                      title="New conversation"
+                      disabled={
+                        props.busy ||
+                        conversationPending ||
+                        !!project.archivedAt
+                      }
+                      onClick={() => {
+                        setConversationPending(true);
+                        setConversationError("");
+                        void props
+                          .onNewConversation(project.id)
+                          .then(close)
+                          .catch((error) =>
+                            setConversationError(
+                              error instanceof Error
+                                ? error.message
+                                : "Could not start a conversation.",
+                            ),
+                          )
+                          .finally(() => setConversationPending(false));
+                      }}
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
                 )}
-                {project.id === props.activeId && props.session && (
-                  <ConversationHistory
-                    session={props.session}
-                    busy={props.busy}
-                    onNew={props.onNewConversation}
-                    onNavigate={() => setOpen(false)}
-                  />
-                )}
+                <div
+                  id={`conversations-${project.id}`}
+                  hidden={!expanded.has(project.id)}
+                >
+                  {open && expanded.has(project.id) && (
+                    <ConversationHistory
+                      projectId={project.id}
+                      activeSessionId={props.session?.id}
+                      busy={props.busy}
+                      onNavigate={close}
+                    />
+                  )}
+                </div>
               </div>
             ))}
+            {conversationError && (
+              <p className="sidebar-hint" role="alert">
+                {conversationError}
+              </p>
+            )}
             {props.more && (
               <button
                 className="text-link"
@@ -293,41 +325,68 @@ export function ApplicationSidebar(props: Props) {
                 More projects
               </button>
             )}
-            {!props.projects.length && (
-              <p className="sidebar-hint">
-                Start with an idea, a challenge, or a question.
-              </p>
+            {props.guest && (
+              <Link
+                className="guest-journey-link"
+                to="/preview/discovery"
+                onClick={close}
+              >
+                Guest journeys
+              </Link>
             )}
           </div>
-          <div className="sidebar-profile">
-            <div className="profile-identity">
-              <span className="profile-avatar" aria-hidden="true">
-                {displayName[0].toUpperCase()}
-              </span>
-              <span>{displayName}</span>
-            </div>
-            <Link to={props.href("settings")} onClick={() => setOpen(false)}>
-              <Settings size={17} />
+        </div>
+        <div className="sidebar-profile" hidden={!open}>
+          <div
+            id="profile-options"
+            className="profile-options"
+            hidden={!profile}
+          >
+            <Link to={props.href("settings")} onClick={close}>
+              <Settings size={16} />
               Settings
             </Link>
-            <Link to={props.href("account")} onClick={() => setOpen(false)}>
-              <User size={17} />
+            <Link to={props.href("account")} onClick={close}>
+              <User size={16} />
               Account
             </Link>
             {props.guest ? (
-              <div className="guest-account-links">
-                <Link to="/sign-in">Sign in</Link>
-                <Link to="/create-account">Create account</Link>
-              </div>
+              <button
+                onClick={() => {
+                  close();
+                  props.onExitGuest();
+                }}
+              >
+                <LogOut size={16} />
+                Exit guest session
+              </button>
             ) : (
-              <button onClick={props.onLogout}>
-                <LogOut size={17} />
+              <button
+                onClick={() => {
+                  close();
+                  props.onLogout();
+                }}
+              >
+                <LogOut size={16} />
                 Sign out
               </button>
             )}
           </div>
-        </aside>
-      </div>
+          <button
+            className="profile-identity"
+            aria-label={`${displayName}, account options`}
+            aria-expanded={profile}
+            aria-controls="profile-options"
+            onClick={() => setProfile((value) => !value)}
+          >
+            <span className="profile-avatar" aria-hidden="true">
+              {displayName[0].toUpperCase()}
+            </span>
+            <span title={displayName}>{displayName}</span>
+            <ChevronUp size={14} strokeWidth={1.4} />
+          </button>
+        </div>
+      </aside>
     </>
   );
 }

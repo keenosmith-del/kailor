@@ -57,7 +57,7 @@ export function ProjectSources({ session }: { session: Session }) {
       </p>
       <ErrorBox error={error} />
       {notice && <p role="status">{notice}</p>}
-      <details>
+      <details hidden={!!session.plan?.archivedAt}>
         <summary>Add project material</summary>
         <form
           onSubmit={(e) => {
@@ -102,7 +102,10 @@ export function ProjectSources({ session }: { session: Session }) {
               rows={4}
             />
           </label>
-          <button className="button" disabled={busy}>
+          <button
+            className="button"
+            disabled={busy || !!session.plan?.archivedAt}
+          >
             Save resource
           </button>
         </form>
@@ -111,7 +114,7 @@ export function ProjectSources({ session }: { session: Session }) {
           <input
             type="file"
             accept=".txt,.csv,text/plain,text/csv"
-            disabled={busy}
+            disabled={busy || !!session.plan?.archivedAt}
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file)
@@ -159,7 +162,7 @@ export function ProjectSources({ session }: { session: Session }) {
           </div>
           <button
             className="text-link"
-            disabled={busy}
+            disabled={busy || !!session.plan?.archivedAt}
             onClick={() => {
               if (
                 window.confirm(

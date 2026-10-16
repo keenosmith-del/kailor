@@ -1,5 +1,6 @@
 /* Match kai's Home/Home.css .kai-footer and inherited .kai-app typography. */
 .kailor-footer {
+  background: var(--page-background);
   display: flex;
   justify-content: space-between;
   gap: 20px;

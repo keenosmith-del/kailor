@@ -1,9 +1,11 @@
 .application-workspace {
-  --surface: #fffefc;
+  --surface: #fff;
+  --paper: #fff;
+  background: var(--page-background);
   --surface-hover: #fff;
   --control-radius: 999px;
-  --control-height: 40px;
-  --control-padding: 9px 18px;
+  --control-height: 32px;
+  --control-padding: 6px 11px;
   --surface-edge: transparent;
   display: flex;
   flex-direction: column;
@@ -20,13 +22,13 @@
 }
 .application-workspace
   :is(input:not([type="checkbox"]):not([type="radio"]), textarea, select) {
-  border-radius: 26px;
-  border: 1px solid #fffefc;
-  background: #fffefcbf;
-  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: #fff;
+  padding: 9px 12px;
 }
 .application-workspace :is(input, textarea, select):focus {
-  background: #fffdfa;
+  background: #fff;
   border-color: #9a897447;
 }
 .application-workspace .button:not(.primary):hover,
@@ -53,7 +55,7 @@
 }
 .application-workspace .choice {
   border-radius: 999px;
-  background: #fffefc;
+  background: #fff;
 }
 .application-workspace .choice:hover {
   background: #fff;
@@ -176,7 +178,7 @@
 }
 .project-dialog {
   position: relative;
-  background: var(--color-cream);
+  background: #fff;
   border-radius: 28px;
   padding: 40px;
   width: min(100%, 480px);
@@ -296,7 +298,7 @@
 }
 .application-workspace .discovery-action {
   color: var(--color-charcoal);
-  background: #fffefcbf;
+  background: #fff;
   border: 1px solid transparent;
 }
 .application-workspace .discovery-action:hover:not(:disabled) {
@@ -312,21 +314,15 @@
   text-decoration: none;
 }
 .application-workspace :is(button, a, input, textarea, select):focus-visible {
-  outline: 2px solid #8c7251;
-  outline-offset: 4px;
+  outline: 1px solid #8c7251;
+  outline-offset: 2px;
+  box-shadow: none;
 }
 .discovery-progress {
   grid-column: 1 / -1;
   font-size: 11px;
   color: var(--muted);
   margin: 8px 0 20px;
-}
-.application-workspace .question-input textarea {
-  background: #fffefc;
-  border-radius: 25px;
-  padding: 20px 24px;
-  min-height: 140px;
-  resize: vertical;
 }
 .application-personal label {
   display: grid;
@@ -378,27 +374,332 @@
   max-height: 400px;
   overflow: auto;
 }
+
+/* Focused workspaces share the viewport; only their bounded content can scroll. */
+.app-shell:has(> .application-view-discovery) {
+  display: grid;
+  height: 100dvh;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+.app-shell > :is(.application-view-chat, .application-view-discovery) {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+.app-shell:has(> :is(.application-view-chat, .application-view-discovery))
+  > .kailor-footer {
+  padding-block: 10px;
+}
+:is(.application-view-chat, .application-view-discovery) .application-body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  padding-bottom: 8px;
+}
+:is(.application-view-chat, .application-view-discovery) .session-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  overflow: hidden;
+}
+:is(.application-view-chat, .application-view-discovery)
+  :is(.session-view, .session-content) {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+:is(.application-view-chat, .application-view-discovery)
+  .session-shell
+  > :is(.error, .processing, .notice) {
+  flex: none;
+  font-size: 12px;
+  padding: 6px 0;
+  margin: 0;
+  max-height: 12dvh;
+  overflow: auto;
+}
+.application-workspace.application-view-discovery .discovery-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  column-gap: 6%;
+  row-gap: 0;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  margin: 0 auto;
+}
+.application-workspace.application-view-discovery .discovery-progress {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 36px;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  font-size: 10px;
+}
+.application-workspace .discovery-progress .text-link {
+  min-height: 36px;
+  gap: 6px;
+  font-size: 10px;
+}
+.application-workspace.application-view-discovery .discovery-mascot {
+  grid-column: 1;
+  grid-row: 2;
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  max-height: 600px;
+  min-height: 0;
+  margin: 0;
+}
+.application-workspace.application-view-discovery .question-section {
+  grid-column: 2;
+  grid-row: 2;
+  width: 100%;
+  min-height: 0;
+  max-height: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  padding: 18px 4px 18px 0;
+  align-self: center;
+}
+.application-workspace .question-section h1 {
+  font-size: clamp(26px, 2.6vw, 36px);
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: -0.045em;
+  margin-bottom: 14px;
+}
+.application-workspace .question-description {
+  font-size: 13px;
+  line-height: 1.65;
+  margin-bottom: 14px;
+}
+.application-workspace .question-input {
+  margin: 20px 0 12px;
+}
+.application-workspace .question-input textarea {
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 11px 13px;
+  min-height: 84px;
+  height: 88px;
+  max-height: 120px;
+  resize: none;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: #fff;
+}
+.application-workspace :is(input, textarea, select):focus-visible {
+  outline: none;
+  box-shadow: none;
+  border-color: #9a897470;
+}
+.application-workspace .question-input textarea:focus {
+  outline: 0;
+  outline-offset: 0;
+  box-shadow: none;
+  background: #fff;
+  border-color: #9a897455;
+}
+.application-workspace :is(.discovery-action, .choice) {
+  min-height: 32px;
+  padding: 6px 11px;
+  font-size: 11px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+}
+.application-workspace .discovery-action:first-child {
+  background: #eee9df;
+}
+.application-workspace .discovery-action:hover:not(:disabled),
+.application-workspace .choice:hover {
+  background: #eee9df;
+}
+.application-workspace .choice.selected {
+  outline: 1px solid #b2a79870;
+  outline-offset: -1px;
+}
+.application-workspace .question-section .actions {
+  gap: 6px;
+}
+.application-workspace .question-section .readiness {
+  padding: 16px 0 0;
+}
+.application-workspace .question-section .readiness p {
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.application-workspace .question-section .conversation-link {
+  min-height: 36px;
+  margin: 12px 0 0;
+  font-size: 11px;
+}
+.application-workspace .question-section > div > .text-link {
+  font-size: 10px;
+  min-height: 32px;
+  margin-bottom: 8px;
+}
+.application-workspace
+  :is(.application-personal, .application-sources, .project-reports)
+  h1 {
+  font-size: clamp(28px, 3vw, 36px);
+  font-weight: 400;
+}
+.application-workspace :is(.application-personal, .project-reports) .button {
+  font-size: 12px;
+  min-height: 34px;
+  padding: 7px 12px;
+}
+.application-workspace .canvas header h1 {
+  font-size: clamp(26px, 2.8vw, 36px);
+  font-weight: 400;
+}
+.application-workspace .canvas-node {
+  padding: 14px 16px;
+  border-radius: 20px;
+}
+.application-workspace .canvas-node[aria-pressed="true"] {
+  border-color: #9d8b6e70;
+  background: #f5f0e7;
+}
 @media (max-width: 700px) {
-  .application-workspace .discovery-mascot {
-    height: 100px;
-    min-height: 100px;
-    max-height: 100px;
-    margin: 0 0 10px;
+  .application-header {
+    height: 60px;
   }
-  .discovery-progress {
-    margin: 4px 0 12px;
+  .application-workspace.application-view-discovery .discovery-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .application-workspace.application-view-discovery .discovery-mascot {
+    display: none;
+  }
+  .application-workspace.application-view-discovery .question-section {
+    grid-column: 1;
+    padding: 12px 0;
   }
   .application-workspace .question-section h1 {
-    font-size: clamp(27px, 7vw, 34px);
+    font-size: clamp(25px, 6.5vw, 30px);
   }
   .application-workspace .question-description {
-    font-size: 14px;
-    line-height: 1.65;
+    font-size: 13px;
   }
   .application-workspace .question-input textarea {
-    min-height: 110px;
+    font-size: 16px;
   }
-  .application-workspace .discovery-layout {
-    min-height: 0;
+  .application-workspace .discovery-progress {
+    font-size: 9px;
   }
+  .application-workspace .discovery-progress .text-link {
+    font-size: 9px;
+  }
+}
+@media (pointer: coarse) {
+  .application-workspace :is(.discovery-action, .choice) {
+    min-height: 44px;
+    padding-block: 8px;
+  }
+}
+@media (max-height: 600px) {
+  .application-header {
+    height: 56px;
+  }
+  .application-workspace .question-section h1 {
+    font-size: 25px;
+  }
+  .application-workspace .question-input {
+    margin-block: 12px;
+  }
+}
+
+/* Compact controls keep kailor's pill silhouette and restrained, tonal hover feedback. */
+.application-workspace
+  :is(.button, .surface-button, .discovery-action, .choice) {
+  border-radius: 999px;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+.application-workspace
+  :is(.button, .surface-button, .discovery-action):hover:not(:disabled),
+.application-workspace .choice:not(:has(input:disabled)):hover {
+  transform: translateY(-1px) scale(1.015);
+  background: #fff;
+}
+.application-workspace .discovery-action:first-child:hover:not(:disabled) {
+  background: #eaddc3;
+}
+.application-workspace .button.primary:hover:not(:disabled) {
+  background: #454d56;
+}
+.application-workspace .text-link:hover:not(:disabled) {
+  color: #80613b;
+  transform: translateY(-1px);
+}
+.application-workspace .application-navigation :is(a, button) {
+  border-radius: 999px;
+}
+.application-workspace
+  .application-navigation
+  :is(a, button):hover:not(:disabled) {
+  background: transparent;
+  color: #6e5738;
+  transform: translateX(1px) scale(1.015);
+}
+
+.application-workspace .navigation-brand {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 550;
+  letter-spacing: -0.035em;
+  color: var(--color-charcoal);
+}
+
+/* White surfaces carry the content; warm accents are reserved for primary actions. */
+.application-workspace .choice:not(:has(input:disabled)):hover {
+  background: #f2f2f2;
+}
+.application-workspace .choice.selected {
+  outline-color: #d0d0ce;
+  background: #fff;
+}
+
+/* White controls brighten on hover; cream and charcoal controls keep their palette. */
+.application-workspace
+  :is(
+    .suggestions button,
+    .choice,
+    .button:not(.primary):not(.chat-send),
+    .discovery-action:not(:first-child)
+  ) {
+  background: #fff;
+}
+.application-workspace
+  :is(
+    .suggestions button,
+    .choice,
+    .button:not(.primary):not(.chat-send),
+    .discovery-action:not(:first-child)
+  ):hover:not(:disabled) {
+  background: #fff;
+  box-shadow: 0 3px 12px #0000000c;
+  transform: translateY(-1px) scale(1.015);
+}
+.application-workspace .chat-form .chat-send:hover:not(:disabled) {
+  background: #fff;
 }

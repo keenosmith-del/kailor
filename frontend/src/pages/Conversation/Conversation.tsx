@@ -1,6 +1,6 @@
 import "./Conversation.css";
 import { useNavigate, useSearchParams } from "react-router";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Plus } from "lucide-react";
 import {
   useState,
   useEffect,
@@ -11,7 +11,7 @@ import {
 import { mascotAssets } from "../../components/Mascot/mascot-assets";
 import { Link } from "react-router";
 import { conversationSuggestions } from "../../../../shared/src/conversation";
-import { api, sessionHref } from "../../services/api";
+import { api, sessionHref, uploadSource } from "../../services/api";
 import type { SessionProps, Next } from "../../types/session";
 import { clearDrafts, readDraft, saveDraft } from "../../utils/drafts";
 export function Conversation({
@@ -65,12 +65,21 @@ export function Conversation({
             : "An existing booking provider"
           : value;
   const [message, setMessage] = useState("");
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [attachmentNotice, setAttachmentNotice] = useState("");
   const [clearing, setClearing] = useState(false);
   const visibleMessages = session.messages.filter(
     (m) => !m.hiddenFromTranscript,
   );
   const sending = useRef(false);
   const [notice, setNotice] = useState("");
+  const [emptyClearNotice, setEmptyClearNotice] = useState(0);
+  useEffect(() => {
+    if (!emptyClearNotice) return;
+    const timer = window.setTimeout(() => setEmptyClearNotice(0), 3000);
+    return () => window.clearTimeout(timer);
+  }, [emptyClearNotice]);
   const input = useRef<HTMLTextAreaElement>(null);
   const history = useRef<HTMLDivElement>(null);
   const shouldAnchor = useRef(visibleMessages.length > 0);
@@ -81,6 +90,7 @@ export function Conversation({
   const initialSent = useRef(false);
   const [editing, setEditing] = useState<Record<string, string>>({});
   const providerNotice =
+    (emptyClearNotice ? "There’s no conversation to clear." : "") ||
     notice ||
     (visibleMessages.filter((m) => m.role === "assistant").at(-1)?.provider ===
     "mock-development"
@@ -117,6 +127,7 @@ export function Conversation({
     }
   }, [initialMessage]);
   useEffect(() => {
+    setEmptyClearNotice(0);
     setMessage(
       component
         ? `Help me understand ${component}. What should I verify before choosing it?`
@@ -153,6 +164,8 @@ export function Conversation({
   async function sendText(text: string) {
     if (!text.trim() || busy || sending.current) return;
     sending.current = true;
+    setEmptyClearNotice(0);
+    setAttachmentNotice("");
     shouldAnchor.current = true;
     pendingFrom.current = visibleMessages.length;
     setPendingMessage(text.trim());
@@ -209,7 +222,7 @@ export function Conversation({
             onClick={() =>
               visibleMessages.length
                 ? setClearing(true)
-                : setNotice("There’s no conversation to clear.")
+                : setEmptyClearNotice((count) => count + 1)
             }
           >
             Clear conversation
@@ -510,11 +523,6 @@ export function Conversation({
                 ))}
               </div>
             )}
-          {providerNotice && (
-            <p className="fine-print" role="status">
-              {providerNotice}
-            </p>
-          )}
           {next.readiness.canAssess && (
             <div className="conversation-readiness" role="status">
               <p>
@@ -596,7 +604,63 @@ export function Conversation({
             </div>
           </div>
         )}
+        {(providerNotice || attachmentNotice) && (
+          <div className="composer-notice" role="status">
+            {emptyClearNotice
+              ? "There’s no conversation to clear."
+              : attachmentNotice || providerNotice}
+          </div>
+        )}
         <form className="chat-form" onSubmit={send}>
+          <input
+            ref={fileInput}
+            hidden
+            type="file"
+            tabIndex={-1}
+            aria-label="Project documents"
+            accept=".txt,.csv,text/plain,text/csv"
+            multiple
+            onChange={(event) => {
+              const files = Array.from(event.target.files ?? []);
+              event.target.value = "";
+              if (!files.length || uploading) return;
+              const planId = session.planId;
+              if (!planId) {
+                setAttachmentNotice("Open a project before adding documents.");
+                return;
+              }
+              setUploading(true);
+              setAttachmentNotice("Adding documents…");
+              void (async () => {
+                const added: string[] = [];
+                try {
+                  for (const file of files) {
+                    await uploadSource(planId, file);
+                    added.push(file.name);
+                  }
+                  setAttachmentNotice(
+                    `Added ${added.join(", ")} to this project's Sources.`,
+                  );
+                } catch (error) {
+                  setAttachmentNotice(
+                    `${added.length ? `Added ${added.join(", ")}. ` : ""}${error instanceof Error ? error.message : "Could not add this document."} Use UTF-8 text or CSV, up to 64 KB each.`,
+                  );
+                } finally {
+                  setUploading(false);
+                }
+              })();
+            }}
+          />
+          <button
+            type="button"
+            className="chat-attach"
+            aria-label="Add documents"
+            title="Add text or CSV documents (up to 64 KB each)"
+            disabled={busy || uploading || !!session.plan?.archivedAt}
+            onClick={() => fileInput.current?.click()}
+          >
+            <Plus size={17} strokeWidth={1.5} />
+          </button>
           <label className="sr-only" htmlFor="message">
             Your message
           </label>
@@ -623,8 +687,8 @@ export function Conversation({
           />
           <div className="actions">
             <button
-              className="button primary chat-send"
-              disabled={busy || !message.trim()}
+              className="button chat-send"
+              disabled={busy || uploading || !message.trim()}
             >
               <span className="sr-only">Send message</span>
               <ArrowUp size={19} />

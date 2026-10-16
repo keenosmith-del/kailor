@@ -5,7 +5,7 @@ import {
   useIsPresent,
   useReducedMotion,
 } from "motion/react";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import type { AnswerValue } from "../../../../shared/src/index";
@@ -199,10 +199,22 @@ export function Discovery({
   }
   return (
     <div className="discovery-layout">
-      <div className="discovery-progress" role="status">
-        {session.answers.length
-          ? `${session.answers.length} responses saved · Questions adapt as we go`
-          : "Choose your starting point"}
+      <div className="discovery-progress">
+        <span role="status">
+          {session.answers.length
+            ? `${session.answers.length} responses saved · Questions adapt as we go`
+            : "Choose your starting point"}
+        </span>
+        {session.answers.length > 0 && question?.id !== "stage" && (
+          <button
+            className="text-link"
+            disabled={busy || !!session.plan?.archivedAt}
+            onClick={() => void restart()}
+          >
+            <RotateCcw size={12} strokeWidth={1.5} />
+            Start from beginning
+          </button>
+        )}
       </div>
       <aside className="discovery-mascot">
         <Mascot
@@ -234,7 +246,7 @@ export function Discovery({
             )}
             {question ? (
               <>
-                <h1>{question.title}</h1>
+                <h1 tabIndex={-1}>{question.title}</h1>
                 <p className="question-description">
                   {question.id === "stage"
                     ? "Whether you're running a business, developing an idea, or looking for a specific solution, choose what best describes your situation. We'll tailor the experience from there"
@@ -245,7 +257,7 @@ export function Discovery({
                   {question.type === "text" ? (
                     <textarea
                       aria-label={question.title}
-                      rows={4}
+                      rows={3}
                       maxLength={4000}
                       value={typeof value === "string" ? value : ""}
                       placeholder="In your own words…"
