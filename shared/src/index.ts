@@ -1,3 +1,4 @@
+export * from "./consulting.js";
 import { z } from "zod";
 export const answerValue = z.union([
   z.string().max(4000),
@@ -34,6 +35,7 @@ export type Evidence = {
   };
 };
 export type Session = {
+  title?: string;
   id: string;
   revision: number;
   knowledgeRevision?: number;
@@ -89,6 +91,7 @@ export type Recommendation = {
 };
 export type ReportSection = { title: string; paragraphs: string[] };
 export type Report = {
+  consulting?: import("./consulting.js").ConsultingBrief;
   presentationVersion?: number;
   assessmentType?: "exploration" | "idea" | "business" | "solution";
   title: string;
@@ -437,6 +440,7 @@ export type PlanItem = {
   revision: number;
   updatedAt: string;
   sessions: {
+    title?: string;
     id: string;
     updatedAt: string;
     knowledgeRevision: number;

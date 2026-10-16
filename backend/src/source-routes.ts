@@ -58,11 +58,24 @@ async function storeSource(
 sourceRouter.get("/plans/:id/sources", async (req, res) => {
   const planId = id.parse(req.params.id);
   await ownedPlan(planId, owner(res));
-  const query = z.object({ cursor: id.optional() }).strict().parse(req.query);
+  const query = z
+    .object({
+      cursor: id.optional(),
+      category: z.enum(["all", "documents", "references", "notes"]).optional(),
+    })
+    .strict()
+    .parse(req.query);
   const rows = await db.projectSource.findMany({
     where: {
       planId,
       plan: { adminId: owner(res) },
+      ...(query.category === "documents"
+        ? { kind: { in: ["text", "csv"] } }
+        : query.category === "references"
+          ? { kind: "link" }
+          : query.category === "notes"
+            ? { kind: "note" }
+            : {}),
       ...(query.cursor ? { id: { gt: query.cursor } } : {}),
     },
     orderBy: { id: "asc" },

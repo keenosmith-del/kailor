@@ -1,9 +1,8 @@
 import { ProjectSources } from "./ProjectSources";
-import { ReportReader } from "../../components/ReportReader/ReportReader";
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { Download, FileText } from "lucide-react";
-import type { Report, Session } from "../../../../shared/src/index";
+import type { Session } from "../../../../shared/src/index";
 import { api, downloadReport, sessionHref } from "../../services/api";
 import { ErrorBox } from "../../components/ErrorBox/ErrorBox";
 import { errorMessage } from "../../utils/errorMessage";
@@ -11,10 +10,9 @@ type Snapshot = {
   id: string;
   title: string;
   summary: string;
-  status: string;
   assessmentType: string;
   createdAt: string;
-  assessment: { sessionId: string; summary: string; knowledgeRevision: number };
+  status: string;
 };
 export function ProjectReports({
   session,
@@ -25,12 +23,11 @@ export function ProjectReports({
   sources?: boolean;
   refreshVersion?: number;
 }) {
-  const [rows, setRows] = useState<Snapshot[]>([]);
-  const [cursor, setCursor] = useState<string | null>(null);
-  const [historic, setHistoric] = useState<Report | null>(null);
-  const [selected, setSelected] = useState("");
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [params, setParams] = useSearchParams();
+  const category = params.get("library") ?? "all";
+  const [rows, setRows] = useState<Snapshot[]>([]),
+    [cursor, setCursor] = useState<string | null>(null),
+    [error, setError] = useState("");
   async function load(cursor?: string) {
     const result = await api<{
       reports: Snapshot[];
@@ -40,133 +37,134 @@ export function ProjectReports({
     setCursor(result.nextCursor);
   }
   useEffect(() => {
+    let current = true;
     setRows([]);
-    setHistoric(null);
-    setSelected("");
     setError("");
-    void load().catch((e) => setError(errorMessage(e)));
+    void api<{ reports: Snapshot[]; nextCursor: string | null }>(
+      `/plans/${session.planId}/reports`,
+    )
+      .then((r) => {
+        if (current) {
+          setRows(r.reports);
+          setCursor(r.nextCursor);
+        }
+      })
+      .catch((e) => {
+        if (current) setError(errorMessage(e));
+      });
+    return () => {
+      current = false;
+    };
   }, [session.planId, session.revision, refreshVersion]);
-  async function open(id: string) {
-    setBusy(true);
-    setError("");
-    try {
-      const result = await api<{ content: Report }>(
-        `/plans/${session.planId}/reports/${id}`,
-      );
-      setSelected(id);
-      setHistoric(result.content);
-    } catch (e) {
-      setError(errorMessage(e));
-    } finally {
-      setBusy(false);
-    }
-  }
-  const Heading = sources ? "h1" : "h2";
+  useEffect(() => {
+    const target = location.hash.startsWith("#assessment-")
+      ? location.hash.slice(1)
+      : null;
+    if (!target) return;
+    const row = document.getElementById(target);
+    if (row) row.scrollIntoView?.({ block: "center" });
+    else if (cursor) void load(cursor).catch((e) => setError(errorMessage(e)));
+  }, [rows, cursor]);
+
   return (
     <section
       className={`project-reports ${sources ? "application-sources" : ""}`}
     >
-      <Heading>{sources ? "Sources" : "Analysis history"}</Heading>
-      <p className="lead">
-        {sources
-          ? "Saved material from this project, ready to revisit and discuss."
-          : "Earlier assessments stay saved when your understanding develops."}
-      </p>
-      <ErrorBox error={error} />
-      {!rows.length && (
-        <p className="muted">
-          No saved analyses yet. Add context in Chat or Discovery, then prepare
-          an analysis when you're ready.
-        </p>
-      )}
-      {sources && <ProjectSources session={session} />}
-      {sources && <h2>Generated assessments and PDFs</h2>}
-      <div className="source-list">
-        {rows.map((row) => (
-          <article className="source-row" key={row.id}>
-            <FileText size={19} />
-            <div>
+      {sources ? (
+        <>
+          <h1>Sources</h1>
+          <p className="source-capabilities">
+            Your project library. Notes, references, documents and saved
+            assessments stay together.
+          </p>
+          <nav className="library-filters" aria-label="Resource categories">
+            {[
+              ["all", "All resources"],
+              ["documents", "Documents"],
+              ["references", "References"],
+              ["notes", "Project notes"],
+              ["assessments", "Assessments"],
+            ].map(([id, label]) => (
               <button
+                key={id}
                 className="text-link"
-                disabled={busy}
-                aria-expanded={selected === row.id}
-                onClick={() => void open(row.id)}
+                aria-pressed={category === id}
+                onClick={() => setParams({ library: id }, { replace: true })}
               >
-                {row.title}
+                {label}
               </button>
-              <p>
-                {new Date(row.createdAt).toLocaleDateString()} ·{" "}
-                {row.assessmentType === "exploration"
-                  ? "Opportunity exploration"
-                  : "Initial assessment"}
-              </p>
-              <p>{row.summary}</p>
-              <Link
-                className="text-link"
-                to={`${sessionHref(session.id, "chat")}?report=${row.id}`}
-              >
-                Discuss in Chat
-              </Link>
-            </div>
-            <button
-              className="application-icon"
-              aria-label={`Download analysis from ${new Date(row.createdAt).toLocaleString()}`}
-              onClick={() =>
-                void downloadReport(session.planId ?? "", row.id).catch((e) =>
-                  setError(errorMessage(e)),
-                )
-              }
-            >
-              <Download size={17} />
-            </button>
-          </article>
-        ))}
-      </div>
-      {cursor && (
-        <button
-          className="button"
-          disabled={busy}
-          onClick={() =>
-            void load(cursor).catch((e) => setError(errorMessage(e)))
-          }
-        >
-          More saved analyses
-        </button>
+            ))}
+          </nav>
+        </>
+      ) : (
+        <h2>Analysis history</h2>
       )}
-      {historic && (
-        <section className="historic-report" aria-label="Historical analysis">
-          <div className="actions">
-            <span className="badge">
-              Saved snapshot · {historic.createdAt.slice(0, 10)}
-            </span>
+      <ErrorBox error={error} />
+      {sources && category !== "assessments" && (
+        <ProjectSources session={session} filter={category} />
+      )}
+      {(!sources || ["all", "assessments"].includes(category)) && (
+        <section id="assessments">
+          {sources && <h2>Saved assessments</h2>}
+          {!rows.length && (
+            <p className="muted">
+              No saved assessments yet. Prepare one when there is enough
+              context.
+            </p>
+          )}
+          <div className="source-list">
+            {rows.map((row) => (
+              <article
+                className="source-row"
+                key={row.id}
+                id={`assessment-${row.id}`}
+              >
+                <FileText size={18} />
+                <div>
+                  <Link
+                    className="text-link"
+                    to={`${sessionHref(session.id, "analysis")}?report=${row.id}&from=${sources ? "sources" : "analysis"}&library=${encodeURIComponent(category)}`}
+                  >
+                    {row.title}
+                  </Link>
+                  <p>
+                    {new Date(row.createdAt).toLocaleDateString()} ·{" "}
+                    {row.assessmentType === "exploration"
+                      ? "Opportunity exploration"
+                      : "Project assessment"}
+                  </p>
+                  <p>{row.summary}</p>
+                  <Link
+                    className="text-link"
+                    to={`${sessionHref(session.id, "chat")}?report=${row.id}`}
+                  >
+                    Discuss in Chat
+                  </Link>
+                </div>
+                <button
+                  className="application-icon"
+                  aria-label={`Download analysis from ${new Date(row.createdAt).toLocaleString()}`}
+                  onClick={() =>
+                    void downloadReport(session.planId ?? "", row.id).catch(
+                      (e) => setError(errorMessage(e)),
+                    )
+                  }
+                >
+                  <Download size={17} />
+                </button>
+              </article>
+            ))}
+          </div>
+          {cursor && (
             <button
-              className="text-link"
-              onClick={() => {
-                setHistoric(null);
-                setSelected("");
-              }}
-            >
-              Close snapshot
-            </button>
-            <button
-              className="text-link"
+              className="button"
               onClick={() =>
-                void downloadReport(session.planId ?? "", selected).catch((e) =>
-                  setError(errorMessage(e)),
-                )
+                void load(cursor).catch((e) => setError(errorMessage(e)))
               }
             >
-              <Download size={15} />
-              Download PDF
+              More saved assessments
             </button>
-          </div>
-          <ReportReader report={historic} />
-          <Link
-            className="button"
-            to={`${sessionHref(session.id, "chat")}?report=${selected}`}
-          >
-            Discuss in Chat
-          </Link>
+          )}
         </section>
       )}
     </section>

@@ -12,6 +12,7 @@ import { mascotAssets } from "../../components/Mascot/mascot-assets";
 import { Link } from "react-router";
 import { conversationSuggestions } from "../../../../shared/src/conversation";
 import { api, sessionHref, uploadSource } from "../../services/api";
+import type { Report, ConsultingBrief } from "../../../../shared/src/index";
 import type { SessionProps, Next } from "../../types/session";
 import { clearDrafts, readDraft, saveDraft } from "../../utils/drafts";
 export function Conversation({
@@ -34,6 +35,59 @@ export function Conversation({
   const [params] = useSearchParams();
   const reportId = params.get("report");
   const component = params.get("component");
+  const directionId = params.get("direction");
+  const nodeId = params.get("node");
+  const [liveNode, setLiveNode] = useState<{
+    purpose: string;
+    decision?: string;
+    status: string;
+  } | null>(null);
+  const [liveBrief, setLiveBrief] = useState<ConsultingBrief | null>(null);
+  useEffect(() => {
+    let current = true;
+    setLiveBrief(null);
+    setLiveNode(null);
+    if (!reportId && (session.answers.length > 1 || component))
+      void api<{
+        consulting?: ConsultingBrief;
+        graph?: {
+          nodes: {
+            id: string;
+            purpose: string;
+            decision?: string;
+            status: string;
+          }[];
+        };
+      }>(`/sessions/${session.id}/canvas`)
+        .then((result) => {
+          if (current) {
+            setLiveBrief(result.consulting ?? null);
+            setLiveNode(
+              result.graph?.nodes.find((n) => n.id === nodeId) ?? null,
+            );
+          }
+        })
+        .catch(() => {});
+    return () => {
+      current = false;
+    };
+  }, [reportId, session.id, session.knowledgeRevision, nodeId, component]);
+  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  useEffect(() => {
+    let current = true;
+    setSelectedReport(null);
+    if (reportId && session.planId)
+      void api<{ content: Report }>(
+        `/plans/${session.planId}/reports/${reportId}`,
+      )
+        .then((result) => {
+          if (current) setSelectedReport(result.content);
+        })
+        .catch(() => {});
+    return () => {
+      current = false;
+    };
+  }, [reportId, session.planId]);
   const labels: Record<string, string> = {
     industry: "Activity",
     goals: "Objective",
@@ -80,7 +134,7 @@ export function Conversation({
     const timer = window.setTimeout(() => setEmptyClearNotice(0), 3000);
     return () => window.clearTimeout(timer);
   }, [emptyClearNotice]);
-  const input = useRef<HTMLTextAreaElement>(null);
+  const input = useRef<HTMLInputElement>(null);
   const history = useRef<HTMLDivElement>(null);
   const shouldAnchor = useRef(visibleMessages.length > 0);
   const pendingFrom = useRef(visibleMessages.length);
@@ -96,9 +150,39 @@ export function Conversation({
     "mock-development"
       ? "Local guidance for this reply."
       : "");
-  const suggestions = session.planProposals?.length
-    ? []
-    : conversationSuggestions(next, visibleMessages);
+  const contextualPrompts = (
+    selectedReport?.consulting ?? liveBrief
+  )?.directions
+    .filter((d) => !["rejected", "deferred"].includes(d.status))
+    .slice(0, 2)
+    .map((d) => ({
+      label: `Explore ${d.title.toLowerCase()}`,
+      message: `Help me explore ${d.title} ${reportId ? "from this saved assessment" : "using my current Discovery context"}. Explain its fit, constraints and first practical test.`,
+    }));
+  const suggestions = contextualPrompts?.length
+    ? contextualPrompts
+    : component
+      ? [
+          {
+            label: "Examine this step",
+            message: `Help me examine ${component}: its evidence, uncertainties and smallest next step.`,
+          },
+        ]
+      : session.planProposals?.length
+        ? []
+        : !session.answers.length && !visibleMessages.length
+          ? [
+              {
+                label: "Talk through an idea",
+                message: "I would like to talk through an idea.",
+              },
+              {
+                label: "Find a starting point",
+                message:
+                  "I am not sure where to begin. Help me explore without assuming I have a business idea.",
+              },
+            ]
+          : conversationSuggestions(next, visibleMessages);
   useLayoutEffect(() => {
     const element = history.current;
     if (!element || !shouldAnchor.current) return;
@@ -132,7 +216,9 @@ export function Conversation({
       component
         ? `Help me understand ${component}. What should I verify before choosing it?`
         : reportId
-          ? "Explain the recommendations in this saved assessment in plain language."
+          ? directionId
+            ? `Explain the ${directionId.replaceAll("-", " ")} direction in this saved assessment using my circumstances, constraints and a first practical test.`
+            : "Explain the recommendations in this saved assessment in plain language."
           : String(
               readDraft(
                 session.id,
@@ -141,13 +227,7 @@ export function Conversation({
               ) ?? "",
             ),
     );
-  }, [session.id]);
-  useEffect(() => {
-    if (input.current) {
-      input.current.style.height = "auto";
-      input.current.style.height = `${Math.min(input.current.scrollHeight, 144)}px`;
-    }
-  }, [message]);
+  }, [session.id, reportId, component, directionId]);
   function draft(text: string) {
     setMessage(text);
     saveDraft(
@@ -163,6 +243,12 @@ export function Conversation({
   }
   async function sendText(text: string) {
     if (!text.trim() || busy || sending.current) return;
+    if (text.length > 4000) {
+      setAttachmentNotice(
+        "This message exceeds 4,000 characters. Your text is kept here; shorten it before sending.",
+      );
+      return;
+    }
     sending.current = true;
     setEmptyClearNotice(0);
     setAttachmentNotice("");
@@ -214,7 +300,19 @@ export function Conversation({
         <div className="conversation-heading">
           <h1>Chat</h1>
           {reportId && (
-            <span className="badge">Discussing a saved assessment</span>
+            <Link
+              className="badge"
+              to={`${sessionHref(session.id, "analysis")}?report=${reportId}`}
+            >
+              Discussing: {selectedReport?.title ?? "a saved assessment"} · View
+              assessment
+            </Link>
+          )}
+          {!reportId && component && (
+            <span className="badge">
+              Discussing: {component}
+              {liveNode ? ` · ${liveNode.decision ?? liveNode.status}` : ""}
+            </span>
           )}
           <button
             className="text-link"
@@ -258,10 +356,24 @@ export function Conversation({
           {!visibleMessages.length && !pendingMessage && (
             <div className="empty-chat">
               <img src={mascotAssets.head} alt="" width="76" height="76" />
-              <h2>What would you like to explore?</h2>
+              <h2>
+                {reportId
+                  ? "Let's explore your assessment."
+                  : component
+                    ? `Let's look at ${component}.`
+                    : session.answers.length
+                      ? "Let's build on what you've shared."
+                      : "Coffee chat"}
+              </h2>
               <p>
-                Start with an idea, a challenge, or a question. We can work
-                through it together.
+                {reportId
+                  ? (selectedReport?.consulting?.summary ??
+                    "We can compare the assessment's directions, examine what supports them and choose a small next step.")
+                  : component
+                    ? "We can examine this step, its assumptions and what you want to do next."
+                    : session.answers.length
+                      ? "Your Discovery information is here. We can compare possibilities or work through an open decision."
+                      : "Hey, welcome. We can start wherever you like — an idea you're considering, something you're struggling with, or absolutely nothing figured out yet. What's on your mind?"}
               </p>
               <div className="suggestions">
                 {suggestions.map((p) => (
@@ -437,27 +549,30 @@ export function Conversation({
                 <p>{pendingMessage}</p>
               </article>
             )}
-          {pendingMessage && (
-            <article className="message assistant thinking" role="status">
-              <img
-                className="message-avatar"
-                src={mascotAssets.head}
-                alt=""
-                width="32"
-                height="32"
-              />
-              <small>kailor</small>
-              <p>
-                Thinking
-                <span className="thinking-dots" aria-hidden="true">
-                  <i />
-                  <i />
-                  <i />
-                </span>
-                <span className="sr-only">…</span>
-              </p>
-            </article>
-          )}
+          {pendingMessage &&
+            !visibleMessages
+              .slice(pendingFrom.current)
+              .some((m) => m.role === "assistant") && (
+              <article className="message assistant thinking" role="status">
+                <img
+                  className="message-avatar"
+                  src={mascotAssets.head}
+                  alt=""
+                  width="32"
+                  height="32"
+                />
+                <small>kailor</small>
+                <p>
+                  Thinking
+                  <span className="thinking-dots" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span className="sr-only">…</span>
+                </p>
+              </article>
+            )}
           {session.planProposals?.map((proposal) => (
             <section className="plan-proposal" key={proposal.id}>
               <p>
@@ -523,40 +638,6 @@ export function Conversation({
                 ))}
               </div>
             )}
-          {next.readiness.canAssess && (
-            <div className="conversation-readiness" role="status">
-              <p>
-                {ready
-                  ? "Your initial assessment is ready."
-                  : "I have enough information to prepare an initial assessment."}
-              </p>
-              <div className="actions">
-                {ready ? (
-                  <Link
-                    className="button"
-                    to={sessionHref(session.id, "report")}
-                  >
-                    Explore the analysis
-                  </Link>
-                ) : (
-                  <button
-                    className="button"
-                    disabled={busy}
-                    onClick={() => void assess().catch(() => {})}
-                  >
-                    Prepare assessment
-                  </button>
-                )}
-                <button
-                  className="text-link"
-                  disabled={busy}
-                  onClick={() => input.current?.focus()}
-                >
-                  Continue conversation
-                </button>
-              </div>
-            </div>
-          )}
           <div ref={tail} />
           <div
             style={{ height: anchorSpace, flexShrink: 0 }}
@@ -604,11 +685,13 @@ export function Conversation({
             </div>
           </div>
         )}
-        {(providerNotice || attachmentNotice) && (
+        {(providerNotice || attachmentNotice || message.length > 4000) && (
           <div className="composer-notice" role="status">
-            {emptyClearNotice
-              ? "There’s no conversation to clear."
-              : attachmentNotice || providerNotice}
+            {message.length > 4000
+              ? "This message exceeds 4,000 characters. Your text is kept here; shorten it before sending."
+              : emptyClearNotice
+                ? "There’s no conversation to clear."
+                : attachmentNotice || providerNotice}
           </div>
         )}
         <form className="chat-form" onSubmit={send}>
@@ -664,7 +747,8 @@ export function Conversation({
           <label className="sr-only" htmlFor="message">
             Your message
           </label>
-          <textarea
+          <input
+            type="text"
             ref={input}
             id="message"
             onKeyDown={(event) => {
@@ -679,8 +763,6 @@ export function Conversation({
                 event.currentTarget.form?.requestSubmit();
               }
             }}
-            maxLength={4000}
-            rows={1}
             value={message}
             onChange={(e) => draft(e.target.value)}
             placeholder="Message kailor…"
@@ -688,7 +770,9 @@ export function Conversation({
           <div className="actions">
             <button
               className="button chat-send"
-              disabled={busy || uploading || !message.trim()}
+              disabled={
+                busy || uploading || !message.trim() || message.length > 4000
+              }
             >
               <span className="sr-only">Send message</span>
               <ArrowUp size={19} />

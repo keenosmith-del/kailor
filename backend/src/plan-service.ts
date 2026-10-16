@@ -27,6 +27,7 @@ const planSelect = {
   sessions: {
     select: {
       id: true,
+      title: true,
       updatedAt: true,
       knowledgeRevision: true,
       synthetic: true,
@@ -142,6 +143,7 @@ export async function createPlan(
         admin: { connect: { id: adminId } },
         plan: { connect: { id_adminId: { id: p.id, adminId } } },
         definitionVersion: version,
+        title: `Conversation ${(await tx.discoverySession.count({ where: { planId: p.id } })) + 1}`,
         subject: { create: { name: p.title } },
       },
     });
@@ -310,6 +312,7 @@ export async function newDiscovery(
         admin: { connect: { id: adminId } },
         plan: { connect: { id_adminId: { id, adminId } } },
         definitionVersion: version,
+        title: `Conversation ${(await tx.discoverySession.count({ where: { planId: p.id } })) + 1}`,
         subject: { create: { name: p.title } },
       },
     });

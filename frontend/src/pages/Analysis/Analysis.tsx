@@ -2,7 +2,7 @@ import "./Analysis.css";
 import { Download, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Report, Session } from "../../../../shared/src/index";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import type { Next } from "../../types/session";
 import { api, ApiError, downloadReport, sessionHref } from "../../services/api";
 import { ErrorBox } from "../../components/ErrorBox/ErrorBox";
@@ -19,6 +19,8 @@ export function Analysis({
   busy: boolean;
   next: Next;
 }) {
+  const [params] = useSearchParams();
+  const selectedReport = params.get("report");
   const [report, setReport] = useState<{
     content: Report;
     stale: boolean;
@@ -31,7 +33,16 @@ export function Analysis({
     setReport(null);
     setLoading(true);
     setError("");
-    void api<NonNullable<typeof report>>(`/sessions/${session.id}/report`)
+    const load = selectedReport
+      ? api<{ content: Report }>(
+          `/plans/${session.planId}/reports/${selectedReport}`,
+        ).then((result) => ({
+          ...result,
+          reportId: selectedReport,
+          stale: false,
+        }))
+      : api<NonNullable<typeof report>>(`/sessions/${session.id}/report`);
+    void load
       .then((r) => {
         if (current) setReport(r);
       })
@@ -45,7 +56,7 @@ export function Analysis({
     return () => {
       current = false;
     };
-  }, [session.id, session.revision]);
+  }, [session.id, session.revision, selectedReport]);
   async function prepare() {
     try {
       await assess();
@@ -62,6 +73,15 @@ export function Analysis({
     );
   return (
     <section className="report">
+      {selectedReport && (
+        <Link
+          className="text-link"
+          to={`${sessionHref(session.id, params.get("from") === "sources" ? "sources" : "analysis")}${params.get("from") === "sources" ? `?library=${encodeURIComponent(params.get("library") ?? "all")}#assessment-${selectedReport}` : ""}`}
+        >
+          ← Back to{" "}
+          {params.get("from") === "sources" ? "Sources" : "Analysis history"}
+        </Link>
+      )}
       <ErrorBox error={error} />
       {report ? (
         <>
@@ -98,7 +118,13 @@ export function Analysis({
               )}
             </div>
           )}
-          <ReportReader report={report.content} />
+          <ReportReader
+            key={report.reportId}
+            report={report.content}
+            discussHref={(direction) =>
+              `${sessionHref(session.id, "chat")}?report=${report.reportId}${direction ? `&direction=${encodeURIComponent(direction)}` : ""}`
+            }
+          />
         </>
       ) : (
         <div className="report-empty">

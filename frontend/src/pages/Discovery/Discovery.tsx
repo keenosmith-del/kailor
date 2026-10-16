@@ -54,11 +54,13 @@ export function Discovery({
   assess,
   ready,
   restart,
+  onNewProject,
 }: SessionProps & {
   next: Next;
   assess: () => Promise<void>;
   ready: boolean;
   restart: () => Promise<void>;
+  onNewProject?: () => void;
 }) {
   const reduced = useReducedMotion();
   const saving = useRef(false);
@@ -511,13 +513,13 @@ export function Discovery({
             ) : (
               <div className="readiness">
                 <h1>
-                  I think we have
-                  <br />
-                  somewhere to start.
+                  {ready
+                    ? "We've found a few directions worth exploring."
+                    : "There's enough context for a useful first assessment."}
                 </h1>
                 <p className="question-description">
                   {ready
-                    ? "I’ve put together an initial assessment based on what you’ve shared. We can keep exploring, or take a look."
+                    ? "Based on what you've shared, I've put together where you could begin, what may suit your circumstances, and how to test possibilities without committing too much time or money."
                     : next.readiness.canAssess
                       ? "There’s enough context for an initial assessment. We can keep exploring, or prepare it when you’re ready."
                       : next.readiness.reasons.join(" ")}
@@ -527,7 +529,7 @@ export function Discovery({
                     className="discovery-action"
                     to={sessionHref(session.id, "report")}
                   >
-                    Explore the analysis
+                    Explore your assessment
                   </Link>
                 ) : (
                   <button
@@ -535,7 +537,7 @@ export function Discovery({
                     disabled={busy || !next.readiness.canAssess}
                     onClick={() => void prepare()}
                   >
-                    Prepare the assessment
+                    Prepare my assessment
                   </button>
                 )}
               </div>
@@ -551,7 +553,7 @@ export function Discovery({
                     className="discovery-action"
                     to={sessionHref(session.id, "report")}
                   >
-                    Explore the analysis
+                    Explore your assessment
                   </Link>
                 ) : (
                   <button
@@ -559,18 +561,46 @@ export function Discovery({
                     disabled={busy}
                     onClick={() => void prepare()}
                   >
-                    Prepare the assessment
+                    Prepare my assessment
                   </button>
                 )}
               </div>
             )}
+            {!question && onNewProject && (
+              <button className="text-link" onClick={onNewProject}>
+                Explore a new project
+              </button>
+            )}
+            {!question &&
+              next.active.find(
+                (q) =>
+                  !["stage"].includes(q.id) &&
+                  !session.answers.some((a) => a.questionId === q.id),
+              ) && (
+                <button
+                  className="text-link"
+                  onClick={() =>
+                    setEditing(
+                      next.active.find(
+                        (q) =>
+                          q.id !== "stage" &&
+                          !session.answers.some((a) => a.questionId === q.id),
+                      )!.id,
+                    )
+                  }
+                >
+                  Explore a little more
+                </button>
+              )}
             {(question || next.readiness.canAssess) && (
               <Link
                 className="conversation-link text-link"
                 to={sessionHref(session.id, "conversation")}
               >
                 <MessageCircle size={15} strokeWidth={1.5} aria-hidden="true" />
-                Have a conversation instead?
+                {question
+                  ? "Have a conversation instead?"
+                  : "Keep exploring with kailor"}
               </Link>
             )}
           </div>

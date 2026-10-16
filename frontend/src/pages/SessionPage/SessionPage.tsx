@@ -13,7 +13,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import type { Session } from "../../../../shared/src/index";
 import { Analysis } from "../Analysis/Analysis";
 import { ProjectReports } from "../Application/ProjectReports";
@@ -68,6 +68,7 @@ export function SessionPage({
   onInitialMessageConsumed,
   onNewConversation,
   onProjectChange,
+  onNewProject,
 }: {
   sessionId: string;
   activeView: string;
@@ -76,6 +77,7 @@ export function SessionPage({
   onInitialMessageConsumed: () => void;
   onNewConversation: () => Promise<void>;
   onProjectChange: () => void;
+  onNewProject?: () => void;
 }) {
   const view =
     activeView === "chat"
@@ -84,6 +86,7 @@ export function SessionPage({
         ? "report"
         : activeView;
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const loadedSessionId = useRef("");
   const loadSequence = useRef(0);
   const currentRoute = useRef(id);
@@ -118,6 +121,14 @@ export function SessionPage({
     setNext(data.next);
     setReady(data.ready);
   }, [id]);
+  useEffect(() => {
+    const changed = (event: Event) => {
+      if ((event as CustomEvent<string>).detail === id)
+        void reload().catch((e) => setError(errorMessage(e)));
+    };
+    window.addEventListener("kailor:session-changed", changed);
+    return () => window.removeEventListener("kailor:session-changed", changed);
+  }, [id, reload]);
   useEffect(() => {
     if (loadedSessionId.current === id) return;
     setError("");
@@ -230,6 +241,7 @@ export function SessionPage({
                   assess={assess}
                   ready={ready}
                   restart={restart}
+                  onNewProject={onNewProject}
                 />
               ) : view === "conversation" ? (
                 <Conversation
@@ -244,6 +256,7 @@ export function SessionPage({
                 />
               ) : view === "canvas" ? (
                 <Canvas
+                  onChanged={reload}
                   session={session}
                   next={next}
                   assess={assess}
@@ -259,10 +272,12 @@ export function SessionPage({
                     assess={assess}
                     busy={busy}
                   />
-                  <ProjectReports
-                    session={session}
-                    refreshVersion={reportVersion}
-                  />
+                  {!searchParams.get("report") && (
+                    <ProjectReports
+                      session={session}
+                      refreshVersion={reportVersion}
+                    />
+                  )}
                 </div>
               ) : (
                 <p>Choose a discovery view.</p>

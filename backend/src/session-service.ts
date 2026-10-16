@@ -1,3 +1,8 @@
+import { consultingBrief } from "./consulting.js";
+import {
+  canvasStateSchema,
+  emptyCanvasState,
+} from "../../shared/src/consulting.js";
 import { canvasGraph } from "./canvas-model.js";
 import { customerReport, reportSummary } from "../../shared/src/report.js";
 import { routeTurn, safeModelIntent, applicationReply } from "./turn-intent.js";
@@ -430,7 +435,12 @@ export async function converse(
     const snapshot = await db.reportSnapshot.findFirst({
       where: {
         ...(input.reportId ? { id: input.reportId } : {}),
-        assessment: { session: { planId: s.planId, adminId } },
+        assessment: {
+          session: { planId: s.planId, adminId },
+          ...(!input.reportId
+            ? { sessionId: id, knowledgeRevision: s.knowledgeRevision }
+            : {}),
+        },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -501,6 +511,12 @@ export async function converse(
       plan: currentPlan,
       memory: personalMemory,
       selectedReport,
+      consulting: consultingBrief(
+        answersOf(s),
+        statesOf(s),
+        recommend(answersOf(s), undefined, evidenceOf(s), statesOf(s)),
+        s.plan.canvasState,
+      ),
       recommendations:
         selectedReport?.recommendations ??
         recommend(answersOf(s), undefined, evidenceOf(s), statesOf(s)),
@@ -934,7 +950,30 @@ export async function assess(id: string, adminId: string, revision: number) {
       },
       evidenceOf(s),
       statesOf(s),
+      s.plan.canvasState,
     );
+    const preferences = await tx.accountPreference.findMany({
+      where: { adminId },
+      select: { key: true, value: true },
+    });
+    if (content.consulting) {
+      content.consulting.decisions.push(
+        ...preferences.map((p) => ({
+          title: p.key,
+          notes: p.value,
+          status: "account preference",
+        })),
+      );
+      const implementation = preferences.find(
+        (p) => p.key === "implementationPreference",
+      );
+      if (implementation)
+        content.consulting.conclusions.push(
+          implementation.value === "existing-tools-first"
+            ? "Compare existing tools before considering custom implementation."
+            : "Consider custom implementation only when a demonstrated requirement is not met by existing tools.",
+        );
+    }
     const assessment = await tx.assessment.create({
       data: {
         sessionId: id,
@@ -1003,6 +1042,7 @@ export async function canvas(id: string, adminId: string) {
     undefined,
     evidenceOf(s),
     statesOf(s),
+    s.plan.canvasState,
   );
   const snapshot = await db.reportSnapshot.findFirst({
     where: {
@@ -1014,14 +1054,58 @@ export async function canvas(id: string, adminId: string) {
   const content = readiness.canAssess
     ? ((snapshot?.content as unknown as Report | undefined) ?? preview)
     : { ...preview, recommendations: [] };
+  const liveState = canvasStateSchema.safeParse(s.plan.canvasState);
+  const state = liveState.success ? liveState.data : emptyCanvasState();
+  const graph = canvasGraph(
+    evaluateEvidence(answersOf(s), evidenceOf(s), statesOf(s)).answers,
+    { ...content, consulting: preview.consulting },
+  );
+  for (const node of graph.nodes) {
+    const edit = state.edits[node.id];
+    if (edit?.title) node.title = edit.title;
+    if (edit?.notes) node.purpose = edit.notes;
+    if (edit?.decision) node.decision = edit.decision;
+  }
+  for (const original of state.additions) {
+    if (graph.nodes.some((n) => n.id === original.id)) continue;
+    const addition = {
+      ...original,
+      title: state.edits[original.id]?.title ?? original.title,
+      notes: state.edits[original.id]?.notes ?? original.notes,
+    };
+    graph.nodes.push({
+      id: addition.id,
+      title: addition.title,
+      purpose: addition.notes,
+      status: "reported",
+      group:
+        addition.kind === "idea"
+          ? "directions"
+          : addition.kind === "decision"
+            ? "next"
+            : "context",
+      evidence: [],
+      dependencies: [],
+      alternatives: [],
+      decision: "user-added",
+    });
+    if (graph.nodes[0])
+      graph.edges.push({
+        from: graph.nodes[0].id,
+        to: addition.id,
+        label: `you added a ${addition.kind}`,
+      });
+  }
   return {
     revision: s.revision,
     readiness,
     source: snapshot && readiness.canAssess ? "snapshot" : "validated-preview",
-    graph: canvasGraph(
-      evaluateEvidence(answersOf(s), evidenceOf(s), statesOf(s)).answers,
-      content,
-    ),
+    projectRevision: s.plan.revision,
+    state: canvasStateSchema.safeParse(s.plan.canvasState).success
+      ? canvasStateSchema.parse(s.plan.canvasState)
+      : emptyCanvasState(),
+    consulting: preview.consulting,
+    graph,
     existing: (evaluateEvidence(answersOf(s), evidenceOf(s), statesOf(s))
       .answers.presence ?? []) as string[],
     existingOrigin: answersOf(s).presence

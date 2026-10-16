@@ -76,7 +76,13 @@ export function GuestJourneyEntry() {
       setConfirm(false);
     }
   };
-  async function begin(replace: boolean) {
+  async function begin(replace: boolean, view = "discovery") {
+    if (!replace && entry?.current?.lastSessionId) {
+      navigate(
+        `/preview/${entry.current.lastSessionId}/${view}${view === "chat" ? "?welcome=coffee" : ""}`,
+      );
+      return;
+    }
     if (pending.current) return;
     pending.current = true;
     setBusy(true);
@@ -92,7 +98,7 @@ export function GuestJourneyEntry() {
             })
           : await api<Session>("/guest/sessions", "POST", {});
       navigate(
-        `/preview/${"sessionId" in result ? result.sessionId : result.id}/discovery`,
+        `/preview/${"sessionId" in result ? result.sessionId : result.id}/${view}${view === "chat" ? "?welcome=coffee" : ""}`,
         { replace: true },
       );
     } catch (e) {
@@ -111,53 +117,69 @@ export function GuestJourneyEntry() {
       <section aria-labelledby="guest-entry-title" inert={confirm}>
         <h1 id="guest-entry-title">Where would you like to begin?</h1>
         {!confirm && <ErrorBox error={error} />}
+        <p>
+          There's no need to have everything figured out. Choose how you'd like
+          to explore with kailor.
+        </p>
         {!entry ? (
           <p role="status">Opening guest journeys…</p>
-        ) : project?.lastSessionId ? (
+        ) : (
           <>
-            <p>
-              Your current guest project is <strong>{project.title}</strong>.
-            </p>
+            {project && (
+              <p>
+                Continue with <strong>{project.title}</strong>. Both paths share
+                this project's context.
+              </p>
+            )}
             <div className="guest-entry-choices">
-              <Link to={`/preview/${project.lastSessionId}/chat`}>
-                Continue current project
-                <span>Return to Chat with your saved context.</span>
-              </Link>
-              <Link to={`/preview/${project.lastSessionId}/discovery`}>
-                Open Discovery in this project
-                <span>
-                  Continue its saved answers. Discovery also offers a guided
-                  restart.
-                </span>
-              </Link>
+              <section>
+                <h2>Start discovery</h2>
+                <p>
+                  A guided experience that helps us understand where you are,
+                  what you're working towards, and where technology or new
+                  opportunities could help.
+                </p>
+                <button
+                  className="button"
+                  disabled={busy}
+                  onClick={() => void begin(false, "discovery")}
+                >
+                  Start discovery
+                </button>
+              </section>
+              <section>
+                <h2>Coffee chat</h2>
+                <p>
+                  Prefer to talk things through? Have a relaxed conversation
+                  with kailor about an idea, a challenge, or simply where to
+                  begin.
+                </p>
+                <button
+                  className="button"
+                  disabled={busy}
+                  onClick={() => void begin(false, "chat")}
+                >
+                  Open Chat
+                </button>
+              </section>
+            </div>
+            {project && (
               <button
                 ref={start}
+                className="text-link"
                 disabled={busy}
                 onClick={() => setConfirm(true)}
               >
                 Start a new guest journey
-                <span>
-                  Archive this project and begin with empty project context.
-                </span>
               </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <p>A little space to explore your next idea.</p>
-            <button
-              className="button primary"
-              disabled={busy}
-              onClick={() => void begin(false)}
-            >
-              {busy ? "Opening…" : "Start discovery"}
-            </button>
+            )}
           </>
         )}
         {entry?.expiresAt && (
           <p className="guest-expiry">
-            Guest access ends {new Date(entry.expiresAt).toLocaleString()}. A
-            new journey does not extend it.
+            Temporary access ends {new Date(entry.expiresAt).toLocaleString()}.
+            Starting a new journey does not extend it. End the guest session to
+            discard work now.
           </p>
         )}
         {archived.length > 0 && (

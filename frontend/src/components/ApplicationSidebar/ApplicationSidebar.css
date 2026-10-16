@@ -367,3 +367,34 @@
     width: 44px;
   }
 }
+.conversation-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.conversation-row .conversation-select {
+  flex: 1;
+  min-width: 0;
+}
+.conversation-row .conversation-rename {
+  flex: none;
+  width: 28px;
+  justify-content: center;
+  color: var(--muted);
+}
+.conversation-row form {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  width: 100%;
+}
+.conversation-row input {
+  width: 100%;
+  min-width: 0;
+  font-size: 11px;
+  padding: 6px 8px;
+}
+.conversation-row form button {
+  width: 28px;
+  justify-content: center;
+}

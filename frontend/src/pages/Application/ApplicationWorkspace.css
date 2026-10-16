@@ -703,3 +703,34 @@
 .application-workspace .chat-form .chat-send:hover:not(:disabled) {
   background: #fff;
 }
+.library-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 18px 0 28px;
+}
+.library-filters [aria-pressed="true"] {
+  color: var(--color-charcoal);
+  font-weight: 550;
+}
+.resource-add-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.resource-add {
+  margin: 20px 0;
+  padding: 20px 0;
+}
+.resource-add .actions {
+  margin-bottom: 20px;
+}
+
+.application-personal .account-session-note {
+  margin-top: 24px;
+}
+
+.application-personal .account-entry-actions {
+  margin-top: 24px;
+}

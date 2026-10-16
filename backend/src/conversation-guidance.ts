@@ -1,3 +1,4 @@
+import { consultingBrief } from "./consulting.js";
 import { customerReport } from "../../shared/src/report.js";
 import type { Report } from "../../shared/src/index.js";
 import { resolveOption, type Turn } from "./conversation-context.js";
@@ -20,10 +21,41 @@ export function localReply(
   suppliedRecommendations?: Recommendation[],
   history: Turn[] = [],
   suppliedReport?: Report,
+  liveConsulting?: import("../../shared/src/consulting.js").ConsultingBrief,
 ) {
   const quality = evaluateInput(message, "", "chat"),
     plan = savedPlan ?? planDiscovery(context);
   const text = message.trim();
+  const brief =
+    suppliedReport?.consulting ?? liveConsulting ?? consultingBrief(context);
+  if (
+    brief.facts.length &&
+    /summari[sz].*(?:learn|situation|told|know)|(?:what|everything).*(?:learned|know about me|told you)/i.test(
+      text,
+    )
+  )
+    return `You reported:\n${brief.facts.map((f) => `${f.label}: ${f.quote}`).join("\n")}\n\nSupported interpretation: ${brief.conclusions.join(" ") || "There is not enough information to favour a direction yet."}\n\nStill unverified: ${brief.hypotheses.join(" ")}\n\nOpen questions: ${brief.unknowns.join(" ")}`;
+  if (
+    brief.directions.some((d) => d.basis.length) &&
+    /explain|compar|direction|experiment|cost|learn|summari[sz]|what.*fit|recommend|next step/i.test(
+      text,
+    ) &&
+    (context.stage === "uncertain" ||
+      suppliedReport?.assessmentType === "exploration")
+  ) {
+    const available = brief.directions.filter(
+      (d) => !["rejected", "deferred"].includes(d.status),
+    );
+    const selected =
+      available.find(
+        (d) =>
+          text.toLowerCase().includes(d.title.toLowerCase()) ||
+          text.toLowerCase().includes(d.id.replaceAll("-", " ")) ||
+          text.toLowerCase().includes(d.id),
+      ) ?? available[0];
+    if (selected)
+      return `${brief.summary}\n\n${(/compar/i.test(text) ? available : [selected]).map((d) => `${d.title}: ${d.summary} ${d.why}`).join("\n\n")}\n\nFor a first test: ${selected.firstStep} ${selected.costToTest} ${/cost|price|paid|experiment|test/i.test(text) ? selected.validation.map((v) => `${v.kind}: ${v.action}`).join(" ") : (selected.validation.find((v) => v.kind === "Willingness to pay")?.action ?? selected.validation[0].action)}\n\n${selected.risks.join(" ")} ${/compar/i.test(text) ? "Which direction would you like to test first?" : "Who would you try this with first?"}`;
+  }
   if (
     suppliedReport &&
     /explain|summari[sz]|assess|report|analysis/i.test(text) &&

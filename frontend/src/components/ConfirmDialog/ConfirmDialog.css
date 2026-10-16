@@ -51,3 +51,32 @@
   outline-offset: 2px;
   box-shadow: none;
 }
+.guest-exit-dialog .confirm-dialog-actions {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.guest-exit-dialog .confirm-dialog-actions button {
+  min-height: 34px;
+  padding: 7px 14px;
+  background: #fff;
+  color: var(--color-charcoal);
+  font-size: 12px;
+}
+.guest-exit-dialog .confirm-dialog-actions .confirm-dialog-submit {
+  background: #f0ece4;
+}
+.guest-exit-dialog .confirm-dialog-actions button:hover:not(:disabled) {
+  background: #fff;
+  transform: translateY(-1px) scale(1.015);
+  box-shadow: 0 3px 12px #00000008;
+}
+.guest-exit-dialog
+  .confirm-dialog-actions
+  .confirm-dialog-submit:hover:not(:disabled) {
+  background: #e9e1d3;
+}
+@media (pointer: coarse) {
+  .guest-exit-dialog .confirm-dialog-actions button {
+    min-height: 44px;
+  }
+}

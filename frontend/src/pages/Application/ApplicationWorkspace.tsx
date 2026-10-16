@@ -238,6 +238,9 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
             initialMessage={initialMessage}
             onInitialMessageConsumed={() => setInitialMessage("")}
             onNewConversation={() => newConversation()}
+            onNewProject={() =>
+              guest ? navigate("/preview/discovery") : setCreating(true)
+            }
             onProjectChange={() => void projects.refresh()}
           />
         ) : projects.data && !guest ? (
@@ -287,7 +290,8 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
       </div>
       {exitingGuest && guest && (
         <ConfirmDialog
-          title="Exit guest session?"
+          variant="guest-exit"
+          title="End guest session?"
           confirmLabel="Discard and exit"
           busyLabel="Exiting…"
           busy={exitBusy}

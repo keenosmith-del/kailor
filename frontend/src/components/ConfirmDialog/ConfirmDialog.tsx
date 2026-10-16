@@ -6,6 +6,7 @@ export function ConfirmDialog({
   children,
   confirmLabel,
   busyLabel = "Starting again…",
+  variant = "default",
   busy,
   error,
   onConfirm,
@@ -15,6 +16,7 @@ export function ConfirmDialog({
   children: ReactNode;
   confirmLabel: string;
   busyLabel?: string;
+  variant?: "default" | "guest-exit";
   busy: boolean;
   error?: string;
   onConfirm: () => void;
@@ -41,8 +43,8 @@ export function ConfirmDialog({
       }
       if (event.key !== "Tab") return;
       const nodes = Array.from(
-        dialog.current?.querySelectorAll<HTMLButtonElement>(
-          "button:not(:disabled)",
+        dialog.current?.querySelectorAll<HTMLElement>(
+          "button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled)",
         ) ?? [],
       );
       if (!nodes.length) {
@@ -87,7 +89,7 @@ export function ConfirmDialog({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
-        className="confirm-dialog"
+        className={`confirm-dialog ${variant === "guest-exit" ? "guest-exit-dialog" : ""}`}
       >
         <h2 id={titleId}>{title}</h2>
         <div id={descriptionId}>{children}</div>

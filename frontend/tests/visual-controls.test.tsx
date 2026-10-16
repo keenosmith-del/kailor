@@ -306,3 +306,80 @@ it("dismisses an error bubble and shows a later message", () => {
   rerender(<ErrorBox error="Please try again." />);
   expect(screen.getByRole("alert").textContent).toBe("Please try again.");
 });
+
+it("keeps long drafts in a single-line input and preserves them through composition and failed sends", async () => {
+  const actRequest = vi.fn(async () => false);
+  render(
+    <MemoryRouter>
+      <Conversation
+        session={session}
+        next={next}
+        busy={false}
+        ready={true}
+        act={actRequest}
+        assess={vi.fn()}
+      />
+    </MemoryRouter>,
+  );
+  const input = screen.getByRole("textbox", {
+    name: "Your message",
+  }) as HTMLInputElement;
+  expect(input.tagName).toBe("INPUT");
+  expect(input.type).toBe("text");
+  const long = "A detailed idea with constraints. ".repeat(100);
+  fireEvent.change(input, { target: { value: long } });
+  fireEvent.keyDown(input, { key: "Enter", isComposing: true, keyCode: 229 });
+  expect(actRequest).not.toHaveBeenCalled();
+  fireEvent.submit(input.closest("form")!);
+  await waitFor(() => expect(input.value).toBe(long));
+  expect(actRequest).toHaveBeenCalledOnce();
+  const beyondLimit = "x".repeat(4200);
+  fireEvent.change(input, { target: { value: beyondLimit } });
+  fireEvent.submit(input.closest("form")!);
+  expect(input.value).toBe(beyondLimit);
+  expect(screen.getByRole("status").textContent).toContain("text is kept");
+  expect(actRequest).toHaveBeenCalledOnce();
+});
+
+it("submits the entire long input without clipping it to the visible line", async () => {
+  vi.useFakeTimers();
+  vi.mocked(api).mockResolvedValue({
+    provider: "mock-development",
+    fallbackReason: "remote_disabled",
+  });
+  const run = vi.fn(async (fn: () => Promise<unknown>) => {
+    await fn();
+    return true;
+  });
+  render(
+    <MemoryRouter>
+      <Conversation
+        session={session}
+        next={next}
+        busy={false}
+        ready={true}
+        act={run}
+        assess={vi.fn()}
+      />
+    </MemoryRouter>,
+  );
+  const long = "A bounded invitation pilot using existing resources. ".repeat(
+    60,
+  );
+  fireEvent.change(screen.getByRole("textbox", { name: "Your message" }), {
+    target: { value: long },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Send message" }));
+  expect(api).toHaveBeenCalledWith(`/sessions/${session.id}/chat`, "POST", {
+    revision: session.revision,
+    message: long,
+    mode: "conversation",
+  });
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(1000);
+  });
+  expect(
+    (screen.getByRole("textbox", { name: "Your message" }) as HTMLInputElement)
+      .value,
+  ).toBe("");
+});

@@ -234,16 +234,8 @@ function entry() {
 }
 it("distinguishes current Chat and Discovery; cancelling or Escape does not replace a project", async () => {
   entry();
-  expect(
-    (
-      await screen.findByRole("link", { name: /Continue current project/ })
-    ).getAttribute("href"),
-  ).toBe("/preview/session-a/chat");
-  expect(
-    screen
-      .getByRole("link", { name: /Open Discovery in this project/ })
-      .getAttribute("href"),
-  ).toBe("/preview/session-a/discovery");
+  expect(await screen.findByRole("button", { name: "Open Chat" })).toBeTruthy();
+  expect(screen.getByRole("button", { name: "Start discovery" })).toBeTruthy();
   const button = screen.getByRole("button", {
     name: /Start a new guest journey/,
   });
@@ -334,4 +326,15 @@ it("offers a guest exit action without invoking account sign out", () => {
   fireEvent.click(screen.getByRole("button", { name: "Exit guest session" }));
   expect(onExitGuest).toHaveBeenCalledOnce();
   expect(onLogout).not.toHaveBeenCalled();
+});
+
+it("opens Coffee chat within the current project without creating another project", async () => {
+  entry();
+  fireEvent.click(await screen.findByRole("button", { name: "Open Chat" }));
+  await waitFor(() =>
+    expect(screen.getByLabelText("Location").textContent).toBe(
+      "/preview/session-a/chat",
+    ),
+  );
+  expect(mockApi.mock.calls.some((call) => call[1] === "POST")).toBe(false);
 });

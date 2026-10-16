@@ -1,3 +1,4 @@
+import { consultingBrief } from "./consulting.js";
 import { displayEvidence } from "../../shared/src/report.js";
 import {
   opportunityDirections,
@@ -196,6 +197,7 @@ export function createReport(
   pricing?: { currency: string; hourlyRate?: number },
   evidence: Evidence[] = [],
   states: AnswerStates = {},
+  workspace: unknown = null,
 ): Report {
   const raw = a;
   a = usableAnswers(a, states);
@@ -253,7 +255,8 @@ export function createReport(
   const known = (keys: string[]) => [
     ...new Set(keys.flatMap((k) => (value(k) ? [value(k)!] : []))),
   ];
-  const directions = opportunityDirections(a);
+  const consulting = consultingBrief(raw, states, recommendations, workspace);
+  const directions = consulting.directions;
   const explorationProfile = [
     ...known(explorationKeys.filter((k) => k !== "opportunityStyle")),
     ...(a.opportunityStyle && a.opportunityStyle !== "explore"
@@ -270,6 +273,7 @@ export function createReport(
         ? "solution"
         : "business";
   return {
+    consulting,
     presentationVersion: 2,
     assessmentType: type,
     title: exploratory
@@ -294,7 +298,7 @@ export function createReport(
               title: "Executive overview",
               paragraphs: [
                 exploratory
-                  ? "This exploration helps you choose a small next step. It does not assume you have a business, skills, resources or a budget you have not described."
+                  ? consulting.summary
                   : "Your concept is a starting hypothesis. Test the problem and intended audience before investing in implementation.",
               ],
             },
@@ -305,7 +309,7 @@ export function createReport(
                 : known(["idea", "progress", "constraints"])
               ).length
                 ? exploratory
-                  ? explorationProfile
+                  ? consulting.facts.map((f) => `${f.label}: ${f.value}`)
                   : known(["idea", "progress", "constraints"])
                 : [
                     "Your preferences remain open. Uncertainty is a valid starting point.",
@@ -314,7 +318,7 @@ export function createReport(
             {
               title: "Possibilities to explore",
               paragraphs: exploratory
-                ? directions.map((d) => `${d.title}. ${d.description}`)
+                ? directions.map((d) => `${d.title}. ${d.summary} ${d.why}`)
                 : [
                     "Identify who experiences the problem and how they solve it today. Compare your concept with that current alternative.",
                   ],
@@ -322,7 +326,7 @@ export function createReport(
             {
               title: "What these possibilities mean",
               paragraphs: [
-                "These are illustrative possibilities, not personalised recommendations or validated market demand. No income, customer interest or technical feasibility is promised.",
+                "These directions are hypotheses grounded in your reported information where available. Fit is not validated market demand; no income, customer interest or technical feasibility is promised.",
               ],
             },
             {
@@ -330,7 +334,9 @@ export function createReport(
               paragraphs: [
                 idea
                   ? "Choose one assumption about the problem or intended users. Speak with a possible user about what they do today. Try a sketch or manual demonstration and record what you learn before specifying a product."
-                  : "Choose one direction that interests you. Speak with one possible user about their current experience. Make a simple sketch or manual trial using resources you already have. Decide what you want to learn and record what actually happened.",
+                  : consulting.directions[0]
+                    ? `${consulting.directions[0].firstStep} ${consulting.directions[0].costToTest} ${consulting.directions[0].validation.map((v) => `${v.kind}: ${v.action}`).join(" ")} Continue when: ${consulting.directions[0].continueWhen} Stop or change when: ${consulting.directions[0].stopWhen}`
+                    : "Choose one assumption to test without committing money.",
               ],
             },
             {
@@ -342,12 +348,7 @@ export function createReport(
                     "What constraints would shape a first trial?",
                     "What result would help you continue, change or stop?",
                   ]
-                : [
-                    "Which activities would you enjoy trying?",
-                    "What time and resources can you safely set aside?",
-                    "Would you prefer online, local or a mix?",
-                    "What evidence would help you continue, change direction or stop?",
-                  ],
+                : consulting.unknowns,
             },
             {
               title: "Your next decision",

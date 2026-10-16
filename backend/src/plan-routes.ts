@@ -1,3 +1,5 @@
+import { saveCanvas, renameConversation } from "./workspace-service.js";
+import { canvasStateSchema } from "../../shared/src/consulting.js";
 import { remoteEnabled } from "./ai.js";
 import { config } from "./config.js";
 import { sourceRouter } from "./source-routes.js";
@@ -90,6 +92,42 @@ planRouter.get("/plans/:id/understanding", async (req, res) => {
     ),
   );
 });
+planRouter.put("/plans/:id/canvas", async (req, res) => {
+  const input = mutationSchema
+    .extend({ state: canvasStateSchema })
+    .strict()
+    .parse(req.body);
+  res.json(
+    await saveCanvas(
+      id.parse(req.params.id),
+      owner(res),
+      input.revision,
+      input.state,
+    ),
+  );
+});
+planRouter.patch("/plans/:id/sessions/:sessionId", async (req, res) => {
+  const input = mutationSchema
+    .extend({
+      title: z
+        .string()
+        .trim()
+        .min(2)
+        .max(100)
+        .refine((v) => !/[\u0000-\u001f]/.test(v), "Use a single-line title"),
+    })
+    .strict()
+    .parse(req.body);
+  res.json(
+    await renameConversation(
+      id.parse(req.params.id),
+      id.parse(req.params.sessionId),
+      owner(res),
+      input.revision,
+      input.title,
+    ),
+  );
+});
 planRouter.get("/plans/:id/sessions", async (req, res) => {
   const planId = id.parse(req.params.id);
   await plans.ownedPlan(planId, owner(res));
@@ -102,6 +140,8 @@ planRouter.get("/plans/:id/sessions", async (req, res) => {
     },
     select: {
       id: true,
+      title: true,
+      revision: true,
       updatedAt: true,
       knowledgeRevision: true,
       synthetic: true,

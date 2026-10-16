@@ -61,6 +61,7 @@ export type PlanMaxAggregateOutputType = {
 }
 
 export type PlanCountAggregateOutputType = {
+  canvasState: number
   id: number
   adminId: number
   title: number
@@ -110,6 +111,7 @@ export type PlanMaxAggregateInputType = {
 }
 
 export type PlanCountAggregateInputType = {
+  canvasState?: true
   id?: true
   adminId?: true
   title?: true
@@ -210,6 +212,7 @@ export type PlanGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 }
 
 export type PlanGroupByOutputType = {
+  canvasState: runtime.JsonValue | null
   id: string
   adminId: string
   title: string
@@ -246,6 +249,7 @@ export type PlanWhereInput = {
   AND?: Prisma.PlanWhereInput | Prisma.PlanWhereInput[]
   OR?: Prisma.PlanWhereInput[]
   NOT?: Prisma.PlanWhereInput | Prisma.PlanWhereInput[]
+  canvasState?: Prisma.JsonNullableFilter<"Plan">
   id?: Prisma.StringFilter<"Plan"> | string
   adminId?: Prisma.StringFilter<"Plan"> | string
   title?: Prisma.StringFilter<"Plan"> | string
@@ -264,6 +268,7 @@ export type PlanWhereInput = {
 }
 
 export type PlanOrderByWithRelationInput = {
+  canvasState?: Prisma.SortOrderInput | Prisma.SortOrder
   id?: Prisma.SortOrder
   adminId?: Prisma.SortOrder
   title?: Prisma.SortOrder
@@ -288,6 +293,7 @@ export type PlanWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.PlanWhereInput | Prisma.PlanWhereInput[]
   OR?: Prisma.PlanWhereInput[]
   NOT?: Prisma.PlanWhereInput | Prisma.PlanWhereInput[]
+  canvasState?: Prisma.JsonNullableFilter<"Plan">
   adminId?: Prisma.StringFilter<"Plan"> | string
   title?: Prisma.StringFilter<"Plan"> | string
   description?: Prisma.StringFilter<"Plan"> | string
@@ -305,6 +311,7 @@ export type PlanWhereUniqueInput = Prisma.AtLeast<{
 }, "id" | "id_adminId" | "adminId_creationKey">
 
 export type PlanOrderByWithAggregationInput = {
+  canvasState?: Prisma.SortOrderInput | Prisma.SortOrder
   id?: Prisma.SortOrder
   adminId?: Prisma.SortOrder
   title?: Prisma.SortOrder
@@ -326,6 +333,7 @@ export type PlanScalarWhereWithAggregatesInput = {
   AND?: Prisma.PlanScalarWhereWithAggregatesInput | Prisma.PlanScalarWhereWithAggregatesInput[]
   OR?: Prisma.PlanScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PlanScalarWhereWithAggregatesInput | Prisma.PlanScalarWhereWithAggregatesInput[]
+  canvasState?: Prisma.JsonNullableWithAggregatesFilter<"Plan">
   id?: Prisma.StringWithAggregatesFilter<"Plan"> | string
   adminId?: Prisma.StringWithAggregatesFilter<"Plan"> | string
   title?: Prisma.StringWithAggregatesFilter<"Plan"> | string
@@ -339,6 +347,7 @@ export type PlanScalarWhereWithAggregatesInput = {
 }
 
 export type PlanCreateInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   title: string
   description?: string
@@ -355,6 +364,7 @@ export type PlanCreateInput = {
 }
 
 export type PlanUncheckedCreateInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   adminId: string
   title: string
@@ -371,6 +381,7 @@ export type PlanUncheckedCreateInput = {
 }
 
 export type PlanUpdateInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -387,6 +398,7 @@ export type PlanUpdateInput = {
 }
 
 export type PlanUncheckedUpdateInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -403,6 +415,7 @@ export type PlanUncheckedUpdateInput = {
 }
 
 export type PlanCreateManyInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   adminId: string
   title: string
@@ -416,6 +429,7 @@ export type PlanCreateManyInput = {
 }
 
 export type PlanUpdateManyMutationInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -427,6 +441,7 @@ export type PlanUpdateManyMutationInput = {
 }
 
 export type PlanUncheckedUpdateManyInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -460,6 +475,7 @@ export type PlanAdminIdCreationKeyCompoundUniqueInput = {
 }
 
 export type PlanCountOrderByAggregateInput = {
+  canvasState?: Prisma.SortOrder
   id?: Prisma.SortOrder
   adminId?: Prisma.SortOrder
   title?: Prisma.SortOrder
@@ -657,6 +673,7 @@ export type PlanUpdateOneRequiredWithoutSourcesNestedInput = {
 }
 
 export type PlanCreateWithoutAdminInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   title: string
   description?: string
@@ -672,6 +689,7 @@ export type PlanCreateWithoutAdminInput = {
 }
 
 export type PlanUncheckedCreateWithoutAdminInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   title: string
   description?: string
@@ -716,6 +734,7 @@ export type PlanScalarWhereInput = {
   AND?: Prisma.PlanScalarWhereInput | Prisma.PlanScalarWhereInput[]
   OR?: Prisma.PlanScalarWhereInput[]
   NOT?: Prisma.PlanScalarWhereInput | Prisma.PlanScalarWhereInput[]
+  canvasState?: Prisma.JsonNullableFilter<"Plan">
   id?: Prisma.StringFilter<"Plan"> | string
   adminId?: Prisma.StringFilter<"Plan"> | string
   title?: Prisma.StringFilter<"Plan"> | string
@@ -729,6 +748,7 @@ export type PlanScalarWhereInput = {
 }
 
 export type PlanCreateWithoutSelectionsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   title: string
   description?: string
@@ -744,6 +764,7 @@ export type PlanCreateWithoutSelectionsInput = {
 }
 
 export type PlanUncheckedCreateWithoutSelectionsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   adminId: string
   title: string
@@ -775,6 +796,7 @@ export type PlanUpdateToOneWithWhereWithoutSelectionsInput = {
 }
 
 export type PlanUpdateWithoutSelectionsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -790,6 +812,7 @@ export type PlanUpdateWithoutSelectionsInput = {
 }
 
 export type PlanUncheckedUpdateWithoutSelectionsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -805,6 +828,7 @@ export type PlanUncheckedUpdateWithoutSelectionsInput = {
 }
 
 export type PlanCreateWithoutSessionsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   title: string
   description?: string
@@ -820,6 +844,7 @@ export type PlanCreateWithoutSessionsInput = {
 }
 
 export type PlanUncheckedCreateWithoutSessionsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   adminId: string
   title: string
@@ -840,6 +865,7 @@ export type PlanCreateOrConnectWithoutSessionsInput = {
 }
 
 export type PlanCreateWithoutLastSessionInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   title: string
   description?: string
@@ -855,6 +881,7 @@ export type PlanCreateWithoutLastSessionInput = {
 }
 
 export type PlanUncheckedCreateWithoutLastSessionInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   adminId: string
   title: string
@@ -891,6 +918,7 @@ export type PlanUpdateToOneWithWhereWithoutSessionsInput = {
 }
 
 export type PlanUpdateWithoutSessionsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -906,6 +934,7 @@ export type PlanUpdateWithoutSessionsInput = {
 }
 
 export type PlanUncheckedUpdateWithoutSessionsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -937,6 +966,7 @@ export type PlanUpdateManyWithWhereWithoutLastSessionInput = {
 }
 
 export type PlanCreateWithoutSourcesInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   title: string
   description?: string
@@ -952,6 +982,7 @@ export type PlanCreateWithoutSourcesInput = {
 }
 
 export type PlanUncheckedCreateWithoutSourcesInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   adminId: string
   title: string
@@ -983,6 +1014,7 @@ export type PlanUpdateToOneWithWhereWithoutSourcesInput = {
 }
 
 export type PlanUpdateWithoutSourcesInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -998,6 +1030,7 @@ export type PlanUpdateWithoutSourcesInput = {
 }
 
 export type PlanUncheckedUpdateWithoutSourcesInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1013,6 +1046,7 @@ export type PlanUncheckedUpdateWithoutSourcesInput = {
 }
 
 export type PlanCreateManyAdminInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   title: string
   description?: string
@@ -1025,6 +1059,7 @@ export type PlanCreateManyAdminInput = {
 }
 
 export type PlanUpdateWithoutAdminInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1040,6 +1075,7 @@ export type PlanUpdateWithoutAdminInput = {
 }
 
 export type PlanUncheckedUpdateWithoutAdminInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1055,6 +1091,7 @@ export type PlanUncheckedUpdateWithoutAdminInput = {
 }
 
 export type PlanUncheckedUpdateManyWithoutAdminInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1067,6 +1104,7 @@ export type PlanUncheckedUpdateManyWithoutAdminInput = {
 }
 
 export type PlanCreateManyLastSessionInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
   adminId: string
   title: string
@@ -1079,6 +1117,7 @@ export type PlanCreateManyLastSessionInput = {
 }
 
 export type PlanUpdateWithoutLastSessionInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1094,6 +1133,7 @@ export type PlanUpdateWithoutLastSessionInput = {
 }
 
 export type PlanUncheckedUpdateWithoutLastSessionInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1109,6 +1149,7 @@ export type PlanUncheckedUpdateWithoutLastSessionInput = {
 }
 
 export type PlanUncheckedUpdateManyWithoutLastSessionInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: Prisma.StringFieldUpdateOperationsInput | string
   adminId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1170,6 +1211,7 @@ export type PlanCountOutputTypeCountSelectionsArgs<ExtArgs extends runtime.Types
 
 
 export type PlanSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  canvasState?: boolean
   id?: boolean
   adminId?: boolean
   title?: boolean
@@ -1189,6 +1231,7 @@ export type PlanSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 }, ExtArgs["result"]["plan"]>
 
 export type PlanSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  canvasState?: boolean
   id?: boolean
   adminId?: boolean
   title?: boolean
@@ -1204,6 +1247,7 @@ export type PlanSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 }, ExtArgs["result"]["plan"]>
 
 export type PlanSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  canvasState?: boolean
   id?: boolean
   adminId?: boolean
   title?: boolean
@@ -1219,6 +1263,7 @@ export type PlanSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 }, ExtArgs["result"]["plan"]>
 
 export type PlanSelectScalar = {
+  canvasState?: boolean
   id?: boolean
   adminId?: boolean
   title?: boolean
@@ -1231,7 +1276,7 @@ export type PlanSelectScalar = {
   lastSessionId?: boolean
 }
 
-export type PlanOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "adminId" | "title" | "description" | "archivedAt" | "revision" | "creationKey" | "createdAt" | "updatedAt" | "lastSessionId", ExtArgs["result"]["plan"]>
+export type PlanOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"canvasState" | "id" | "adminId" | "title" | "description" | "archivedAt" | "revision" | "creationKey" | "createdAt" | "updatedAt" | "lastSessionId", ExtArgs["result"]["plan"]>
 export type PlanInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sources?: boolean | Prisma.Plan$sourcesArgs<ExtArgs>
   admin?: boolean | Prisma.AdminUserDefaultArgs<ExtArgs>
@@ -1259,6 +1304,7 @@ export type $PlanPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     selections: Prisma.$AccountSettingsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
+    canvasState: runtime.JsonValue | null
     id: string
     adminId: string
     title: string
@@ -1352,8 +1398,8 @@ export interface PlanDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    * // Get first 10 Plans
    * const plans = await prisma.plan.findMany({ take: 10 })
    *
-   * // Only select the `id`
-   * const planWithIdOnly = await prisma.plan.findMany({ select: { id: true } })
+   * // Only select the `canvasState`
+   * const planWithCanvasStateOnly = await prisma.plan.findMany({ select: { canvasState: true } })
    *
    */
   findMany<T extends PlanFindManyArgs>(args?: Prisma.SelectSubset<T, PlanFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -1397,9 +1443,9 @@ export interface PlanDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    *   ]
    * })
    *
-   * // Create many Plans and only return the `id`
-   * const planWithIdOnly = await prisma.plan.createManyAndReturn({
-   *   select: { id: true },
+   * // Create many Plans and only return the `canvasState`
+   * const planWithCanvasStateOnly = await prisma.plan.createManyAndReturn({
+   *   select: { canvasState: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -1488,9 +1534,9 @@ export interface PlanDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    *   ]
    * })
    *
-   * // Update zero or more Plans and only return the `id`
-   * const planWithIdOnly = await prisma.plan.updateManyAndReturn({
-   *   select: { id: true },
+   * // Update zero or more Plans and only return the `canvasState`
+   * const planWithCanvasStateOnly = await prisma.plan.updateManyAndReturn({
+   *   select: { canvasState: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -1697,6 +1743,7 @@ export interface Prisma__PlanClient<T, Null = never, ExtArgs extends runtime.Typ
  * Fields of the Plan model
  */
 export interface PlanFieldRefs {
+  readonly canvasState: Prisma.FieldRef<"Plan", 'Json'>
   readonly id: Prisma.FieldRef<"Plan", 'String'>
   readonly adminId: Prisma.FieldRef<"Plan", 'String'>
   readonly title: Prisma.FieldRef<"Plan", 'String'>

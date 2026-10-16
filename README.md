@@ -1,14 +1,16 @@
+> **Personalised consulting update (16 October 2026):** See [iteration implementation, verification and limits](docs/iterations/016-personalised-consulting.md). Guest entry now offers Discovery and Coffee chat; Analysis and live Canvas share grounded consulting information. Apply the additive `202610160001_consulting_workspace` migration before running the new backend. Guest cookies now last for the browser session within the existing 24-hour server ceiling, with periodic expired-data cleanup.
+
 > **Current refinement (15 October 2026):** See [implementation and deployment](docs/refinement/IMPLEMENTATION.md), [architecture audit](docs/refinement/AUDIT.md) and [executed verification](docs/refinement/TESTING.md). These supersede older iteration descriptions of the conversation dropdown, slide report, guest-only local routing and unsupported account transfer. Apply the additive ProjectSource migration before using the resource library. GitHub OAuth and binary PDF/Word ingestion remain unavailable; text/CSV extraction and explicit guest-project transfer are implemented.
 
 # kailor
 
 For interface changes, follow the [kailor visual style reference](docs/style/README.md), which captures the current typography, colours, pill buttons, hover behaviour, spacing and interaction preferences.
 
-The current project workspace uses Chat as the signed-in entry, shared sidebar navigation, project/conversation history, Discovery, Canvas, Analysis and Sources. Guest entry resumes one temporary project directly in Discovery. The backend Plan model and existing intelligence remain. See [iteration 011: implementation, changed files, verification and limits](docs/iterations/011-project-workspace.md). The former founder dashboard is now at `/founder`; `/workspace` redirects to Chat.
+The current project workspace uses Chat as the signed-in entry, shared sidebar navigation, project/conversation history, Discovery, Canvas, Analysis and Sources. Guest entry offers Start discovery or Coffee chat within the same temporary project. The backend Plan model and existing intelligence remain. See [iteration 011: implementation, changed files, verification and limits](docs/iterations/011-project-workspace.md). The former founder dashboard is now at `/founder`; `/workspace` redirects to Chat.
 
 Iteration 007 is a private, AI-assisted technology consultancy platform with independently owned business/project plans, persistent conversation memory, guided Discovery, confirmation-gated evidence, Solution Canvas, immutable assessments and PDF export. Plans can be created, renamed, resumed, archived, restored and explicitly compared without merging their knowledge.
 
-Cloudflare inference remains opt-in and founder-only. Deterministic evaluation passes do not establish live model quality. See the [iteration 007 implementation and execution report](docs/iterations/007-conversational-memory-and-plans.md).
+Cloudflare inference follows the existing configuration, guest-access, privacy and usage-limit controls. Deterministic evaluation passes do not establish live model quality. See the [iteration 007 implementation and execution report](docs/iterations/007-conversational-memory-and-plans.md).
 
 ## Start an existing local installation
 

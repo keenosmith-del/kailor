@@ -5,6 +5,7 @@ import type { Account } from "../../types/account";
 import { api } from "../../services/api";
 import { ErrorBox } from "../../components/ErrorBox/ErrorBox";
 import { errorMessage } from "../../utils/errorMessage";
+import "../../components/EntryButton/EntryButton.css";
 
 export function SettingsPage({ guest }: { guest: boolean }) {
   const [prefs, setPrefs] = useState<Preference[]>([]);
@@ -83,13 +84,13 @@ export function SettingsPage({ guest }: { guest: boolean }) {
       <p>
         {model
           ? model.configured
-            ? "Cloudflare model assistance is configured. Replies can use it when privacy checks and usage limits permit. Configuration does not guarantee availability."
-            : "This session uses local guidance. Model assistance needs server-side configuration and permission for this session type."
+            ? "kailor can use Cloudflare to help with replies when privacy checks and usage limits allow. Availability can vary."
+            : "Local guidance is available. Online model assistance is not configured for this session."
           : "Checking model configuration…"}
       </p>
-      <h2>Privacy and memory</h2>
+      <h2>Your information</h2>
       <details>
-        <summary>Chat and confirmed information</summary>
+        <summary>What kailor remembers</summary>
         <p>
           Conversations and proposed details are stored with your project.
           Confirmed information informs Discovery, Chat, the canvas and future
@@ -98,7 +99,7 @@ export function SettingsPage({ guest }: { guest: boolean }) {
         </p>
       </details>
       <details>
-        <summary>Discovery and reports</summary>
+        <summary>Answers and saved assessments</summary>
         <p>
           Discovery answers persist in this project. Starting from the beginning
           retires guided answers and their evidence while keeping Chat-confirmed
@@ -106,14 +107,17 @@ export function SettingsPage({ guest }: { guest: boolean }) {
         </p>
       </details>
       <details>
-        <summary>Guest access and model assistance</summary>
+        <summary>Guest access and online assistance</summary>
         <p>
-          Guest access lasts 24 hours from entry in this browser. Expiry ends
-          access; it is not a promise of immediate data deletion. Explicit
-          account transfer before expiry ends guest access. When configured,
-          Cloudflare processes bounded project context; sensitive context stays
-          local. Uploaded text is reference material, not instructions or
-          confirmed facts.
+          Guest access uses a browser-session cookie with a maximum of 24 hours.
+          Refreshing keeps your active work. Closing a tab cannot guarantee
+          deletion, and browsers may restore session cookies. End guest session
+          discards temporary work immediately. Expired guest data is removed by
+          regular server cleanup; it may remain until cleanup runs. Explicit
+          account transfer ends guest access. When configured, Cloudflare
+          processes bounded project context; sensitive context stays local.
+          Uploaded text is reference material, not instructions or confirmed
+          facts.
         </p>
       </details>
       <p>
@@ -173,16 +177,17 @@ export function AccountPage({
       <ErrorBox error={error} />
       {guest ? (
         <>
-          <h2>You're exploring as a guest.</h2>
+          <h2>Make room for more ideas.</h2>
           <p>
-            Your temporary project is saved with this browser's guest session
-            for 24 hours. Keep using Chat, Discovery, Solution canvas and
-            Analysis here.
+            You're exploring as a guest. An account lets you keep projects and
+            conversations, revisit assessments and resources, and make space for
+            more than one idea.
           </p>
-          <p>
-            Sign in before this guest session expires, then choose to keep this
-            project in your account. Signing in alone does not transfer
-            anything. Expired guest access cannot be recovered here.
+          <p className="account-session-note">
+            Sign in or create an account, then choose whether to keep this
+            project. Nothing transfers automatically. Temporary access lasts at
+            most 24 hours; use End guest session to discard it now. Expired data
+            is removed by regular server cleanup and cannot be recovered here.
           </p>
           {account ? (
             <div className="guest-transfer">
@@ -211,11 +216,12 @@ export function AccountPage({
               </button>
             </div>
           ) : (
-            <div className="actions">
+            <div className="actions account-entry-actions">
               <Link
-                className="button primary"
+                className="entry-button entry-button--light"
                 to={`/sign-in?returnTo=${returnTo}`}
               >
+                <img src="/svgs/profile.svg" alt="" width="17" height="17" />
                 Sign in
               </Link>
               <Link

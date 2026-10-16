@@ -1,3 +1,4 @@
+import { discardGuestWork } from "./guest-lifecycle.js";
 import { guestJourneys } from "./guest-journeys.js";
 import { planRouter } from "./plan-routes.js";
 import { evidenceReviewInput } from "../../shared/src/index.js";
@@ -50,34 +51,7 @@ guestRouter.post("/logout", async (req, res) => {
     .parse(req.body);
   const owner = res.locals.guestId as string | undefined;
   const discardedSessionIds = owner
-    ? await db.$transaction(async (tx) => {
-        await tx.$queryRaw`SELECT id FROM "AdminUser" WHERE id = ${owner} FOR UPDATE`;
-        const auth = await tx.authSession.findFirst({
-          where: {
-            tokenHash: res.locals.guestTokenHash,
-            adminId: owner,
-            admin: { isGuest: true },
-            expiresAt: { gt: new Date() },
-          },
-        });
-        if (!auth) return [];
-        // Finish outstanding session writes before deleting their temporary context.
-        await tx.$queryRaw`SELECT id FROM "DiscoverySession" WHERE "adminId" = ${owner} FOR UPDATE`;
-        const sessions = await tx.discoverySession.findMany({
-          where: { adminId: owner },
-          select: { id: true, subjectId: true },
-        });
-        await tx.discoverySession.deleteMany({ where: { adminId: owner } });
-        await tx.subject.deleteMany({
-          where: {
-            id: { in: sessions.map((session) => session.subjectId) },
-            sessions: { none: {} },
-          },
-        });
-        await tx.auditEvent.deleteMany({ where: { actorId: owner } });
-        await tx.adminUser.deleteMany({ where: { id: owner, isGuest: true } });
-        return sessions.map((session) => session.id);
-      })
+    ? await discardGuestWork(owner, res.locals.guestTokenHash)
     : [];
   res.clearCookie("kailor_guest", {
     path: "/api/guest",
@@ -126,7 +100,6 @@ guestRouter.post(
         secure: config.NODE_ENV === "production",
         sameSite: "strict",
         path: "/api/guest",
-        maxAge: 86400000,
       });
     }
     res

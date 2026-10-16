@@ -429,3 +429,37 @@
 .confirm-dialog-actions .confirm-dialog-submit:hover:not(:disabled) {
   background: #e6e6e6;
 }
+.application-workspace .chat-form input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 42px;
+  min-height: 42px;
+  margin: 0;
+  padding: 10px 4px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 14px;
+  line-height: 22px;
+  overflow-x: auto;
+  white-space: nowrap;
+  box-shadow: none;
+}
+.application-workspace .chat-form input[type="text"]:focus {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.conversation-heading .badge {
+  min-width: 0;
+  max-width: 60%;
+  font-size: 10px;
+  line-height: 1.5;
+}
+@media (max-width: 700px) {
+  .application-workspace .chat-form input[type="text"] {
+    font-size: 16px;
+  }
+}

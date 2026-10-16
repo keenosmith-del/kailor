@@ -9,6 +9,9 @@ export type CanvasNode = {
   evidence: string[];
   dependencies: string[];
   alternatives: string[];
+  group?: "context" | "directions" | "next";
+  sourceKey?: string;
+  decision?: string;
 };
 export function canvasGraph(a: Answers, report: Report) {
   const nodes: CanvasNode[] = [];
@@ -29,48 +32,81 @@ export function canvasGraph(a: Answers, report: Report) {
     alternatives: string[] = [],
   ) =>
     add({ id, title, purpose, status, evidence, dependencies, alternatives });
-  if (isExploration(a)) {
+  if (isExploration(a) && report.consulting) {
+    const brief = report.consulting;
+    const goal = brief.facts.find((f) => f.kind === "goal");
     node(
       "start",
-      "Your starting point",
-      "No business idea is required. Preferences can remain open.",
+      goal?.label ?? "Your starting point",
+      goal?.value ?? brief.summary,
       "reported",
     );
-    for (const key of ["interests", "strengths", "explorationTime"])
-      if (a[key]) {
-        node(
-          key,
-          {
-            interests: "Interests",
-            strengths: "Experience and strengths",
-            explorationTime: "Time and resources",
-          }[key]!,
-          String(a[key]),
-          "reported",
-          [String(a[key])],
-        );
-        connect("start", key, "you described");
-      }
-    for (const direction of opportunityDirections(a)) {
+    if (goal) nodes[0].sourceKey = goal.sourceKey;
+    for (const fact of brief.facts) {
+      if (fact.id === goal?.id) continue;
+      node(
+        fact.id,
+        fact.value.length > 78 ? `${fact.value.slice(0, 75)}…` : fact.value,
+        fact.value,
+        "reported",
+        fact.quote.length <= 150 ? [] : [fact.quote],
+      );
+      Object.assign(nodes.at(-1)!, {
+        sourceKey: fact.sourceKey === "canvas" ? undefined : fact.sourceKey,
+        group: "context",
+      });
+      connect("start", fact.id, "you described");
+    }
+    for (const direction of brief.directions) {
       node(
         direction.id,
         direction.title,
-        direction.description,
+        direction.summary,
         "exploratory",
-        [],
-        ["Check interest and fit; demand is unverified"],
-        ["Choose another direction or keep exploring"],
+        direction.basis
+          .map((id) => brief.facts.find((f) => f.id === id)?.value)
+          .filter((v): v is string => !!v),
+        direction.requirements,
+        direction.risks,
       );
-      connect("start", direction.id, "possibility to test");
+      Object.assign(nodes.at(-1)!, {
+        group: "directions",
+        decision: direction.status,
+      });
+      for (const fact of direction.basis)
+        if (nodes.some((n) => n.id === fact))
+          connect(fact, direction.id, "supports a small test");
+      if (!direction.basis.length)
+        connect("start", direction.id, "hypothesis to explore");
     }
     node(
       "decision",
-      "Choose a small experiment",
-      "Discuss one direction and define what you want to learn. No purchase is required.",
+      "Choose a first experiment",
+      "Select one direction and decide what you want to learn before committing money.",
       "exploratory",
     );
-    for (const d of opportunityDirections(a))
-      connect(d.id, "decision", "explore");
+    Object.assign(nodes.at(-1)!, { group: "next" });
+    for (const d of brief.directions)
+      connect(
+        d.id,
+        "decision",
+        d.status === "rejected"
+          ? "set aside"
+          : d.status === "selected"
+            ? "develop this direction"
+            : "compare and test",
+      );
+  } else if (isExploration(a)) {
+    node(
+      "start",
+      "Your starting point",
+      "Preferences can remain open.",
+      "reported",
+    );
+    for (const d of opportunityDirections(a)) {
+      node(d.id, d.title, d.description, "exploratory");
+      connect("start", d.id, "possibility to test");
+    }
   } else if (a.stage === "starting") {
     node(
       "concept",
@@ -209,6 +245,28 @@ export function canvasGraph(a: Answers, report: Report) {
     for (const r of report.recommendations)
       connect(r.serviceId, "trial", "compare and test");
     if (!report.recommendations.length) connect("outcome", "trial", "clarify");
+  }
+  for (const n of nodes) {
+    if (n.id === "concept" && a.idea) n.sourceKey = "idea";
+    if (n.id === "context")
+      n.sourceKey = a.industry
+        ? "industry"
+        : a.idea
+          ? "idea"
+          : a.request
+            ? "request"
+            : undefined;
+    if (n.id === "outcome" && a.goals) n.sourceKey = "goals";
+    if (n.id.startsWith("existing-") && a.tools) n.sourceKey = "tools";
+    n.evidence = [...new Set(n.evidence)].filter(
+      (e) => e.trim() !== n.purpose.trim(),
+    );
+    n.group ??=
+      n.status === "reported"
+        ? "context"
+        : /trial|decision/.test(n.id)
+          ? "next"
+          : "directions";
   }
   return { nodes, edges };
 }

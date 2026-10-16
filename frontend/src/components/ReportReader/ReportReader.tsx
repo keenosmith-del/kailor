@@ -1,11 +1,20 @@
+import { ConsultingReport } from "./ConsultingReport";
 import { useId } from "react";
 import type { Report } from "../../../../shared/src/index";
 import { customerReport } from "../../../../shared/src/report";
 import "./ReportReader.css";
-export function ReportReader({ report }: { report: Report }) {
+export function ReportReader({
+  report,
+  discussHref,
+}: {
+  report: Report;
+  discussHref?: (id: string) => string;
+}) {
   const content = customerReport(report);
   const readerId = useId();
   const prefix = `${readerId}-report-${report.revision}-${report.createdAt.replace(/\W/g, "")}`;
+  if (content.consulting)
+    return <ConsultingReport report={content} discussHref={discussHref} />;
   return (
     <article className="report-reader">
       <header>

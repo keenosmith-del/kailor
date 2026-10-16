@@ -101,3 +101,28 @@
     padding: 22px;
   }
 }
+.guest-entry-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.guest-entry-choices h2 {
+  font-size: 21px;
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+.guest-entry-choices section p {
+  font-size: 13px;
+}
+.guest-entry-choices .button {
+  display: inline-flex;
+  min-height: 34px;
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+@media (max-width: 700px) {
+  .guest-entry-choices {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

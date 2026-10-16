@@ -33,6 +33,7 @@ model Subject {
   sessions DiscoverySession[]
 }
 model Plan {
+  canvasState Json?
   sources ProjectSource[]
   id String @id @default(uuid())
   adminId String
@@ -101,6 +102,7 @@ model PlanActionProposal {
   @@index([sessionId, status])
 }
 model DiscoverySession {
+  title String @default("New conversation")
   id String @id @default(uuid())
   adminId String
   admin AdminUser @relation(fields: [adminId], references: [id])
