@@ -164,3 +164,25 @@
     flex-wrap: wrap;
   }
 }
+
+.requirement-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-block: 24px;
+}
+.requirement-overview h3 {
+  font-size: 14px;
+}
+.requirement-overview ul {
+  padding-left: 18px;
+}
+.experiment-steps {
+  list-style: none;
+  padding-left: 0;
+}
+@media (max-width: 600px) {
+  .requirement-overview {
+    grid-template-columns: 1fr;
+  }
+}

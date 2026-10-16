@@ -32,7 +32,67 @@ export function canvasGraph(a: Answers, report: Report) {
     alternatives: string[] = [],
   ) =>
     add({ id, title, purpose, status, evidence, dependencies, alternatives });
-  if (isExploration(a) && report.consulting) {
+  if (report.consulting?.approaches) {
+    const brief = report.consulting;
+    for (const [i, insight] of (brief.insights ?? []).entries()) {
+      node(
+        `operation-${i}`,
+        insight.title,
+        insight.summary,
+        "reported",
+        brief.facts
+          .filter((f) => f.label === insight.title)
+          .map((f) => f.quote),
+      );
+      const source = brief.facts.find(
+        (f) => f.label === insight.title,
+      )?.sourceKey;
+      Object.assign(nodes.at(-1)!, { group: "context", sourceKey: source });
+    }
+    for (const d of brief.directions) {
+      node(
+        d.id,
+        d.title,
+        d.why,
+        "proposed",
+        d.basis
+          .map((id) => brief.facts.find((f) => f.id === id)?.value ?? "")
+          .filter(Boolean),
+        d.requirements,
+        d.risks,
+      );
+      Object.assign(nodes.at(-1)!, { group: "directions", decision: d.status });
+      for (const n of nodes.filter((n) => n.group === "context"))
+        connect(n.id, d.id, "informs the evaluation");
+    }
+    for (const r of brief.requirements ?? []) {
+      node(
+        r.id,
+        r.label,
+        `${r.priority === "unconfirmed" ? "Priority needs confirmation" : `Recorded priority: ${r.priority}`}. ${r.conflict ?? "Evaluate only within the agreed phase; provider support is unverified."}`,
+        "reported",
+        r.provenance.map((p) => p.quote),
+        r.conflict ? [r.conflict] : [],
+      );
+      Object.assign(nodes.at(-1)!, {
+        group: "directions",
+        decision: r.priority,
+      });
+      for (const d of brief.directions)
+        connect(d.id, r.id, `${r.priority} capability`);
+    }
+    node(
+      "pilot",
+      "Compare platforms and define a pilot",
+      brief.directions[0]?.firstStep ?? "Review priorities before committing.",
+      "proposed",
+      [],
+      brief.unknowns,
+    );
+    Object.assign(nodes.at(-1)!, { group: "next" });
+    for (const d of brief.directions)
+      connect(d.id, "pilot", "evaluate before committing");
+  } else if (isExploration(a) && report.consulting) {
     const brief = report.consulting;
     const goal = brief.facts.find((f) => f.kind === "goal");
     node(

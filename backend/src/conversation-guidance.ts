@@ -26,8 +26,64 @@ export function localReply(
   const quality = evaluateInput(message, "", "chat"),
     plan = savedPlan ?? planDiscovery(context);
   const text = message.trim();
-  const brief =
-    suppliedReport?.consulting ?? liveConsulting ?? consultingBrief(context);
+  const currentPlanning =
+    /need first|priorit|postpon|current|develop|recorded decision|have.*decided/i.test(
+      text,
+    ) && !/saved|report|assessment|analysis/i.test(text);
+  const brief = currentPlanning
+    ? (liveConsulting ?? suppliedReport?.consulting ?? consultingBrief(context))
+    : (suppliedReport?.consulting ??
+      liveConsulting ??
+      consultingBrief(context));
+  if (
+    brief.requirements?.length &&
+    proposals.some((p) => p.key === "clarification") &&
+    /essential|optional|defer|postpon|can wait/i.test(text)
+  )
+    return "Review the proposed priority change below. Once you confirm it, I will reconcile the affected capability with your current scope and use it in future assessments. Saved reports remain unchanged.";
+  if (
+    brief.requirements?.length &&
+    /first|essential|priorit|nice.to.have|later|postpon|defer|scope/i.test(text)
+  ) {
+    return [
+      ...(
+        [
+          ["essential", "Essential first phase"],
+          ["optional", "Optional later"],
+          ["deferred", "Explicitly postponed"],
+          ["unconfirmed", "Needs clarification"],
+        ] as const
+      ).map(
+        ([priority, label]) =>
+          `${label}: ${
+            brief
+              .requirements!.filter((r) => r.priority === priority)
+              .map((r) => r.label)
+              .join("; ") || "No confirmed items"
+          }.`,
+      ),
+      ...(brief.requirements.some((r) => r.id === "requirement-gps")
+        ? [
+            "Progress statuses are updates entered by staff; customer tracking links share selected status information; continuous GPS reports location. These are separate capabilities.",
+          ]
+        : []),
+      ...brief.decisions.map(
+        (d) => `${d.title}: ${d.status}${d.notes ? ` — ${d.notes}` : ""}.`,
+      ),
+    ].join("\n\n");
+  }
+  if (
+    brief.approaches &&
+    /develop|selected|decid|recommend|compar|pilot|plan|cost|direction|component|next step|assess|report/i.test(
+      text,
+    )
+  ) {
+    const available = brief.directions.filter(
+      (d) => !["rejected", "deferred"].includes(d.status),
+    );
+    const d = available[0];
+    return `${brief.summary}\n\n${brief.decisions.map((d) => `${d.title}: ${d.status}${d.notes ? ` — ${d.notes}` : ""}.`).join(" ")} Selection is an agreement to investigate, not approval to purchase or implement.\n\n${d ? `${d.title}: ${d.why}\n\n${d.firstStep} ${d.validation.map((v) => `${v.kind}: ${v.action}`).join(" ")}\n\n${d.costToTest}` : "The proposed direction has been deferred or set aside. Reconsider it explicitly before developing a plan."}\n\n${/compar/i.test(text) ? brief.approaches.map((p) => `${p.title}: ${p.strengths} ${p.tradeoffs} Appropriate when: ${p.appropriateWhen}`).join("\n") : ""}\n\nStill open: ${brief.unknowns.join(" ")}`;
+  }
   if (
     brief.facts.length &&
     /summari[sz].*(?:learn|situation|told|know)|(?:what|everything).*(?:learned|know about me|told you)/i.test(
@@ -299,5 +355,17 @@ export function localReply(
 export function containsSensitiveData(text: string) {
   return /\b[^\s@]+@[^\s@]+\.[a-z]{2,}\b|\b(?:sk-|Bearer\s+)[a-z0-9_-]{12,}|\b(?:patient name|national id|credit card number|passport number)\s*[:=]|\b\+?\d[\d ()-]{9,}\d\b/i.test(
     text,
+  );
+}
+
+// System reference identifiers are not phone numbers. User message strings and
+// evidence quotes remain untouched, including any contact details inside them.
+export function privacyScanText(value: unknown) {
+  return JSON.stringify(value, (key, item) =>
+    /^(?:id|\w+Id|from|to|source)$/.test(key) &&
+    typeof item === "string" &&
+    /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(item)
+      ? "[reference]"
+      : item,
   );
 }

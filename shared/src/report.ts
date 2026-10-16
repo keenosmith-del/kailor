@@ -2,9 +2,12 @@ import type { Report } from "./index.js";
 
 // Read-only presentation adapter. Historic snapshot JSON is never modified.
 export function customerReport(report: Report): Report {
-  if (report.presentationVersion === 2) return report;
   const clean = (text: string) =>
     text
+      .replace(
+        /Consultant hours must be configured in data\/services\.ts\.?/gi,
+        "",
+      )
       .replace(/manual_review/g, "Scope and quotation required")
       .replace(/indicative_draft/g, "Indicative estimate")
       .replace(/vendor_quote_required/g, "Check the selected service and plan")
@@ -24,6 +27,19 @@ export function customerReport(report: Report): Report {
       .replace(/\bnot provided\b/g, "not yet confirmed");
   return {
     ...report,
+    recommendations: report.recommendations.map((r) => ({
+      ...r,
+      estimate: { ...r.estimate, notes: clean(r.estimate.notes) },
+    })),
+    consulting: report.consulting
+      ? {
+          ...report.consulting,
+          directions: report.consulting.directions.map((d) => ({
+            ...d,
+            costToTest: clean(d.costToTest),
+          })),
+        }
+      : undefined,
     title:
       report.title === "Your way forward"
         ? "Business improvement assessment"
@@ -31,7 +47,9 @@ export function customerReport(report: Report): Report {
     status: "Preliminary assessment · not human-reviewed",
     sections: report.sections
       .map((s) => ({
-        title: s.title,
+        title: clean(s.title)
+          .replace(/^#+\s*/, "")
+          .trim(),
         paragraphs: s.paragraphs
           .filter(
             (p) =>
@@ -39,9 +57,10 @@ export function customerReport(report: Report): Report {
                 p,
               ),
           )
-          .map(clean),
+          .map(clean)
+          .filter((p) => p.trim() && !/^#+\s*$/.test(p)),
       }))
-      .filter((s) => s.paragraphs.length),
+      .filter((s) => s.title && s.paragraphs.length),
   };
 }
 export const reportSummary = (report: Report) => {
@@ -74,3 +93,15 @@ export function displayEvidence(value: string) {
     )
     .replace(/^\w+: /, "");
 }
+
+export const decisionLabel = (status: string) =>
+  (
+    ({
+      hypothesis: "Proposed",
+      selected: "Selected for exploration",
+      developing: "Being developed",
+      rejected: "Set aside",
+      deferred: "Deferred",
+      exploring: "Reconsidering",
+    }) as Record<string, string>
+  )[status] ?? status;

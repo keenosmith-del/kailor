@@ -1,3 +1,4 @@
+import { decisionLabel } from "../../shared/src/report.js";
 import { customerReport } from "../../shared/src/report.js";
 import PDFDocument from "pdfkit";
 import type { Report } from "../../shared/src/index.js";
@@ -36,15 +37,26 @@ export async function renderPdf(report: Report): Promise<Buffer> {
         .fontSize(16)
         .text("Your starting point");
       doc.moveDown();
-      for (let i = 0; i < brief.facts.length; i += 2) {
-        const row = brief.facts.slice(i, i + 2),
+      const visibleFacts = brief.insights
+        ? brief.insights.map((insight, i) => ({
+            id: String(i),
+            label: insight.title,
+            quote: insight.summary,
+            value: insight.summary,
+          }))
+        : brief.facts;
+      for (let i = 0; i < visibleFacts.length; i += 2) {
+        const row = visibleFacts.slice(i, i + 2),
           width = 230,
           gap = 25;
         doc.font("Helvetica").fontSize(10);
         const height =
           Math.max(
             ...row.map((f) =>
-              doc.heightOfString(print(f.quote), { width, lineGap: 3 }),
+              doc.heightOfString(print(brief.insights ? f.value : f.quote), {
+                width,
+                lineGap: 3,
+              }),
             ),
           ) + 35;
         if (doc.y + height > 770) doc.addPage();
@@ -60,7 +72,10 @@ export async function renderPdf(report: Report): Promise<Buffer> {
             .font("Helvetica")
             .fontSize(10)
             .fillColor("#333333")
-            .text(print(f.quote), x, y + 16, { width, lineGap: 3 });
+            .text(print(brief.insights ? f.value : f.quote), x, y + 16, {
+              width,
+              lineGap: 3,
+            });
         });
         doc.x = 55;
         doc.y = y + height;
@@ -72,16 +87,47 @@ export async function renderPdf(report: Report): Promise<Buffer> {
             title: "Conclusions and hypotheses",
             paragraphs: [...brief.conclusions, ...brief.hypotheses],
           },
+          ...(
+            ["essential", "optional", "deferred", "unconfirmed"] as const
+          ).flatMap((priority) => {
+            const items =
+              brief.requirements?.filter((r) => r.priority === priority) ?? [];
+            return items.length
+              ? [
+                  {
+                    title: `${priority[0].toUpperCase()}${priority.slice(1)} requirements`,
+                    paragraphs: items.map(
+                      (r) => `${r.label}${r.conflict ? `: ${r.conflict}` : ""}`,
+                    ),
+                  },
+                ]
+              : [];
+          }),
+          ...(brief.approaches?.length
+            ? [
+                {
+                  title: "Approaches to compare",
+                  paragraphs: brief.approaches.map(
+                    (p) =>
+                      `${p.title}: ${p.strengths} ${p.tradeoffs} Appropriate when: ${p.appropriateWhen}`,
+                  ),
+                },
+              ]
+            : []),
           ...brief.directions.map((d) => ({
             title: d.title,
             paragraphs: [
               d.summary,
-              `Status: ${d.status}`,
+              `Status: ${decisionLabel(d.status)}`,
               `Why this may fit: ${d.why}`,
-              `Supporting facts: ${d.basis
-                .map((id) => brief.facts.find((f) => f.id === id)?.quote)
-                .filter(Boolean)
-                .join("; ")}`,
+              ...(brief.insights
+                ? []
+                : [
+                    `Supporting facts: ${d.basis
+                      .map((id) => brief.facts.find((f) => f.id === id)?.quote)
+                      .filter(Boolean)
+                      .join("; ")}`,
+                  ]),
               `Requirements: ${d.requirements.join("; ")}`,
               `Risks: ${d.risks.join("; ")}`,
               `Commitment: ${d.commitment}`,
@@ -108,7 +154,8 @@ export async function renderPdf(report: Report): Promise<Buffer> {
                 {
                   title: "Recorded decisions and preferences",
                   paragraphs: brief.decisions.map(
-                    (d) => `${d.title} (${d.status}): ${d.notes}`,
+                    (d) =>
+                      `${d.title} (${decisionLabel(d.status)}): ${d.notes}`,
                   ),
                 },
               ]
@@ -116,11 +163,28 @@ export async function renderPdf(report: Report): Promise<Buffer> {
         ]
       : [];
     const written =
-      brief && report.assessmentType === "exploration" ? [] : report.sections;
-    for (const section of [...consultingSections, ...written]) {
+      brief && (report.assessmentType === "exploration" || brief.approaches)
+        ? []
+        : report.sections;
+    for (const section of [...consultingSections, ...written].filter(
+      (s) => s.title.trim() && s.paragraphs.some((p) => p.trim()),
+    )) {
       if (brief?.directions.some((d) => d.title === section.title))
         doc.addPage();
-      if (doc.y > 660) doc.addPage();
+      const keepTogether = /requirements$/.test(section.title);
+      doc.font("Helvetica").fontSize(10);
+      const sectionHeight =
+        40 +
+        section.paragraphs.reduce(
+          (sum, p) =>
+            sum + doc.heightOfString(print(p), { width: 485, lineGap: 3 }) + 5,
+          0,
+        );
+      if (
+        doc.y > 660 ||
+        (keepTogether && sectionHeight < 650 && doc.y + sectionHeight > 775)
+      )
+        doc.addPage();
       doc
         .font("Helvetica-Bold")
         .fontSize(16)

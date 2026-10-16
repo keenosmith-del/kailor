@@ -18,7 +18,10 @@ import {
   statesOf,
   evidenceOf,
 } from "./session-state.js";
-import { containsSensitiveData } from "./conversation-guidance.js";
+import {
+  containsSensitiveData,
+  privacyScanText,
+} from "./conversation-guidance.js";
 import { randomUUID } from "node:crypto";
 import { evaluateInput, usableAnswers } from "./input-quality.js";
 import { claimsOf, detectUpdateConflicts } from "./knowledge-conflicts.js";
@@ -457,7 +460,7 @@ export async function converse(
     }
   }
   const sensitive = containsSensitiveData(
-    JSON.stringify({
+    privacyScanText({
       message: input.message,
       memory: personalMemory,
       context: answersOf(s),
@@ -822,7 +825,7 @@ export async function nextForSession(
   const saved = s.planState as unknown as DiscoveryPlan | null;
   if (
     saved?.revision === s.revision &&
-    saved.plannerVersion === "consulting-5" &&
+    saved.plannerVersion === "consulting-6" &&
     saved.questionStates &&
     saved.completion
   )
@@ -922,7 +925,7 @@ export async function assess(id: string, adminId: string, revision: number) {
     const savedPlan = s.planState as unknown as DiscoveryPlan | null;
     const plan =
       savedPlan?.revision === s.revision &&
-      savedPlan.plannerVersion === "consulting-5"
+      savedPlan.plannerVersion === "consulting-6"
         ? savedPlan
         : await persistPlan(tx, id);
     if (!plan.readiness.canAssess) {
@@ -1064,7 +1067,8 @@ export async function canvas(id: string, adminId: string) {
     const edit = state.edits[node.id];
     if (edit?.title) node.title = edit.title;
     if (edit?.notes) node.purpose = edit.notes;
-    if (edit?.decision) node.decision = edit.decision;
+    if (edit?.priority || edit?.decision)
+      node.decision = edit.priority ?? edit.decision;
   }
   for (const original of state.additions) {
     if (graph.nodes.some((n) => n.id === original.id)) continue;

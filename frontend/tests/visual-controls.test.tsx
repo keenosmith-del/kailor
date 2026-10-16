@@ -383,3 +383,39 @@ it("submits the entire long input without clipping it to the visible line", asyn
       .value,
   ).toBe("");
 });
+it("gives Discovery completion separate assessment, continuation, new-project and Chat actions", () => {
+  render(
+    <MemoryRouter>
+      <Discovery
+        session={session}
+        next={{
+          ...next,
+          question: null,
+          readiness: { ...next.readiness, canAssess: true },
+        }}
+        busy={false}
+        act={vi.fn()}
+        assess={vi.fn()}
+        ready={false}
+        restart={vi.fn()}
+        onNewProject={vi.fn()}
+      />
+    </MemoryRouter>,
+  );
+  expect(
+    screen.getByRole("heading", { name: "We have enough to get started." }),
+  ).toBeTruthy();
+  expect(
+    screen.getByRole("button", { name: "Prepare assessment" }),
+  ).toBeTruthy();
+  expect(
+    screen.getByRole("button", { name: "Continue discovery" }),
+  ).toBeTruthy();
+  expect(
+    screen.getByRole("button", { name: "Start a new project" }),
+  ).toBeTruthy();
+  expect(
+    screen.getByRole("link", { name: "Discuss your project in Chat" })
+      .className,
+  ).toContain("conversation-link");
+});

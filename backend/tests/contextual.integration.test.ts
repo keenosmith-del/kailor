@@ -209,7 +209,7 @@ describe("contextual PostgreSQL acceptance", () => {
       },
     });
     const plan = await nextForSession(s.id, owner);
-    expect(plan.plannerVersion).toBe("consulting-5");
+    expect(plan.plannerVersion).toBe("consulting-6");
     expect(plan.provenance.definitionVersion).toBe("1.0.0");
     expect((await getReport(s.id, owner)).content).toEqual(old.content);
   });

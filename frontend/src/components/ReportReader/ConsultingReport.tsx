@@ -1,3 +1,4 @@
+import { decisionLabel } from "../../../../shared/src/report";
 import { useId, useState } from "react";
 import { Link } from "react-router";
 import type { Report } from "../../../../shared/src/index";
@@ -72,14 +73,57 @@ export function ConsultingReport({
       </nav>
       <section id={`${prefix}-starting`}>
         <h2>{wording.starting}</h2>
-        <dl className="consulting-facts">
-          {brief.facts.map((f) => (
-            <div key={f.id}>
-              <dt>{f.label}</dt>
-              <dd>{f.value}</dd>
-            </div>
-          ))}
-        </dl>
+        {brief.insights ? (
+          <div className="consulting-facts">
+            {brief.insights.map((insight) => (
+              <div key={insight.title}>
+                <h3>{insight.title}</h3>
+                <p>{insight.summary}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <dl className="consulting-facts">
+            {brief.facts.map((f) => (
+              <div key={f.id}>
+                <dt>{f.label}</dt>
+                <dd>{f.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        {!!brief.requirements?.length && (
+          <div
+            className="requirement-overview"
+            aria-label="Requirement priorities"
+          >
+            {(
+              [
+                ["essential", "Essential"],
+                ["optional", "Optional"],
+                ["deferred", "Deferred"],
+                ["unconfirmed", "Unknown"],
+              ] as const
+            ).map(([priority, label]) => (
+              <section key={priority}>
+                <h3>{label}</h3>
+                <ul>
+                  {brief
+                    .requirements!.filter((r) => r.priority === priority)
+                    .map((r) => (
+                      <li key={r.id}>
+                        {r.label}
+                        {r.conflict ? ` — ${r.conflict}` : ""}
+                      </li>
+                    ))}
+                </ul>
+                {!brief.requirements!.some((r) => r.priority === priority) && (
+                  <p>No confirmed items</p>
+                )}
+              </section>
+            ))}
+          </div>
+        )}
         {!brief.facts.length && (
           <p>
             Your preferences remain open. There is no need to invent a business
@@ -140,7 +184,7 @@ export function ConsultingReport({
                 <small>
                   {d.status === "hypothesis"
                     ? "Possibility to validate"
-                    : d.status}
+                    : decisionLabel(d.status)}
                 </small>
                 <p>{d.summary}</p>
               </button>
@@ -166,6 +210,7 @@ export function ConsultingReport({
               <details>
                 <summary>Why this direction appears</summary>
                 {direction.basis
+                  .slice(0, 3)
                   .map((id) => brief.facts.find((f) => f.id === id))
                   .filter(Boolean)
                   .map((f) => (
@@ -180,6 +225,31 @@ export function ConsultingReport({
             </div>
           )}
         </div>
+        {brief.approaches && (
+          <div className="consulting-comparison">
+            <table>
+              <caption>Approaches to compare</caption>
+              <thead>
+                <tr>
+                  <th>Approach</th>
+                  <th>Strengths</th>
+                  <th>Trade-offs</th>
+                  <th>Appropriate when</th>
+                </tr>
+              </thead>
+              <tbody>
+                {brief.approaches.map((p) => (
+                  <tr key={p.title}>
+                    <th>{p.title}</th>
+                    <td>{p.strengths}</td>
+                    <td>{p.tradeoffs}</td>
+                    <td>{p.appropriateWhen}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
         {compare && (
           <div className="consulting-comparison">
             <table>
@@ -251,7 +321,7 @@ export function ConsultingReport({
             <h3>Recorded decisions and preferences</h3>
             {brief.decisions.map((d, i) => (
               <p key={i}>
-                <strong>{d.title}</strong> · {d.status}
+                <strong>{d.title}</strong> · {decisionLabel(d.status)}
                 {d.notes ? ` — ${d.notes}` : ""}
               </p>
             ))}
@@ -259,20 +329,22 @@ export function ConsultingReport({
         )}
         {discussHref && (
           <Link className="button" to={discussHref(direction?.id ?? "")}>
-            Keep exploring with kailor
+            Discuss your assessment in Chat
           </Link>
         )}
       </section>
       <details>
         <summary>Full written assessment</summary>
-        {report.sections.map((s, i) => (
-          <div className="written-section" key={i}>
-            <h3>{s.title}</h3>
-            {s.paragraphs.map((p, j) => (
-              <p key={j}>{p}</p>
-            ))}
-          </div>
-        ))}
+        {report.sections
+          .filter((s) => s.title.trim() && s.paragraphs.some((p) => p.trim()))
+          .map((s, i) => (
+            <div className="written-section" key={i}>
+              <h3>{s.title}</h3>
+              {s.paragraphs.map((p, j) => (
+                <p key={j}>{p}</p>
+              ))}
+            </div>
+          ))}
       </details>
     </article>
   );

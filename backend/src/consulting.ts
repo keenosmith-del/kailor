@@ -1,3 +1,5 @@
+import { projectRequirements } from "./requirements.js";
+import { enrichOperationalBrief } from "./operational-consulting.js";
 import type {
   Answers,
   AnswerStates,
@@ -109,6 +111,10 @@ const labels: Record<string, string> = {
   reportingDetails: "Reporting needs",
   integrationDetails: "Connections to check",
   scopeDetails: "Scope",
+  firstVersion: "First-phase priorities",
+  currentAlternatives: "Current alternatives",
+  clarification: "Additional context",
+  frustrations: "Operational problems",
 };
 const clean = (value: unknown) =>
   Array.isArray(value) ? value.join(", ") : String(value ?? "");
@@ -141,7 +147,9 @@ export function consultingBrief(
                 ? "interest"
                 : /goal|motivation/.test(key)
                   ? "goal"
-                  : "experience";
+                  : /problem|frustration/.test(key)
+                    ? "problem"
+                    : "fact";
       facts.push({
         id: `${key}-${i}`,
         label,
@@ -433,7 +441,9 @@ export function consultingBrief(
       d.status = edit.decision;
   }
   directions.sort(
-    (x, y) => Number(y.status === "selected") - Number(x.status === "selected"),
+    (x, y) =>
+      Number(["selected", "developing"].includes(y.status)) -
+      Number(["selected", "developing"].includes(x.status)),
   );
   const unknowns = [
     ...(!facts.some((f) => /\d.*hours?|full.time/i.test(f.quote))
@@ -458,36 +468,48 @@ export function consultingBrief(
         ]),
   ];
   const goal = facts.find((f) => f.kind === "goal");
-  return {
-    version: 1,
-    summary: goal
-      ? `Start from your goal: ${compact(goal.quote, 180)}. ${directions.some((d) => d.basis.length) ? "The directions below build on your reported experience and constraints." : "The directions below are starting hypotheses; fit still needs testing."}`
-      : "Choose a small next step from your current information; capability and demand claims remain provisional.",
-    facts: facts.slice(0, 24),
-    directions,
-    conclusions: directions
-      .filter((d) => d.basis.length)
-      .map(
-        (d) =>
-          `${d.title} has a stated capability basis; that supports a small test, not a claim of demand or professional expertise.`,
-      ),
-    hypotheses: [
-      "Proposed directions may be useful; customer interest and delivery feasibility require evidence.",
-    ],
-    unknowns,
-    decisions: [
-      ...Object.entries(live.edits)
-        .filter(([, e]) => e.decision || e.notes)
-        .map(([id, e]) => ({
-          title: e.title ?? directions.find((d) => d.id === id)?.title ?? id,
-          notes: e.notes ?? "",
-          status: e.decision ?? "refined",
+  return enrichOperationalBrief(
+    {
+      requirements: projectRequirements(raw, states, workspace),
+      version: 1,
+      summary: goal
+        ? `Start from your goal: ${compact(goal.quote, 180)}. ${directions.some((d) => d.basis.length) ? "The directions below build on your reported experience and constraints." : "The directions below are starting hypotheses; fit still needs testing."}`
+        : "Choose a small next step from your current information; capability and demand claims remain provisional.",
+      facts: facts.slice(0, 24),
+      directions,
+      conclusions: directions
+        .filter((d) => d.basis.length)
+        .map(
+          (d) =>
+            `${d.title} has a stated capability basis; that supports a small test, not a claim of demand or professional expertise.`,
+        ),
+      hypotheses: [
+        "Proposed directions may be useful; customer interest and delivery feasibility require evidence.",
+      ],
+      unknowns,
+      decisions: [
+        ...Object.entries(live.edits)
+          .filter(([, e]) => e.decision || e.notes || e.priority)
+          .map(([id, e]) => ({
+            title:
+              e.title ??
+              directions.find((d) => d.id === id)?.title ??
+              projectRequirements(raw, states, workspace).find(
+                (r) => r.id === id,
+              )?.label ??
+              id,
+            notes:
+              e.notes ??
+              (e.priority ? `Requirement priority: ${e.priority}` : ""),
+            status: e.priority ?? e.decision ?? "refined",
+          })),
+        ...live.additions.map((n) => ({
+          title: n.title,
+          notes: n.notes,
+          status: n.kind,
         })),
-      ...live.additions.map((n) => ({
-        title: n.title,
-        notes: n.notes,
-        status: n.kind,
-      })),
-    ],
-  };
+      ],
+    },
+    a,
+  );
 }

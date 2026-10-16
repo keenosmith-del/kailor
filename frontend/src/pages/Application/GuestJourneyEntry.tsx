@@ -1,3 +1,5 @@
+import { Compass, Coffee } from "lucide-react";
+import "../../components/EntryButton/EntryButton.css";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import type { PlanItem, Session } from "../../../../shared/src/index";
@@ -140,10 +142,11 @@ export function GuestJourneyEntry() {
                   opportunities could help.
                 </p>
                 <button
-                  className="button"
+                  className="entry-button entry-button--light"
                   disabled={busy}
                   onClick={() => void begin(false, "discovery")}
                 >
+                  <Compass aria-hidden="true" strokeWidth={1.5} />
                   Start discovery
                 </button>
               </section>
@@ -155,10 +158,11 @@ export function GuestJourneyEntry() {
                   begin.
                 </p>
                 <button
-                  className="button"
+                  className="entry-button entry-button--light"
                   disabled={busy}
                   onClick={() => void begin(false, "chat")}
                 >
+                  <Coffee aria-hidden="true" strokeWidth={1.5} />
                   Open Chat
                 </button>
               </section>

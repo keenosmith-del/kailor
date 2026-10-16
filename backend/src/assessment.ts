@@ -1,3 +1,5 @@
+import { operationalPattern, projectRequirements } from "./requirements.js";
+import { operationalRecommendation } from "./operational-consulting.js";
 import { consultingBrief } from "./consulting.js";
 import { displayEvidence } from "../../shared/src/report.js";
 import {
@@ -29,6 +31,19 @@ export function recommend(
   states: AnswerStates = {},
 ): Recommendation[] {
   const decision = evaluateEvidence(a, evidence, states);
+  const operational = operationalRecommendation(
+    usableAnswers(a, states),
+    projectRequirements(a, states),
+    pricing.currency,
+  );
+  if (
+    operational &&
+    decision.situationKnown &&
+    decision.objectiveKnown &&
+    !decision.conflicts.length &&
+    !decision.unsupported
+  )
+    return [operational];
   if (
     !decision.situationKnown ||
     !decision.objectiveKnown ||
@@ -184,7 +199,7 @@ export function recommend(
         implementationHigh: priced ? s.hoursHigh! * pricing.hourlyRate! : null,
         recurringStatus: "vendor_quote_required",
         notes:
-          "Implementation and third-party subscriptions are separate. No binding quotation. Consultant hours must be configured in data/services.ts.",
+          "Implementation and third-party subscriptions are separate. Obtain a scoped quotation and verify current vendor terms before committing.",
       },
     };
   });
@@ -204,13 +219,20 @@ export function createReport(
   const signals = evaluateEvidence(raw, evidence, states).answers;
   const readiness = evaluateReadiness(raw, evidence, states);
   const matches = matchCases(raw, cases, evidence, states);
-  const recommendations = evaluateSolutions(
+  let recommendations = evaluateSolutions(
     raw,
     recommend(raw, pricing, evidence, states),
     cases,
     evidence,
     states,
   );
+  const liveOperational = operationalRecommendation(
+    a,
+    projectRequirements(raw, states, workspace),
+    pricing?.currency,
+  );
+  if (liveOperational && recommendations.length && readiness.canAssess)
+    recommendations = [liveOperational];
   const matchedCases = matches
     .slice(0, 3)
     .map(
@@ -256,6 +278,17 @@ export function createReport(
     ...new Set(keys.flatMap((k) => (value(k) ? [value(k)!] : []))),
   ];
   const consulting = consultingBrief(raw, states, recommendations, workspace);
+  if (consulting.approaches)
+    recommendations = recommendations.map((r) => {
+      const direction = consulting.directions.find((d) => d.id === r.serviceId);
+      return direction && ["rejected", "deferred"].includes(direction.status)
+        ? {
+            ...r,
+            solution: `${direction.status === "rejected" ? "Set aside" : "Deferred"}: ${direction.title}`,
+            problem: direction.why,
+          }
+        : r;
+    });
   const directions = consulting.directions;
   const explorationProfile = [
     ...known(explorationKeys.filter((k) => k !== "opportunityStyle")),
@@ -276,23 +309,63 @@ export function createReport(
     consulting,
     presentationVersion: 2,
     assessmentType: type,
-    title: exploratory
-      ? "Your opportunity exploration"
-      : idea
-        ? "Your idea — first validation steps"
-        : recommendations.some((r) => r.serviceId === "booking")
-          ? "Simplifying appointment management"
-          : a.stage === "specific"
-            ? "Your solution — scope and next steps"
-            : "Your business — practical improvements",
+    title: consulting.approaches
+      ? `${operationalPattern(a)?.subject ?? "Operations"} — workflow improvements`
+      : exploratory
+        ? "Your opportunity exploration"
+        : idea
+          ? "Your idea — first validation steps"
+          : recommendations.some((r) => r.serviceId === "booking")
+            ? "Simplifying appointment management"
+            : a.stage === "specific"
+              ? "Your solution — scope and next steps"
+              : "Your business — practical improvements",
     status: "Preliminary assessment · not human-reviewed",
     synthetic,
     revision,
     createdAt: new Date().toISOString(),
     recommendations,
     matchedCases,
-    sections:
-      exploratory || idea
+    sections: consulting.approaches
+      ? [
+          { title: "Executive overview", paragraphs: [consulting.summary] },
+          ...(consulting.insights ?? []).map((i) => ({
+            title: i.title,
+            paragraphs: [i.summary],
+          })),
+          ...(["essential", "optional", "deferred", "unconfirmed"] as const)
+            .map((priority) => ({
+              title: `${priority[0].toUpperCase()}${priority.slice(1)} requirements`,
+              paragraphs: (consulting.requirements ?? [])
+                .filter((r) => r.priority === priority)
+                .map((r) => r.label),
+            }))
+            .filter((s) => s.paragraphs.length),
+          {
+            title: "Recommended direction",
+            paragraphs: consulting.directions.flatMap((d) => [d.title, d.why]),
+          },
+          {
+            title: "Alternative approaches",
+            paragraphs: consulting.approaches.map(
+              (p) =>
+                `${p.title}: ${p.strengths} ${p.tradeoffs} Appropriate when: ${p.appropriateWhen}`,
+            ),
+          },
+          {
+            title: "Costs and ongoing considerations",
+            paragraphs: consulting.directions.map((d) => d.costToTest),
+          },
+          {
+            title: "Practical pilot",
+            paragraphs:
+              consulting.directions[0]?.validation.map(
+                (v, i) => `${i + 1}. ${v.kind}: ${v.action}`,
+              ) ?? [],
+          },
+          { title: "Open questions", paragraphs: consulting.unknowns },
+        ]
+      : exploratory || idea
         ? [
             {
               title: "Executive overview",

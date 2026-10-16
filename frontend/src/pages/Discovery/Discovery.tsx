@@ -8,7 +8,7 @@ import {
 import { MessageCircle, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router";
-import type { AnswerValue } from "../../../../shared/src/index";
+import type { AnswerValue, Report } from "../../../../shared/src/index";
 import { api, sessionHref, ApiError } from "../../services/api";
 import { Mascot } from "../../components/Mascot/Mascot";
 import {
@@ -63,6 +63,23 @@ export function Discovery({
   onNewProject?: () => void;
 }) {
   const reduced = useReducedMotion();
+  const startingStage = session.answers.find(
+    (a) => a.questionId === "stage",
+  )?.value;
+  const [completionReport, setCompletionReport] = useState<Report | null>(null);
+  useEffect(() => {
+    let current = true;
+    setCompletionReport(null);
+    if (ready)
+      void api<{ content: Report }>(`/sessions/${session.id}/report`)
+        .then((r) => {
+          if (current) setCompletionReport(r.content);
+        })
+        .catch(() => {});
+    return () => {
+      current = false;
+    };
+  }, [ready, session.id, session.knowledgeRevision]);
   const saving = useRef(false);
   const [submittedControl, setSubmittedControl] = useState<string | null>(null);
   const [preparing, setPreparing] = useState(false);
@@ -514,39 +531,84 @@ export function Discovery({
               <div className="readiness">
                 <h1>
                   {ready
-                    ? "We've found a few directions worth exploring."
-                    : "There's enough context for a useful first assessment."}
+                    ? session.answers.some(
+                        (a) =>
+                          a.questionId === "stage" && a.value === "uncertain",
+                      )
+                      ? "We've found a few directions worth exploring."
+                      : completionReport
+                        ? `${completionReport.title.split(" — ")[0]} assessment is ready.`
+                        : "Your project assessment is ready."
+                    : "We have enough to get started."}
                 </h1>
                 <p className="question-description">
                   {ready
-                    ? "Based on what you've shared, I've put together where you could begin, what may suit your circumstances, and how to test possibilities without committing too much time or money."
+                    ? session.answers.some(
+                        (a) =>
+                          a.questionId === "stage" && a.value === "uncertain",
+                      )
+                      ? "Based on what you've shared, I've put together where you could begin, what may suit your circumstances, and how to test possibilities without committing too much time or money."
+                      : (completionReport?.consulting?.summary ??
+                        (startingStage === "specific"
+                          ? "Review the proposed scope, requirements, dependencies and checks before implementation."
+                          : "Review the capabilities your team needs, the recommended approach and what to test before committing to implementation."))
                     : next.readiness.canAssess
-                      ? "There’s enough context for an initial assessment. We can keep exploring, or prepare it when you’re ready."
+                      ? startingStage === "uncertain"
+                        ? "We have a useful picture of your interests, experience and constraints. Review some initial possibilities or provide a few more details."
+                        : startingStage === "starting"
+                          ? "We have a useful starting picture of your idea and the assumptions to test. You can review an initial assessment or provide a few more details."
+                          : startingStage === "specific"
+                            ? "We have a useful picture of your intended solution, initial requirements and open technical questions. Review an initial assessment or provide a few more details."
+                            : "We've gathered a useful picture of your business, the challenges you're facing and what a first solution might involve. You can review an initial assessment now or provide a few more details."
                       : next.readiness.reasons.join(" ")}
                 </p>
-                {ready ? (
-                  <Link
-                    className="discovery-action"
-                    to={sessionHref(session.id, "report")}
-                  >
-                    Explore your assessment
-                  </Link>
-                ) : (
-                  <button
-                    className="discovery-action"
-                    disabled={busy || !next.readiness.canAssess}
-                    onClick={() => void prepare()}
-                  >
-                    Prepare my assessment
-                  </button>
-                )}
+                <div className="discovery-completion-actions">
+                  {ready ? (
+                    <Link
+                      className="discovery-action"
+                      to={sessionHref(session.id, "report")}
+                    >
+                      Explore your assessment
+                    </Link>
+                  ) : (
+                    <button
+                      className="discovery-action"
+                      disabled={busy || !next.readiness.canAssess}
+                      onClick={() => void prepare()}
+                    >
+                      Prepare assessment
+                    </button>
+                  )}
+                  {next.active.find(
+                    (q) =>
+                      q.id !== "stage" &&
+                      !session.answers.some((a) => a.questionId === q.id),
+                  ) && (
+                    <button
+                      className="button"
+                      disabled={busy}
+                      onClick={() =>
+                        setEditing(
+                          next.active.find(
+                            (q) =>
+                              q.id !== "stage" &&
+                              !session.answers.some(
+                                (a) => a.questionId === q.id,
+                              ),
+                          )!.id,
+                        )
+                      }
+                    >
+                      Continue discovery
+                    </button>
+                  )}
+                </div>
               </div>
             )}
             {question && next.readiness.canAssess && (
               <div className="readiness">
                 <p className="question-description">
-                  An initial assessment is available.{" "}
-                  {next.readiness.uncertainties.join(" ")}
+                  Initial assessment available · important details remain open
                 </p>
                 {ready ? (
                   <Link
@@ -561,37 +623,16 @@ export function Discovery({
                     disabled={busy}
                     onClick={() => void prepare()}
                   >
-                    Prepare my assessment
+                    Prepare assessment
                   </button>
                 )}
               </div>
             )}
             {!question && onNewProject && (
               <button className="text-link" onClick={onNewProject}>
-                Explore a new project
+                Start a new project
               </button>
             )}
-            {!question &&
-              next.active.find(
-                (q) =>
-                  !["stage"].includes(q.id) &&
-                  !session.answers.some((a) => a.questionId === q.id),
-              ) && (
-                <button
-                  className="text-link"
-                  onClick={() =>
-                    setEditing(
-                      next.active.find(
-                        (q) =>
-                          q.id !== "stage" &&
-                          !session.answers.some((a) => a.questionId === q.id),
-                      )!.id,
-                    )
-                  }
-                >
-                  Explore a little more
-                </button>
-              )}
             {(question || next.readiness.canAssess) && (
               <Link
                 className="conversation-link text-link"
@@ -600,7 +641,9 @@ export function Discovery({
                 <MessageCircle size={15} strokeWidth={1.5} aria-hidden="true" />
                 {question
                   ? "Have a conversation instead?"
-                  : "Keep exploring with kailor"}
+                  : ready
+                    ? "Discuss your assessment in Chat"
+                    : "Discuss your project in Chat"}
               </Link>
             )}
           </div>

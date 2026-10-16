@@ -237,3 +237,34 @@
     min-height: 44px;
   }
 }
+
+.question-section .conversation-link {
+  display: flex;
+  width: fit-content;
+  margin: 24px 0 0;
+  clear: both;
+}
+.question-section .readiness + .text-link {
+  margin-top: 12px;
+}
+
+.discovery-completion-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+@media (max-width: 500px) {
+  .discovery-completion-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+@media (max-width: 700px), (pointer: coarse) {
+  .application-workspace
+    .discovery-layout
+    .question-section
+    :is(.discovery-action, .text-link) {
+    min-height: 44px;
+  }
+}

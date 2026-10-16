@@ -1,4 +1,6 @@
-import type { Prisma } from "./generated/prisma/client.js";
+import { projectRequirements } from "./requirements.js";
+import { canvasStateSchema } from "../../shared/src/consulting.js";
+import { Prisma } from "./generated/prisma/client.js";
 import type {
   AnswerValue,
   AnswerState,
@@ -293,6 +295,57 @@ export async function writeAnswer(
         }),
       },
     });
+  // A newly confirmed priority correction supersedes an older Canvas priority for
+  // that capability. Keep titles and refinements, and use the existing plan revision lock.
+  if (
+    quality.usableFacts &&
+    typeof value === "string" &&
+    /actually|now (?:essential|optional|required)|no longer|changed.*priority/i.test(
+      value,
+    )
+  ) {
+    const p = await tx.plan.findUniqueOrThrow({ where: { id: s.planId } });
+    const parsed = canvasStateSchema.safeParse(p.canvasState);
+    if (parsed.success) {
+      const state = parsed.data;
+      let changed = false;
+      for (const requirement of projectRequirements({ [key]: value })) {
+        const edit = state.edits[requirement.id];
+        if (!edit || requirement.priority === "unconfirmed") continue;
+        state.edits[requirement.id] = {
+          ...edit,
+          priority: requirement.priority,
+        };
+        delete state.edits[requirement.id].decision;
+        changed = true;
+      }
+      if (changed) {
+        const result = await tx.plan.updateMany({
+          where: { id: p.id, revision: p.revision },
+          data: { canvasState: json(state), revision: { increment: 1 } },
+        });
+        if (!result.count)
+          throw new AppError(
+            409,
+            "revision_conflict",
+            "The project changed while confirming this correction. Please try again.",
+          );
+        await tx.discoverySession.updateMany({
+          where: { planId: p.id, id: { not: s.id } },
+          data: {
+            knowledgeRevision: { increment: 1 },
+            revision: { increment: 1 },
+            planState: Prisma.DbNull,
+            contextState: Prisma.DbNull,
+          },
+        });
+        await tx.conversationSummary.updateMany({
+          where: { session: { planId: p.id }, superseded: false },
+          data: { superseded: true },
+        });
+      }
+    }
+  }
   const updatedKnowledge = await tx.discoverySession.update({
     where: { id: s.id },
     data: {

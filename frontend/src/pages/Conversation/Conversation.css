@@ -360,8 +360,8 @@
   color: var(--muted);
 }
 .application-workspace .chat-form .chat-send {
-  background: #f1f1f1;
-  color: var(--color-charcoal);
+  background: #302f2a;
+  color: #fffdf8;
   border-radius: 999px;
   width: 34px;
   height: 34px;
@@ -369,7 +369,7 @@
   margin: 4px;
 }
 .application-workspace .chat-form .chat-send:hover:not(:disabled) {
-  background: #fff;
+  background: #1e1d19;
 }
 .application-workspace .chat-form .chat-send:disabled {
   opacity: 0.4;
@@ -390,7 +390,6 @@
   }
   .application-workspace .chat-form .chat-send {
     margin: 0;
-    background: transparent;
   }
 }
 @media (max-height: 600px) {
@@ -412,7 +411,6 @@
   transform: scale(1.06);
 }
 .application-workspace .chat-form .chat-send:hover:not(:disabled) {
-  background: #fff;
   transform: scale(1.04);
 }
 .confirm-dialog-actions button {

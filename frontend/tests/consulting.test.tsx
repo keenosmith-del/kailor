@@ -209,3 +209,29 @@ it("adapts report navigation to operational and technical assessments", () => {
     screen.getByRole("heading", { name: "Proposed solution components" }),
   ).toBeTruthy();
 });
+it("renders operational priorities, comparisons and numbered pilot steps without raw evidence in the main overview", async () => {
+  const { createReport } = await import("../../backend/src/assessment");
+  const { logisticsPersona } = await import(
+    "../../backend/tests/operations-fixture"
+  );
+  const operational = createReport(logisticsPersona, 1, true, []);
+  render(
+    <MemoryRouter>
+      <ConsultingReport report={operational} />
+    </MemoryRouter>,
+  );
+  const overview = screen.getByRole("generic", {
+    name: "Requirement priorities",
+  });
+  expect(overview.textContent).toContain("Essential");
+  expect(overview.textContent).toContain("Optional");
+  expect(overview.textContent).toContain("Deferred");
+  expect(
+    screen.getByRole("table", { name: "Approaches to compare" }),
+  ).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "Capability fit" })).toBeTruthy();
+  expect(document.querySelectorAll(".experiment-steps > li")).toHaveLength(5);
+  expect(
+    document.querySelector(".consulting-facts")?.textContent,
+  ).not.toContain("Your activity");
+});

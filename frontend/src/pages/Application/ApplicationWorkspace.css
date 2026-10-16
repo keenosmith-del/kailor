@@ -304,6 +304,11 @@
 .application-workspace .discovery-action:hover:not(:disabled) {
   background: #fff;
 }
+.application-workspace
+  .discovery-completion-actions
+  > :is(.discovery-action, .button) {
+  font-size: 11px;
+}
 .application-workspace .discovery-action:first-child {
   background: #ede7dc;
 }

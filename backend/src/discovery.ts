@@ -1,4 +1,9 @@
 import {
+  capabilityPatterns,
+  operationalPattern,
+  projectRequirements,
+} from "./requirements.js";
+import {
   explorationQuestions,
   explorationKeys,
   isExploration,
@@ -117,15 +122,21 @@ export const questions: Question[] = [
     title: "Where would a little help make a difference?",
     hint: "Select the challenges you actually experience.",
     type: "multi",
-    options: options(
-      "credibility|Presenting my work professionally",
-      "booking|Managing appointments",
-      "invoices|Preparing or following up invoices",
-      "content|Recurring content or research",
-      "outdated|An outdated website",
-      "custom|A specific tool or application",
-      "none|Still exploring",
-    ),
+    options: [
+      ...capabilityPatterns.map(([id, label]) => ({
+        value: `capability-${id}`,
+        label,
+      })),
+      ...options(
+        "credibility|Presenting my work professionally",
+        "booking|Managing appointments",
+        "invoices|Preparing or following up invoices",
+        "content|Recurring content or research",
+        "outdated|An outdated website",
+        "custom|A specific tool or application",
+        "none|Still exploring",
+      ),
+    ],
   },
   {
     id: "bookingDetails",
@@ -293,11 +304,41 @@ export function relevant(q: Question, a: Answers) {
   );
 }
 export function activeQuestions(a: Answers) {
-  return questions.filter(
-    (q) =>
-      relevant(q, a) &&
-      (!isExploration(a) || q.id === "stage" || explorationKeys.includes(q.id)),
-  );
+  return questions
+    .map((q) => {
+      if (q.id !== "problems") return q;
+      const requirements = projectRequirements(a);
+      const contextual = operationalPattern(a) && requirements.length >= 2;
+      return {
+        ...q,
+        title: contextual
+          ? "Which parts of this workflow need the most help?"
+          : q.title,
+        options: contextual
+          ? [
+              ...requirements
+                .filter(
+                  (r) =>
+                    !r.id.startsWith("requirement-other-") &&
+                    r.priority !== "deferred",
+                )
+                .slice(0, 7)
+                .map((r) => ({
+                  value: `capability-${r.id.replace("requirement-", "")}`,
+                  label: r.label,
+                })),
+              { value: "custom", label: "Another challenge" },
+            ]
+          : q.options?.filter((o) => !o.value.startsWith("capability-")),
+      };
+    })
+    .filter(
+      (q) =>
+        relevant(q, a) &&
+        (!isExploration(a) ||
+          q.id === "stage" ||
+          explorationKeys.includes(q.id)),
+    );
 }
 export function nextQuestion(a: Answers) {
   return (

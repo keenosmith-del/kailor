@@ -198,6 +198,15 @@ export function extractCandidates(message: string): ChatOutput["proposals"] {
       add("workflowDetails", clause);
   }
   if (goalClauses.length > 1) result.set("goals", goalClauses.join(". "));
+  if (
+    /essential|optional|defer|postpon|can wait|first.phase|first.version/i.test(
+      text,
+    ) &&
+    /(?:now|actually|no longer|changed|defer|postpon|optional|essential)/i.test(
+      text,
+    )
+  )
+    add("clarification", text);
   if (problems.length) add("problems", problems);
   if (
     problems.includes("booking") &&

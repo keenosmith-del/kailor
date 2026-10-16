@@ -109,26 +109,28 @@ export function Canvas({
     if (!graph || !data) return;
     const measure = () => {
       const base = graph.getBoundingClientRect();
-      const nodes = new Map(
-        [...graph.querySelectorAll<HTMLElement>("[data-node-id]")].map((n) => [
-          n.dataset.nodeId!,
-          n.getBoundingClientRect(),
-        ]),
-      );
+      const columns = [...graph.querySelectorAll<HTMLElement>(".canvas-group")];
       setSize({ width: graph.scrollWidth, height: graph.scrollHeight });
+      const groupNames = ["context", "directions", "next"];
       setLines(
-        data.graph.edges.flatMap((e) => {
-          const a = nodes.get(e.from),
-            b = nodes.get(e.to);
-          if (!a || !b) return [];
-          const x = a.right - base.left,
-            y = a.top - base.top + a.height / 2,
-            tx = b.left - base.left,
-            ty = b.top - base.top + b.height / 2;
+        columns.slice(0, -1).flatMap((column, i) => {
+          const related = data.graph.edges.some((e) => {
+            const from = data.graph.nodes.find((n) => n.id === e.from);
+            const to = data.graph.nodes.find((n) => n.id === e.to);
+            return (
+              from?.group === groupNames[i] && to?.group === groupNames[i + 1]
+            );
+          });
+          const a = column.getBoundingClientRect(),
+            b = columns[i + 1].getBoundingClientRect();
+          if (!related || b.left <= a.right) return [];
+          const x = a.right - base.left + 4,
+            tx = b.left - base.left - 4;
           return [
             {
-              d: `M ${x} ${y} C ${x + 22} ${y}, ${tx - 22} ${ty}, ${tx} ${ty}`,
-              label: e.label,
+              d: `M ${x} 10 L ${tx} 10`,
+              label:
+                "Grouped project relationship; select a component for its exact connections",
             },
           ];
         }),
@@ -183,6 +185,35 @@ export function Canvas({
       setSaving(false);
     }
   }
+  const renderNode = (n: Node) => (
+    <div className="canvas-step" key={n.id}>
+      <button
+        data-node-id={n.id}
+        className={`canvas-node ${n.status}`}
+        aria-pressed={selected === n.id}
+        onClick={() => {
+          setSelected(n.id);
+          setEditing(false);
+        }}
+      >
+        <small>
+          {n.decision === "hypothesis"
+            ? "Proposed direction"
+            : n.decision === "selected"
+              ? "Selected for exploration"
+              : n.decision === "developing"
+                ? "Being developed"
+                : n.decision === "rejected"
+                  ? "Set aside"
+                  : (n.decision ??
+                    (n.status === "reported"
+                      ? "You described"
+                      : "Proposed component"))}
+        </small>
+        <strong>{n.title}</strong>
+      </button>
+    </div>
+  );
   const groups = [
     ["context", "Your starting point"],
     [
@@ -191,7 +222,9 @@ export function Canvas({
         (a) => a.questionId === "stage" && a.value === "specific",
       )
         ? "Solution components"
-        : "Directions to explore",
+        : data?.consulting?.approaches
+          ? "Proposed approach and capabilities"
+          : "Directions to explore",
     ],
     ["next", "Next decisions"],
   ];
@@ -344,30 +377,44 @@ export function Canvas({
                 <div className="canvas-group" key={group}>
                   <h2>{label}</h2>
                   {data.graph.nodes
-                    .filter((n) => (n.group ?? "directions") === group)
-                    .map((n) => (
-                      <div className="canvas-step" key={n.id}>
-                        <button
-                          data-node-id={n.id}
-                          className={`canvas-node ${n.status}`}
-                          aria-pressed={selected === n.id}
-                          onClick={() => {
-                            setSelected(n.id);
-                            setEditing(false);
-                          }}
+                    .filter(
+                      (n) =>
+                        (n.group ?? "directions") === group &&
+                        !n.id.startsWith("requirement-"),
+                    )
+                    .map(renderNode)}
+                  {group === "directions" &&
+                    (
+                      [
+                        "essential",
+                        "optional",
+                        "deferred",
+                        "unconfirmed",
+                      ] as const
+                    ).map((priority) => {
+                      const items = data.graph.nodes.filter(
+                        (n) =>
+                          n.id.startsWith("requirement-") &&
+                          n.decision === priority,
+                      );
+                      return items.length ? (
+                        <details
+                          className="canvas-capability-group"
+                          key={priority}
+                          open={
+                            items.some((n) => n.id === selected) || undefined
+                          }
                         >
-                          <small>
-                            {n.decision ??
-                              (n.status === "reported"
-                                ? "You described"
-                                : n.status === "exploratory"
-                                  ? "Possibility to validate"
-                                  : "Proposed component")}
-                          </small>
-                          <strong>{n.title}</strong>
-                        </button>
-                      </div>
-                    ))}
+                          <summary>
+                            {priority === "unconfirmed"
+                              ? "Needs confirmation"
+                              : `${priority[0].toUpperCase()}${priority.slice(1)} capabilities`}{" "}
+                            · {items.length}
+                          </summary>
+                          {items.map(renderNode)}
+                        </details>
+                      ) : null;
+                    })}
                 </div>
               ))}
             </div>
@@ -382,18 +429,21 @@ export function Canvas({
                 </p>
                 <h2>{active.title}</h2>
                 <p>{active.purpose}</p>
-                {data.graph.edges
-                  .filter((e) => e.from === active.id)
-                  .map((e, i) => (
-                    <button
-                      key={i}
-                      className="canvas-edge"
-                      onClick={() => setSelected(e.to)}
-                    >
-                      {e.label} →{" "}
-                      {data.graph.nodes.find((n) => n.id === e.to)?.title}
-                    </button>
-                  ))}
+                <details className="canvas-relationships">
+                  <summary>Related components and decisions</summary>
+                  {data.graph.edges
+                    .filter((e) => e.from === active.id)
+                    .map((e, i) => (
+                      <button
+                        key={i}
+                        className="canvas-edge"
+                        onClick={() => setSelected(e.to)}
+                      >
+                        {e.label} →{" "}
+                        {data.graph.nodes.find((n) => n.id === e.to)?.title}
+                      </button>
+                    ))}
+                </details>
                 {!!active.dependencies.length && (
                   <>
                     <h3>What to check</h3>
@@ -422,6 +472,60 @@ export function Canvas({
                       ))}
                   </details>
                 )}
+                {!archived && active.id.startsWith("requirement-") && (
+                  <label>
+                    Requirement priority
+                    <select
+                      aria-label="Requirement priority"
+                      value={
+                        data.consulting?.requirements?.find(
+                          (r) => r.id === active.id,
+                        )?.priority ?? "unconfirmed"
+                      }
+                      disabled={saving}
+                      onChange={(e) =>
+                        void save({
+                          ...data.state,
+                          edits: {
+                            ...data.state.edits,
+                            [active.id]: {
+                              ...data.state.edits[active.id],
+                              priority: e.target.value as
+                                | "essential"
+                                | "optional"
+                                | "deferred"
+                                | "unconfirmed",
+                            },
+                          },
+                        })
+                      }
+                    >
+                      <option value="essential">Essential</option>
+                      <option value="optional">Optional</option>
+                      <option value="deferred">Deferred</option>
+                      <option value="unconfirmed">Needs confirmation</option>
+                    </select>
+                  </label>
+                )}
+                {active.decision === "developing" && (
+                  <div className="canvas-development">
+                    <h3>Develop a practical plan</h3>
+                    <p>
+                      Review essential requirements, dependencies and
+                      constraints. Define a pilot and its success criteria, then
+                      record your refinement here or continue in Chat.
+                    </p>
+                    <ol>
+                      {data.consulting?.directions
+                        .find((d) => d.id === active.id)
+                        ?.validation.map((v) => (
+                          <li key={v.kind}>
+                            <strong>{v.kind}</strong>: {v.action}
+                          </li>
+                        ))}
+                    </ol>
+                  </div>
+                )}
                 {!archived && (
                   <>
                     <div className="actions">
@@ -447,7 +551,13 @@ export function Canvas({
                           : "Refine this step"}
                       </button>
                       {active.status !== "reported" &&
-                        ["selected", "deferred", "rejected"].map((decision) => (
+                        [
+                          "selected",
+                          "developing",
+                          "exploring",
+                          "deferred",
+                          "rejected",
+                        ].map((decision) => (
                           <button
                             key={decision}
                             className="text-link"
@@ -461,6 +571,8 @@ export function Canvas({
                                   [active.id]: {
                                     ...data.state.edits[active.id],
                                     decision: decision as
+                                      | "developing"
+                                      | "exploring"
                                       | "selected"
                                       | "deferred"
                                       | "rejected",
@@ -470,10 +582,14 @@ export function Canvas({
                             }
                           >
                             {decision === "selected"
-                              ? "Develop this direction"
-                              : decision === "deferred"
-                                ? "Defer"
-                                : "Set aside"}
+                              ? "Select this direction"
+                              : decision === "developing"
+                                ? "Develop this direction"
+                                : decision === "exploring"
+                                  ? "Reconsider"
+                                  : decision === "deferred"
+                                    ? "Defer"
+                                    : "Set aside"}
                           </button>
                         ))}
                     </div>
@@ -539,7 +655,14 @@ export function Canvas({
                   className="button"
                   to={`${sessionHref(session.id, "chat")}?component=${encodeURIComponent(active.title)}&node=${encodeURIComponent(active.id)}`}
                 >
-                  Discuss this component in Chat
+                  {active.decision === "selected" ||
+                  active.decision === "developing"
+                    ? "Develop this direction in Chat"
+                    : active.decision === "deferred"
+                      ? "Discuss this deferred component in Chat"
+                      : active.decision === "rejected"
+                        ? "Reconsider this component in Chat"
+                        : "Discuss this component in Chat"}
                 </Link>
               </>
             ) : (

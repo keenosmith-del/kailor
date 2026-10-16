@@ -5,7 +5,14 @@ export type ConsultingFact = {
   value: string;
   sourceKey: string;
   quote: string;
-  kind: "goal" | "interest" | "experience" | "constraint" | "resource";
+  kind:
+    | "goal"
+    | "interest"
+    | "experience"
+    | "constraint"
+    | "resource"
+    | "fact"
+    | "problem";
 };
 export type ConsultingDirection = {
   id: string;
@@ -22,7 +29,7 @@ export type ConsultingDirection = {
   stopWhen: string;
   commitment: string;
   timeDemand: string;
-  status: "hypothesis" | "selected" | "rejected" | "deferred";
+  status: "hypothesis" | "selected" | "developing" | "rejected" | "deferred";
 };
 export const canvasStateSchema = z
   .object({
@@ -33,8 +40,17 @@ export const canvasStateSchema = z
           .object({
             title: z.string().trim().min(2).max(100).optional(),
             notes: z.string().trim().max(1200).optional(),
+            priority: z
+              .enum(["essential", "optional", "deferred", "unconfirmed"])
+              .optional(),
             decision: z
-              .enum(["selected", "rejected", "deferred", "exploring"])
+              .enum([
+                "selected",
+                "developing",
+                "rejected",
+                "deferred",
+                "exploring",
+              ])
               .optional(),
           })
           .strict(),
@@ -64,7 +80,31 @@ export const emptyCanvasState = (): CanvasState => ({
   edits: {},
   additions: [],
 });
+export type RequirementPriority =
+  | "essential"
+  | "optional"
+  | "deferred"
+  | "unconfirmed";
+export type ProjectRequirement = {
+  id: string;
+  label: string;
+  priority: RequirementPriority;
+  conflict?: string;
+  provenance: {
+    sourceKey: string;
+    quote: string;
+    basis: "explicit" | "interpreted";
+  }[];
+};
 export type ConsultingBrief = {
+  requirements?: ProjectRequirement[];
+  insights?: { title: string; summary: string }[];
+  approaches?: {
+    title: string;
+    strengths: string;
+    tradeoffs: string;
+    appropriateWhen: string;
+  }[];
   version: 1;
   summary: string;
   facts: ConsultingFact[];

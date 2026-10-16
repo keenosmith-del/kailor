@@ -1,5 +1,5 @@
 import "./Analysis.css";
-import { Download, RefreshCw } from "lucide-react";
+import { ArrowLeft, Download, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Report, Session } from "../../../../shared/src/index";
 import { Link, useSearchParams } from "react-router";
@@ -78,7 +78,7 @@ export function Analysis({
           className="text-link"
           to={`${sessionHref(session.id, params.get("from") === "sources" ? "sources" : "analysis")}${params.get("from") === "sources" ? `?library=${encodeURIComponent(params.get("library") ?? "all")}#assessment-${selectedReport}` : ""}`}
         >
-          ← Back to{" "}
+          <ArrowLeft size={14} aria-hidden="true" /> Back to{" "}
           {params.get("from") === "sources" ? "Sources" : "Analysis history"}
         </Link>
       )}

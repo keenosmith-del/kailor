@@ -62,9 +62,22 @@ export function Conversation({
         .then((result) => {
           if (current) {
             setLiveBrief(result.consulting ?? null);
-            setLiveNode(
-              result.graph?.nodes.find((n) => n.id === nodeId) ?? null,
-            );
+            const node =
+              result.graph?.nodes.find((n) => n.id === nodeId) ?? null;
+            setLiveNode(node);
+            if (component && node)
+              setMessage((old) =>
+                old ===
+                `Help me understand ${component}. What should I verify before choosing it?`
+                  ? node.decision === "selected" ||
+                    node.decision === "developing"
+                    ? `I've selected this direction for exploration: ${component}. Help me develop a practical plan while respecting my first-phase requirements and the capabilities I've postponed.`
+                    : node.decision === "deferred" ||
+                        node.decision === "rejected"
+                      ? `Discuss ${component}, currently ${node.decision}. Help me review the reasons and trade-offs without treating it as active scope.`
+                      : `Help me examine ${component}: ${node.purpose}. What should I verify next?`
+                  : old,
+              );
           }
         })
         .catch(() => {});
@@ -156,8 +169,10 @@ export function Conversation({
     .filter((d) => !["rejected", "deferred"].includes(d.status))
     .slice(0, 2)
     .map((d) => ({
-      label: `Explore ${d.title.toLowerCase()}`,
-      message: `Help me explore ${d.title} ${reportId ? "from this saved assessment" : "using my current Discovery context"}. Explain its fit, constraints and first practical test.`,
+      label: ["selected", "developing"].includes(d.status)
+        ? "Develop the selected direction"
+        : `Examine ${d.title.toLowerCase()}`,
+      message: `Help me ${["selected", "developing"].includes(d.status) ? "develop the selected direction" : "examine the proposed direction"}: ${d.title} ${reportId ? "from this saved assessment" : "using my current Discovery context"}. Explain its fit, constraints and first practical test.`,
     }));
   const suggestions = contextualPrompts?.length
     ? contextualPrompts

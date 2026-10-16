@@ -131,3 +131,7 @@ Conversation now has a fixed sitting mascot, inline confirmations and a stationa
 ## Authentication visual replication (iteration 010)
 
 Sign in and Create account now use kai's split-screen authentication styling with kailor's unamused mascot. Registration stores a full name, validates password confirmation and creates member accounts without an invitation. Existing sign-in and guest discovery remain functional. Apply the additive account-name migration and regenerate Prisma; no reset/reseed is needed. GitHub OAuth is not implemented in kailor and its control is explicitly unavailable. See [implementation, configuration and verification](docs/iterations/010-kai-authentication-replication.md).
+
+## Consulting intelligence (requested iteration 013)
+
+Operational requirements now retain essential, optional and deferred priorities across reports, Canvas and Chat. Assessments compare suitable existing platform categories with manual improvements and custom engineering, propose a practical pilot and retain explicit decisions. See the [architecture, implementation and executed validation](docs/iterations/017-consulting-intelligence.md). The documentation sequence continues after 016; no migration is required for these backward-compatible report/Canvas fields.

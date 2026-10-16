@@ -10,6 +10,7 @@ import {
   getReport,
   canvas,
   converse,
+  confirmBatch,
 } from "../src/session-service.js";
 import { purgeExpiredGuests } from "../src/guest-lifecycle.js";
 import { exploratoryPersona } from "./consulting-fixture.js";
@@ -302,4 +303,134 @@ it("corrects a Canvas fact through the existing answer path without rewriting re
         .expect(200)
     ).body.content,
   ).toEqual(original);
+});
+it("propagates operational priorities and every Canvas decision into Chat and future immutable reports", async () => {
+  const { logisticsPersona } = await import("./operations-fixture.js");
+  const logistics = request.agent(app);
+  const created = await logistics
+    .post("/api/guest/sessions")
+    .set("Origin", origin)
+    .send({})
+    .expect(201);
+  const { id: sessionId, adminId: principal, planId: project } = created.body;
+  owners.push(principal);
+  let s = await getSession(sessionId, principal);
+  for (const [questionId, value] of Object.entries({
+    ...logisticsPersona,
+    problems: ["custom"],
+  }).filter(([key]) => key !== "scopeDetails"))
+    s = await submitAnswer(sessionId, principal, {
+      revision: s.revision,
+      questionId,
+      value,
+    });
+  // Scope is submitted after the validated application branch exists.
+  s = await submitAnswer(sessionId, principal, {
+    revision: s.revision,
+    questionId: "scopeDetails",
+    value: logisticsPersona.scopeDetails!,
+  });
+  const originalReport = await assess(sessionId, principal, s.revision);
+  expect(
+    originalReport.content.consulting?.requirements?.filter(
+      (r) => r.priority === "essential",
+    ),
+  ).toHaveLength(10);
+  expect(originalReport.content.recommendations[0].solution).toContain(
+    "delivery-management",
+  );
+  const originalContent = JSON.stringify(originalReport.content);
+  for (const decision of [
+    "selected",
+    "developing",
+    "deferred",
+    "rejected",
+    "exploring",
+  ] as const) {
+    const before = await canvas(sessionId, principal);
+    await logistics
+      .put(`/api/guest/plans/${project}/canvas`)
+      .set("Origin", origin)
+      .send({
+        revision: before.projectRevision,
+        state: {
+          ...before.state,
+          edits: {
+            ...before.state.edits,
+            integration: { decision },
+            "requirement-dashboard": { priority: "optional" },
+          },
+        },
+      })
+      .expect(200);
+    const current = await canvas(sessionId, principal);
+    expect(
+      current.graph.nodes.find((n) => n.id === "integration")?.decision,
+    ).toBe(decision);
+    expect(
+      current.consulting?.requirements?.find(
+        (r) => r.id === "requirement-dashboard",
+      )?.priority,
+    ).toBe("optional");
+    s = await getSession(sessionId, principal);
+    const chat = await converse(
+      sessionId,
+      principal,
+      {
+        revision: s.revision,
+        mode: "conversation",
+        message: "Explain the recorded direction and develop a pilot plan",
+      },
+      true,
+    );
+    const answer = chat.session.messages
+      .filter((m) => m.role === "assistant")
+      .at(-1)!.content;
+    expect(answer).toContain(decision);
+    expect(answer).toContain("not approval to purchase");
+    s = await getSession(sessionId, principal);
+    const nextReport = await assess(sessionId, principal, s.revision);
+    expect(nextReport.reportId).not.toBe(originalReport.reportId);
+    expect(nextReport.content.consulting?.directions[0].status).toBe(
+      decision === "exploring" ? "hypothesis" : decision,
+    );
+  }
+  s = await getSession(sessionId, principal);
+  const correction = await converse(
+    sessionId,
+    principal,
+    {
+      revision: s.revision,
+      mode: "conversation",
+      message: "Actually, the operations dashboard is now essential.",
+    },
+    true,
+  );
+  const pending = correction.session.evidence.filter(
+    (e) => e.active && e.status === "inferred" && e.key === "clarification",
+  );
+  expect(pending).toHaveLength(1);
+  s = await confirmBatch(
+    sessionId,
+    principal,
+    correction.session.revision,
+    pending.map((e) => e.id),
+    true,
+  );
+  expect(
+    (await canvas(sessionId, principal)).consulting?.requirements?.find(
+      (r) => r.id === "requirement-dashboard",
+    )?.priority,
+  ).toBe("essential");
+  const saved = await logistics
+    .get(`/api/guest/plans/${project}/reports/${originalReport.reportId}`)
+    .expect(200);
+  expect(JSON.stringify(saved.body.content)).toBe(originalContent);
+  await other
+    .get(`/api/guest/plans/${project}/reports/${originalReport.reportId}`)
+    .expect(404);
+  const pdf = await logistics
+    .get(`/api/guest/plans/${project}/reports/${originalReport.reportId}/pdf`)
+    .expect(200);
+  expect(pdf.body.subarray(0, 4).toString()).toBe("%PDF");
 });

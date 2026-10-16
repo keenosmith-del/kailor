@@ -3,7 +3,10 @@ import type {
   DiscoveryPlan,
   Recommendation,
 } from "../../shared/src/index.js";
-import { containsSensitiveData } from "./conversation-guidance.js";
+import {
+  containsSensitiveData,
+  privacyScanText,
+} from "./conversation-guidance.js";
 
 export type Turn = { role: string; content: string; id?: string };
 export type ConversationKnowledge = {
@@ -109,7 +112,7 @@ export function remoteConversationData(
         typeof value === "string" ? value.slice(0, 1000) : value,
       ]),
   );
-  if (containsSensitiveData(JSON.stringify({ confirmed, memory })))
+  if (containsSensitiveData(privacyScanText({ confirmed, memory })))
     throw new Error("sensitive_context_kept_local");
   return { confirmed, ...memory };
 }

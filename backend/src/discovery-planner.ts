@@ -1,3 +1,4 @@
+import { projectRequirements } from "./requirements.js";
 import {
   explorationQuestion,
   explorationKeys,
@@ -38,21 +39,46 @@ export function planDiscovery(
     context = buildContext(raw, evidence, states);
   const matches = matchCases(raw, cases, evidence, states);
   const readiness = evaluateReadiness(raw, evidence, states);
+  const knownRequirements = projectRequirements(a, states);
   const definitions = activeQuestions(s).map((q) =>
-    q.id === "scopeDetails" &&
-    /teacher|lesson|curriculum/i.test(String(s.request))
+    q.id === "reportingDetails" &&
+    knownRequirements.some((r) => /exports|dashboard|history/.test(r.id))
       ? {
           ...q,
-          title: "How should teachers create and review a weekly plan?",
-          hint: "Intended users, approved curriculum/templates, human approval, storage/export and the smallest useful version. Is content generation needed?",
+          title:
+            "Your reporting needs are recorded. What retention and review rules should apply?",
+          hint: "You can leave retention periods open if they still need checking.",
         }
-      : q.id === "workflowDetails"
+      : ["scopeDetails", "firstVersion"].includes(q.id) &&
+          knownRequirements.length >= 2
         ? {
             ...q,
-            title: "Walk us through the process you want to improve.",
-            hint: "What happens today, where does it break down, who uses it, and which records or systems must stay? Include volume and reporting needs.",
+            title: `You’ve described ${knownRequirements
+              .slice(0, 5)
+              .map((r) => r.label.toLowerCase())
+              .join(", ")}. Which must be in the first phase?`,
+            hint: "Confirm or correct this summary. Separate essential capabilities, optional improvements and anything that can wait.",
           }
-        : q,
+        : q.id === "scopeDetails" &&
+            /teacher|lesson|curriculum/i.test(String(s.request))
+          ? {
+              ...q,
+              title: "How should teachers create and review a weekly plan?",
+              hint: "Intended users, approved curriculum/templates, human approval, storage/export and the smallest useful version. Is content generation needed?",
+            }
+          : q.id === "workflowDetails"
+            ? {
+                ...q,
+                title:
+                  knownRequirements.length >= 2 &&
+                  /(?:record|assign|request|use).*(?:spreadsheet|whatsapp|phone|driver|staff)/i.test(
+                    String(a.industry ?? a.request ?? ""),
+                  )
+                    ? "You've described the current workflow. Where does it break down most often?"
+                    : "Walk us through the process you want to improve.",
+                hint: "What happens today, where does it break down, who uses it, and which records or systems must stay? Include volume and reporting needs.",
+              }
+            : q,
   );
   const gaps = contextualGaps(
     {
@@ -185,6 +211,26 @@ export function planDiscovery(
       );
       if (reference && score > 0)
         rank(10, "Approved reference suggests validating this workflow");
+      if (
+        ["scopeDetails", "firstVersion"].includes(q.id) &&
+        knownRequirements.length >= 2 &&
+        knownRequirements.every((r) => r.priority !== "unconfirmed")
+      ) {
+        score = 0;
+        reasons.push(
+          "Explicit first-phase, optional and deferred priorities are already recorded",
+        );
+      }
+      if (
+        q.id === "problems" &&
+        a.workflowDetails &&
+        knownRequirements.length >= 2
+      ) {
+        score = 0;
+        reasons.push(
+          "The workflow and capability needs have already been described",
+        );
+      }
       return { id: q.id, score, reasons };
     })
     .filter((r) => r.score > 0)
@@ -243,7 +289,7 @@ export function planDiscovery(
   );
   return {
     revision,
-    plannerVersion: "consulting-5",
+    plannerVersion: "consulting-6",
     question,
     active,
     answered: Object.keys(a).filter((k) => states[k] === "answered").length,

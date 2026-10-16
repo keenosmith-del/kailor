@@ -177,3 +177,26 @@
     max-height: none;
   }
 }
+
+.canvas-capability-group {
+  margin: 16px 0;
+  font-size: 11px;
+}
+.canvas-capability-group summary {
+  cursor: pointer;
+  padding: 9px 2px;
+  color: var(--color-charcoal);
+}
+.canvas-capability-group .canvas-step {
+  margin-top: 8px;
+}
+@media (max-width: 700px) {
+  .canvas-graph {
+    min-width: 0;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .canvas-connections {
+    display: none;
+  }
+}
