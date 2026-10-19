@@ -1,0 +1,86 @@
+.engagements {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.engagement {
+  padding: 35px 30px;
+  border-radius: 30px;
+  background: var(--background-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.engagement > span {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.engagement h3 {
+  font-size: 52px;
+  margin: 40px 0 25px;
+}
+.engagement p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  min-height: 125px;
+}
+.engagement ul {
+  padding: 0;
+  list-style: none;
+  margin: 0 0 35px;
+  width: 100%;
+  font-size: 12px;
+}
+.engagement li {
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 13px 0;
+}
+.engagement .pub-pill {
+  margin-top: auto;
+  font-size: 12px;
+  gap: 12px;
+}
+.engagement-dark {
+  background: var(--button-background);
+  color: var(--white);
+}
+.engagement-dark > span,
+.engagement-dark p {
+  color: #bfbfbf;
+}
+.engagement-dark li {
+  border-color: #ffffff24;
+}
+.engagement-dark .pub-pill {
+  color: #222526;
+}
+@media (max-width: 1050px) {
+  .engagement {
+    padding: 30px 22px;
+  }
+  .engagement .pub-pill {
+    padding: 12px 15px;
+  }
+  .engagement p {
+    min-height: 165px;
+  }
+}
+@media (max-width: 760px) {
+  .engagements {
+    grid-template-columns: 1fr;
+  }
+  .engagement {
+    padding: 32px;
+  }
+  .engagement p {
+    min-height: 0;
+    max-width: 500px;
+  }
+  .engagement h3 {
+    margin-top: 28px;
+  }
+  .engagement ul {
+    margin-bottom: 30px;
+  }
+}

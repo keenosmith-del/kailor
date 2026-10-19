@@ -1,0 +1,100 @@
+.carousel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+.carousel-heading > p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+.feature-track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding: 5px 0 20px;
+  overscroll-behavior-x: contain;
+}
+.feature-slide {
+  flex: 0 0 88%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  background: #f2f2f2;
+  border-radius: 38px;
+  min-width: 0;
+  min-height: 420px;
+}
+.feature-slide-art {
+  min-height: 420px;
+  background: #272b2d;
+  border-radius: 38px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.feature-slide-art > svg {
+  position: relative;
+  color: var(--white);
+}
+.feature-slide-copy {
+  padding: 55px 45px;
+  align-self: center;
+}
+.feature-slide-copy > span {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.feature-slide-copy h3 {
+  font-size: clamp(32px, 3.6vw, 52px);
+  margin: 25px 0;
+}
+.feature-slide-copy p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.feature-slide details summary {
+  font-size: 13px;
+}
+.feature-slide details .pub-pill {
+  font-size: 12px;
+}
+.carousel-position {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+  margin: 14px 0 0;
+}
+@media (max-width: 1050px) {
+  .feature-slide-copy {
+    padding: 35px;
+  }
+}
+@media (max-width: 760px) {
+  .feature-slide {
+    flex-basis: 92%;
+    grid-template-columns: 1fr;
+    min-height: 0;
+    border-radius: 28px;
+  }
+  .feature-slide-art {
+    min-height: 290px;
+    border-radius: 28px;
+  }
+  .feature-slide-copy {
+    padding: 30px;
+  }
+  .feature-slide-copy h3 {
+    font-size: 37px;
+  }
+  .carousel-heading {
+    align-items: flex-start;
+  }
+  .carousel-heading > p {
+    max-width: 190px;
+  }
+}

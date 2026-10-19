@@ -1,0 +1,130 @@
+.kailor-hero {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  isolation: isolate;
+  overflow: hidden;
+  background: #f7f7f7;
+  padding: 140px clamp(24px, 6vw, 100px) 110px;
+}
+
+.kailor-hero .media-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.kailor-hero .media-background video,
+.kailor-hero .media-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.kailor-hero .media-background::after {
+  content: none;
+}
+
+.kailor-hero__fallback {
+  width: 100%;
+  height: 100%;
+  background: #f7f7f7;
+}
+
+.kailor-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0.5) 55%,
+    rgba(255, 255, 255, 0.18) 100%
+  );
+}
+
+.kailor-hero__content {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 1100px);
+}
+
+.kailor-hero h1 {
+  font-size: clamp(58px, 9vw, 142px);
+  line-height: 0.98;
+  letter-spacing: -0.075em;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin: 0 0 35px;
+}
+
+.kailor-hero__content > p {
+  max-width: 550px;
+  margin: 0 0 34px;
+  font-size: clamp(16px, 1.45vw, 21px);
+  line-height: 1.55;
+  color: #1a1a1a;
+}
+
+.kailor-hero__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.kailor-hero__actions .pub-pill {
+  border-radius: 999px;
+  min-height: 48px;
+  padding: 13px 25px;
+}
+
+.kailor-hero__scroll {
+  position: absolute;
+  z-index: 2;
+  left: clamp(24px, 6vw, 100px);
+  bottom: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #1a1a1a;
+}
+
+@media (max-width: 760px) {
+  .kailor-hero {
+    min-height: 100svh;
+    padding: 125px 24px 105px;
+    align-items: flex-end;
+  }
+
+  .kailor-hero h1 {
+    font-size: clamp(48px, 11vw, 78px);
+    line-height: 1.01;
+    letter-spacing: -0.065em;
+  }
+
+  .kailor-hero__content > p {
+    max-width: 440px;
+    font-size: 15px;
+  }
+
+  .kailor-hero__overlay {
+    background: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.4)
+    );
+  }
+
+  .kailor-hero__scroll {
+    left: 24px;
+    bottom: 30px;
+  }
+}

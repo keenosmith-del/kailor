@@ -1,0 +1,19 @@
+.about-principles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10%;
+}
+.about-principles article {
+  padding: 27px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+.about-principles h3 {
+  font-size: 27px;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  margin: 0 0 17px;
+}
+.about-principles p {
+  color: var(--text-secondary);
+  font-size: 14px;
+}

@@ -1,0 +1,161 @@
+.stacked-panels {
+  position: relative;
+  padding-bottom: 7vh;
+}
+.service-panel {
+  position: sticky;
+  height: clamp(490px, 68svh, 740px);
+  margin-bottom: 28px;
+  perspective: 1200px;
+}
+.service-panel-inner {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  height: 100%;
+  padding: clamp(35px, 4.5vw, 70px);
+  background: #1a1a1a;
+  color: var(--white);
+  border-radius: 32px;
+  box-shadow: 0 -12px 30px #0000000d;
+  transform-origin: top center;
+  overflow: hidden;
+}
+.service-panel:nth-child(2) .service-panel-inner {
+  background: var(--button-background);
+}
+.service-panel:nth-child(3) .service-panel-inner {
+  background: #2c3032;
+}
+.service-panel:nth-child(4) .service-panel-inner {
+  background: #353a3e;
+}
+.service-panel:nth-child(5) .service-panel-inner {
+  background: #414547;
+}
+.service-panel-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  z-index: 1;
+}
+.service-panel h3 {
+  font-size: clamp(44px, 5.4vw, 82px);
+  margin: 0 0 30px;
+}
+.service-panel h3 span {
+  color: #b2b4b5;
+}
+.service-panel p {
+  font-size: 16px;
+  max-width: 330px;
+  color: #e0e0e0;
+  margin-top: auto;
+}
+.service-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  font-size: 10px;
+  color: #bfbfbf;
+  margin: 0 0 28px;
+}
+.service-art {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+}
+.service-art-label {
+  position: absolute;
+  bottom: 12px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  color: #bfbfbf;
+}
+@media (min-width: 761px) and (max-height: 750px) {
+  .service-panel {
+    height: 510px;
+  }
+  .service-panel-inner {
+    padding: 35px;
+  }
+  .service-panel h3 {
+    font-size: 55px;
+  }
+}
+@media (max-width: 1050px) {
+  .service-panel h3 {
+    font-size: 55px;
+  }
+  .service-panel-inner {
+    grid-template-columns: 1.4fr 1fr;
+    padding: 40px;
+  }
+}
+@media (max-width: 760px) {
+  .stacked-panels {
+    padding-bottom: 0;
+  }
+  .service-panel {
+    position: relative !important;
+    top: auto !important;
+    height: auto;
+    margin-bottom: 15px;
+  }
+  .service-panel-inner {
+    transform: none !important;
+    grid-template-columns: 1fr;
+    min-height: 590px;
+    padding: 30px 25px;
+    border-radius: 28px;
+  }
+  .service-panel h3 {
+    font-size: clamp(35px, 8.6vw, 58px);
+    margin-bottom: 22px;
+  }
+  .service-panel p {
+    margin-top: 0;
+    font-size: 14px;
+  }
+  .service-tags {
+    margin-bottom: 22px;
+  }
+  .service-art {
+    min-height: 220px;
+    grid-row: 1;
+    margin: 0 auto 15px;
+    width: 100%;
+    max-width: 330px;
+  }
+  .service-art-label {
+    font-size: 9px;
+    bottom: 0;
+  }
+  .service-panel-copy {
+    min-height: 300px;
+  }
+  .service-panel-copy .pub-pill {
+    margin-top: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .service-panel {
+    position: relative !important;
+    top: auto !important;
+    margin-bottom: 24px;
+  }
+  .service-panel-inner {
+    transform: none !important;
+  }
+}
+
+.service-panel:focus-within {
+  z-index: 10 !important;
+}
+.service-panel:focus-within .service-panel-inner {
+  transform: none !important;
+}

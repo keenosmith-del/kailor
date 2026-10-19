@@ -1,0 +1,21 @@
+.about-statement {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 10%;
+  background: var(--background-secondary);
+}
+.about-sculpture {
+  height: 500px;
+}
+.about-statement h2 {
+  margin-bottom: 35px;
+}
+.about-statement p {
+  color: var(--text-secondary);
+}
+@media (max-width: 760px) {
+  .about-sculpture {
+    height: 320px;
+  }
+}

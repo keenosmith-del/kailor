@@ -7,15 +7,15 @@ import {
   act,
 } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
-import { PublicLayout } from "../src/components/public/PublicLayout";
+import { PublicLayout } from "../src/components/public/PublicLayout/PublicLayout";
 import Home from "../src/pages/Public/Home/Home";
 import Services from "../src/pages/Public/Services/Services";
 import HowItWorks from "../src/pages/Public/HowItWorks/HowItWorks";
 import About from "../src/pages/Public/About/About";
 import Pricing from "../src/pages/Public/Pricing/Pricing";
 import Contact from "../src/pages/Public/Contact/Contact";
-import { ConversationVisual } from "../src/components/public/ConversationVisual";
-import { MediaSection } from "../src/components/public/MediaSection";
+import { ConversationVisual } from "../src/components/public/ConversationVisual/ConversationVisual";
+import { MediaSection } from "../src/components/public/MediaSection/MediaSection";
 const state = vi.hoisted(() => ({ reduced: false }));
 vi.mock("motion/react", async (importOriginal) => {
   const actual = await importOriginal<typeof import("motion/react")>();
@@ -28,6 +28,14 @@ vi.mock("motion/react", async (importOriginal) => {
 });
 beforeEach(() => {
   state.reduced = false;
+  vi.stubGlobal(
+    "IntersectionObserver",
+    class {
+      observe = vi.fn();
+      disconnect = vi.fn();
+      unobserve = vi.fn();
+    },
+  );
   vi.stubGlobal("matchMedia", () => ({
     matches: false,
     addEventListener: vi.fn(),
@@ -65,7 +73,7 @@ function site(path = "/") {
 it("provides six substantive routes and updates page metadata through navigation", () => {
   site();
   expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
-    "Technology,",
+    "Technology that",
   );
   for (const [name, heading] of [
     ["Services", "Practical expertise."],
@@ -76,7 +84,7 @@ it("provides six substantive routes and updates page metadata through navigation
   ]) {
     fireEvent.click(
       screen
-        .getByRole("navigation", { name: "Public pages" })
+        .getByRole("navigation", { name: "Footer pages" })
         .querySelector(
           `a[href="${name === "Services" ? "/services" : name === "How it works" ? "/how-it-works" : "/" + name.toLowerCase()}"]`,
         )!,
@@ -89,6 +97,12 @@ it("provides six substantive routes and updates page metadata through navigation
         .querySelector('meta[name="description"]')
         ?.getAttribute("content")?.length,
     ).toBeGreaterThan(30);
+    expect(document.title).toBe("kailor");
+    expect(
+      document
+        .querySelector('meta[property="og:title"]')
+        ?.getAttribute("content"),
+    ).toBe("kailor");
   }
   expect(
     document.querySelector('link[rel="canonical"]')?.getAttribute("href"),
@@ -164,6 +178,54 @@ it("uses designed fallbacks without creating source-less videos", () => {
   fireEvent.error(document.querySelector("video")!);
   expect(screen.getByText("Fallback")).toBeTruthy();
   expect(document.querySelector("video")).toBeNull();
+});
+it("keeps the hero muted, looping and inline, and pauses it outside the viewport", () => {
+  let visibility: IntersectionObserverCallback;
+  const disconnect = vi.fn();
+  vi.stubGlobal(
+    "IntersectionObserver",
+    class {
+      constructor(callback: IntersectionObserverCallback) {
+        visibility = callback;
+      }
+      observe = vi.fn();
+      disconnect = disconnect;
+    },
+  );
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  const pause = vi
+    .spyOn(HTMLMediaElement.prototype, "pause")
+    .mockImplementation(() => {});
+  const { unmount } = site();
+  const video = document.querySelector("video")!;
+  expect(video.muted).toBe(true);
+  expect(video.loop).toBe(true);
+  expect(video.playsInline).toBe(true);
+  expect(video.querySelector("source")?.getAttribute("src")).toBe(
+    "/media/hero/kailor-hero.mp4",
+  );
+  act(() =>
+    visibility(
+      [{ isIntersecting: true } as IntersectionObserverEntry],
+      {} as IntersectionObserver,
+    ),
+  );
+  expect(play).toHaveBeenCalledOnce();
+  act(() =>
+    visibility(
+      [{ isIntersecting: false } as IntersectionObserverEntry],
+      {} as IntersectionObserver,
+    ),
+  );
+  expect(pause).toHaveBeenCalledOnce();
+  unmount();
+  expect(disconnect).toHaveBeenCalledOnce();
+});
+it("uses the current hero fallback when reduced motion is requested", () => {
+  state.reduced = true;
+  site();
+  expect(document.querySelector(".kailor-hero video")).toBeNull();
+  expect(document.querySelector(".kailor-hero__fallback")).toBeTruthy();
 });
 it("keeps engagement CTAs as enquiries and labels illustrative material", () => {
   site();

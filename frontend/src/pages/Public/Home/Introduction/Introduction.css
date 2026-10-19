@@ -1,0 +1,70 @@
+.home-introduction {
+  padding-top: 130px;
+  padding-bottom: 135px;
+}
+.home-introduction h2 {
+  font-size: clamp(46px, 6.2vw, 94px);
+  max-width: 1100px;
+}
+.introduction-aside {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-left: 28%;
+  gap: 35px;
+}
+.tiny-orbit {
+  font-size: 90px;
+  line-height: 1;
+  color: #bfbfbf;
+  padding-top: 10px;
+}
+.introduction-aside p {
+  font-size: 17px;
+  max-width: 470px;
+  color: #626262;
+}
+.kinetic-word {
+  color: #818181;
+}
+@supports (animation-timeline: view()) {
+  .kinetic-word {
+    animation: word-focus linear both;
+    animation-timeline: view();
+    animation-range: entry 20% cover 45%;
+  }
+  @keyframes word-focus {
+    from {
+      color: #bfbfbf;
+    }
+    to {
+      color: #353a3e;
+    }
+  }
+}
+@media (max-width: 1050px) {
+  .introduction-aside {
+    margin-left: 10%;
+    grid-template-columns: 1fr 1.7fr;
+  }
+}
+@media (max-width: 760px) {
+  .introduction-aside {
+    margin-left: 0;
+    grid-template-columns: 50px 1fr;
+    gap: 20px;
+  }
+  .tiny-orbit {
+    font-size: 45px;
+  }
+  .introduction-aside p {
+    font-size: 15px;
+  }
+  .home-introduction h2 {
+    font-size: clamp(36px, 7.8vw, 58px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kinetic-word {
+    color: #353a3e;
+  }
+}

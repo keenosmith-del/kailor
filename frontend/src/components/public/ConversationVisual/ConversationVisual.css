@@ -1,0 +1,172 @@
+.conversation-visual {
+  padding: 30px;
+  background: #f2f2f2;
+  border-radius: 36px;
+  min-height: 610px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.conversation-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  color: #626262;
+}
+.conversation-controls {
+  display: flex;
+  gap: 6px;
+}
+.conversation-controls .pub-icon {
+  background: transparent;
+  width: 36px;
+  height: 36px;
+}
+.conversation-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 32px 0 10px;
+  min-height: 465px;
+}
+.demo-message {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  width: 90%;
+}
+.demo-message:not(.is-visible) {
+  visibility: hidden;
+}
+.demo-visitor {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+.demo-avatar {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  background: #e0e0e0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.demo-avatar img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: grayscale(1);
+}
+.demo-bubble {
+  padding: 18px 22px;
+  background: var(--background-primary);
+  border-radius: 25px 25px 25px 5px;
+  box-shadow: 0 5px 14px #00000005;
+}
+.demo-bubble > span {
+  font-size: 10px;
+  color: #777;
+}
+.demo-bubble p {
+  margin: 7px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.demo-visitor .demo-bubble {
+  background: var(--button-background);
+  color: var(--white);
+  border-radius: 25px 25px 5px 25px;
+}
+.demo-visitor .demo-bubble > span {
+  color: #bfbfbf;
+}
+.demo-message.is-visible {
+  animation: bubble-enter 0.5s both;
+}
+.thinking {
+  display: flex;
+  gap: 4px;
+  margin-left: 52px;
+  padding: 13px 18px;
+  background: var(--background-primary);
+  border-radius: 999px;
+  width: fit-content;
+}
+.thinking i {
+  width: 5px;
+  height: 5px;
+  background: #888;
+  border-radius: 50%;
+  animation: thinking 1.2s infinite;
+}
+.thinking i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.thinking i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.thinking.is-paused i {
+  animation-play-state: paused;
+}
+.demo-note {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin: auto 0 0;
+  padding-top: 20px;
+}
+@keyframes thinking {
+  0%,
+  70%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  35% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+@keyframes bubble-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 760px) {
+  .conversation-visual {
+    padding: 22px 17px;
+    min-height: 590px;
+    border-radius: 28px;
+  }
+  .demo-message {
+    width: 100%;
+    gap: 8px;
+  }
+  .demo-avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .demo-avatar img {
+    width: 26px;
+    height: 26px;
+  }
+  .demo-bubble {
+    padding: 14px 17px;
+  }
+  .demo-bubble p {
+    font-size: 13px;
+  }
+}
+
+.conversation-messages > .thinking {
+  position: absolute;
+  left: 30px;
+  bottom: 65px;
+  margin: 0;
+}

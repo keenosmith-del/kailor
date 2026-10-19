@@ -1,90 +1,9 @@
-.contact-hero h1 {
-  font-size: clamp(70px, 11vw, 160px);
-}
-.contact-direct {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 10%;
-  padding-top: 20px;
-}
-.contact-direct > div > span {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-.contact-email {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  font-size: clamp(22px, 3vw, 44px);
-  letter-spacing: -0.055em;
-  margin: 30px 0 40px;
-  overflow-wrap: anywhere;
-}
-.contact-email svg {
-  flex: none;
-}
-.contact-status {
-  min-height: 28px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-top: 20px;
-}
-.contact-direct aside {
-  background: var(--background-secondary);
-  border-radius: 28px;
-  padding: 35px;
-}
-.contact-direct aside h2 {
-  font-size: 27px;
-  letter-spacing: -0.035em;
-  margin: 0 0 25px;
-}
-.contact-direct ul {
-  padding-left: 18px;
-  color: var(--text-secondary);
-  font-size: 14px;
-  line-height: 1.8;
-}
-.contact-direct li {
-  margin: 12px 0;
-}
-.contact-direct aside p {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin: 25px 0 0;
-}
-.contact-links {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10%;
-  border-top: 1px solid var(--border-subtle);
-}
-.contact-links a {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  align-items: center;
-  min-height: 80px;
-  border-bottom: 1px solid var(--border-subtle);
-  font-size: 18px;
-}
+/* Responsive layout shared by this page’s sections. */
+
 @media (max-width: 760px) {
   .contact-direct,
   .contact-links {
     grid-template-columns: 1fr;
     gap: 35px;
-  }
-  .contact-email {
-    font-size: clamp(20px, 5.8vw, 34px);
-    gap: 10px;
-  }
-  .contact-email svg {
-    width: 20px;
-  }
-  .contact-direct aside {
-    padding: 28px;
-  }
-  .contact-links a {
-    font-size: 16px;
   }
 }

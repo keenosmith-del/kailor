@@ -1,0 +1,15 @@
+.public-site main:focus {
+  outline: none;
+}
+.public-skip {
+  position: fixed;
+  top: -100px;
+  left: 30px;
+  z-index: 110;
+  padding: 12px 20px;
+  background: var(--background-primary);
+  border-radius: 999px;
+}
+.public-skip:focus {
+  top: 90px;
+}

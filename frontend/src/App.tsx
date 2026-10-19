@@ -26,7 +26,7 @@ const Auth = lazy(() =>
   import("./pages/Auth/Auth").then((m) => ({ default: m.Auth })),
 );
 const PublicLayout = lazy(() =>
-  import("./components/public/PublicLayout").then((m) => ({
+  import("./components/public/PublicLayout/PublicLayout").then((m) => ({
     default: m.PublicLayout,
   })),
 );

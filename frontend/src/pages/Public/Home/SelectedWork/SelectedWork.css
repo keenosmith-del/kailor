@@ -1,0 +1,12 @@
+.home-work {
+  background: var(--background-secondary);
+  border-radius: 40px;
+}
+.home-work .feature-slide {
+  background: var(--background-primary);
+}
+@media (max-width: 760px) {
+  .home-work {
+    border-radius: 28px;
+  }
+}

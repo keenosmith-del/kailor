@@ -1,0 +1,127 @@
+.sculpture {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+.sculpture-core {
+  width: 52%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 25%,
+    #a4a4a4 0%,
+    #5b5d5e 18%,
+    #252829 42%,
+    #121313 68%,
+    #57595a 95%
+  );
+  box-shadow:
+    inset -12px -12px 22px #0008,
+    inset 5px 4px 10px #ffffff2a,
+    16px 36px 40px #0002;
+  transform: rotate(-24deg);
+}
+.orbit {
+  position: absolute;
+  width: 83%;
+  height: 32%;
+  border: 1px solid #92929288;
+  border-radius: 50%;
+  transform: rotate(-28deg);
+}
+.orbit-two {
+  transform: rotate(35deg);
+  width: 77%;
+  height: 38%;
+}
+.orbit-three {
+  transform: rotate(80deg);
+  height: 36%;
+  width: 81%;
+}
+.orbit-dot {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 25% 20%, #fff, #888 55%, #333);
+  left: 21%;
+  top: 30%;
+  box-shadow: 0 5px 10px #0002;
+}
+.sculpture-1 .sculpture-core {
+  border-radius: 26%;
+  transform: rotate(-20deg);
+  width: 48%;
+  background: linear-gradient(
+    135deg,
+    #989a9b,
+    #292c2d 40%,
+    #151718 65%,
+    #5e6061
+  );
+  box-shadow:
+    inset 1px 1px 5px #fff6,
+    24px 30px 0 #0003,
+    38px 45px 0 #ffffff08;
+}
+.sculpture-1 .orbit {
+  border-radius: 20%;
+  height: 55%;
+  transform: rotate(-20deg);
+}
+.sculpture-1 .orbit-two {
+  width: 64%;
+  height: 45%;
+}
+.sculpture-1 .orbit-three {
+  width: 45%;
+  height: 35%;
+}
+.sculpture-2 .sculpture-core {
+  width: 45%;
+  background: repeating-radial-gradient(
+    ellipse at 30% 30%,
+    #bfbfbf 0px,
+    #353a3e 4px,
+    #1a1a1a 10px
+  );
+  box-shadow: 18px 25px 40px #0004;
+}
+.sculpture-3 .sculpture-core {
+  width: 45%;
+  border-radius: 30%;
+  transform: rotate(45deg);
+  box-shadow:
+    18px 18px 0 #ffffff12,
+    36px 36px 0 #ffffff08;
+}
+.sculpture-3 .orbit {
+  width: 85%;
+  height: 55%;
+  border-radius: 35%;
+  transform: rotate(45deg);
+}
+.sculpture-4 .sculpture-core {
+  width: 60%;
+  aspect-ratio: 1.6;
+  border-radius: 999px;
+  background: linear-gradient(160deg, #bfbfbf, #353a3e 40%, #222526 70%);
+  box-shadow:
+    0 24px 0 #ffffff12,
+    0 48px 0 #ffffff08,
+    0 80px 30px #0003;
+}
+.sculpture-4 .orbit {
+  width: 88%;
+  height: 45%;
+  transform: rotate(-15deg);
+}
+.sculpture-5 .sculpture-core {
+  border-radius: 50% 50% 18% 50%;
+  width: 48%;
+  transform: rotate(45deg);
+}

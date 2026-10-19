@@ -1,0 +1,41 @@
+.home-conversation {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 8%;
+  align-items: center;
+  padding-top: 130px;
+  padding-bottom: 130px;
+}
+.conversation-intro > span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.conversation-intro h2 {
+  margin-top: 35px;
+  font-size: clamp(42px, 5vw, 75px);
+}
+.conversation-intro > p {
+  font-size: 16px;
+  max-width: 340px;
+  color: var(--text-secondary);
+  margin-bottom: 35px;
+}
+@media (max-width: 1050px) {
+  .home-conversation {
+    gap: 5%;
+    grid-template-columns: 1fr 1.1fr;
+  }
+}
+@media (max-width: 760px) {
+  .home-conversation {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .conversation-intro h2 {
+    font-size: 48px;
+  }
+  .conversation-intro > p {
+    max-width: 480px;
+  }
+}

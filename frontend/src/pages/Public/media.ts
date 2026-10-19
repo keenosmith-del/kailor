@@ -8,8 +8,8 @@ export type PublicMedia = {
 };
 export const media: Record<"hero" | "conversation" | "work", PublicMedia> = {
   hero: {
-    description:
-      "An abstract sculptural form representing thoughtful connections.",
+    desktopMp4: "/media/hero/kailor-hero.mp4",
+    description: "kailor introduction background video.",
   },
   conversation: {
     description:

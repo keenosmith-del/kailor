@@ -1,0 +1,226 @@
+.public-site {
+  --pub-ink: var(--text-primary);
+  --pub-muted: #656565;
+  --pub-line: #dedede;
+  --pub-soft: #f7f7f7;
+  --pub-space: clamp(22px, 5.5vw, 88px);
+  background: var(--background-primary);
+  color: var(--pub-ink);
+  overflow: clip;
+  font-size: 15px;
+}
+.public-site h1,
+.public-site h2,
+.public-site h3 {
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 1.02;
+}
+.public-site h2 {
+  font-size: clamp(42px, 5.5vw, 84px);
+  margin: 0 0 60px;
+}
+.public-site h2 > span {
+  color: #858585;
+}
+.public-site p {
+  line-height: 1.65;
+}
+.public-site button,
+.public-site .pub-pill {
+  border-radius: 999px;
+}
+.public-site a:focus-visible,
+.public-site button:focus-visible,
+.public-site summary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 5px;
+}
+.public-site svg {
+  flex-shrink: 0;
+}
+.pub-pill {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 23px;
+  min-height: 48px;
+  line-height: 1.3;
+  border: 1px solid #d5d5d5;
+  background: var(--background-primary);
+  font-size: 13px;
+  width: fit-content;
+  max-width: 100%;
+}
+.pub-pill:hover {
+  background: #ededed;
+  transform: translateY(-1px);
+}
+.pub-pill-dark {
+  background: var(--button-background);
+  color: var(--white);
+  border-color: var(--button-background);
+}
+.pub-pill-dark:hover {
+  background: #353a3e;
+}
+.pub-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1px solid #d5d5d5;
+  background: var(--background-primary);
+  border-radius: 50%;
+}
+.pub-icon:hover:not(:disabled) {
+  background: #eee;
+}
+.public-section {
+  padding: 110px var(--pub-space);
+}
+.section-prelude {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  font-size: 12px;
+  margin-bottom: 45px;
+  color: #626262;
+}
+.section-prelude span + span {
+  text-align: right;
+}
+.pub-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  min-height: 44px;
+  font-size: 13px;
+  border-bottom: 1px solid #bfbfbf;
+  padding: 8px 0;
+}
+.pub-text-link:hover {
+  color: #777;
+}
+.public-page-hero {
+  padding: 180px var(--pub-space) 80px;
+}
+.public-page-hero > span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.public-page-hero h1 {
+  font-size: clamp(55px, 8vw, 118px);
+  max-width: 1100px;
+  margin: 38px 0 45px;
+}
+.public-page-hero h1 span {
+  color: #858585;
+}
+.public-page-hero > p {
+  max-width: 570px;
+  font-size: 18px;
+  color: var(--text-secondary);
+  margin-left: 40%;
+}
+.public-page-closing {
+  padding: 75px var(--pub-space);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  border-top: 1px solid var(--border-subtle);
+}
+.public-page-closing h2 {
+  font-size: clamp(30px, 4vw, 58px);
+  margin: 0;
+}
+.public-page-closing .pub-pill {
+  flex: none;
+}
+@media (max-width: 1050px) {
+  .public-section {
+    padding-top: 85px;
+    padding-bottom: 85px;
+  }
+  .public-page-hero > p {
+    margin-left: 28%;
+  }
+}
+@media (max-width: 760px) {
+  .public-section {
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+  .public-site h2 {
+    margin-bottom: 38px;
+    font-size: clamp(39px, 8vw, 61px);
+  }
+  .section-prelude {
+    margin-bottom: 32px;
+    align-items: flex-start;
+    font-size: 11px;
+  }
+  .section-prelude span + span {
+    max-width: 44%;
+  }
+  .public-page-hero {
+    padding-top: 145px;
+    padding-bottom: 55px;
+  }
+  .public-page-hero h1 {
+    font-size: clamp(48px, 10vw, 78px);
+    margin: 30px 0;
+  }
+  .public-page-hero > p {
+    margin-left: 0;
+    font-size: 16px;
+  }
+  .public-page-closing {
+    align-items: flex-start;
+    flex-direction: column;
+    padding-top: 55px;
+    padding-bottom: 55px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-site *,
+  .public-site *::before,
+  .public-site *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .public-site .pub-pill:hover {
+    transform: none;
+  }
+}
+.public-page-hero {
+  animation: public-page-enter 0.45s ease both;
+}
+@keyframes public-page-enter {
+  from {
+    opacity: 0.5;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.public-site :is(h1, h2, h3) > span {
+  color: inherit !important;
+}
+.pub-pill-outline {
+  background: transparent;
+  border-color: #ffffff50;
+  color: var(--white);
+  min-height: 44px;
+  font-size: 12px;
+}
+.pub-pill-outline:hover {
+  background: #ffffff15;
+}

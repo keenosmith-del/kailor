@@ -1,0 +1,31 @@
+.about-founder {
+  background: var(--button-background);
+  color: var(--white);
+  border-radius: 40px 40px 0 0;
+}
+.about-founder > span {
+  font-size: 12px;
+  color: #bfbfbf;
+}
+.about-founder h2 {
+  margin-top: 40px;
+}
+.about-founder p {
+  max-width: 520px;
+  margin-left: 40%;
+  color: #bfbfbf;
+}
+.about-founder .pub-pill {
+  margin: 25px 0 0 40%;
+  background: var(--background-primary);
+  color: #222526;
+}
+@media (max-width: 760px) {
+  .about-founder p,
+  .about-founder .pub-pill {
+    margin-left: 0;
+  }
+  .about-founder {
+    border-radius: 28px 28px 0 0;
+  }
+}
