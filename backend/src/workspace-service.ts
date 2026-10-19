@@ -13,7 +13,11 @@ export async function saveCanvas(
 ) {
   const canvasState = canvasStateSchema.parse(state);
   for (const text of [
-    ...Object.values(canvasState.edits).flatMap((e) => [e.title, e.notes]),
+    ...Object.values(canvasState.edits).flatMap((e) => [
+      e.title,
+      e.notes,
+      ...(e.capabilities?.map((c) => c.label) ?? []),
+    ]),
     ...canvasState.additions.flatMap((e) => [e.title, e.notes]),
   ].filter(Boolean)) {
     if (!evaluateInput(text, "", "chat").accepted)

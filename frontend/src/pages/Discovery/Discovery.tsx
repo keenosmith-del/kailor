@@ -105,14 +105,17 @@ export function Discovery({
     [value, setValue] = useState<AnswerValue>("");
   const [recovering, setRecovering] = useState(false);
   const [validation, setValidation] = useState<ApiError | null>(null);
+  const [continued, setContinued] = useState(false);
   const question =
-    (editing && next.active.some((q) => q.id === editing)
-      ? ([...(next.questionHistory ?? [])]
-          .reverse()
-          .find((h) => h.question.id === editing)?.question ??
-        next.active.find((q) => q.id === editing))
-      : undefined) ??
-    (recovering ? next.completion.recoveryQuestion : next.question);
+    ready && !continued && !editing
+      ? null
+      : ((editing && next.active.some((q) => q.id === editing)
+          ? ([...(next.questionHistory ?? [])]
+              .reverse()
+              .find((h) => h.question.id === editing)?.question ??
+            next.active.find((q) => q.id === editing))
+          : undefined) ??
+        (recovering ? next.completion.recoveryQuestion : next.question));
   useEffect(() => {
     const saved = session.answers.find((a) => a.questionId === question?.id);
     setValue(
@@ -206,10 +209,12 @@ export function Discovery({
       });
   }
   async function prepare() {
-    if (busy) return;
+    if (busy || preparing) return;
     setPreparing(true);
     try {
       await assess();
+      setContinued(false);
+      setEditing(null);
     } catch {
       // SessionPage displays the error; restore the current pose for a retry.
     } finally {
@@ -221,7 +226,7 @@ export function Discovery({
       <div className="discovery-progress">
         <span role="status">
           {session.answers.length
-            ? `${session.answers.length} responses saved · Questions adapt as we go`
+            ? `${session.answers.length} ${session.answers.length === 1 ? "step" : "steps"} saved · Questions adapt as we go`
             : "Choose your starting point"}
         </span>
         {session.answers.length > 0 && question?.id !== "stage" && (
@@ -239,7 +244,7 @@ export function Discovery({
         <Mascot
           state="attentive"
           pose={
-            !question && (preparing || ready)
+            !question && ready && !preparing
               ? discoveryCompletionPose
               : discoveryPoseAssets[responseCount % discoveryPoseAssets.length]
           }
@@ -573,31 +578,40 @@ export function Discovery({
                   ) : (
                     <button
                       className="discovery-action"
-                      disabled={busy || !next.readiness.canAssess}
+                      disabled={busy || preparing || !next.readiness.canAssess}
                       onClick={() => void prepare()}
                     >
-                      Prepare assessment
+                      {preparing
+                        ? "Preparing assessment…"
+                        : "Prepare assessment"}
                     </button>
                   )}
-                  {next.active.find(
-                    (q) =>
-                      q.id !== "stage" &&
-                      !session.answers.some((a) => a.questionId === q.id),
-                  ) && (
+                  {(next.question ??
+                    next.active.find((q) => q.id === next.ranking?.[0]?.id) ??
+                    next.active.find(
+                      (q) =>
+                        q.id !== "stage" &&
+                        !session.answers.some((a) => a.questionId === q.id),
+                    )) && (
                     <button
                       className="button"
-                      disabled={busy}
-                      onClick={() =>
+                      disabled={busy || preparing}
+                      onClick={() => {
+                        setContinued(true);
                         setEditing(
-                          next.active.find(
-                            (q) =>
-                              q.id !== "stage" &&
-                              !session.answers.some(
-                                (a) => a.questionId === q.id,
-                              ),
-                          )!.id,
-                        )
-                      }
+                          (next.question ??
+                            next.active.find(
+                              (q) => q.id === next.ranking?.[0]?.id,
+                            ) ??
+                            next.active.find(
+                              (q) =>
+                                q.id !== "stage" &&
+                                !session.answers.some(
+                                  (a) => a.questionId === q.id,
+                                ),
+                            ))!.id,
+                        );
+                      }}
                     >
                       Continue discovery
                     </button>

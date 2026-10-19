@@ -229,7 +229,7 @@ export function SessionPage({
               className="session-content"
               disabled={
                 !!session.plan?.archivedAt &&
-                !["report", "sources"].includes(view)
+                !["report", "sources", "canvas"].includes(view)
               }
             >
               {view === "discovery" ? (

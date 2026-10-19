@@ -127,7 +127,7 @@
 }
 
 .auth-page .auth-form .auth-field input::placeholder {
-  color: #aaa294;
+  color: #a3a3a3;
 }
 
 .auth-page .auth-form .auth-field input:disabled {
@@ -172,7 +172,7 @@
 .auth-page .auth-form .auth-field input:focus-visible {
   outline: none;
   box-shadow: none;
-  background: #fffdfa;
+  background: #ffffff;
 }
 
 /* Submit */
@@ -190,7 +190,7 @@
   border: 0;
   border-radius: 100px;
 
-  background: #33383e;
+  background: #373737;
   color: var(--color-cream);
 
   font: inherit;
@@ -227,20 +227,20 @@
 }
 
 .auth-status.error {
-  color: #905f44;
+  color: #676767;
   background: #fff;
   box-shadow: 0 3px 12px #00000006;
 }
 
 .auth-status.success {
-  color: #486c53;
-  background: #edf6ed;
+  color: #636363;
+  background: #f3f3f3;
 }
 
 /* Accessibility */
 
 .auth-page button:focus-visible {
-  outline: 2px solid rgba(154, 137, 116, 0.65);
+  outline: 2px solid rgba(136, 136, 136, 0.65);
   outline-offset: 3px;
 }
 
@@ -304,13 +304,13 @@
   outline: none;
   outline-offset: 0;
 
-  background: #fffdfa;
+  background: #ffffff;
 
-  border-color: rgba(154, 137, 116, 0.28);
+  border-color: rgba(136, 136, 136, 0.28);
 
   box-shadow:
-    inset 0 0 0 1px rgba(154, 137, 116, 0.12),
-    0 3px 12px rgba(85, 73, 57, 0.025);
+    inset 0 0 0 1px rgba(136, 136, 136, 0.12),
+    0 3px 12px rgba(72, 72, 72, 0.025);
 }
 
 /* Shared secondary authentication and guest actions */
@@ -327,7 +327,7 @@
   padding: 12px 20px;
 
   border-radius: 100px;
-  border: 1px solid rgba(145, 131, 110, 0.15);
+  border: 1px solid rgba(129, 129, 129, 0.15);
 
   background: rgba(255, 255, 255, 0.52);
   color: var(--color-charcoal);
@@ -346,7 +346,7 @@
 
 .auth-secondary:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.85);
-  border-color: rgba(145, 131, 110, 0.24);
+  border-color: rgba(129, 129, 129, 0.24);
   transform: translateY(-1px);
 }
 
@@ -479,7 +479,7 @@
   opacity: 0.6;
 }
 .auth-page :is(button, a):focus-visible {
-  outline: 2px solid rgba(154, 137, 116, 0.65);
+  outline: 2px solid rgba(136, 136, 136, 0.65);
   outline-offset: 3px;
   box-shadow: none;
 }

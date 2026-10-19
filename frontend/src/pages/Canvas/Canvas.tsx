@@ -1,38 +1,21 @@
 import "./Canvas.css";
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import type {
-  CanvasState,
-  ConsultingBrief,
-  Session,
-} from "../../../../shared/src/index";
+import type { CanvasState, Session } from "../../../../shared/src/index";
+import {
+  solutionStatus,
+  unresolvedSelections,
+  type Solution,
+  type SolutionCanvas,
+} from "../../../../shared/src/solutions";
 import type { Next } from "../../types/session";
-import { api, sessionHref } from "../../services/api";
+import { api, downloadReasoning, sessionHref } from "../../services/api";
 import { ErrorBox } from "../../components/ErrorBox/ErrorBox";
-import { ConfirmDialog } from "../../components/ConfirmDialog/ConfirmDialog";
-type Node = {
-  id: string;
-  title: string;
-  status: string;
-  purpose: string;
-  evidence: string[];
-  dependencies: string[];
-  alternatives: string[];
-  group?: string;
-  sourceKey?: string;
-  decision?: string;
-};
-type CanvasData = {
-  revision: number;
-  projectRevision: number;
-  state: CanvasState;
-  consulting?: ConsultingBrief;
-  graph: {
-    nodes: Node[];
-    edges: { from: string; to: string; label: string }[];
-  };
-  note: string;
-};
+import { SolutionVisual } from "./SolutionVisual";
+import { SolutionModal } from "./SolutionModal";
+import { SolutionDetail } from "./SolutionDetail";
+import { RequestReview } from "./RequestReview";
+
 export function Canvas({
   session,
   assess,
@@ -46,105 +29,58 @@ export function Canvas({
   next: Next;
   onChanged: () => Promise<void>;
 }) {
-  const [data, setData] = useState<CanvasData | null>(null),
-    [selected, setSelected] = useState(""),
+  const [data, setData] = useState<SolutionCanvas | null>(null),
     [error, setError] = useState(""),
-    [saving, setSaving] = useState(false),
-    [editing, setEditing] = useState(false),
+    [saving, setSaving] = useState(false);
+  const [opened, setOpened] = useState(""),
+    [reviewing, setReviewing] = useState(
+      () =>
+        new URLSearchParams(window.location.search).get("resume") ===
+        "consultancy",
+    ),
     [adding, setAdding] = useState(false),
-    [title, setTitle] = useState(""),
-    [notes, setNotes] = useState(""),
+    [undo, setUndo] = useState<CanvasState | null>(null);
+  const [noteId, setNoteId] = useState(""),
     [kind, setKind] = useState<"idea" | "constraint" | "decision">("idea"),
-    [undo, setUndo] = useState<CanvasState | null>(null),
-    [confirmFact, setConfirmFact] = useState(false),
-    [report, setReport] = useState<{ reportId: string; stale: boolean } | null>(
-      null,
-    );
-  const graphRef = useRef<HTMLDivElement>(null),
-    marker = useId().replace(/:/g, "");
-  const [lines, setLines] = useState<{ d: string; label: string }[]>([]),
-    [size, setSize] = useState({ width: 1, height: 1 });
-  async function load() {
-    const result = await api<CanvasData>(`/sessions/${session.id}/canvas`);
-    setData(result);
-    setSelected((old) =>
-      result.graph.nodes.some((n) => n.id === old)
-        ? old
-        : (result.graph.nodes[0]?.id ?? ""),
-    );
-  }
+    [title, setTitle] = useState(""),
+    [notes, setNotes] = useState("");
+  const sequence = useRef(0),
+    sessionId = useRef(session.id),
+    mutating = useRef(false);
+  const archived = !!session.plan?.archivedAt;
   useEffect(() => {
-    let current = true;
-    setData(null);
+    const request = ++sequence.current;
+    if (sessionId.current !== session.id) {
+      sessionId.current = session.id;
+      setData(null);
+      setOpened("");
+      setReviewing(false);
+      setAdding(false);
+      setUndo(null);
+      setTitle("");
+      setNotes("");
+    }
     setError("");
-    void api<CanvasData>(`/sessions/${session.id}/canvas`)
-      .then((r) => {
-        if (current) {
-          setData(r);
-          setSelected((old) =>
-            r.graph.nodes.some((n) => n.id === old)
-              ? old
-              : (r.graph.nodes[0]?.id ?? ""),
-          );
-        }
+    void api<SolutionCanvas>(`/sessions/${session.id}/canvas`)
+      .then((result) => {
+        if (sequence.current === request) setData(result);
       })
       .catch((e) => {
-        if (current) setError(e.message);
-      });
-    void api<{ reportId: string; stale: boolean }>(
-      `/sessions/${session.id}/report-status`,
-    )
-      .then((r) => {
-        if (current) setReport(r);
-      })
-      .catch(() => {
-        if (current) setReport(null);
+        if (sequence.current === request) setError(e.message);
       });
     return () => {
-      current = false;
+      sequence.current++;
     };
   }, [session.id, session.revision]);
-  useLayoutEffect(() => {
-    const graph = graphRef.current;
-    if (!graph || !data) return;
-    const measure = () => {
-      const base = graph.getBoundingClientRect();
-      const columns = [...graph.querySelectorAll<HTMLElement>(".canvas-group")];
-      setSize({ width: graph.scrollWidth, height: graph.scrollHeight });
-      const groupNames = ["context", "directions", "next"];
-      setLines(
-        columns.slice(0, -1).flatMap((column, i) => {
-          const related = data.graph.edges.some((e) => {
-            const from = data.graph.nodes.find((n) => n.id === e.from);
-            const to = data.graph.nodes.find((n) => n.id === e.to);
-            return (
-              from?.group === groupNames[i] && to?.group === groupNames[i + 1]
-            );
-          });
-          const a = column.getBoundingClientRect(),
-            b = columns[i + 1].getBoundingClientRect();
-          if (!related || b.left <= a.right) return [];
-          const x = a.right - base.left + 4,
-            tx = b.left - base.left - 4;
-          return [
-            {
-              d: `M ${x} 10 L ${tx} 10`,
-              label:
-                "Grouped project relationship; select a component for its exact connections",
-            },
-          ];
-        }),
-      );
-    };
-    const observer = new ResizeObserver(measure);
-    observer.observe(graph);
-    measure();
-    return () => observer.disconnect();
-  }, [data]);
-  const active = data?.graph.nodes.find((n) => n.id === selected),
-    archived = !!session.plan?.archivedAt;
-  async function save(state: CanvasState, allowUndo = true) {
-    if (!data || saving) return;
+  async function reload() {
+    const request = ++sequence.current;
+    const result = await api<SolutionCanvas>(`/sessions/${session.id}/canvas`);
+    if (sessionId.current === session.id && request === sequence.current)
+      setData(result);
+  }
+  async function save(state: CanvasState, remember = true): Promise<boolean> {
+    if (!data || mutating.current || archived) return false;
+    mutating.current = true;
     setSaving(true);
     setError("");
     try {
@@ -152,561 +88,478 @@ export function Canvas({
         revision: data.projectRevision,
         state,
       });
-      if (allowUndo) setUndo(data.state);
-      else setUndo(null);
+      setUndo(remember ? data.state : null);
+      if (sessionId.current !== session.id) return false;
+      await reload();
       await onChanged();
-      await load();
-      setEditing(false);
-      setAdding(false);
+      return true;
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not save the canvas.");
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Could not save. Your draft is retained.",
+      );
+      return false;
     } finally {
+      mutating.current = false;
       setSaving(false);
     }
   }
-  async function correct() {
-    if (!active?.sourceKey) return;
+  async function correct(key: string, value: string): Promise<boolean> {
+    if (mutating.current || archived) return false;
+    mutating.current = true;
     setSaving(true);
     setError("");
     try {
-      const latest = await api<Session>(`/sessions/${session.id}`);
       await api(`/sessions/${session.id}/answers`, "PUT", {
-        revision: latest.revision,
-        questionId: active.sourceKey,
-        value: notes,
+        revision: session.revision,
+        questionId: key,
+        value,
       });
+      setUndo(null);
+      if (sessionId.current !== session.id) return false;
+      await reload();
       await onChanged();
-      await load();
-      setConfirmFact(false);
-      setEditing(false);
+      return true;
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not update this fact.");
+      setError(
+        e instanceof Error ? e.message : "Could not correct this information.",
+      );
+      return false;
     } finally {
+      mutating.current = false;
       setSaving(false);
     }
   }
-  const renderNode = (n: Node) => (
-    <div className="canvas-step" key={n.id}>
-      <button
-        data-node-id={n.id}
-        className={`canvas-node ${n.status}`}
-        aria-pressed={selected === n.id}
-        onClick={() => {
-          setSelected(n.id);
-          setEditing(false);
-        }}
-      >
-        <small>
-          {n.decision === "hypothesis"
-            ? "Proposed direction"
-            : n.decision === "selected"
-              ? "Selected for exploration"
-              : n.decision === "developing"
-                ? "Being developed"
-                : n.decision === "rejected"
-                  ? "Set aside"
-                  : (n.decision ??
-                    (n.status === "reported"
-                      ? "You described"
-                      : "Proposed component"))}
-        </small>
-        <strong>{n.title}</strong>
-      </button>
-    </div>
-  );
-  const groups = [
-    ["context", "Your starting point"],
-    [
-      "directions",
-      session.answers.some(
-        (a) => a.questionId === "stage" && a.value === "specific",
-      )
-        ? "Solution components"
-        : data?.consulting?.approaches
-          ? "Proposed approach and capabilities"
-          : "Directions to explore",
-    ],
-    ["next", "Next decisions"],
-  ];
+  function select(solution: Solution, force?: boolean) {
+    if (!data) return;
+    const selected = force ?? (solution.reviewRequired || !solution.selected);
+    void save({
+      ...data.state,
+      edits: {
+        ...data.state.edits,
+        [solution.id]: {
+          ...data.state.edits[solution.id],
+          decision: selected ? "selected" : "exploring",
+        },
+      },
+      selections: {
+        ...data.state.selections,
+        [solution.id]: {
+          selected,
+          basisRevision: solution.revision,
+          updatedAt: new Date().toISOString(),
+        },
+      },
+    });
+  }
+  const active = data?.solutions.find((s) => s.id === opened),
+    selections = data?.solutions.filter((s) => s.selected) ?? [];
+  const missingSelections = data
+    ? unresolvedSelections(data.state, data.solutions)
+    : [];
+  function discuss(solution: Solution) {
+    return `${sessionHref(session.id, "chat")}?${new URLSearchParams({ solution: solution.id, component: solution.title, node: solution.id }).toString()}`;
+  }
+  async function download(solution: Solution) {
+    try {
+      await downloadReasoning(session.id, solution.id);
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "Could not download reasoning.",
+      );
+    }
+  }
   return (
-    <section className="canvas">
+    <section className="canvas solution-canvas">
       <header>
-        <p className="eyebrow">Solution canvas</p>
-        <h1>See how it could fit together.</h1>
+        <h1>
+          Your recommended
+          <br className="solution-heading-break" /> solutions.
+        </h1>
         <p className="lead">
-          Follow the connections. Select a step to inspect its basis, refine an
-          idea or record a decision.
+          Explore what could work for your project. Refine the details, choose
+          what matters and decide how you’d like to move forward.
         </p>
       </header>
       <ErrorBox error={error} />
-      <div className="canvas-actions">
-        <div className="actions">
-          <button
-            className="button"
-            disabled={saving || archived}
-            onClick={() => {
-              setAdding((v) => !v);
-              setEditing(false);
-              setTitle("");
-              setNotes("");
-            }}
-          >
-            Add an idea or constraint
-          </button>
-          {undo && (
+      {error && data && !opened && (
+        <button
+          className="text-link"
+          onClick={() => void reload().catch((e) => setError(e.message))}
+        >
+          Reload latest solutions
+        </button>
+      )}
+      {!data && !error && (
+        <p className="solution-empty" role="status">
+          Preparing your project’s solutions…
+        </p>
+      )}
+      {!data && error && (
+        <button
+          className="button"
+          onClick={() => void reload().catch((e) => setError(e.message))}
+        >
+          Try again
+        </button>
+      )}
+      {data && (
+        <>
+          {data.solutions.length ? (
+            <div
+              className={`solution-collection ${data.solutions.length === 1 ? "solution-collection--single" : ""}`}
+              aria-label="Recommended solutions"
+            >
+              {data.solutions.map((solution) => (
+                <article
+                  key={solution.id}
+                  className={`solution-tile ${solution.selected ? "is-selected" : ""}`}
+                >
+                  <button
+                    className="solution-tile-open"
+                    aria-label={`View ${solution.title}`}
+                    onClick={() => setOpened(solution.id)}
+                  >
+                    <SolutionVisual
+                      type={solution.visual}
+                      title={solution.title}
+                    />
+                    <div className="solution-tile-copy">
+                      <span className="solution-status">
+                        {solutionStatus(solution)}
+                      </span>
+                      <h2>{solution.title}</h2>
+                      <p>{solution.description}</p>
+                      <span className="solution-view-label">
+                        View details <span aria-hidden="true">→</span>
+                      </span>
+                    </div>
+                  </button>
+                  <label className="solution-select">
+                    <input
+                      type="checkbox"
+                      checked={solution.selected}
+                      disabled={saving || archived}
+                      onChange={(e) => select(solution, e.target.checked)}
+                    />
+                    <span>
+                      Select<span className="sr-only"> {solution.title}</span>
+                    </span>
+                  </label>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="solution-empty">
+              <h2>A little more context first.</h2>
+              <p>
+                Tell kailor about your goals and current situation so it can
+                identify a useful solution.
+              </p>
+              <div className="actions">
+                <Link
+                  className="button"
+                  to={sessionHref(session.id, "discovery")}
+                >
+                  Continue discovery
+                </Link>
+                <Link
+                  className="text-link"
+                  to={sessionHref(session.id, "chat")}
+                >
+                  Discuss your project in Chat
+                </Link>
+              </div>
+            </div>
+          )}
+          {!!missingSelections.length && (
+            <div className="solution-notice">
+              <p>
+                A previously selected direction is no longer in the current
+                recommendations. Its decision is retained. Review your project
+                context before proceeding.
+              </p>
+              {missingSelections.map((id) => (
+                <button
+                  key={id}
+                  className="text-link"
+                  disabled={saving || archived}
+                  onClick={() =>
+                    void save({
+                      ...data.state,
+                      edits: {
+                        ...data.state.edits,
+                        [id]: {
+                          ...data.state.edits[id],
+                          decision: "exploring",
+                        },
+                      },
+                      selections: {
+                        ...data.state.selections,
+                        [id]: {
+                          basisRevision: 0,
+                          updatedAt: new Date().toISOString(),
+                          ...data.state.selections?.[id],
+                          selected: false,
+                        },
+                      },
+                    })
+                  }
+                >
+                  Release previous selection:{" "}
+                  {data.state.edits[id]?.title ?? id}
+                </button>
+              ))}
+            </div>
+          )}
+          {selections.length > 0 && (
+            <div className="solution-selection-summary" role="status">
+              <span>
+                <strong>
+                  {selections.length}{" "}
+                  {selections.length === 1 ? "solution" : "solutions"} selected
+                </strong>
+                <small>For consideration. You decide the next step.</small>
+              </span>
+              <button
+                className="button"
+                disabled={saving || archived}
+                onClick={() => setReviewing(true)}
+              >
+                Review selected solutions
+              </button>
+            </div>
+          )}
+          <nav className="solution-support" aria-label="Project options">
             <button
               className="text-link"
               disabled={saving || archived}
               onClick={() => {
-                const previous = undo;
-                void save(previous, false);
+                setAdding(true);
+                setNoteId("");
+                setTitle("");
+                setNotes("");
               }}
             >
-              Undo last canvas change
+              Propose a solution or add a note
             </button>
-          )}
-        </div>
-        <span className="badge">
-          Live workspace · saved reports stay unchanged
-        </span>
-      </div>
-      {adding && (
-        <form
-          className="canvas-edit"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (data)
-              void save({
-                ...data.state,
-                additions: [
-                  ...data.state.additions,
-                  {
-                    id: crypto.randomUUID(),
-                    kind,
-                    title: title.trim(),
-                    notes: notes.trim(),
-                  },
-                ],
-              });
-          }}
-        >
-          <label>
-            What are you adding?
-            <select
-              value={kind}
-              onChange={(e) => setKind(e.target.value as typeof kind)}
-            >
-              <option value="idea">Idea</option>
-              <option value="constraint">Constraint</option>
-              <option value="decision">Decision</option>
-            </select>
-          </label>
-          <label>
-            Title
-            <input
-              required
-              minLength={2}
-              maxLength={100}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </label>
-          <label>
-            Project note
-            <textarea
-              required
-              minLength={2}
-              maxLength={1200}
-              rows={2}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </label>
-          <button className="button" disabled={saving}>
-            Save to this project
-          </button>
-        </form>
-      )}
-      {!data && !error && (
-        <p role="status">Connecting your project information…</p>
-      )}
-      {data && (
-        <div className="canvas-workspace">
-          <div
-            className="canvas-map"
-            role="group"
-            aria-label="Project workflow"
-          >
-            <div className="canvas-graph" ref={graphRef}>
-              <svg
-                className="canvas-connections"
-                width={size.width}
-                height={size.height}
-                aria-hidden="true"
+            <Link to={sessionHref(session.id, "analysis")}>
+              Explore the analysis
+            </Link>
+            <Link to={sessionHref(session.id, "discovery")}>
+              Refine project information
+            </Link>
+            <Link to={sessionHref(session.id, "chat")}>Continue in Chat</Link>
+            {undo && (
+              <button
+                className="text-link"
+                disabled={saving || archived}
+                onClick={() => void save(undo, false)}
               >
-                <defs>
-                  <marker
-                    id={marker}
-                    markerWidth="7"
-                    markerHeight="8"
-                    refX="6"
-                    refY="4"
-                    orient="auto"
-                  >
-                    <path
-                      d="M1,1 L6,4 L1,7"
-                      fill="none"
-                      stroke="currentColor"
-                    />
-                  </marker>
-                </defs>
-                {lines.map((line, i) => (
-                  <path
-                    key={i}
-                    d={line.d}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1"
-                    markerEnd={`url(#${marker})`}
-                  >
-                    <title>{line.label}</title>
-                  </path>
-                ))}
-              </svg>
-              {groups.map(([group, label]) => (
-                <div className="canvas-group" key={group}>
-                  <h2>{label}</h2>
-                  {data.graph.nodes
-                    .filter(
-                      (n) =>
-                        (n.group ?? "directions") === group &&
-                        !n.id.startsWith("requirement-"),
-                    )
-                    .map(renderNode)}
-                  {group === "directions" &&
-                    (
-                      [
-                        "essential",
-                        "optional",
-                        "deferred",
-                        "unconfirmed",
-                      ] as const
-                    ).map((priority) => {
-                      const items = data.graph.nodes.filter(
-                        (n) =>
-                          n.id.startsWith("requirement-") &&
-                          n.decision === priority,
-                      );
-                      return items.length ? (
-                        <details
-                          className="canvas-capability-group"
-                          key={priority}
-                          open={
-                            items.some((n) => n.id === selected) || undefined
-                          }
-                        >
-                          <summary>
-                            {priority === "unconfirmed"
-                              ? "Needs confirmation"
-                              : `${priority[0].toUpperCase()}${priority.slice(1)} capabilities`}{" "}
-                            · {items.length}
-                          </summary>
-                          {items.map(renderNode)}
-                        </details>
-                      ) : null;
-                    })}
-                </div>
-              ))}
-            </div>
-          </div>
-          <aside className="canvas-detail" aria-label="Selected component">
-            {active ? (
-              <>
-                <p className="badge">
-                  {active.status === "reported"
-                    ? "User-reported information"
-                    : "A proposal, not a confirmed requirement"}
-                </p>
-                <h2>{active.title}</h2>
-                <p>{active.purpose}</p>
-                <details className="canvas-relationships">
-                  <summary>Related components and decisions</summary>
-                  {data.graph.edges
-                    .filter((e) => e.from === active.id)
-                    .map((e, i) => (
-                      <button
-                        key={i}
-                        className="canvas-edge"
-                        onClick={() => setSelected(e.to)}
-                      >
-                        {e.label} →{" "}
-                        {data.graph.nodes.find((n) => n.id === e.to)?.title}
-                      </button>
-                    ))}
-                </details>
-                {!!active.dependencies.length && (
-                  <>
-                    <h3>What to check</h3>
-                    <ul>
-                      {active.dependencies.map((s) => (
-                        <li key={s}>{s}</li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-                {!!active.alternatives.length && (
-                  <details>
-                    <summary>Alternatives and uncertainties</summary>
-                    {active.alternatives.map((s) => (
-                      <p key={s}>{s}</p>
-                    ))}
-                  </details>
-                )}
-                {!!active.evidence.length && (
-                  <details>
-                    <summary>Supporting information</summary>
-                    {[...new Set(active.evidence)]
-                      .filter((s) => s !== active.purpose)
-                      .map((s) => (
-                        <p key={s}>{s}</p>
-                      ))}
-                  </details>
-                )}
-                {!archived && active.id.startsWith("requirement-") && (
-                  <label>
-                    Requirement priority
-                    <select
-                      aria-label="Requirement priority"
-                      value={
-                        data.consulting?.requirements?.find(
-                          (r) => r.id === active.id,
-                        )?.priority ?? "unconfirmed"
-                      }
-                      disabled={saving}
-                      onChange={(e) =>
-                        void save({
-                          ...data.state,
-                          edits: {
-                            ...data.state.edits,
-                            [active.id]: {
-                              ...data.state.edits[active.id],
-                              priority: e.target.value as
-                                | "essential"
-                                | "optional"
-                                | "deferred"
-                                | "unconfirmed",
-                            },
-                          },
-                        })
-                      }
-                    >
-                      <option value="essential">Essential</option>
-                      <option value="optional">Optional</option>
-                      <option value="deferred">Deferred</option>
-                      <option value="unconfirmed">Needs confirmation</option>
-                    </select>
-                  </label>
-                )}
-                {active.decision === "developing" && (
-                  <div className="canvas-development">
-                    <h3>Develop a practical plan</h3>
-                    <p>
-                      Review essential requirements, dependencies and
-                      constraints. Define a pilot and its success criteria, then
-                      record your refinement here or continue in Chat.
-                    </p>
-                    <ol>
-                      {data.consulting?.directions
-                        .find((d) => d.id === active.id)
-                        ?.validation.map((v) => (
-                          <li key={v.kind}>
-                            <strong>{v.kind}</strong>: {v.action}
-                          </li>
-                        ))}
-                    </ol>
-                  </div>
-                )}
-                {!archived && (
-                  <>
-                    <div className="actions">
-                      <button
-                        className="button"
-                        onClick={() => {
-                          setEditing((v) => !v);
-                          setAdding(false);
-                          setTitle(active.title);
-                          setNotes(
-                            active.sourceKey
-                              ? String(
-                                  session.answers.find(
-                                    (a) => a.questionId === active.sourceKey,
-                                  )?.value ?? active.purpose,
-                                )
-                              : active.purpose,
-                          );
-                        }}
-                      >
-                        {active.sourceKey
-                          ? "Correct this fact"
-                          : "Refine this step"}
-                      </button>
-                      {active.status !== "reported" &&
-                        [
-                          "selected",
-                          "developing",
-                          "exploring",
-                          "deferred",
-                          "rejected",
-                        ].map((decision) => (
-                          <button
-                            key={decision}
-                            className="text-link"
-                            disabled={saving || active.decision === decision}
-                            aria-pressed={active.decision === decision}
-                            onClick={() =>
-                              void save({
-                                ...data.state,
-                                edits: {
-                                  ...data.state.edits,
-                                  [active.id]: {
-                                    ...data.state.edits[active.id],
-                                    decision: decision as
-                                      | "developing"
-                                      | "exploring"
-                                      | "selected"
-                                      | "deferred"
-                                      | "rejected",
-                                  },
-                                },
-                              })
-                            }
-                          >
-                            {decision === "selected"
-                              ? "Select this direction"
-                              : decision === "developing"
-                                ? "Develop this direction"
-                                : decision === "exploring"
-                                  ? "Reconsider"
-                                  : decision === "deferred"
-                                    ? "Defer"
-                                    : "Set aside"}
-                          </button>
-                        ))}
-                    </div>
-                    {editing && (
-                      <form
-                        className="canvas-edit"
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          if (active.sourceKey) setConfirmFact(true);
-                          else
-                            void save({
-                              ...data.state,
-                              edits: {
-                                ...data.state.edits,
-                                [active.id]: {
-                                  ...data.state.edits[active.id],
-                                  title,
-                                  notes,
-                                },
-                              },
-                            });
-                        }}
-                      >
-                        {!active.sourceKey && (
-                          <label>
-                            Title
-                            <input
-                              required
-                              minLength={2}
-                              maxLength={100}
-                              value={title}
-                              onChange={(e) => setTitle(e.target.value)}
-                            />
-                          </label>
-                        )}
-                        <label>
-                          {active.sourceKey
-                            ? "Corrected answer"
-                            : "Your refinement"}
-                          <textarea
-                            required
-                            minLength={2}
-                            maxLength={active.sourceKey ? 4000 : 1200}
-                            rows={3}
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                          />
-                        </label>
-                        <p className="fine-print">
-                          This changes the live project. Existing saved reports
-                          remain unchanged.
-                        </p>
-                        <button className="button" disabled={saving}>
-                          {active.sourceKey
-                            ? "Review correction"
-                            : "Save refinement"}
-                        </button>
-                      </form>
-                    )}
-                  </>
-                )}
-                <Link
-                  className="button"
-                  to={`${sessionHref(session.id, "chat")}?component=${encodeURIComponent(active.title)}&node=${encodeURIComponent(active.id)}`}
-                >
-                  {active.decision === "selected" ||
-                  active.decision === "developing"
-                    ? "Develop this direction in Chat"
-                    : active.decision === "deferred"
-                      ? "Discuss this deferred component in Chat"
-                      : active.decision === "rejected"
-                        ? "Reconsider this component in Chat"
-                        : "Discuss this component in Chat"}
-                </Link>
-              </>
-            ) : (
-              <p>Select a step to explore it.</p>
+                Undo last canvas change
+              </button>
             )}
-          </aside>
-        </div>
+          </nav>
+          {data.state.additions.some((note) => note.kind !== "idea") && (
+            <details className="solution-project-notes">
+              <summary>Your project notes</summary>
+              {data.state.additions
+                .filter((note) => note.kind !== "idea")
+                .map((note) => (
+                  <div key={note.id}>
+                    <h3>{data.state.edits[note.id]?.title ?? note.title}</h3>
+                    <p>{data.state.edits[note.id]?.notes ?? note.notes}</p>
+                    <button
+                      className="text-link"
+                      disabled={saving || archived}
+                      onClick={() => {
+                        setNoteId(note.id);
+                        setTitle(
+                          data.state.edits[note.id]?.title ?? note.title,
+                        );
+                        setNotes(
+                          data.state.edits[note.id]?.notes ?? note.notes,
+                        );
+                        setKind(note.kind);
+                        setAdding(true);
+                      }}
+                    >
+                      Edit note
+                    </button>
+                  </div>
+                ))}
+            </details>
+          )}
+          <div className="solution-assessment">
+            <p>
+              Keep a separate assessment of your latest project information.
+              Saved versions stay unchanged.
+            </p>
+            <button
+              className="text-link"
+              disabled={busy || saving || !next.readiness.canAssess || archived}
+              onClick={() => void assess().catch((e) => setError(e.message))}
+            >
+              Prepare a current assessment
+            </button>
+          </div>
+        </>
       )}
-      <div className="canvas-actions">
-        <p className="fine-print">
-          {report && !report.stale
-            ? "Your saved assessment already reflects this information. Select or inspect steps without creating duplicate snapshots."
-            : "A new assessment captures current answers and recorded decisions as a separate saved version."}
-        </p>
-        {report && !report.stale ? (
-          <Link className="text-link" to={sessionHref(session.id, "analysis")}>
-            View saved assessment
-          </Link>
-        ) : (
-          <button
-            className="button"
-            disabled={busy || saving || !next.readiness.canAssess || archived}
-            onClick={() => void assess().catch((e) => setError(e.message))}
-          >
-            {report ? "Prepare an updated assessment" : "Prepare an assessment"}
-          </button>
-        )}
-      </div>
-      {confirmFact && (
-        <ConfirmDialog
-          title="Update this project fact?"
-          confirmLabel="Save correction"
-          busyLabel="Saving…"
+      {opened && data && (
+        <SolutionModal
+          title={active?.title ?? "This recommendation has changed"}
+          hero={
+            active && (
+              <SolutionVisual type={active.visual} title={active.title} />
+            )
+          }
+          description={
+            active?.description ??
+            "Your previous selection is retained. Review the current recommendations before proceeding."
+          }
+          onClose={() => setOpened("")}
           busy={saving}
-          error={error}
-          onClose={() => setConfirmFact(false)}
-          onConfirm={() => void correct()}
         >
-          <p>{notes}</p>
-          <p>
-            This updates the guided answer and future guidance. Earlier reports
-            stay unchanged.
-          </p>
-        </ConfirmDialog>
+          {error && (
+            <>
+              <ErrorBox error={error} />
+              <button
+                className="text-link"
+                onClick={() => void reload().catch((e) => setError(e.message))}
+              >
+                Reload latest solutions
+              </button>
+            </>
+          )}
+          {active && (
+            <SolutionDetail
+              key={active.id}
+              solution={active}
+              session={session}
+              state={data.state}
+              busy={saving}
+              archived={archived}
+              save={save}
+              correct={correct}
+              select={() => select(active)}
+              discuss={discuss(active)}
+              download={() => void download(active)}
+              help={() => {
+                if (!active.selected) select(active, true);
+                setOpened("");
+                setReviewing(true);
+              }}
+            />
+          )}
+        </SolutionModal>
+      )}
+      {reviewing && data && session.planId && (
+        <SolutionModal
+          title="Your selected solutions"
+          description="Review the scope you’d like help with. You can change your choices before sending a request."
+          onClose={() => setReviewing(false)}
+          busy={saving}
+        >
+          <RequestReview
+            solutions={selections}
+            planId={session.planId}
+            sessionId={session.id}
+            projectRevision={data.projectRevision}
+            busy={saving}
+            onBusy={setSaving}
+            onSubmitted={reload}
+            unresolved={missingSelections.length > 0}
+            change={(s) => select(s, false)}
+          />
+        </SolutionModal>
+      )}
+      {adding && data && (
+        <SolutionModal
+          title="Add to your project"
+          description="Your idea will be kept as your proposal, ready to explore and refine."
+          onClose={() => setAdding(false)}
+          busy={saving}
+        >
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (
+                await save({
+                  ...data.state,
+                  additions: noteId
+                    ? data.state.additions.map((note) =>
+                        note.id === noteId
+                          ? {
+                              ...note,
+                              kind,
+                              title: title.trim(),
+                              notes: notes.trim(),
+                            }
+                          : note,
+                      )
+                    : [
+                        ...data.state.additions,
+                        {
+                          id: crypto.randomUUID(),
+                          kind,
+                          title: title.trim(),
+                          notes: notes.trim(),
+                        },
+                      ],
+                  edits: noteId
+                    ? {
+                        ...data.state.edits,
+                        [noteId]: {
+                          ...data.state.edits[noteId],
+                          title: title.trim(),
+                          notes: notes.trim(),
+                        },
+                      }
+                    : data.state.edits,
+                })
+              )
+                setAdding(false);
+            }}
+          >
+            <label>
+              What would you like to add?
+              <select
+                value={kind}
+                onChange={(e) => setKind(e.target.value as typeof kind)}
+              >
+                <option value="idea">A proposed solution</option>
+                <option value="constraint">A constraint</option>
+                <option value="decision">A project decision</option>
+              </select>
+            </label>
+            <label>
+              Title
+              <input
+                required
+                minLength={2}
+                maxLength={100}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </label>
+            <label>
+              What should kailor know?
+              <textarea
+                required
+                minLength={2}
+                maxLength={1200}
+                rows={4}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+            </label>
+            <button className="button" disabled={saving}>
+              Save to this project
+            </button>
+            {error && <ErrorBox error={error} />}
+          </form>
+        </SolutionModal>
       )}
     </section>
   );

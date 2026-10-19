@@ -420,7 +420,8 @@ export const ModelName = {
   AiUsageRecord: 'AiUsageRecord',
   AuditEvent: 'AuditEvent',
   AccountInvite: 'AccountInvite',
-  ProjectSource: 'ProjectSource'
+  ProjectSource: 'ProjectSource',
+  ConsultancyRequest: 'ConsultancyRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -436,7 +437,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "adminUser" | "authSession" | "subject" | "plan" | "accountSettings" | "accountPreference" | "conversationSummary" | "planActionProposal" | "discoverySession" | "discoveryAnswer" | "conversationMessage" | "evidence" | "assessment" | "service" | "recommendation" | "costEstimate" | "reportSnapshot" | "scenarioTemplate" | "simulationRun" | "caseIntelligenceRecord" | "aiUsageRecord" | "auditEvent" | "accountInvite" | "projectSource"
+    modelProps: "adminUser" | "authSession" | "subject" | "plan" | "accountSettings" | "accountPreference" | "conversationSummary" | "planActionProposal" | "discoverySession" | "discoveryAnswer" | "conversationMessage" | "evidence" | "assessment" | "service" | "recommendation" | "costEstimate" | "reportSnapshot" | "scenarioTemplate" | "simulationRun" | "caseIntelligenceRecord" | "aiUsageRecord" | "auditEvent" | "accountInvite" | "projectSource" | "consultancyRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2216,6 +2217,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ConsultancyRequest: {
+      payload: Prisma.$ConsultancyRequestPayload<ExtArgs>
+      fields: Prisma.ConsultancyRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ConsultancyRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsultancyRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ConsultancyRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsultancyRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.ConsultancyRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsultancyRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ConsultancyRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsultancyRequestPayload>
+        }
+        findMany: {
+          args: Prisma.ConsultancyRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsultancyRequestPayload>[]
+        }
+        create: {
+          args: Prisma.ConsultancyRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsultancyRequestPayload>
+        }
+        createMany: {
+          args: Prisma.ConsultancyRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ConsultancyRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsultancyRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.ConsultancyRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsultancyRequestPayload>
+        }
+        update: {
+          args: Prisma.ConsultancyRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsultancyRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.ConsultancyRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ConsultancyRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ConsultancyRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsultancyRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.ConsultancyRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsultancyRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.ConsultancyRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateConsultancyRequest>
+        }
+        groupBy: {
+          args: Prisma.ConsultancyRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConsultancyRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ConsultancyRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConsultancyRequestCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2584,6 +2659,21 @@ export const ProjectSourceScalarFieldEnum = {
 export type ProjectSourceScalarFieldEnum = (typeof ProjectSourceScalarFieldEnum)[keyof typeof ProjectSourceScalarFieldEnum]
 
 
+export const ConsultancyRequestScalarFieldEnum = {
+  id: 'id',
+  planId: 'planId',
+  ownerId: 'ownerId',
+  sessionId: 'sessionId',
+  requestKey: 'requestKey',
+  status: 'status',
+  scope: 'scope',
+  notes: 'notes',
+  createdAt: 'createdAt'
+} as const
+
+export type ConsultancyRequestScalarFieldEnum = (typeof ConsultancyRequestScalarFieldEnum)[keyof typeof ConsultancyRequestScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2889,6 +2979,7 @@ export type GlobalOmitConfig = {
   auditEvent?: Prisma.AuditEventOmit
   accountInvite?: Prisma.AccountInviteOmit
   projectSource?: Prisma.ProjectSourceOmit
+  consultancyRequest?: Prisma.ConsultancyRequestOmit
 }
 
 /* Types for Logging */

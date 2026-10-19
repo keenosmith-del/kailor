@@ -1,3 +1,8 @@
+import { projectSolutions } from "../../shared/src/solutions.js";
+import {
+  emptyCanvasState,
+  canvasStateSchema,
+} from "../../shared/src/consulting.js";
 import { operationalPattern, projectRequirements } from "./requirements.js";
 import { operationalRecommendation } from "./operational-consulting.js";
 import { consultingBrief } from "./consulting.js";
@@ -36,20 +41,18 @@ export function recommend(
     projectRequirements(a, states),
     pricing.currency,
   );
-  if (
-    operational &&
+  const operationalSupported =
+    !!operational &&
     decision.situationKnown &&
     decision.objectiveKnown &&
     !decision.conflicts.length &&
-    !decision.unsupported
-  )
-    return [operational];
+    !decision.unsupported;
   if (
     !decision.situationKnown ||
     !decision.objectiveKnown ||
     !decision.directions.length
   )
-    return [];
+    return operationalSupported ? [operational!] : [];
   const confirmed = usableAnswers(a, states);
   a = decision.answers;
   const text = Object.values(confirmed).flat().join(" ");
@@ -57,6 +60,8 @@ export function recommend(
     /affordable|limited|small amount|not complicated|no custom/i.test(text);
   const existingBooking = a.bookingStatus === "existing";
   const explanations: Record<string, string> = {
+    social_presence:
+      "You asked for an Instagram business presence; confirm the account setup, content and ongoing ownership before proceeding.",
     presentation: "You want a more credible presentation of your work.",
     modernization: "You described a problem with an existing website.",
     booking: existingBooking
@@ -84,125 +89,133 @@ export function recommend(
       basis: direction.basis,
     })),
   );
-  return selected.map(({ id, problem, keys, optional = false, basis }) => {
-    const s = services.find((s) => s.id === id)!;
-    const priced =
-      pricing.hourlyRate !== undefined &&
-      s.hoursLow !== null &&
-      s.hoursHigh !== null;
-    return {
-      serviceId: id,
-      problem,
-      solution:
-        id === "booking"
-          ? "Hosted booking service"
-          : id === "integration" && !existingBooking
-            ? "Workflow feasibility and integration review"
-            : s.name,
-      evidence: keys
-        .filter((k) => confirmed[k] !== undefined)
-        .map(
-          (k) =>
-            `${k}: ${Array.isArray(confirmed[k]) ? (confirmed[k] as string[]).join(", ") : confirmed[k]}`,
-        ),
-      benefits: [
-        id === "booking"
-          ? "A shareable booking page may reduce manual appointment messages. Test availability and reminder settings with the selected service."
-          : s.description,
-      ],
-      alternatives:
-        id === "booking" || (existingBooking && id === "integration")
-          ? [
-              "Improve availability and reminders in the current workflow first",
-              "Share a hosted booking link through existing channels; a full website may be unnecessary initially",
-              "Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls",
-              "Add booking to an existing website only if that channel is useful",
-              "Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially",
-            ]
-          : id === "webapp"
+  const standard = selected
+    .filter(
+      ({ id }) =>
+        !operationalSupported || !["integration", "webapp"].includes(id),
+    )
+    .map(({ id, problem, keys, optional = false, basis }) => {
+      const s = services.find((s) => s.id === id)!;
+      const priced =
+        pricing.hourlyRate !== undefined &&
+        s.hoursLow !== null &&
+        s.hoursHigh !== null;
+      return {
+        serviceId: id,
+        problem,
+        solution:
+          id === "booking"
+            ? "Hosted booking service"
+            : id === "integration" && !existingBooking
+              ? "Workflow feasibility and integration review"
+              : s.name,
+        evidence: keys
+          .filter((k) => confirmed[k] !== undefined)
+          .map(
+            (k) =>
+              `${k}: ${Array.isArray(confirmed[k]) ? (confirmed[k] as string[]).join(", ") : confirmed[k]}`,
+          ),
+        benefits: [
+          id === "booking"
+            ? "A shareable booking page may reduce manual appointment messages. Test availability and reminder settings with the selected service."
+            : s.description,
+        ],
+        alternatives:
+          id === "booking" || (existingBooking && id === "integration")
             ? [
-                "Validate the initial workflow with approved templates and existing software",
-                "Prototype a small web application after defining essential users and features",
-                "Native mobile requires evidence of device-specific needs and partner feasibility review",
+                "Improve availability and reminders in the current workflow first",
+                "Share a hosted booking link through existing channels; a full website may be unnecessary initially",
+                "Configure or integrate an existing scheduling provider; compare subscriptions and cancellation controls",
+                "Add booking to an existing website only if that channel is useful",
+                "Custom booking software requires unique needs; greater engineering and maintenance costs are unlikely to be proportionate initially",
               ]
-            : id === "publishing"
+            : id === "webapp"
               ? [
-                  "Use templates and a manual research checklist",
-                  /no AI|do not want AI|don.t want AI|no generative AI/i.test(
-                    text,
-                  )
-                    ? "Reuse approved resource libraries with a human content review checklist"
-                    : "Consider an AI-assisted pilot only after evaluating sources, privacy, accuracy and cost",
+                  "Validate the initial workflow with approved templates and existing software",
+                  "Prototype a small web application after defining essential users and features",
+                  "Native mobile requires evidence of device-specific needs and partner feasibility review",
                 ]
-              : [
-                  "Improve the current process first",
-                  "Use a suitable existing third-party tool; compare subscriptions, data portability and permissions",
-                  "Custom engineering needs a demonstrated gap in existing tools and a maintenance plan",
-                ],
-      complexity: [
-        "webapp",
-        "automation",
-        "publishing",
-        "integration",
-      ].includes(id)
-        ? simple
-          ? "begin with a low-complexity pilot; custom scope requires review"
-          : "requires technical scoping"
-        : "low to moderate, subject to review",
-      dependencies:
-        id === "publishing"
-          ? [
-              "Approved curriculum/templates or sources and content rights",
-              "Human review and approval",
-              "Separate implementation scope; no scheduler or publication is created",
-            ]
-          : id === "webapp"
+              : id === "publishing"
+                ? [
+                    "Use templates and a manual research checklist",
+                    /no AI|do not want AI|don.t want AI|no generative AI/i.test(
+                      text,
+                    )
+                      ? "Reuse approved resource libraries with a human content review checklist"
+                      : "Consider an AI-assisted pilot only after evaluating sources, privacy, accuracy and cost",
+                  ]
+                : [
+                    "Improve the current process first",
+                    "Use a suitable existing third-party tool; compare subscriptions, data portability and permissions",
+                    "Custom engineering needs a demonstrated gap in existing tools and a maintenance plan",
+                  ],
+        complexity: [
+          "webapp",
+          "automation",
+          "publishing",
+          "integration",
+        ].includes(id)
+          ? simple
+            ? "begin with a low-complexity pilot; custom scope requires review"
+            : "requires technical scoping"
+          : "low to moderate, subject to review",
+        dependencies:
+          id === "publishing"
             ? [
-                "Essential user roles and initial acceptance criteria",
-                "Data privacy, template ownership and review workflow",
-                "Hosting, export, maintenance and supported integrations",
+                "Approved curriculum/templates or sources and content rights",
+                "Human review and approval",
+                "Separate implementation scope; no scheduler or publication is created",
               ]
-            : id === "booking" || (existingBooking && id === "integration")
+            : id === "webapp"
               ? [
-                  `${existingBooking ? "Current" : "Selected"} provider permissions and export/integration support`,
-                  "Availability, reminders and cancellation policy",
-                  "Vendor subscription terms and ongoing support",
+                  "Essential user roles and initial acceptance criteria",
+                  "Data privacy, template ownership and review workflow",
+                  "Hosting, export, maintenance and supported integrations",
                 ]
-              : [
-                  "Confirm requirements and ownership",
-                  "Confirm ongoing maintenance, hosting and vendor terms",
-                ],
-      confidence:
-        basis === "interpreted"
-          ? "conditional — interpreted from the cited user description; confirm scope with the consultant"
-          : "conditional — based on self-reported facts; consultant validation required",
-      delivery: s.delivery,
-      nextSteps: [
-        "Review this option with the consultant",
-        "Validate constraints, budget and acceptance criteria",
-        ...(simple
-          ? [
-              "Prioritize a small affordable first step; defer complex enhancements",
-            ]
-          : []),
-        ...(buildContext(confirmed).specialistReview
-          ? [
-              "Specialist domain expertise and delivery capability require review before commitment",
-            ]
-          : []),
-      ],
-      optional,
-      estimate: {
-        status: priced ? "indicative_draft" : "manual_review",
-        currency: pricing.currency,
-        implementationLow: priced ? s.hoursLow! * pricing.hourlyRate! : null,
-        implementationHigh: priced ? s.hoursHigh! * pricing.hourlyRate! : null,
-        recurringStatus: "vendor_quote_required",
-        notes:
-          "Implementation and third-party subscriptions are separate. Obtain a scoped quotation and verify current vendor terms before committing.",
-      },
-    };
-  });
+              : id === "booking" || (existingBooking && id === "integration")
+                ? [
+                    `${existingBooking ? "Current" : "Selected"} provider permissions and export/integration support`,
+                    "Availability, reminders and cancellation policy",
+                    "Vendor subscription terms and ongoing support",
+                  ]
+                : [
+                    "Confirm requirements and ownership",
+                    "Confirm ongoing maintenance, hosting and vendor terms",
+                  ],
+        confidence:
+          basis === "interpreted"
+            ? "conditional — interpreted from the cited user description; confirm scope with the consultant"
+            : "conditional — based on self-reported facts; consultant validation required",
+        delivery: s.delivery,
+        nextSteps: [
+          "Review this option with the consultant",
+          "Validate constraints, budget and acceptance criteria",
+          ...(simple
+            ? [
+                "Prioritize a small affordable first step; defer complex enhancements",
+              ]
+            : []),
+          ...(buildContext(confirmed).specialistReview
+            ? [
+                "Specialist domain expertise and delivery capability require review before commitment",
+              ]
+            : []),
+        ],
+        optional,
+        estimate: {
+          status: priced ? "indicative_draft" : "manual_review",
+          currency: pricing.currency,
+          implementationLow: priced ? s.hoursLow! * pricing.hourlyRate! : null,
+          implementationHigh: priced
+            ? s.hoursHigh! * pricing.hourlyRate!
+            : null,
+          recurringStatus: "vendor_quote_required",
+          notes:
+            "Implementation and third-party subscriptions are separate. Obtain a scoped quotation and verify current vendor terms before committing.",
+        },
+      };
+    });
+  return operationalSupported ? [operational!, ...standard] : standard;
 }
 export function createReport(
   a: Answers,
@@ -232,7 +245,12 @@ export function createReport(
     pricing?.currency,
   );
   if (liveOperational && recommendations.length && readiness.canAssess)
-    recommendations = [liveOperational];
+    recommendations = [
+      liveOperational,
+      ...recommendations.filter(
+        (r) => !["integration", "webapp"].includes(r.serviceId),
+      ),
+    ];
   const matchedCases = matches
     .slice(0, 3)
     .map(
@@ -305,7 +323,7 @@ export function createReport(
       : a.stage === "specific"
         ? "solution"
         : "business";
-  return {
+  const report: Report = {
     consulting,
     presentationVersion: 2,
     assessmentType: type,
@@ -546,4 +564,157 @@ export function createReport(
             },
           ],
   };
+  const parsed = canvasStateSchema.safeParse(workspace);
+  const solutions = projectSolutions(
+    report,
+    parsed.success ? parsed.data : emptyCanvasState(),
+    revision,
+  );
+  const presence = solutions.some(
+    (s) => s.category === "website" || s.category === "social",
+  );
+  if (presence || solutions.some((s) => s.refined)) {
+    for (const solution of solutions) {
+      const direction = consulting.directions.find(
+        (d) => d.id === (solution.recommendationId ?? solution.id),
+      );
+      if (direction)
+        Object.assign(direction, {
+          id: solution.id,
+          title: solution.title,
+          summary: solution.description,
+          why: solution.why,
+          requirements: solution.requirements
+            .filter((r) => r.priority === "essential")
+            .map((r) => r.label),
+          risks: solution.unknowns,
+          firstStep: solution.nextStep,
+          validation: [
+            {
+              kind: "Launch checks",
+              action:
+                solution.category === "website"
+                  ? "Check content accuracy, mobile readability, owner access and enquiry delivery before publishing."
+                  : solution.category === "social"
+                    ? "Verify account access, profile details, image permissions and the website contact link before publishing."
+                    : "Review the changed scope and feasibility before agreeing delivery.",
+            },
+          ],
+        });
+      const r = report.recommendations.find(
+        (r) => r.serviceId === (solution.recommendationId ?? solution.id),
+      );
+      if (r)
+        Object.assign(r, {
+          serviceId: solution.id,
+          solution: solution.title,
+          problem: solution.why,
+          benefits: [solution.description],
+          alternatives: solution.alternatives,
+          dependencies: [
+            ...solution.requirements
+              .filter((r) => r.priority === "essential")
+              .map((r) => r.label),
+            ...solution.unknowns,
+          ],
+          nextSteps: [solution.nextStep],
+        });
+    }
+    consulting.requirements = [
+      ...new Map(
+        solutions.flatMap((s) => s.requirements).map((r) => [r.id, r]),
+      ).values(),
+    ];
+    if (presence) {
+      consulting.relationship =
+        solutions.length > 1 ? "complementary" : undefined;
+      consulting.insights = [
+        {
+          title: "Requested outcomes",
+          summary: solutions.map((s) => s.title).join("; "),
+        },
+        {
+          title: "Launch scope",
+          summary: [
+            ...new Set(
+              solutions.flatMap((s) =>
+                s.requirements
+                  .filter((r) => r.priority === "essential")
+                  .map((r) => r.label),
+              ),
+            ),
+          ].join("; "),
+        },
+        {
+          title: "Deferred scope",
+          summary:
+            [
+              ...new Set(
+                solutions.flatMap((s) =>
+                  s.requirements
+                    .filter((r) => r.priority === "deferred")
+                    .map((r) => r.label),
+                ),
+              ),
+            ].join("; ") || "No deferred capabilities recorded.",
+        },
+      ];
+      consulting.conclusions = solutions.map((s) => `${s.title}: ${s.why}`);
+      for (const d of consulting.directions) {
+        d.continueWhen =
+          "The essential scope, content, ownership and ongoing costs fit the agreed launch needs.";
+        d.stopWhen =
+          "The approach adds capabilities or maintenance commitments outside the agreed scope.";
+      }
+    }
+    consulting.summary = presence
+      ? "Prepare the requested online presence around your content, enquiry channels and maintenance needs. Website and social profiles are complementary deliverables, not competing alternatives."
+      : "Review the current user-refined solutions before agreeing implementation scope.";
+    consulting.unknowns = [...new Set(solutions.flatMap((s) => s.unknowns))];
+    report.sections = [
+      { title: "Executive overview", paragraphs: [consulting.summary] },
+      {
+        title: "Proposed solutions",
+        paragraphs: [
+          ...solutions.map((s) => `${s.title}: ${s.why}`),
+          ...report.recommendations
+            .filter((r) => r.optional)
+            .map(
+              (r) => `Optional supporting setup — ${r.solution}: ${r.problem}`,
+            ),
+        ],
+      },
+      ...solutions.map((s) => ({
+        title: `${s.title} — requirements`,
+        paragraphs: [
+          ...s.requirements.map((r) => `${r.label} (${r.priority})`),
+          ...s.includes,
+        ],
+      })),
+      {
+        title: "Constraints",
+        paragraphs: [...new Set(solutions.flatMap((s) => s.constraints))],
+      },
+      {
+        title: "Implementation approaches",
+        paragraphs: [...new Set(solutions.flatMap((s) => s.alternatives))],
+      },
+      {
+        title: "Practical roadmap",
+        paragraphs: solutions.map((s) => `${s.title}: ${s.nextStep}`),
+      },
+      { title: "Open questions", paragraphs: consulting.unknowns },
+      {
+        title: "Evidence and provenance",
+        paragraphs: [...new Set(consulting.facts.map((f) => f.sourceKey))].map(
+          (key) =>
+            consulting.facts
+              .filter((f) => f.sourceKey === key)
+              .map((f) => f.quote)
+              .join(" "),
+        ),
+      },
+    ].filter((section) => section.paragraphs.length);
+  }
+  return report;
 }

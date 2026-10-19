@@ -1,3 +1,4 @@
+import { solutionRouter } from "./solution-routes.js";
 import { saveCanvas, renameConversation } from "./workspace-service.js";
 import { canvasStateSchema } from "../../shared/src/consulting.js";
 import { remoteEnabled } from "./ai.js";
@@ -19,6 +20,7 @@ import {
 } from "../../shared/src/index.js";
 export const planRouter = Router();
 planRouter.use(sourceRouter);
+planRouter.use(solutionRouter);
 const id = z.uuid();
 const owner = (res: { locals: Record<string, any> }) =>
   String(res.locals.adminId ?? res.locals.guestId);

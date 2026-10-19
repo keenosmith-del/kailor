@@ -67,3 +67,11 @@ AccountSettings stores activePlanId and selection revision. AccountPreference st
 ## Iteration 008 additive fields
 
 AdminUser.role defaults to member. A case-insensitive unique email index prevents case-variant duplicate accounts. AccountInvite holds tokenHash, email, expiresAt, usedAt, createdBy and createdAt; codes are never stored raw. ConversationMessage.hiddenFromTranscript defaults false and is independent from excludedFromContext, since application-action turns can remain visible while excluded from model history. Clearing increments activity revision, retires pending evidence/proposals and invalidates summaries, preserving knowledge revision and immutable reports. The configured-founder preservation helper never creates an account.
+
+## Solution canvas and request snapshots (iteration 018)
+
+Solutions are a current read projection of existing recommendation/direction identities, not a parallel authoritative recommendation table. Requirement priorities and evidence references remain in the existing consulting model. `Plan.canvasState.edits` additionally supports explicitly user-authored scoped capabilities; optional `selections` records selected state, reviewed scope fingerprint and timestamp. Legacy decisions/additions are adapted without rewriting JSON or historical reports.
+
+`ConsultancyRequest` belongs to `Plan`, retains owner/session provenance, a unique retry UUID, server-owned pending status/timestamp, notes and immutable JSON scope. Scope captures selected solution IDs/fingerprints, individual objectives/capabilities/evidence, recorded constraints and project/knowledge revisions. Project ownership, current selection, reconciled scope and optimistic revision are checked at intake. The project foreign key cascades with project deletion. No consultant or implementation is inferred from this record.
+
+The additive `202610170001_solution_requests` migration creates that table/indexes and inserts the explicit Instagram-setup service if missing. Existing sessions, Canvas state and assessment snapshots are preserved. Future commissioned engagements must join project/solution identities to separately accepted immutable scope and authoritative progress records. See [iteration 018](../iterations/018-solution-canvas-rebuild.md).

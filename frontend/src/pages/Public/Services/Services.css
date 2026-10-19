@@ -1,0 +1,82 @@
+.services-index {
+  margin: 0 var(--pub-space);
+  padding: 25px 0;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px 30px;
+}
+.services-index a {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+.service-detail {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 10%;
+  align-items: center;
+  scroll-margin-top: 100px;
+}
+.service-detail:nth-child(even) {
+  background: var(--background-secondary);
+}
+.service-detail h2 {
+  font-size: clamp(43px, 5vw, 75px);
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.service-detail p {
+  color: var(--text-secondary);
+  max-width: 560px;
+}
+.service-detail h3 {
+  font-size: 19px;
+  letter-spacing: -0.025em;
+  margin: 35px 0 15px;
+}
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 25px 0 35px;
+}
+.detail-tags span {
+  padding: 9px 13px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  font-size: 11px;
+}
+.service-detail-art {
+  height: 430px;
+  background: #353a3e;
+  border-radius: 40px;
+  overflow: hidden;
+}
+.service-detail-art .sculpture {
+  width: 100%;
+  height: 100%;
+}
+@media (max-width: 760px) {
+  .service-detail {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .service-detail-art {
+    height: 300px;
+    grid-row: 1;
+    border-radius: 28px;
+  }
+  .services-index {
+    gap: 5px 20px;
+  }
+  .services-index a {
+    font-size: 11px;
+  }
+  .service-detail h2 {
+    font-size: 44px;
+  }
+}

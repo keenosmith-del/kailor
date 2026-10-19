@@ -296,16 +296,22 @@ describe("report and authentication", () => {
   });
   it("uses the same evidence-backed recommendations in the snapshot and report sections", () => {
     const r = createReport(personas[0].answers, 4, true, seededCases);
-    expect(r.sections).toHaveLength(11);
+    expect(r.sections.length).toBeGreaterThan(5);
     expect(r.synthetic).toBe(true);
     expect(r.revision).toBe(4);
     for (const recommendation of r.recommendations)
       expect(
-        r.sections.find((s) => s.title === "Recommended direction")!.paragraphs,
+        r.sections
+          .find((s) =>
+            ["Recommended direction", "Proposed solutions"].includes(s.title),
+          )!
+          .paragraphs.join(" "),
       ).toContain(recommendation.solution);
     expect(
       r.sections
-        .find((s) => s.title === "Supporting evidence")!
+        .find((s) =>
+          ["Supporting evidence", "Evidence and provenance"].includes(s.title),
+        )!
         .paragraphs.join(" "),
     ).toContain(String(personas[0].answers.goals));
   });

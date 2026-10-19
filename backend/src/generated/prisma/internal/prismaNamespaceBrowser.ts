@@ -74,7 +74,8 @@ export const ModelName = {
   AiUsageRecord: 'AiUsageRecord',
   AuditEvent: 'AuditEvent',
   AccountInvite: 'AccountInvite',
-  ProjectSource: 'ProjectSource'
+  ProjectSource: 'ProjectSource',
+  ConsultancyRequest: 'ConsultancyRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -420,6 +421,21 @@ export const ProjectSourceScalarFieldEnum = {
 } as const
 
 export type ProjectSourceScalarFieldEnum = (typeof ProjectSourceScalarFieldEnum)[keyof typeof ProjectSourceScalarFieldEnum]
+
+
+export const ConsultancyRequestScalarFieldEnum = {
+  id: 'id',
+  planId: 'planId',
+  ownerId: 'ownerId',
+  sessionId: 'sessionId',
+  requestKey: 'requestKey',
+  status: 'status',
+  scope: 'scope',
+  notes: 'notes',
+  createdAt: 'createdAt'
+} as const
+
+export type ConsultancyRequestScalarFieldEnum = (typeof ConsultancyRequestScalarFieldEnum)[keyof typeof ConsultancyRequestScalarFieldEnum]
 
 
 export const SortOrder = {

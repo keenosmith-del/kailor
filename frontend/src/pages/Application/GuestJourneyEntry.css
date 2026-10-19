@@ -46,10 +46,10 @@
   font-weight: 400;
 }
 .guest-entry-choices :is(a, button):hover {
-  color: #715c41;
+  color: #5f5f5f;
 }
 .guest-entry :is(a, button, summary):focus-visible {
-  outline: 2px solid #8c7251;
+  outline: 2px solid #757575;
   outline-offset: 4px;
 }
 .guest-entry details {
@@ -71,7 +71,7 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: #302f2a24;
+  background: #2f2f2f24;
   backdrop-filter: blur(2px);
 }
 .guest-confirm {
@@ -135,8 +135,8 @@
   padding: 7px 18px;
   font-size: var(--control-font);
   color: var(--color-charcoal);
-  border: 1px solid #e9e5dc;
-  box-shadow: 0 1px 2px #302f2a08;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 1px 2px #2f2f2f08;
 }
 @media (max-width: 700px), (pointer: coarse) {
   .guest-entry-choices .entry-button {

@@ -1,0 +1,19 @@
+/* Permanent monochrome identity. Legacy names remain aliases for application compatibility. */
+:root {
+  --white: #ffffff;
+  --soft-white: #f7f7f7;
+  --platinum: #e0e0e0;
+  --ash: #bfbfbf;
+  --graphite: #353a3e;
+  --onyx: #222526;
+  --jet-black: #1a1a1a;
+  --text-primary: var(--jet-black);
+  --text-secondary: #656565;
+  --background-primary: var(--white);
+  --background-secondary: var(--soft-white);
+  --border-subtle: var(--platinum);
+  --shadow-soft: 0 10px 35px #00000008;
+  --button-background: var(--onyx);
+  --button-text: var(--white);
+  --focus-ring: var(--graphite);
+}

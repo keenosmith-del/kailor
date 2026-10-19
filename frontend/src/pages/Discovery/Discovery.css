@@ -5,9 +5,9 @@
   gap: 6px;
   padding: 8px 14px;
   min-height: 36px;
-  border: 1px solid #33383e;
+  border: 1px solid #373737;
   border-radius: 100px;
-  background: #33383e;
+  background: #373737;
   color: var(--color-cream);
   font-size: 12px;
   line-height: 1.5;
@@ -38,12 +38,12 @@
     color 0.18s ease;
 }
 .discovery-action {
-  background: #33383e;
-  border-color: #33383e;
+  background: #373737;
+  border-color: #373737;
   color: var(--color-cream);
 }
 .discovery-action:hover:not(:disabled) {
-  background: #484c50;
+  background: #4b4b4b;
 }
 @media (pointer: coarse) {
   .discovery-action {
@@ -114,7 +114,7 @@
     color 0.18s ease;
 }
 .choice.selected {
-  outline: 1px solid #d8cfc0;
+  outline: 1px solid #d0d0d0;
 }
 .choice:has(input:disabled) {
   cursor: not-allowed;
@@ -134,7 +134,7 @@
   color: var(--muted);
 }
 .conversation-link:hover {
-  color: #4c4a44;
+  color: #4a4a4a;
   transform: translateY(-1px) scale(1.015);
 }
 .readiness {
@@ -204,7 +204,7 @@
   }
 }
 .choice:has(input:focus-visible) {
-  outline: 2px solid #9a8974;
+  outline: 2px solid #8b8b8b;
   outline-offset: 3px;
   box-shadow: none;
 }

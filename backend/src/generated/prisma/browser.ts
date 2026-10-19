@@ -137,3 +137,8 @@ export type AccountInvite = Prisma.AccountInviteModel
  *
  */
 export type ProjectSource = Prisma.ProjectSourceModel
+/**
+ * Model ConsultancyRequest
+ *
+ */
+export type ConsultancyRequest = Prisma.ConsultancyRequestModel

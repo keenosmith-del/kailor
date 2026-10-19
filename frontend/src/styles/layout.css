@@ -88,7 +88,7 @@
   font-size: 12px;
 }
 .session-navigation .session-nav-link:hover {
-  color: #4c4a44;
+  color: #4a4a4a;
 }
 .session-navigation .session-nav-link[aria-current],
 .session-navigation .session-nav-link[aria-current]:hover {

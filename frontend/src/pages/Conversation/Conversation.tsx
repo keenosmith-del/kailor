@@ -1,3 +1,7 @@
+import {
+  solutionStatus,
+  type Solution,
+} from "../../../../shared/src/solutions";
 import "./Conversation.css";
 import { useNavigate, useSearchParams } from "react-router";
 import { ArrowUp, Plus } from "lucide-react";
@@ -42,14 +46,17 @@ export function Conversation({
     decision?: string;
     status: string;
   } | null>(null);
+  const [liveSolution, setLiveSolution] = useState<Solution | null>(null);
   const [liveBrief, setLiveBrief] = useState<ConsultingBrief | null>(null);
   useEffect(() => {
     let current = true;
     setLiveBrief(null);
+    setLiveSolution(null);
     setLiveNode(null);
     if (!reportId && (session.answers.length > 1 || component))
       void api<{
         consulting?: ConsultingBrief;
+        solutions?: Solution[];
         graph?: {
           nodes: {
             id: string;
@@ -62,10 +69,21 @@ export function Conversation({
         .then((result) => {
           if (current) {
             setLiveBrief(result.consulting ?? null);
+            const solution = result.solutions?.find(
+              (s) => s.id === params.get("solution"),
+            );
+            setLiveSolution(solution ?? null);
             const node =
               result.graph?.nodes.find((n) => n.id === nodeId) ?? null;
             setLiveNode(node);
-            if (component && node)
+            if (solution)
+              setMessage((old) =>
+                old ===
+                `Help me understand ${component}. What should I verify before choosing it?`
+                  ? `Help me review ${solution.title} and plan the next steps using its current saved scope.`
+                  : old,
+              );
+            else if (component && node)
               setMessage((old) =>
                 old ===
                 `Help me understand ${component}. What should I verify before choosing it?`
@@ -170,34 +188,52 @@ export function Conversation({
     .slice(0, 2)
     .map((d) => ({
       label: ["selected", "developing"].includes(d.status)
-        ? "Develop the selected direction"
+        ? `Plan ${d.title.toLowerCase()}`
         : `Examine ${d.title.toLowerCase()}`,
-      message: `Help me ${["selected", "developing"].includes(d.status) ? "develop the selected direction" : "examine the proposed direction"}: ${d.title} ${reportId ? "from this saved assessment" : "using my current Discovery context"}. Explain its fit, constraints and first practical test.`,
+      message: `Help me ${["selected", "developing"].includes(d.status) ? "plan the selected solution" : "review the proposed solution"}: ${d.title} ${reportId ? "from this saved assessment" : "using my current Discovery context"}. Explain its fit, constraints and first practical test.`,
     }));
-  const suggestions = contextualPrompts?.length
-    ? contextualPrompts
-    : component
-      ? [
-          {
-            label: "Examine this step",
-            message: `Help me examine ${component}: its evidence, uncertainties and smallest next step.`,
-          },
-        ]
-      : session.planProposals?.length
-        ? []
-        : !session.answers.length && !visibleMessages.length
-          ? [
-              {
-                label: "Talk through an idea",
-                message: "I would like to talk through an idea.",
-              },
-              {
-                label: "Find a starting point",
-                message:
-                  "I am not sure where to begin. Help me explore without assuming I have a business idea.",
-              },
-            ]
-          : conversationSuggestions(next, visibleMessages);
+  const solutionPrompts = liveSolution
+    ? [
+        {
+          label: `Review ${liveSolution.title.toLowerCase()} requirements`,
+          message: `Review the current requirements for ${liveSolution.title}, keeping deferred capabilities separate.`,
+        },
+        {
+          label: "Compare implementation approaches",
+          message: `Compare suitable approaches for ${liveSolution.title} against my current constraints.`,
+        },
+        {
+          label: "Plan the next steps",
+          message: `Plan practical next steps for ${liveSolution.title} using its current saved scope.`,
+        },
+      ]
+    : null;
+  const suggestions =
+    solutionPrompts ??
+    (contextualPrompts?.length
+      ? contextualPrompts
+      : component
+        ? [
+            {
+              label: "Examine this step",
+              message: `Help me examine ${component}: its evidence, uncertainties and smallest next step.`,
+            },
+          ]
+        : session.planProposals?.length
+          ? []
+          : !session.answers.length && !visibleMessages.length
+            ? [
+                {
+                  label: "Talk through an idea",
+                  message: "I would like to talk through an idea.",
+                },
+                {
+                  label: "Find a starting point",
+                  message:
+                    "I am not sure where to begin. Help me explore without assuming I have a business idea.",
+                },
+              ]
+            : conversationSuggestions(next, visibleMessages));
   useLayoutEffect(() => {
     const element = history.current;
     if (!element || !shouldAnchor.current) return;
@@ -282,7 +318,11 @@ export function Conversation({
           revision: session.revision,
           message: text,
           mode: "conversation",
-          ...(reportId ? { reportId } : {}),
+          ...(reportId
+            ? { reportId }
+            : liveSolution
+              ? { solutionId: liveSolution.id }
+              : {}),
         });
         await new Promise((resolve) =>
           setTimeout(
@@ -326,7 +366,11 @@ export function Conversation({
           {!reportId && component && (
             <span className="badge">
               Discussing: {component}
-              {liveNode ? ` · ${liveNode.decision ?? liveNode.status}` : ""}
+              {liveSolution
+                ? ` · ${solutionStatus(liveSolution)}`
+                : liveNode
+                  ? ` · ${liveNode.decision ?? liveNode.status}`
+                  : ""}
             </span>
           )}
           <button
@@ -385,24 +429,33 @@ export function Conversation({
                   ? (selectedReport?.consulting?.summary ??
                     "We can compare the assessment's directions, examine what supports them and choose a small next step.")
                   : component
-                    ? "We can examine this step, its assumptions and what you want to do next."
+                    ? `We can review ${component}, its requirements and practical next steps.`
                     : session.answers.length
                       ? "Your Discovery information is here. We can compare possibilities or work through an open decision."
                       : "Hey, welcome. We can start wherever you like — an idea you're considering, something you're struggling with, or absolutely nothing figured out yet. What's on your mind?"}
               </p>
               <div className="suggestions">
-                {suggestions.map((p) => (
-                  <button
-                    key={p.message}
-                    disabled={busy}
-                    onClick={() => {
-                      draft(p.message);
-                      input.current?.focus();
-                    }}
-                  >
-                    {p.label}
-                  </button>
-                ))}
+                {suggestions
+                  .filter(
+                    (p, i, all) =>
+                      all.findIndex(
+                        (x) =>
+                          x.label.trim().toLowerCase() ===
+                          p.label.trim().toLowerCase(),
+                      ) === i,
+                  )
+                  .map((p) => (
+                    <button
+                      key={p.message}
+                      disabled={busy}
+                      onClick={() => {
+                        draft(p.message);
+                        input.current?.focus();
+                      }}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
               </div>
             </div>
           )}
@@ -639,18 +692,27 @@ export function Conversation({
             !pendingMessage &&
             !!next.suggestedPrompts.length && (
               <div className="suggestions">
-                {suggestions.map((p) => (
-                  <button
-                    key={p.message}
-                    disabled={busy}
-                    onClick={() => {
-                      draft(p.message);
-                      input.current?.focus();
-                    }}
-                  >
-                    {p.label}
-                  </button>
-                ))}
+                {suggestions
+                  .filter(
+                    (p, i, all) =>
+                      all.findIndex(
+                        (x) =>
+                          x.label.trim().toLowerCase() ===
+                          p.label.trim().toLowerCase(),
+                      ) === i,
+                  )
+                  .map((p) => (
+                    <button
+                      key={p.message}
+                      disabled={busy}
+                      onClick={() => {
+                        draft(p.message);
+                        input.current?.focus();
+                      }}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
               </div>
             )}
           <div ref={tail} />

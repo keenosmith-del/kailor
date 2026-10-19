@@ -1,3 +1,4 @@
+import { projectIntent } from "../../shared/src/project-intent.js";
 import { projectRequirements } from "./requirements.js";
 import {
   explorationQuestion,
@@ -90,6 +91,17 @@ export function planDiscovery(
     evidence,
     states,
   );
+  const intent = projectIntent(Object.values(a).flat().join(" "));
+  const presenceOnly =
+    decision.directions.some((d) =>
+      ["presentation", "social_presence"].includes(d.id),
+    ) &&
+    !decision.directions.some((d) =>
+      ["application", "booking", "workflow_exploration", "invoices"].includes(
+        d.id,
+      ),
+    ) &&
+    !intent.operational;
   const candidates = definitions.filter((q) => !(q.id in raw));
   const ranking = candidates
     .map((q) => {
@@ -231,6 +243,57 @@ export function planDiscovery(
           "The workflow and capability needs have already been described",
         );
       }
+      if (presenceOnly) {
+        if (
+          [
+            "dataCaptureDetails",
+            "workflowDetails",
+            "reportingDetails",
+            "accessDetails",
+            "firstVersion",
+            "scopeDetails",
+            "currentAlternatives",
+            "bookingDetails",
+            "bookingCapabilities",
+            "contentDetails",
+          ].includes(q.id)
+        )
+          score = 0;
+        if (
+          q.id === "websiteContent" &&
+          knownRequirements.filter((r) =>
+            /services|prices|coverage|enquiries/.test(r.id),
+          ).length >= 2
+        )
+          score = 0;
+        const priorities: Record<string, number> = {
+          branding: 760,
+          launchContent: 740,
+          socialAccount: intent.social ? 720 : 0,
+          budget: 600,
+          timing: 580,
+        };
+        if (q.id in priorities) score = priorities[q.id];
+        if (
+          q.id === "constraints" &&
+          /affordable|maintain|technical experience/i.test(
+            String(a.request ?? a.goals),
+          )
+        )
+          score = 0;
+      }
+      // A skipped operational prompt lowers closely related gaps rather than walking a queue.
+      const recordFamily = [
+        "dataCaptureDetails",
+        "reportingDetails",
+        "accessDetails",
+        "workflowDetails",
+      ];
+      if (
+        recordFamily.includes(q.id) &&
+        recordFamily.some((id) => states[id] === "skipped")
+      )
+        score = Math.min(score, 400);
       return { id: q.id, score, reasons };
     })
     .filter((r) => r.score > 0)
@@ -289,7 +352,7 @@ export function planDiscovery(
   );
   return {
     revision,
-    plannerVersion: "consulting-6",
+    plannerVersion: "consulting-7",
     question,
     active,
     answered: Object.keys(a).filter((k) => states[k] === "answered").length,

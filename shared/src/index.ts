@@ -182,6 +182,7 @@ export const answerInput = mutationSchema
 export const chatInput = mutationSchema
   .extend({
     reportId: z.uuid().optional(),
+    solutionId: z.string().min(1).max(100).optional(),
     message: z.string().trim().min(1).max(4000),
     mode: z.enum(["conversation", "analysis"]).default("conversation"),
   })

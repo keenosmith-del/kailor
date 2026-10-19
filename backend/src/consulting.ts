@@ -91,6 +91,9 @@ const capabilities = [
   },
 ];
 const labels: Record<string, string> = {
+  branding: "Business identity",
+  launchContent: "Available launch content",
+  socialAccount: "Instagram account",
   motivation: "Your goal",
   goals: "Your goal",
   interests: "Interests",
@@ -135,7 +138,7 @@ export function consultingBrief(
     for (const [i, quote] of clauses.entries()) {
       const kind: ConsultingFact["kind"] = /^(?:goals|motivation)$/.test(key)
         ? "goal"
-        : /avoid|limited|low.?risk|cannot|can.t|don.t want|not want|full.time|hours? (?:a|per|each)|\d\s*[–-]\s*\d.*hours/i.test(
+        : /affordable|easy to maintain|useful later|not.*first version|don.t need|do not need|avoid|limited|low.?risk|cannot|can.t|don.t want|not want|full.time|hours? (?:a|per|each)|\d\s*[–-]\s*\d.*hours/i.test(
               quote,
             )
           ? "constraint"

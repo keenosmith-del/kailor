@@ -1,3 +1,4 @@
+import { projectSolutions } from "../../shared/src/solutions.js";
 import { consultingBrief } from "./consulting.js";
 import {
   canvasStateSchema,
@@ -392,7 +393,13 @@ export async function reserveUsage(id: string, mode: string) {
 export async function converse(
   id: string,
   adminId: string,
-  input: { revision: number; message: string; mode: string; reportId?: string },
+  input: {
+    revision: number;
+    message: string;
+    mode: string;
+    reportId?: string;
+    solutionId?: string;
+  },
   forceMock = false,
 ) {
   const s = await getSession(id, adminId);
@@ -469,6 +476,13 @@ export async function converse(
         .map((m) => m.content),
     }),
   );
+  const currentCanvas = await canvas(id, adminId);
+  const currentSolutions = currentCanvas.solutions;
+  if (
+    input.solutionId &&
+    !currentSolutions.some((s) => s.id === input.solutionId)
+  )
+    throw new AppError(404, "not_found", "Solution not found in this project");
   const reservation =
     !forceMock &&
     !applicationTurn &&
@@ -512,17 +526,13 @@ export async function converse(
     input.mode,
     {
       plan: currentPlan,
+      solutions: currentSolutions,
+      solutionId: input.solutionId,
       memory: personalMemory,
       selectedReport,
-      consulting: consultingBrief(
-        answersOf(s),
-        statesOf(s),
-        recommend(answersOf(s), undefined, evidenceOf(s), statesOf(s)),
-        s.plan.canvasState,
-      ),
+      consulting: currentCanvas.consulting,
       recommendations:
-        selectedReport?.recommendations ??
-        recommend(answersOf(s), undefined, evidenceOf(s), statesOf(s)),
+        selectedReport?.recommendations ?? currentCanvas.recommendations,
     },
   );
   if (reservation)
@@ -825,7 +835,7 @@ export async function nextForSession(
   const saved = s.planState as unknown as DiscoveryPlan | null;
   if (
     saved?.revision === s.revision &&
-    saved.plannerVersion === "consulting-6" &&
+    saved.plannerVersion === "consulting-7" &&
     saved.questionStates &&
     saved.completion
   )
@@ -925,7 +935,7 @@ export async function assess(id: string, adminId: string, revision: number) {
     const savedPlan = s.planState as unknown as DiscoveryPlan | null;
     const plan =
       savedPlan?.revision === s.revision &&
-      savedPlan.plannerVersion === "consulting-6"
+      savedPlan.plannerVersion === "consulting-7"
         ? savedPlan
         : await persistPlan(tx, id);
     if (!plan.readiness.canAssess) {
@@ -1100,15 +1110,49 @@ export async function canvas(id: string, adminId: string) {
         label: `you added a ${addition.kind}`,
       });
   }
+  const solutions = projectSolutions(
+    {
+      ...preview,
+      recommendations: readiness.canAssess ? preview.recommendations : [],
+      consulting: readiness.canAssess ? preview.consulting : undefined,
+    },
+    state,
+    s.knowledgeRevision,
+  );
+  const requests = await db.consultancyRequest.findMany({
+    where: { planId: s.planId, ownerId: adminId },
+    orderBy: { createdAt: "desc" },
+    take: 100,
+  });
+  for (const solution of solutions) {
+    const request = requests.find((r) =>
+      (r.scope as unknown as { solutions: { id: string }[] }).solutions.some(
+        (ref) => ref.id === solution.id,
+      ),
+    );
+    if (request)
+      solution.request = {
+        id: request.id,
+        status: request.status,
+        createdAt: request.createdAt.toISOString(),
+        scopeRevision: (
+          request.scope as unknown as {
+            solutions: { id: string; revision: number }[];
+          }
+        ).solutions.find((ref) => ref.id === solution.id)!.revision,
+      };
+  }
   return {
     revision: s.revision,
     readiness,
     source: snapshot && readiness.canAssess ? "snapshot" : "validated-preview",
     projectRevision: s.plan.revision,
+    solutions,
     state: canvasStateSchema.safeParse(s.plan.canvasState).success
       ? canvasStateSchema.parse(s.plan.canvasState)
       : emptyCanvasState(),
     consulting: preview.consulting,
+    recommendations: preview.recommendations,
     graph,
     existing: (evaluateEvidence(answersOf(s), evidenceOf(s), statesOf(s))
       .answers.presence ?? []) as string[],

@@ -40,6 +40,23 @@ export const canvasStateSchema = z
           .object({
             title: z.string().trim().min(2).max(100).optional(),
             notes: z.string().trim().max(1200).optional(),
+            capabilities: z
+              .array(
+                z
+                  .object({
+                    id: z.uuid(),
+                    label: z.string().trim().min(2).max(150),
+                    priority: z.enum([
+                      "essential",
+                      "optional",
+                      "deferred",
+                      "unconfirmed",
+                    ]),
+                  })
+                  .strict(),
+              )
+              .max(30)
+              .optional(),
             priority: z
               .enum(["essential", "optional", "deferred", "unconfirmed"])
               .optional(),
@@ -60,6 +77,19 @@ export const canvasStateSchema = z
         "Too many Canvas refinements",
       )
       .default({}),
+    selections: z
+      .record(
+        z.string().max(100),
+        z
+          .object({
+            selected: z.boolean(),
+            basisRevision: z.number().int().nonnegative(),
+            updatedAt: z.iso.datetime(),
+          })
+          .strict(),
+      )
+      .refine((v) => Object.keys(v).length <= 100, "Too many selections")
+      .optional(),
     additions: z
       .array(
         z
@@ -97,6 +127,7 @@ export type ProjectRequirement = {
   }[];
 };
 export type ConsultingBrief = {
+  relationship?: "complementary" | "alternatives";
   requirements?: ProjectRequirement[];
   insights?: { title: string; summary: string }[];
   approaches?: {

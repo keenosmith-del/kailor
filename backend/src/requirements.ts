@@ -1,3 +1,7 @@
+import {
+  presenceCapabilities,
+  projectIntent,
+} from "../../shared/src/project-intent.js";
 import type { Answers, AnswerStates } from "../../shared/src/index.js";
 import {
   canvasStateSchema,
@@ -8,6 +12,7 @@ import { usableAnswers } from "./input-quality.js";
 
 // Capability identities distinguish related concepts; these are evidence matchers, not vendor claims.
 export const capabilityPatterns = [
+  ...presenceCapabilities,
   [
     "scheduling",
     "Creation and scheduling",
@@ -74,7 +79,7 @@ export const capabilityPatterns = [
   ["quality", "Quality records", /quality (?:control|record|assurance)/i],
 ] as const;
 const explicitPriority = (s: string): RequirementPriority | undefined =>
-  /(?:defer|postpon|can wait|not (?:needed|required)|out of scope|exclud|set aside)/i.test(
+  /(?:defer|postpon|can wait|useful later|not.*(?:first|initial) version|don['’]t need|do not need|not (?:needed|required)|out of scope|exclud|set aside)/i.test(
     s,
   )
     ? "deferred"
@@ -82,7 +87,7 @@ const explicitPriority = (s: string): RequirementPriority | undefined =>
           s,
         )
       ? "optional"
-      : /essential|must|first.phase|first.version|initial.phase|prioriti[sz]|need(?:s|ed)?(?: to)?|require(?:d|ment)/i.test(
+      : /essential|must|first.phase|first.version|initial.phase|prioriti[sz]|want|would like|need(?:s|ed)?(?: to)?|require(?:d|ment)/i.test(
             s,
           )
         ? "essential"
@@ -96,7 +101,13 @@ export function projectRequirements(
   const a = usableAnswers(raw, states);
   const parsed = canvasStateSchema.safeParse(workspace);
   const live = parsed.success ? parsed.data : { edits: {}, additions: [] };
+  const intent = projectIntent(Object.values(a).flat().join(" "));
   const result = new Map<string, ProjectRequirement>();
+  // Refinements are the latest explicit requirement layer, attributed to Canvas.
+  for (const edit of Object.values(live.edits)) {
+    if (!edit.notes || !edit.title) continue;
+    a[`canvas:${edit.title}`] = edit.notes;
+  }
   // Scope answers are the latest explicit prioritisation layer over current descriptions.
   const entries = Object.entries(a).sort(
     ([x, xv], [y, yv]) =>
@@ -134,6 +145,12 @@ export function projectRequirements(
         : (priority ?? sectionPriority);
       let matched = false;
       for (const [id, label, signal] of capabilityPatterns) {
+        if (
+          presenceCapabilities.some(([key]) => key === id) &&
+          !intent.website &&
+          !intent.social
+        )
+          continue;
         if (!signal.test(quote)) continue;
         matched = true;
         const item: ProjectRequirement = {
@@ -191,6 +208,21 @@ export function projectRequirements(
       }
     }
   }
+  for (const edit of Object.values(live.edits))
+    for (const capability of edit.capabilities ?? []) {
+      const existing = [...result.values()].find(
+        (r) => r.label.toLowerCase() === capability.label.toLowerCase(),
+      );
+      if (!existing)
+        result.set(`user-${capability.id}`, {
+          id: `requirement-user-${capability.id}`,
+          label: capability.label,
+          priority: capability.priority,
+          provenance: [
+            { sourceKey: "canvas", quote: capability.label, basis: "explicit" },
+          ],
+        });
+    }
   return [...result.values()].map((item) => {
     const edit = live.edits[item.id];
     if (!edit) return item;
@@ -223,6 +255,8 @@ export function projectRequirements(
 export function operationalPattern(a: Answers) {
   if (!["established", "specific"].includes(String(a.stage))) return null;
   const text = Object.values(a).flat().join(" ");
+  const intent = projectIntent(text);
+  if (intent.prelaunch && !intent.operational) return null;
   // A workflow category needs functional evidence, not an industry name alone.
   const patterns = [
     {

@@ -419,3 +419,131 @@ it("gives Discovery completion separate assessment, continuation, new-project an
       .className,
   ).toContain("conversation-link");
 });
+
+it("acknowledges a saved assessment even while relevant questions remain and allows continued Discovery", async () => {
+  vi.mocked(api).mockResolvedValue({
+    content: {
+      title: "Your assessment",
+      consulting: { summary: "A website and Instagram launch." },
+    },
+  });
+  const followup = {
+    id: "branding",
+    title: "Do you already have a business name and branding?",
+    hint: "Tell us what exists.",
+    type: "text",
+    optional: true,
+  };
+  const props = {
+    ...next,
+    question: followup,
+    active: [stage, followup],
+    readiness: { ...next.readiness, canAssess: true },
+  } as DiscoveryPlan;
+  const { container } = render(
+    <MemoryRouter>
+      <Discovery
+        session={session}
+        next={props}
+        busy={false}
+        ready={true}
+        act={vi.fn()}
+        assess={vi.fn()}
+        restart={vi.fn()}
+      />
+    </MemoryRouter>,
+  );
+  expect(
+    screen.getByRole("link", { name: "Explore your assessment" }),
+  ).toBeTruthy();
+  expect(
+    container.querySelector('img[src="/mascot/other/kailor-smiling.png"]'),
+  ).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Continue discovery" }));
+  await waitFor(() =>
+    expect(screen.getByRole("textbox", { name: followup.title })).toBeTruthy(),
+  );
+});
+it("preserves answers and never displays assessment success after a failed generation", async () => {
+  const props = {
+    ...next,
+    question: null,
+    readiness: { ...next.readiness, canAssess: true },
+  } as DiscoveryPlan;
+  const { container } = render(
+    <MemoryRouter>
+      <Discovery
+        session={session}
+        next={props}
+        busy={false}
+        ready={false}
+        act={vi.fn()}
+        assess={vi.fn().mockRejectedValue(new Error("generation failed"))}
+        restart={vi.fn()}
+      />
+    </MemoryRouter>,
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Prepare assessment" }));
+  await waitFor(() =>
+    expect(
+      screen.getByRole("button", { name: "Prepare assessment" }),
+    ).toBeTruthy(),
+  );
+  expect(
+    screen.queryByRole("link", { name: "Explore your assessment" }),
+  ).toBeNull();
+  expect(
+    container.querySelector('img[src="/mascot/other/kailor-smiling.png"]'),
+  ).toBeNull();
+});
+it("keeps Chat handoff short and offers distinct actions for the current solution", async () => {
+  vi.mocked(api).mockResolvedValue({
+    solutions: [
+      {
+        id: "website",
+        title: "Build a website",
+        description: "A long objective. ".repeat(100),
+        refined: true,
+        source: "recommendation",
+        requirements: [],
+        includes: [],
+        selected: false,
+      },
+    ],
+    graph: { nodes: [] },
+  });
+  render(
+    <MemoryRouter
+      initialEntries={[
+        "/preview/visual-session/chat?solution=website&component=Build+a+website",
+      ]}
+    >
+      <Conversation
+        session={session}
+        next={next}
+        busy={false}
+        ready={false}
+        act={vi.fn()}
+        assess={vi.fn()}
+      />
+    </MemoryRouter>,
+  );
+  await waitFor(() =>
+    expect(
+      (
+        screen.getByRole("textbox", {
+          name: "Your message",
+        }) as HTMLInputElement
+      ).value,
+    ).toBe(
+      "Help me review Build a website and plan the next steps using its current saved scope.",
+    ),
+  );
+  expect(
+    screen.getByRole("button", { name: "Compare implementation approaches" }),
+  ).toBeTruthy();
+  expect(
+    screen.getAllByRole("button", { name: "Plan the next steps" }),
+  ).toHaveLength(1);
+  expect(screen.getByText(/Discussing:.*Refined by you/)).toBeTruthy();
+});

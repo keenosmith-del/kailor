@@ -159,9 +159,9 @@
   margin: 0;
   padding: 9px;
   background: #fff;
-  border: 1px solid #e8e0d530;
+  border: 1px solid #e1e1e130;
   border-radius: 30px;
-  box-shadow: 0 4px 24px #302f2a03;
+  box-shadow: 0 4px 24px #2f2f2f03;
 }
 .application-workspace .chat-form textarea {
   flex: 1;
@@ -271,7 +271,7 @@
 }
 
 .application-workspace .chat-form:focus-within {
-  border-color: rgba(154, 137, 116, 0.28);
+  border-color: rgba(136, 136, 136, 0.28);
 }
 .application-workspace .chat-form textarea:focus-visible {
   outline: none;
@@ -340,7 +340,7 @@
   border: 0;
 }
 .application-workspace .chat-form:focus-within {
-  border-color: #9a89743b;
+  border-color: #8b8b8b3b;
 }
 .application-workspace .chat-form :is(.chat-attach, .chat-send) {
   display: inline-flex;
@@ -360,8 +360,8 @@
   color: var(--muted);
 }
 .application-workspace .chat-form .chat-send {
-  background: #302f2a;
-  color: #fffdf8;
+  background: #2f2f2f;
+  color: #ffffff;
   border-radius: 999px;
   width: 34px;
   height: 34px;
@@ -369,7 +369,7 @@
   margin: 4px;
 }
 .application-workspace .chat-form .chat-send:hover:not(:disabled) {
-  background: #1e1d19;
+  background: #1d1d1d;
 }
 .application-workspace .chat-form .chat-send:disabled {
   opacity: 0.4;
@@ -407,7 +407,7 @@
 }
 
 .application-workspace .chat-form .chat-attach:hover:not(:disabled) {
-  color: #80613b;
+  color: #656565;
   transform: scale(1.06);
 }
 .application-workspace .chat-form .chat-send:hover:not(:disabled) {
@@ -421,7 +421,7 @@
     transform 0.18s;
 }
 .confirm-dialog-actions button:hover:not(:disabled) {
-  color: #80613b;
+  color: #656565;
   transform: translateY(-1px) scale(1.015);
 }
 .confirm-dialog-actions .confirm-dialog-submit:hover:not(:disabled) {

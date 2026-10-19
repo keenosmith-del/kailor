@@ -1,3 +1,4 @@
+import { ConsultancyInbox } from "./components/ConsultancyInbox/ConsultancyInbox";
 import "./Workspace.css";
 import { PlanManager } from "../../components/PlanManager/PlanManager";
 import { ArrowRight } from "lucide-react";
@@ -77,6 +78,7 @@ export function Workspace({ founder = false }: { founder?: boolean }) {
       <h1>Your workspace</h1>
       <ErrorBox error={error} />
       {founder && <InviteForm />}
+      {founder && <ConsultancyInbox />}
       <div className="workspace-grid">
         <PlanManager />
         {founder && (

@@ -22,10 +22,10 @@
 }
 .entry-button--text {
   background: transparent;
-  color: #5f5b54;
+  color: #5b5b5b;
 }
 .entry-button--light {
-  background: #fffefc;
+  background: #ffffff;
   color: var(--color-charcoal);
 }
 .entry-button > img,
@@ -39,7 +39,7 @@
   transition: transform 200ms ease;
 }
 .entry-button:focus-visible {
-  outline: 2px solid #9a8974;
+  outline: 2px solid #8b8b8b;
   outline-offset: 3px;
 }
 .entry-button:disabled {
@@ -55,7 +55,7 @@
   }
   .entry-button--light:not(:disabled):hover {
     background: #fff;
-    color: #4c4a44;
+    color: #4a4a4a;
   }
   .entry-button:not(:disabled):hover > .entry-button__arrow {
     transform: translateX(4px);

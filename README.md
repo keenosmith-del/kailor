@@ -135,3 +135,11 @@ Sign in and Create account now use kai's split-screen authentication styling wit
 ## Consulting intelligence (requested iteration 013)
 
 Operational requirements now retain essential, optional and deferred priorities across reports, Canvas and Chat. Assessments compare suitable existing platform categories with manual improvements and custom engineering, propose a practical pilot and retain explicit decisions. See the [architecture, implementation and executed validation](docs/iterations/017-consulting-intelligence.md). The documentation sequence continues after 016; no migration is required for these backward-compatible report/Canvas fields.
+
+## Solution canvas rebuild (iteration 018)
+
+Canvas now presents visual solutions with centred details, editable requirements, persistent multi-selection, current reasoning PDFs and reviewed combined consultancy intake. Submitted requests persist as pending scope snapshots and are accessible to admins in `/founder`; selection never commissions work. Existing project records, Canvas consumers and historical assessments remain compatible. Apply the additive migration with `npm run db:generate` and `npm run db:migrate` without a reset/reseed. See [architecture, migration and executed validation](docs/iterations/018-solution-canvas-rebuild.md).
+
+## Discovery intelligence and solution reconciliation (requested iteration 014)
+
+Discovery now distinguishes online-presence requests from custom applications, respects exclusions and deferred features, asks relevant launch questions, and acknowledges saved assessments with the existing smiling mascot. Current solution refinements feed Analysis, Chat, reasoning exports and combined consultancy scope while historical reports remain immutable. See the [root-cause audit, behaviour, validation and limitations](docs/iterations/014-discovery-intelligence-and-solution-reconciliation.md). No additional migration is required beyond the existing iteration 018 migration.

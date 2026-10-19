@@ -37,7 +37,7 @@
   overflow-y: auto;
 }
 .plan-dialog::backdrop {
-  background: #e6e0d4;
+  background: #e0e0e0;
 }
 @media (max-width: 700px) {
   .plan-navigation {

@@ -22,10 +22,34 @@ export function localReply(
   history: Turn[] = [],
   suppliedReport?: Report,
   liveConsulting?: import("../../shared/src/consulting.js").ConsultingBrief,
+  solutions?: import("../../shared/src/solutions.js").Solution[],
+  solutionId?: string,
 ) {
   const quality = evaluateInput(message, "", "chat"),
     plan = savedPlan ?? planDiscovery(context);
   const text = message.trim();
+  if (!suppliedReport && solutions?.length) {
+    const matched =
+      solutions.find((s) => s.id === solutionId) ??
+      solutions.find((s) =>
+        message.toLowerCase().includes(s.title.toLowerCase()),
+      ) ??
+      solutions.find((s) => s.refined) ??
+      solutions.find((s) => s.selected) ??
+      solutions[0];
+    if (
+      /feature|capabilit|requirement|scope|what.*add|what.*remove|what.*defer/i.test(
+        text,
+      )
+    ) {
+      return `${matched.title} — current saved scope:\n${matched.requirements.map((r) => `${r.label}: ${r.priority}`).join("\n")}\n${matched.includes.join("; ")}\n\n${matched.why}`;
+    }
+    if (
+      !briefOperational(solutions) &&
+      /next|plan|launch|approach|compar|understand/i.test(text)
+    )
+      return `${matched.title}: ${matched.why}\n\n${matched.nextStep}\n\nApproaches: ${matched.alternatives.join(". ")}`;
+  }
   const currentPlanning =
     /need first|priorit|postpon|current|develop|recorded decision|have.*decided/i.test(
       text,
@@ -367,5 +391,13 @@ export function privacyScanText(value: unknown) {
     /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(item)
       ? "[reference]"
       : item,
+  );
+}
+
+function briefOperational(
+  solutions: import("../../shared/src/solutions.js").Solution[],
+) {
+  return solutions.some(
+    (s) => s.visual === "delivery" || s.id === "integration",
   );
 }

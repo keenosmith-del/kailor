@@ -1,7 +1,8 @@
 @import "tailwindcss";
+@import "./tokens.css";
 @theme {
-  --color-cream: #faf7f0;
-  --color-charcoal: #302f2a;
+  --color-cream: #f7f7f7;
+  --color-charcoal: #222526;
   --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 :root {
@@ -10,17 +11,17 @@
   --page-background: #fafafa;
   background: var(--page-background);
   font-synthesis: none;
-  --paper: #fffdf8;
-  --muted: #77736b;
-  --surface: #fffdf8;
-  --surface-edge: #ebe5da;
+  --paper: var(--white);
+  --muted: var(--text-secondary);
+  --surface: var(--white);
+  --surface-edge: var(--border-subtle);
   --space: clamp(22px, 5vw, 80px);
   --radius: 10px;
   --control-height: 34px;
-  --control-radius: 9px;
+  --control-radius: 999px;
   --control-padding: 7px 12px;
   --control-font: 13px;
-  --surface-hover: #eee9df;
+  --surface-hover: #e9e9e9;
 }
 * {
   box-sizing: border-box;
@@ -85,7 +86,7 @@ strong {
 }
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px #9a897455;
+  box-shadow: 0 0 0 2px #8b8b8b55;
 }
 input:focus-visible,
 textarea:focus-visible,
@@ -94,7 +95,7 @@ select:focus-visible {
   box-shadow: none;
 }
 ::selection {
-  background: #e7decf;
+  background: #dfdfdf;
 }
 .sr-only {
   position: absolute;
@@ -125,7 +126,7 @@ select:focus-visible {
   font-size: 12px;
 }
 .text-link:hover {
-  color: #8c755b;
+  color: #787878;
 }
 .surface-button,
 .button,
@@ -209,7 +210,7 @@ select {
   display: block;
   width: 100%;
   padding: 16px 18px;
-  background: #fffdfa;
+  background: #ffffff;
   border: 0;
   outline: none;
   box-shadow: none;
@@ -225,10 +226,10 @@ textarea:focus,
 select:focus {
   outline: none;
   box-shadow: none;
-  background: #fffdfa;
+  background: #ffffff;
 }
 ::placeholder {
-  color: #aaa294;
+  color: #a3a3a3;
 }
 .quiet-card {
   background: transparent;
@@ -247,7 +248,7 @@ select:focus {
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid #9a8974;
+  outline: 2px solid #8b8b8b;
   outline-offset: 3px;
   box-shadow: none;
 }
@@ -269,12 +270,12 @@ select:focus-visible {
     color 0.18s ease;
 }
 .button.primary {
-  background: #33383e;
-  border-color: #33383e;
+  background: #373737;
+  border-color: #373737;
   color: var(--color-cream);
 }
 .button.primary:hover:not(:disabled) {
-  background: #484c50;
+  background: #4b4b4b;
 }
 .button:hover:not(:disabled),
 .surface-button:hover:not(:disabled) {
@@ -282,7 +283,7 @@ select:focus-visible {
   transform: none;
 }
 .button.primary:hover:not(:disabled) {
-  background: #484c50;
+  background: #4b4b4b;
 }
 .text-link {
   padding: 7px 4px;
@@ -360,4 +361,12 @@ details[open] > summary::before {
   summary::before {
     transition: none;
   }
+}
+
+/* Intentional rounded geometry applies to every existing button, including compact app controls. */
+button {
+  border-radius: var(--control-radius);
+}
+:root button:not([class*="public"]):not(.pub-icon) {
+  border-radius: var(--control-radius);
 }

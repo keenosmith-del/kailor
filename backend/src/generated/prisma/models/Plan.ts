@@ -260,6 +260,7 @@ export type PlanWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Plan"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Plan"> | Date | string
   lastSessionId?: Prisma.StringNullableFilter<"Plan"> | string | null
+  consultancyRequests?: Prisma.ConsultancyRequestListRelationFilter
   sources?: Prisma.ProjectSourceListRelationFilter
   admin?: Prisma.XOR<Prisma.AdminUserScalarRelationFilter, Prisma.AdminUserWhereInput>
   sessions?: Prisma.DiscoverySessionListRelationFilter
@@ -279,6 +280,7 @@ export type PlanOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   lastSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  consultancyRequests?: Prisma.ConsultancyRequestOrderByRelationAggregateInput
   sources?: Prisma.ProjectSourceOrderByRelationAggregateInput
   admin?: Prisma.AdminUserOrderByWithRelationInput
   sessions?: Prisma.DiscoverySessionOrderByRelationAggregateInput
@@ -303,6 +305,7 @@ export type PlanWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Plan"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Plan"> | Date | string
   lastSessionId?: Prisma.StringNullableFilter<"Plan"> | string | null
+  consultancyRequests?: Prisma.ConsultancyRequestListRelationFilter
   sources?: Prisma.ProjectSourceListRelationFilter
   admin?: Prisma.XOR<Prisma.AdminUserScalarRelationFilter, Prisma.AdminUserWhereInput>
   sessions?: Prisma.DiscoverySessionListRelationFilter
@@ -356,6 +359,7 @@ export type PlanCreateInput = {
   creationKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestCreateNestedManyWithoutPlanInput
   sources?: Prisma.ProjectSourceCreateNestedManyWithoutPlanInput
   admin: Prisma.AdminUserCreateNestedOneWithoutPlansInput
   sessions?: Prisma.DiscoverySessionCreateNestedManyWithoutPlanInput
@@ -375,6 +379,7 @@ export type PlanUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   lastSessionId?: string | null
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedCreateNestedManyWithoutPlanInput
   sources?: Prisma.ProjectSourceUncheckedCreateNestedManyWithoutPlanInput
   sessions?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutPlanInput
   selections?: Prisma.AccountSettingsUncheckedCreateNestedManyWithoutActivePlanInput
@@ -390,6 +395,7 @@ export type PlanUpdateInput = {
   creationKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestUpdateManyWithoutPlanNestedInput
   sources?: Prisma.ProjectSourceUpdateManyWithoutPlanNestedInput
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutPlansNestedInput
   sessions?: Prisma.DiscoverySessionUpdateManyWithoutPlanNestedInput
@@ -409,6 +415,7 @@ export type PlanUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedUpdateManyWithoutPlanNestedInput
   sources?: Prisma.ProjectSourceUncheckedUpdateManyWithoutPlanNestedInput
   sessions?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutPlanNestedInput
   selections?: Prisma.AccountSettingsUncheckedUpdateManyWithoutActivePlanNestedInput
@@ -672,6 +679,20 @@ export type PlanUpdateOneRequiredWithoutSourcesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PlanUpdateToOneWithWhereWithoutSourcesInput, Prisma.PlanUpdateWithoutSourcesInput>, Prisma.PlanUncheckedUpdateWithoutSourcesInput>
 }
 
+export type PlanCreateNestedOneWithoutConsultancyRequestsInput = {
+  create?: Prisma.XOR<Prisma.PlanCreateWithoutConsultancyRequestsInput, Prisma.PlanUncheckedCreateWithoutConsultancyRequestsInput>
+  connectOrCreate?: Prisma.PlanCreateOrConnectWithoutConsultancyRequestsInput
+  connect?: Prisma.PlanWhereUniqueInput
+}
+
+export type PlanUpdateOneRequiredWithoutConsultancyRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.PlanCreateWithoutConsultancyRequestsInput, Prisma.PlanUncheckedCreateWithoutConsultancyRequestsInput>
+  connectOrCreate?: Prisma.PlanCreateOrConnectWithoutConsultancyRequestsInput
+  upsert?: Prisma.PlanUpsertWithoutConsultancyRequestsInput
+  connect?: Prisma.PlanWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PlanUpdateToOneWithWhereWithoutConsultancyRequestsInput, Prisma.PlanUpdateWithoutConsultancyRequestsInput>, Prisma.PlanUncheckedUpdateWithoutConsultancyRequestsInput>
+}
+
 export type PlanCreateWithoutAdminInput = {
   canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   id?: string
@@ -682,6 +703,7 @@ export type PlanCreateWithoutAdminInput = {
   creationKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestCreateNestedManyWithoutPlanInput
   sources?: Prisma.ProjectSourceCreateNestedManyWithoutPlanInput
   sessions?: Prisma.DiscoverySessionCreateNestedManyWithoutPlanInput
   lastSession?: Prisma.DiscoverySessionCreateNestedOneWithoutLastForPlansInput
@@ -699,6 +721,7 @@ export type PlanUncheckedCreateWithoutAdminInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   lastSessionId?: string | null
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedCreateNestedManyWithoutPlanInput
   sources?: Prisma.ProjectSourceUncheckedCreateNestedManyWithoutPlanInput
   sessions?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutPlanInput
   selections?: Prisma.AccountSettingsUncheckedCreateNestedManyWithoutActivePlanInput
@@ -757,6 +780,7 @@ export type PlanCreateWithoutSelectionsInput = {
   creationKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestCreateNestedManyWithoutPlanInput
   sources?: Prisma.ProjectSourceCreateNestedManyWithoutPlanInput
   admin: Prisma.AdminUserCreateNestedOneWithoutPlansInput
   sessions?: Prisma.DiscoverySessionCreateNestedManyWithoutPlanInput
@@ -775,6 +799,7 @@ export type PlanUncheckedCreateWithoutSelectionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   lastSessionId?: string | null
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedCreateNestedManyWithoutPlanInput
   sources?: Prisma.ProjectSourceUncheckedCreateNestedManyWithoutPlanInput
   sessions?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutPlanInput
 }
@@ -805,6 +830,7 @@ export type PlanUpdateWithoutSelectionsInput = {
   creationKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestUpdateManyWithoutPlanNestedInput
   sources?: Prisma.ProjectSourceUpdateManyWithoutPlanNestedInput
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutPlansNestedInput
   sessions?: Prisma.DiscoverySessionUpdateManyWithoutPlanNestedInput
@@ -823,6 +849,7 @@ export type PlanUncheckedUpdateWithoutSelectionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedUpdateManyWithoutPlanNestedInput
   sources?: Prisma.ProjectSourceUncheckedUpdateManyWithoutPlanNestedInput
   sessions?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutPlanNestedInput
 }
@@ -837,6 +864,7 @@ export type PlanCreateWithoutSessionsInput = {
   creationKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestCreateNestedManyWithoutPlanInput
   sources?: Prisma.ProjectSourceCreateNestedManyWithoutPlanInput
   admin: Prisma.AdminUserCreateNestedOneWithoutPlansInput
   lastSession?: Prisma.DiscoverySessionCreateNestedOneWithoutLastForPlansInput
@@ -855,6 +883,7 @@ export type PlanUncheckedCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   lastSessionId?: string | null
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedCreateNestedManyWithoutPlanInput
   sources?: Prisma.ProjectSourceUncheckedCreateNestedManyWithoutPlanInput
   selections?: Prisma.AccountSettingsUncheckedCreateNestedManyWithoutActivePlanInput
 }
@@ -874,6 +903,7 @@ export type PlanCreateWithoutLastSessionInput = {
   creationKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestCreateNestedManyWithoutPlanInput
   sources?: Prisma.ProjectSourceCreateNestedManyWithoutPlanInput
   admin: Prisma.AdminUserCreateNestedOneWithoutPlansInput
   sessions?: Prisma.DiscoverySessionCreateNestedManyWithoutPlanInput
@@ -891,6 +921,7 @@ export type PlanUncheckedCreateWithoutLastSessionInput = {
   creationKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedCreateNestedManyWithoutPlanInput
   sources?: Prisma.ProjectSourceUncheckedCreateNestedManyWithoutPlanInput
   sessions?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutPlanInput
   selections?: Prisma.AccountSettingsUncheckedCreateNestedManyWithoutActivePlanInput
@@ -927,6 +958,7 @@ export type PlanUpdateWithoutSessionsInput = {
   creationKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestUpdateManyWithoutPlanNestedInput
   sources?: Prisma.ProjectSourceUpdateManyWithoutPlanNestedInput
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutPlansNestedInput
   lastSession?: Prisma.DiscoverySessionUpdateOneWithoutLastForPlansNestedInput
@@ -945,6 +977,7 @@ export type PlanUncheckedUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedUpdateManyWithoutPlanNestedInput
   sources?: Prisma.ProjectSourceUncheckedUpdateManyWithoutPlanNestedInput
   selections?: Prisma.AccountSettingsUncheckedUpdateManyWithoutActivePlanNestedInput
 }
@@ -975,6 +1008,7 @@ export type PlanCreateWithoutSourcesInput = {
   creationKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestCreateNestedManyWithoutPlanInput
   admin: Prisma.AdminUserCreateNestedOneWithoutPlansInput
   sessions?: Prisma.DiscoverySessionCreateNestedManyWithoutPlanInput
   lastSession?: Prisma.DiscoverySessionCreateNestedOneWithoutLastForPlansInput
@@ -993,6 +1027,7 @@ export type PlanUncheckedCreateWithoutSourcesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   lastSessionId?: string | null
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedCreateNestedManyWithoutPlanInput
   sessions?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutPlanInput
   selections?: Prisma.AccountSettingsUncheckedCreateNestedManyWithoutActivePlanInput
 }
@@ -1023,6 +1058,7 @@ export type PlanUpdateWithoutSourcesInput = {
   creationKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestUpdateManyWithoutPlanNestedInput
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutPlansNestedInput
   sessions?: Prisma.DiscoverySessionUpdateManyWithoutPlanNestedInput
   lastSession?: Prisma.DiscoverySessionUpdateOneWithoutLastForPlansNestedInput
@@ -1041,6 +1077,91 @@ export type PlanUncheckedUpdateWithoutSourcesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedUpdateManyWithoutPlanNestedInput
+  sessions?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutPlanNestedInput
+  selections?: Prisma.AccountSettingsUncheckedUpdateManyWithoutActivePlanNestedInput
+}
+
+export type PlanCreateWithoutConsultancyRequestsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  id?: string
+  title: string
+  description?: string
+  archivedAt?: Date | string | null
+  revision?: number
+  creationKey: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sources?: Prisma.ProjectSourceCreateNestedManyWithoutPlanInput
+  admin: Prisma.AdminUserCreateNestedOneWithoutPlansInput
+  sessions?: Prisma.DiscoverySessionCreateNestedManyWithoutPlanInput
+  lastSession?: Prisma.DiscoverySessionCreateNestedOneWithoutLastForPlansInput
+  selections?: Prisma.AccountSettingsCreateNestedManyWithoutActivePlanInput
+}
+
+export type PlanUncheckedCreateWithoutConsultancyRequestsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  id?: string
+  adminId: string
+  title: string
+  description?: string
+  archivedAt?: Date | string | null
+  revision?: number
+  creationKey: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastSessionId?: string | null
+  sources?: Prisma.ProjectSourceUncheckedCreateNestedManyWithoutPlanInput
+  sessions?: Prisma.DiscoverySessionUncheckedCreateNestedManyWithoutPlanInput
+  selections?: Prisma.AccountSettingsUncheckedCreateNestedManyWithoutActivePlanInput
+}
+
+export type PlanCreateOrConnectWithoutConsultancyRequestsInput = {
+  where: Prisma.PlanWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlanCreateWithoutConsultancyRequestsInput, Prisma.PlanUncheckedCreateWithoutConsultancyRequestsInput>
+}
+
+export type PlanUpsertWithoutConsultancyRequestsInput = {
+  update: Prisma.XOR<Prisma.PlanUpdateWithoutConsultancyRequestsInput, Prisma.PlanUncheckedUpdateWithoutConsultancyRequestsInput>
+  create: Prisma.XOR<Prisma.PlanCreateWithoutConsultancyRequestsInput, Prisma.PlanUncheckedCreateWithoutConsultancyRequestsInput>
+  where?: Prisma.PlanWhereInput
+}
+
+export type PlanUpdateToOneWithWhereWithoutConsultancyRequestsInput = {
+  where?: Prisma.PlanWhereInput
+  data: Prisma.XOR<Prisma.PlanUpdateWithoutConsultancyRequestsInput, Prisma.PlanUncheckedUpdateWithoutConsultancyRequestsInput>
+}
+
+export type PlanUpdateWithoutConsultancyRequestsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  creationKey?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sources?: Prisma.ProjectSourceUpdateManyWithoutPlanNestedInput
+  admin?: Prisma.AdminUserUpdateOneRequiredWithoutPlansNestedInput
+  sessions?: Prisma.DiscoverySessionUpdateManyWithoutPlanNestedInput
+  lastSession?: Prisma.DiscoverySessionUpdateOneWithoutLastForPlansNestedInput
+  selections?: Prisma.AccountSettingsUpdateManyWithoutActivePlanNestedInput
+}
+
+export type PlanUncheckedUpdateWithoutConsultancyRequestsInput = {
+  canvasState?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  adminId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  revision?: Prisma.IntFieldUpdateOperationsInput | number
+  creationKey?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sources?: Prisma.ProjectSourceUncheckedUpdateManyWithoutPlanNestedInput
   sessions?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutPlanNestedInput
   selections?: Prisma.AccountSettingsUncheckedUpdateManyWithoutActivePlanNestedInput
 }
@@ -1068,6 +1189,7 @@ export type PlanUpdateWithoutAdminInput = {
   creationKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestUpdateManyWithoutPlanNestedInput
   sources?: Prisma.ProjectSourceUpdateManyWithoutPlanNestedInput
   sessions?: Prisma.DiscoverySessionUpdateManyWithoutPlanNestedInput
   lastSession?: Prisma.DiscoverySessionUpdateOneWithoutLastForPlansNestedInput
@@ -1085,6 +1207,7 @@ export type PlanUncheckedUpdateWithoutAdminInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedUpdateManyWithoutPlanNestedInput
   sources?: Prisma.ProjectSourceUncheckedUpdateManyWithoutPlanNestedInput
   sessions?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutPlanNestedInput
   selections?: Prisma.AccountSettingsUncheckedUpdateManyWithoutActivePlanNestedInput
@@ -1126,6 +1249,7 @@ export type PlanUpdateWithoutLastSessionInput = {
   creationKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestUpdateManyWithoutPlanNestedInput
   sources?: Prisma.ProjectSourceUpdateManyWithoutPlanNestedInput
   admin?: Prisma.AdminUserUpdateOneRequiredWithoutPlansNestedInput
   sessions?: Prisma.DiscoverySessionUpdateManyWithoutPlanNestedInput
@@ -1143,6 +1267,7 @@ export type PlanUncheckedUpdateWithoutLastSessionInput = {
   creationKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  consultancyRequests?: Prisma.ConsultancyRequestUncheckedUpdateManyWithoutPlanNestedInput
   sources?: Prisma.ProjectSourceUncheckedUpdateManyWithoutPlanNestedInput
   sessions?: Prisma.DiscoverySessionUncheckedUpdateManyWithoutPlanNestedInput
   selections?: Prisma.AccountSettingsUncheckedUpdateManyWithoutActivePlanNestedInput
@@ -1167,12 +1292,14 @@ export type PlanUncheckedUpdateManyWithoutLastSessionInput = {
  */
 
 export type PlanCountOutputType = {
+  consultancyRequests: number
   sources: number
   sessions: number
   selections: number
 }
 
 export type PlanCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  consultancyRequests?: boolean | PlanCountOutputTypeCountConsultancyRequestsArgs
   sources?: boolean | PlanCountOutputTypeCountSourcesArgs
   sessions?: boolean | PlanCountOutputTypeCountSessionsArgs
   selections?: boolean | PlanCountOutputTypeCountSelectionsArgs
@@ -1186,6 +1313,13 @@ export type PlanCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the PlanCountOutputType
    */
   select?: Prisma.PlanCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * PlanCountOutputType without action
+ */
+export type PlanCountOutputTypeCountConsultancyRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConsultancyRequestWhereInput
 }
 
 /**
@@ -1222,6 +1356,7 @@ export type PlanSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   lastSessionId?: boolean
+  consultancyRequests?: boolean | Prisma.Plan$consultancyRequestsArgs<ExtArgs>
   sources?: boolean | Prisma.Plan$sourcesArgs<ExtArgs>
   admin?: boolean | Prisma.AdminUserDefaultArgs<ExtArgs>
   sessions?: boolean | Prisma.Plan$sessionsArgs<ExtArgs>
@@ -1278,6 +1413,7 @@ export type PlanSelectScalar = {
 
 export type PlanOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"canvasState" | "id" | "adminId" | "title" | "description" | "archivedAt" | "revision" | "creationKey" | "createdAt" | "updatedAt" | "lastSessionId", ExtArgs["result"]["plan"]>
 export type PlanInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  consultancyRequests?: boolean | Prisma.Plan$consultancyRequestsArgs<ExtArgs>
   sources?: boolean | Prisma.Plan$sourcesArgs<ExtArgs>
   admin?: boolean | Prisma.AdminUserDefaultArgs<ExtArgs>
   sessions?: boolean | Prisma.Plan$sessionsArgs<ExtArgs>
@@ -1297,6 +1433,7 @@ export type PlanIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $PlanPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Plan"
   objects: {
+    consultancyRequests: Prisma.$ConsultancyRequestPayload<ExtArgs>[]
     sources: Prisma.$ProjectSourcePayload<ExtArgs>[]
     admin: Prisma.$AdminUserPayload<ExtArgs>
     sessions: Prisma.$DiscoverySessionPayload<ExtArgs>[]
@@ -1709,6 +1846,7 @@ readonly fields: PlanFieldRefs;
  */
 export interface Prisma__PlanClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  consultancyRequests<T extends Prisma.Plan$consultancyRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Plan$consultancyRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConsultancyRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sources<T extends Prisma.Plan$sourcesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Plan$sourcesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectSourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   admin<T extends Prisma.AdminUserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUserDefaultArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   sessions<T extends Prisma.Plan$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Plan$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DiscoverySessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2152,6 +2290,30 @@ export type PlanDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Plans to delete.
    */
   limit?: number
+}
+
+/**
+ * Plan.consultancyRequests
+ */
+export type Plan$consultancyRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ConsultancyRequest
+   */
+  select?: Prisma.ConsultancyRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ConsultancyRequest
+   */
+  omit?: Prisma.ConsultancyRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ConsultancyRequestInclude<ExtArgs> | null
+  where?: Prisma.ConsultancyRequestWhereInput
+  orderBy?: Prisma.ConsultancyRequestOrderByWithRelationInput | Prisma.ConsultancyRequestOrderByWithRelationInput[]
+  cursor?: Prisma.ConsultancyRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConsultancyRequestScalarFieldEnum | Prisma.ConsultancyRequestScalarFieldEnum[]
 }
 
 /**

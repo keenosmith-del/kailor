@@ -24,7 +24,10 @@ export function ConsultingReport({
       ? {
           starting: "Requirements and context",
           directions: "Proposed solution components",
-          experiment: "A first feasibility check",
+          experiment:
+            brief.relationship === "complementary"
+              ? "Practical launch steps"
+              : "A first feasibility check",
         }
       : report.assessmentType === "business"
         ? {
@@ -157,15 +160,16 @@ export function ConsultingReport({
       <section id={`${prefix}-directions`}>
         <div className="consulting-section-heading">
           <h2>{wording.directions}</h2>
-          {brief.directions.length > 1 && (
-            <button
-              className="text-link"
-              aria-expanded={compare}
-              onClick={() => setCompare((v) => !v)}
-            >
-              {compare ? "Close comparison" : "Compare possibilities"}
-            </button>
-          )}
+          {brief.directions.length > 1 &&
+            brief.relationship !== "complementary" && (
+              <button
+                className="text-link"
+                aria-expanded={compare}
+                onClick={() => setCompare((v) => !v)}
+              >
+                {compare ? "Close comparison" : "Compare possibilities"}
+              </button>
+            )}
         </div>
         <div className="direction-workspace">
           <div

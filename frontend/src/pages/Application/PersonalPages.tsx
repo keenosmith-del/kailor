@@ -153,7 +153,11 @@ export function AccountPage({
         .then((s) => setGuestPlanId(s.planId))
         .catch((e) => setError(errorMessage(e)));
   }, [guest, id]);
-  const returnTo = encodeURIComponent(`/preview/${id}/account`);
+  const resume =
+    new URLSearchParams(window.location.search).get("resume") === "consultancy";
+  const returnTo = encodeURIComponent(
+    `/preview/${id}/account${resume ? "?resume=consultancy" : ""}`,
+  );
   async function transfer() {
     if (!consent || !guestPlanId || busy) return;
     setBusy(true);
@@ -164,7 +168,10 @@ export function AccountPage({
         "POST",
         { consent: true, transferKey, planId: guestPlanId },
       );
-      navigate(`/app/${result.sessionId}/chat`, { replace: true });
+      navigate(
+        `/app/${result.sessionId}/${resume ? "canvas?resume=consultancy" : "chat"}`,
+        { replace: true },
+      );
     } catch (e) {
       setError(errorMessage(e));
     } finally {

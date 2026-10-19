@@ -1,3 +1,13 @@
+# Current visual identity — public website redesign, 19 October 2026
+
+The complete public website and shared application baseline now use the approved **strict monochrome** identity. White dominates; soft white, platinum, ash, graphite, onyx and jet black provide hierarchy. Every button is rounded. Helvetica Neue / Helvetica / Arial remains the typeface. Old cream/beige/coloured accents are deprecated, including the exceptions described in the historical notes below.
+
+See [Public website implementation and editing guide](PUBLIC_WEBSITE.md) for routes, components, media replacement, animation controls and typography. See [Launch review](../deployment/PUBLIC_WEBSITE_LAUNCH.md) for access and hosting decisions. Shared tokens live in `frontend/src/styles/tokens.css`; compatibility aliases remain in `global.css`.
+
+The compact application layout, sidebar, chat, Discovery, project isolation and interactions remain in place. Historical notes below describe earlier decisions and should not be used to restore old warm colours. Retain their useful behavioural guidance where compatible with the newer brief.
+
+---
+
 # kailor visual style
 
 This is the user's preferred visual direction, established through the October 2026 refinements. Use it as the default reference for future kailor interface changes. It is a living baseline: later explicit adjustments take priority. Update this document when a new preference is agreed.

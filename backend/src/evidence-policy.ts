@@ -1,3 +1,4 @@
+import { projectIntent } from "../../shared/src/project-intent.js";
 import type {
   Answers,
   AnswerStates,
@@ -82,7 +83,30 @@ export function evaluateEvidence(
         limitations,
       });
   };
+  const requested = (pattern: RegExp) =>
+    Object.values(raw)
+      .flatMap((v) => String(v).split(/\n+|(?<=[.!?;])\s+/))
+      .some(
+        (c) =>
+          pattern.test(c) &&
+          !/\b(?:don['’]t|do not|not|never) (?:want|need)|already (?:have|use)|might|maybe|hypothetical/i.test(
+            c,
+          ),
+      );
+  const websiteRequested = requested(
+    /(?:need|want|would like|build|set up).{0,120}\bwebsite\b/i,
+  );
+  if (
+    requested(
+      /(?:need|want|would like|set(?:ting)? up|create).{0,160}\binstagram\b/i,
+    ) &&
+    !(Array.isArray(a.presence) && a.presence.includes("instagram"))
+  )
+    add("social_presence", ["instagram"], sourceKeys(/instagram/i), [
+      "Confirm account ownership, business profile details and access before setup",
+    ]);
   const presentation =
+    websiteRequested ||
     problems.includes("credibility") ||
     /portfolio|showcase|professional presence|credible gallery|present.*work|website for.*(?:photography|business|work|offering)/i.test(
       text,
@@ -111,10 +135,10 @@ export function evaluateEvidence(
     add(
       "presentation",
       services,
-      sourceKeys(
-        /portfolio|professional|credib|gallery|showcase|website for/i,
-        ["problems", "goals"],
-      ),
+      sourceKeys(/portfolio|professional|credib|gallery|showcase|website/i, [
+        "problems",
+        "goals",
+      ]),
     );
   }
   if (
@@ -126,10 +150,17 @@ export function evaluateEvidence(
   )
     add("modernization", ["modernization"], ["website", "problems"]);
   const booking =
+    requested(
+      /(?:need|want|would like).{0,100}(?:online booking|booking system|appointment system)/i,
+    ) ||
     /manual bookings?|bookings? manually|appointments? (?:through|via)|easier.*book|missed.*appointments?|(?:booking|appointment|customer).*reminder|cancellations?/i.test(
       text,
     );
-  if ((problems.includes("booking") || booking) && booking)
+  if (
+    (problems.includes("booking") || booking) &&
+    booking &&
+    !projectIntent(text).deferredBooking
+  )
     add(
       "booking",
       [a.bookingStatus === "existing" ? "integration" : "booking"],
@@ -171,7 +202,9 @@ export function evaluateEvidence(
         ),
     )
     .join(". ");
+  const intent = projectIntent(Object.values(raw).flat().join(" "));
   const application =
+    !intent.excludedApplication &&
     !!a.request &&
     /(?:allows?|schedule|create|record|manage|upload|templates?|draft|approv|publishing|export|to [\p{L}]+ [\p{L}]+)(?!.*every feature)/iu.test(
       requestedScope,

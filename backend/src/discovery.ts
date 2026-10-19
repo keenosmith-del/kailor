@@ -276,6 +276,27 @@ export const questions: Question[] = [
     type: "text",
     optional: true,
   },
+  {
+    id: "branding",
+    title: "Do you already have a business name and branding?",
+    hint: "A name, logo or existing visual identity; it is fine if these are still open.",
+    type: "text",
+    optional: true,
+  },
+  {
+    id: "launchContent",
+    title: "Do you have photographs and service descriptions ready?",
+    hint: "Tell us what exists and what still needs preparing.",
+    type: "text",
+    optional: true,
+  },
+  {
+    id: "socialAccount",
+    title: "Is your Instagram business page new or already established?",
+    hint: "Account ownership and access will need confirming before setup.",
+    type: "text",
+    optional: true,
+  },
   ...explorationQuestions,
   ...contextualQuestions,
   {
@@ -292,6 +313,10 @@ export const questions: Question[] = [
   },
 ];
 export function relevant(q: Question, a: Answers) {
+  if (["branding", "launchContent", "socialAccount"].includes(q.id))
+    return /(?:want|need|like|build|set up).{0,160}(?:website|instagram)/i.test(
+      Object.values(a).flat().join(" "),
+    );
   if (explorationKeys.includes(q.id)) return a.stage === "uncertain";
   if (q.id === "scopeDetails" && a.appPreference === "declined") return false;
   return (
@@ -346,6 +371,9 @@ export function nextQuestion(a: Answers) {
       (q) =>
         ![
           ...contextualQuestions.map((q) => q.id),
+          "branding",
+          "launchContent",
+          "socialAccount",
           "appPreference",
           "scopeDetails",
           "workflowDetails",

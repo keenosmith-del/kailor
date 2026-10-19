@@ -41,6 +41,8 @@ export interface AiProvider {
       recommendations?: Recommendation[];
       memory?: PersonalMemory;
       selectedReport?: Report;
+      solutionId?: string;
+      solutions?: import("../../shared/src/solutions.js").Solution[];
       consulting?: import("../../shared/src/consulting.js").ConsultingBrief;
     },
   ): Promise<ChatOutput>;
@@ -57,6 +59,8 @@ export class MockProvider implements AiProvider {
       recommendations?: Recommendation[];
       memory?: PersonalMemory;
       selectedReport?: Report;
+      solutionId?: string;
+      solutions?: import("../../shared/src/solutions.js").Solution[];
       consulting?: import("../../shared/src/consulting.js").ConsultingBrief;
     },
   ): Promise<ChatOutput> {
@@ -105,6 +109,8 @@ export class MockProvider implements AiProvider {
       ],
       knowledge?.selectedReport,
       knowledge?.consulting,
+      knowledge?.solutions,
+      knowledge?.solutionId,
     );
     if (
       knowledge?.memory?.preferences.some(
@@ -148,6 +154,8 @@ export class CloudflareProvider implements AiProvider {
       recommendations?: Recommendation[];
       memory?: PersonalMemory;
       selectedReport?: Report;
+      solutionId?: string;
+      solutions?: import("../../shared/src/solutions.js").Solution[];
       consulting?: import("../../shared/src/consulting.js").ConsultingBrief;
     },
   ) {
@@ -207,6 +215,8 @@ export class CloudflareProvider implements AiProvider {
                   question: h.question,
                   reason: h.reason,
                 })),
+                currentSolutionId: knowledge?.solutionId,
+                currentSolutions: knowledge?.solutions,
                 consultingGuidance: consultingContext(
                   knowledge?.consulting ?? consultingBrief(minimized),
                 ),
@@ -287,6 +297,8 @@ export async function inferSafely(
     recommendations?: Recommendation[];
     memory?: PersonalMemory;
     selectedReport?: Report;
+    solutionId?: string;
+    solutions?: import("../../shared/src/solutions.js").Solution[];
     consulting?: import("../../shared/src/consulting.js").ConsultingBrief;
   },
 ) {
@@ -345,6 +357,8 @@ async function validatedInference(
     recommendations?: Recommendation[];
     memory?: PersonalMemory;
     selectedReport?: Report;
+    solutionId?: string;
+    solutions?: import("../../shared/src/solutions.js").Solution[];
     consulting?: import("../../shared/src/consulting.js").ConsultingBrief;
   },
 ) {

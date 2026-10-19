@@ -88,3 +88,22 @@ export async function uploadSource(planId: string, file: File) {
   }
   return response.json();
 }
+
+export async function downloadReasoning(sessionId: string, solutionId: string) {
+  const response = await fetch(
+    endpoint(
+      `/sessions/${sessionId}/solutions/${encodeURIComponent(solutionId)}/reasoning`,
+    ),
+    { credentials: "same-origin" },
+  );
+  if (!response.ok)
+    throw new Error(
+      "Could not download this solution explanation. Reload the canvas and try again.",
+    );
+  const url = URL.createObjectURL(await response.blob());
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "kailor-solution-reasoning.pdf";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}

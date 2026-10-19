@@ -34,6 +34,7 @@ model Subject {
 }
 model Plan {
   canvasState Json?
+  consultancyRequests ConsultancyRequest[]
   sources ProjectSource[]
   id String @id @default(uuid())
   adminId String
@@ -305,4 +306,20 @@ model ProjectSource {
   status String
   createdAt DateTime @default(now())
   @@index([planId, createdAt])
+}
+
+// Scope is an immutable snapshot; requests never commission work.
+model ConsultancyRequest {
+  id String @id @default(uuid())
+  planId String
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  ownerId String
+  sessionId String
+  requestKey String @unique
+  status String @default("pending")
+  scope Json
+  notes String
+  createdAt DateTime @default(now())
+  @@index([ownerId, createdAt])
+  @@index([status, createdAt])
 }

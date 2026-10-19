@@ -1,3 +1,4 @@
+import { projectIntent } from "../../shared/src/project-intent.js";
 import type {
   Answers,
   AnswerStates,
@@ -84,6 +85,16 @@ export function contextualStatements(
             .filter(
               ([id, pattern]) =>
                 pattern.test(text) &&
+                !(
+                  id === "application" &&
+                  projectIntent(text).excludedApplication
+                ) &&
+                !(
+                  id === "data_capture" &&
+                  /contact.form/i.test(text) &&
+                  !/record|capture|inspect|data entry/i.test(text)
+                ) &&
+                !(id === "scheduling" && projectIntent(text).deferredBooking) &&
                 !(
                   id === "offline" &&
                   /(?:don.t|do not|no longer) (?:want|need).*offline|(?:online.only|not offline)/i.test(

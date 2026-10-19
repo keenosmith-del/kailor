@@ -1,5 +1,12 @@
 export const services = [
   {
+    id: "instagram",
+    name: "Set up an Instagram business page",
+    delivery: "in-house",
+    description:
+      "Establish the business profile you requested, with account ownership and content responsibilities agreed first.",
+  },
+  {
     id: "website",
     name: "Professional website",
     delivery: "in-house",
