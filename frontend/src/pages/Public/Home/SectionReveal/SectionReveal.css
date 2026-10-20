@@ -1,0 +1,20 @@
+.section-reveal,
+.section-reveal__scroll,
+.section-reveal__entrance {
+  position: relative;
+  width: 100%;
+}
+
+/*
+  Do not add overflow: hidden, clip or auto here.
+  Service panels rely on position: sticky.
+*/
+
+@media (prefers-reduced-motion: reduce) {
+  .section-reveal,
+  .section-reveal__scroll,
+  .section-reveal__entrance {
+    opacity: 1;
+    transition: none;
+  }
+}

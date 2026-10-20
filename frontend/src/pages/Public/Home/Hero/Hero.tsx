@@ -41,7 +41,7 @@ export function Hero() {
         <h1 id="hero-title">
           Technology that
           <br />
-          works for you.
+          works for you
         </h1>
 
         <p>

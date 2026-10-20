@@ -1,15 +1,12 @@
 .home-services {
-  padding-top: 20px;
-  padding-bottom: 90px;
+  padding-top: 30px;
+  padding-bottom: 100px;
+  background: #ffffff;
 }
-.home-services > h2 {
-  margin-bottom: 70px;
-}
+
 @media (max-width: 760px) {
   .home-services {
-    padding-top: 35px;
-  }
-  .home-services > h2 {
-    margin-bottom: 40px;
+    padding-top: 20px;
+    padding-bottom: 70px;
   }
 }

@@ -1,13 +1,4 @@
-import { useRef } from "react";
 import { Link } from "react-router";
-import { ArrowUpRight } from "lucide-react";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "motion/react";
-
 import "./Introduction.css";
 
 const statistics = [
@@ -15,136 +6,97 @@ const statistics = [
     label: "Engineering experience",
     value: "6+",
     description:
-      "Years of hands-on experience across software engineering and technology.",
-    featured: true,
+      "Years of experience spanning software development, cloud technology and intelligent systems.",
   },
   {
-    label: "Connected expertise",
+    label: "Technical disciplines",
     value: "05",
     description:
-      "Service disciplines brought together around your requirements.",
-    featured: false,
+      "Connected areas of expertise, from consultancy and software to AI, automation and cloud.",
   },
   {
-    label: "Ways to begin",
+    label: "Starting points",
     value: "03",
     description:
-      "Starting points, from a new idea to a specific technical challenge.",
-    featured: false,
+      "Whether you're starting, improving or building, there's a way to begin.",
   },
 ];
 
 export function Introduction() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotion();
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const opacity = useTransform(
-    scrollYProgress,
-    [0, 0.18, 0.82, 1],
-    [0, 1, 1, 0],
-  );
-
-  const translateY = useTransform(
-    scrollYProgress,
-    [0, 0.18, 0.82, 1],
-    [35, 0, 0, -20],
-  );
-
   return (
     <section
-      ref={sectionRef}
       className="public-section home-introduction"
       id="introduction"
       aria-labelledby="introduction-title"
     >
-      <motion.div
-        className="introduction-layout"
-        style={{
-          opacity: reducedMotion ? 1 : opacity,
-          y: reducedMotion ? 0 : translateY,
-        }}
-      >
+      <div className="introduction-layout">
         <div className="introduction-left">
-          <div className="introduction-heading">
-            <span className="introduction-eyebrow">
+          <div>
+            <p className="introduction-eyebrow">
               Independent thinking. Connected expertise.
-            </span>
+            </p>
 
             <h2 id="introduction-title">
               Why
               <br />
-              kailor.
+              kailor
+              <span className="kailor-round-dot" aria-hidden="true" />
             </h2>
 
             <div className="introduction-disciplines">
+              <span>Technology consultancy</span>
               <span>Software engineering</span>
-              <span>Artificial intelligence</span>
-              <span>Automation and cloud</span>
-              <span>Technology consulting</span>
+              <span>Artificial intelligence and automation</span>
+              <span>Cloud infrastructure</span>
             </div>
           </div>
 
           <div className="introduction-left-bottom">
             <p>
-              One place to explore the problem, understand your options and work
-              towards the right solution.
+              One place to understand the challenge, identify the opportunity
+              and build something that makes a difference.
             </p>
 
             <Link className="introduction-link" to="/about">
-              More about kailor
+              Discover kailor
             </Link>
           </div>
         </div>
 
         <div className="introduction-right">
           <div className="introduction-statement">
-            <h3>
-              Good ideas deserve
-              <br />
-              more than guesswork.
-            </h3>
+            <h3>Technology should move your business forward.</h3>
 
             <p>
-              From your first business idea to an established operation ready
-              for something better, kailor brings consultancy, engineering and
-              intelligent technology together to help you move forward with
-              purpose.
+              kailor combines practical business consultancy with hands-on
+              software, AI and cloud engineering. We help individuals,
+              entrepreneurs and established organisations turn ideas,
+              operational challenges and technical requirements into considered
+              solutions.
             </p>
           </div>
 
           <div className="introduction-statistics">
-            {statistics.map((stat) => (
+            {statistics.map((stat, index) => (
               <article
                 key={stat.label}
-                className={`introduction-stat${
-                  stat.featured ? " introduction-stat--featured" : ""
+                className={`introduction-stat ${
+                  index === 0 ? "introduction-stat--featured" : ""
                 }`}
               >
-                <span className="introduction-stat-label">
-                  <span
-                    className="introduction-stat-marker"
-                    aria-hidden="true"
-                  />
-                  {stat.label}
-                </span>
+                <span className="introduction-stat-label">{stat.label}</span>
 
                 <div className="introduction-stat-bottom">
                   <strong className="introduction-stat-value">
                     {stat.value}
                   </strong>
-
                   <p>{stat.description}</p>
                 </div>
               </article>
             ))}
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
