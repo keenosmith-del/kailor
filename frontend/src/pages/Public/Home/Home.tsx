@@ -1,10 +1,8 @@
-
 import { Hero } from "./Hero/Hero";
 import { Introduction } from "./Introduction/Introduction";
 import { ServicesSection } from "./ServicesSection/ServicesSection";
-import { ClientJourneys } from "./ClientJourneys/ClientJourneys";
 import { Conversation } from "./Conversation/Conversation";
-import { Process } from "./Process/Process";
+import { Collaboration } from "./Collaboration/Collaboration";
 import { Intelligence } from "./Intelligence/Intelligence";
 import { Insights } from "./Insights/Insights";
 import { SelectedWork } from "./SelectedWork/SelectedWork";
@@ -30,15 +28,11 @@ export default function Home() {
       </SectionReveal>
 
       <SectionReveal>
-        <ClientJourneys />
-      </SectionReveal>
-
-      <SectionReveal>
         <Conversation />
       </SectionReveal>
 
       <SectionReveal>
-        <Process />
+        <Collaboration />
       </SectionReveal>
 
       <SectionReveal>

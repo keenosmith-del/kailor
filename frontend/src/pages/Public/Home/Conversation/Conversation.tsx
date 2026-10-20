@@ -1,30 +1,29 @@
-import { Link } from "react-router";
-import { ArrowUpRight } from "lucide-react";
 import { ConversationVisual } from "../../../../components/public/ConversationVisual/ConversationVisual";
-import { MediaSection } from "../../../../components/public/MediaSection/MediaSection";
-import { media } from "../../media";
 import "./Conversation.css";
+
 export function Conversation() {
   return (
-    <section className="public-section home-conversation" id="conversation">
+    <section
+      className="public-section home-conversation"
+      id="conversation"
+      aria-labelledby="conversation-title"
+    >
       <div className="conversation-intro">
-        <span>A conversation with kailor</span>
-        <h2>
-          Start with
+        <h2 id="conversation-title">
+          It starts with
           <br />
-          what's <span>on your mind.</span>
+          a conversation
+          <span className="kailor-round-dot" aria-hidden="true" />
         </h2>
+
         <p>
-          You don't need a technical brief to begin. A good conversation can
-          uncover the question worth answering.
+          Tell kailor what you're trying to achieve or what isn't working. We'll
+          help uncover the real challenge, understand your existing processes
+          and explore a practical way forward.
         </p>
-        <Link className="pub-pill pub-pill-dark" to="/how-it-works">
-          See how it works <ArrowUpRight size={17} />
-        </Link>
       </div>
-      <MediaSection media={media.conversation}>
-        <ConversationVisual />
-      </MediaSection>
+
+      <ConversationVisual />
     </section>
   );
 }

@@ -8,6 +8,8 @@ export function Header() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
+  const [hidden, setHidden] = useState(false);
+
   const toggleRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLElement>(null);
 
@@ -50,9 +52,61 @@ export function Header() {
     };
   }, [open]);
 
+  useEffect(() => {
+    let previousY = Math.max(0, window.scrollY);
+    let direction = 0;
+    let distance = 0;
+
+    const handleScroll = () => {
+      const currentY = Math.max(0, window.scrollY);
+      const delta = currentY - previousY;
+      previousY = currentY;
+
+      if (open || currentY < 90) {
+        setHidden(false);
+        direction = 0;
+        distance = 0;
+        return;
+      }
+
+      if (Math.abs(delta) < 1) return;
+
+      const nextDirection = delta > 0 ? 1 : -1;
+
+      distance =
+        nextDirection === direction
+          ? distance + Math.abs(delta)
+          : Math.abs(delta);
+
+      direction = nextDirection;
+
+      // Scrolling down: hide after a short movement.
+      if (direction === 1 && distance >= 24) {
+        setHidden(true);
+        distance = 0;
+      }
+
+      // Scrolling up: reveal more quickly.
+      if (direction === -1 && distance >= 10) {
+        setHidden(false);
+        distance = 0;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [open]);
+
   return (
     <>
-      <header className="public-header">
+      <header className={`public-header${hidden && !open ? " is-hidden" : ""}`}>
         <div className="public-brand">
           <img src="/kailor-head.png" alt="" width={28} height={28} />
 

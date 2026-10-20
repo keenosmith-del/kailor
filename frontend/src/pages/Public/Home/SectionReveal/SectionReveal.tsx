@@ -1,6 +1,7 @@
 import { useRef, type ReactNode } from "react";
 import {
   motion,
+  useInView,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -16,14 +17,19 @@ export function SectionReveal({ children }: SectionRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
 
+  const entered = useInView(ref, {
+    once: true,
+    amount: 0.04,
+  });
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
 
-  const scrollOpacity = useTransform(
+  const opacity = useTransform(
     scrollYProgress,
-    [0, 0.18, 0.78, 1],
+    [0, 0.15, 0.82, 1],
     [0, 1, 1, 0],
   );
 
@@ -32,19 +38,19 @@ export function SectionReveal({ children }: SectionRevealProps) {
       <motion.div
         className="section-reveal__scroll"
         style={{
-          opacity: reducedMotion ? 1 : scrollOpacity,
+          opacity: reducedMotion ? 1 : opacity,
         }}
       >
         <motion.div
           className="section-reveal__entrance"
-          initial={reducedMotion ? false : { opacity: 0 }}
-          whileInView={reducedMotion ? undefined : { opacity: 1 }}
-          viewport={{
-            once: true,
-            amount: 0.05,
-          }}
+          initial={reducedMotion ? false : { opacity: 0, y: 34 }}
+          animate={
+            reducedMotion || entered
+              ? { opacity: 1, y: 0 }
+              : { opacity: 0, y: 34 }
+          }
           transition={{
-            duration: 1.15,
+            duration: 1.05,
             ease: [0.22, 1, 0.36, 1],
           }}
         >

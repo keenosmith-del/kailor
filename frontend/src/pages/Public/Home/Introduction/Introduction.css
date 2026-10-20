@@ -46,7 +46,7 @@
 }
 
 .introduction-disciplines span::before {
-  content: "+";
+  /* content: "+"; */
   margin-right: 14px;
 }
 

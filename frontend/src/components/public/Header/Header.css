@@ -498,3 +498,23 @@
     transform: none;
   }
 }
+
+/* Hide on scroll down, reveal on scroll up */
+
+.public-site .public-header {
+  transition:
+    transform 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.public-site .public-header.is-hidden {
+  transform: translate3d(0, -105%, 0);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-site .public-header {
+    transition: none;
+  }
+}
