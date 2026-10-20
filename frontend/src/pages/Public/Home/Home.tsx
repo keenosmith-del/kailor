@@ -3,6 +3,8 @@ import { Introduction } from "./Introduction/Introduction";
 import { ServicesSection } from "./ServicesSection/ServicesSection";
 import { Conversation } from "./Conversation/Conversation";
 import { Collaboration } from "./Collaboration/Collaboration";
+import { Outcomes } from "./Outcomes/Outcomes";
+
 import { Intelligence } from "./Intelligence/Intelligence";
 import { Insights } from "./Insights/Insights";
 import { SelectedWork } from "./SelectedWork/SelectedWork";
@@ -33,6 +35,10 @@ export default function Home() {
 
       <SectionReveal>
         <Collaboration />
+      </SectionReveal>
+
+      <SectionReveal>
+        <Outcomes />
       </SectionReveal>
 
       <SectionReveal>
