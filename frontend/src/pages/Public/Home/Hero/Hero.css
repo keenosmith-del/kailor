@@ -36,17 +36,23 @@
   background: #f7f7f7;
 }
 
+/* Soft white gradient over hero video */
+
 .kailor-hero__overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.78) 0%,
-    rgba(255, 255, 255, 0.5) 55%,
-    rgba(255, 255, 255, 0.18) 100%
-  );
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.64) 0%,
+      rgba(255, 255, 255, 0.42) 38%,
+      rgba(255, 255, 255, 0.14) 72%,
+      rgba(255, 255, 255, 0.03) 100%
+    ),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.18) 0%, transparent 45%);
 }
 
 .kailor-hero__content {

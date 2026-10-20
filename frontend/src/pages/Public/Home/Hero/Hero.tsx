@@ -27,19 +27,10 @@ export function Hero() {
 
         <div className="kailor-hero__actions">
           <Link className="pub-pill pub-pill-dark" to="/services">
-            Explore services
-          </Link>
-
-          <Link className="pub-pill" to="/contact">
             Get in touch
           </Link>
         </div>
       </div>
-
-      <a className="kailor-hero__scroll" href="#introduction">
-        <ArrowDown size={17} />
-        <span>Scroll to explore</span>
-      </a>
     </section>
   );
 }

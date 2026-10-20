@@ -1,90 +1,108 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { links } from "../navigation";
 import "./Header.css";
+
 export function Header() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const update = () => {
-      setScrolled(window.scrollY > 24 || location.pathname !== "/");
-    };
-
-    update();
-
-    window.addEventListener("scroll", update, {
-      passive: true,
-    });
-
-    return () => {
-      window.removeEventListener("scroll", update);
-    };
-  }, [location.pathname]);
-
-  const toggle = useRef<HTMLButtonElement>(null);
-  const nav = useRef<HTMLElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setOpen(false);
   }, [location.pathname, location.hash]);
+
   useEffect(() => {
     if (!open) return;
-    const close = (event: KeyboardEvent) => {
+
+    // Move keyboard focus into the opened navigation.
+    menuRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setOpen(false);
-        toggle.current?.focus();
+        toggleRef.current?.focus();
       }
     };
-    document.addEventListener("keydown", close);
-    return () => document.removeEventListener("keydown", close);
+
+    const handleOutsideClick = (event: PointerEvent) => {
+      const target = event.target;
+
+      if (!(target instanceof Node)) return;
+
+      if (
+        !menuRef.current?.contains(target) &&
+        !toggleRef.current?.contains(target)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("pointerdown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("pointerdown", handleOutsideClick);
+    };
   }, [open]);
+
   return (
-    <header className={`public-header${scrolled ? " is-scrolled" : ""}`}>
-      <Link to="/" className="public-brand" aria-label="kailor home">
-        kailor.
-      </Link>
-      <nav className="public-desktop-nav" aria-label="Public pages">
-        {links
-          .filter(([to]) => to === "/services" || to === "/about")
-          .map(([to, label]) => (
-            <NavLink key={to} to={to}>
-              {label}
-            </NavLink>
-          ))}
-      </nav>
-      <div className="public-header-actions">
-        <Link className="pub-pill header-sign-in" to="/sign-in">
-          Sign in
-        </Link>
-        <button
-          ref={toggle}
-          className="pub-icon public-menu-toggle"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          aria-controls="public-mobile-menu"
-          onClick={() => setOpen(!open)}
-        >
-          {open ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
+    <>
+      <header className="public-header">
+        <div className="public-brand">
+          <img src="/kailor-head.png" alt="" width={28} height={28} />
+
+          <button
+            ref={toggleRef}
+            type="button"
+            className="public-menu-toggle"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="public-mobile-menu"
+            onClick={() => setOpen((previous) => !previous)}
+          >
+            <Menu size={15} />
+          </button>
+
+          <Link
+            to="/"
+            className="public-brand-wordmark"
+            aria-label="kailor home"
+          >
+            kailor
+          </Link>
+        </div>
+
+        <div className="public-header-actions">
+          <Link to="/sign-in" className="pub-pill header-sign-in">
+            <img src="/svgs/profile.svg" alt="" width={17} height={17} />
+            <span>Sign in</span>
+          </Link>
+
+          <Link to="/create-account" className="pub-pill header-create-account">
+            Create account
+          </Link>
+        </div>
+      </header>
+
       <nav
-        ref={nav}
+        ref={menuRef}
         id="public-mobile-menu"
-        className="public-mobile-nav"
-        hidden={!open}
-        aria-label="Mobile public pages"
+        className={`public-mobile-nav${open ? " is-open" : ""}`}
+        aria-label="Main navigation"
+        aria-hidden={!open}
+        inert={!open}
       >
         {links.map(([to, label]) => (
-          <NavLink key={to} to={to}>
+          <NavLink key={to} to={to} onClick={() => setOpen(false)}>
             {label}
-            <ArrowUpRight size={18} />
           </NavLink>
         ))}
       </nav>
-    </header>
+    </>
   );
 }
