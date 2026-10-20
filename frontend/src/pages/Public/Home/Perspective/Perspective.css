@@ -1,0 +1,264 @@
+/* Perspective — editorial outro */
+
+.public-site .home-perspective {
+  position: relative;
+
+  padding: clamp(115px, 12vw, 190px) var(--pub-space) clamp(110px, 10vw, 155px);
+
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.perspective-inner {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+/* Editorial statement */
+
+.perspective-editorial {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.1fr)
+    minmax(0, 0.9fr);
+
+  align-items: end;
+  gap: clamp(45px, 7vw, 125px);
+
+  margin-bottom: clamp(75px, 9vw, 135px);
+}
+
+.public-site .perspective-editorial h2 {
+  max-width: 880px;
+  margin: 0;
+
+  color: #1a1a1a;
+  font-size: clamp(58px, 7vw, 112px);
+  font-weight: 450;
+  line-height: 0.97;
+  letter-spacing: -0.075em;
+}
+
+/* Circular heading punctuation */
+
+.public-site .perspective-dot {
+  display: inline-block;
+  width: 0.095em;
+  height: 0.095em;
+
+  margin-left: 0.018em;
+  vertical-align: 0.015em;
+
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Descriptive copy */
+
+.perspective-description {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+
+  max-width: 510px;
+  padding-bottom: 6px;
+}
+
+.public-site .perspective-description p {
+  margin: 0;
+
+  color: #454545;
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 400;
+  line-height: 1.75;
+}
+
+/* Four equal tiles */
+
+.perspective-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(10px, 1.2vw, 17px);
+
+  align-items: stretch;
+}
+
+.perspective-tile-reveal {
+  min-width: 0;
+  height: 100%;
+}
+
+.perspective-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 28px;
+  width: 100%;
+  height: 100%;
+  min-height: 325px;
+
+  padding: clamp(25px, 2.4vw, 38px);
+
+  background: #f0f0f0;
+  border: none;
+  border-radius: 27px;
+
+  color: #1a1a1a;
+
+  transform-origin: center;
+
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Tile labels */
+
+.public-site .perspective-tile h3 {
+  margin: 0;
+
+  color: #515151;
+  font-size: clamp(12px, 1vw, 14px);
+  font-weight: 450;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+/* Large numbers and information */
+
+.perspective-value {
+  display: block;
+  margin-top: auto;
+  margin-bottom: 1px;
+
+  color: #1a1a1a;
+  font-size: clamp(58px, 6vw, 99px);
+  font-weight: 450;
+  line-height: 0.95;
+  letter-spacing: -0.085em;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.public-site .perspective-tile p {
+  max-width: 260px;
+  min-height: 66px;
+  margin: 0;
+
+  color: #535353;
+  font-size: clamp(12px, 0.95vw, 14px);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Restrained hover treatment */
+
+@media (hover: hover) and (pointer: fine) {
+  .perspective-tile:hover {
+    background: #e7e7e7;
+
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.045);
+  }
+}
+
+/* Tablet */
+
+@media (max-width: 1100px) {
+  .perspective-editorial {
+    gap: 55px;
+  }
+
+  .perspective-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .perspective-tile {
+    min-height: 275px;
+    padding: 30px;
+  }
+
+  .perspective-value {
+    font-size: clamp(75px, 9vw, 110px);
+  }
+
+  .public-site .perspective-tile p {
+    font-size: 14px;
+    min-height: 0;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 760px) {
+  .public-site .home-perspective {
+    padding: 95px 24px 110px;
+  }
+
+  .perspective-editorial {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 40px;
+    margin-bottom: 65px;
+  }
+
+  .public-site .perspective-editorial h2 {
+    font-size: clamp(50px, 10.5vw, 79px);
+  }
+
+  .perspective-description {
+    max-width: 590px;
+    gap: 18px;
+  }
+
+  .public-site .perspective-description p {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .perspective-grid {
+    gap: 12px;
+  }
+
+  .perspective-tile {
+    min-height: 290px;
+    padding: 25px;
+    border-radius: 24px;
+  }
+
+  .perspective-value {
+    font-size: clamp(66px, 11vw, 90px);
+  }
+}
+
+@media (max-width: 520px) {
+  .perspective-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .perspective-tile {
+    min-height: 245px;
+    padding: 27px;
+    gap: 23px;
+  }
+
+  .perspective-value {
+    font-size: 80px;
+  }
+
+  .public-site .perspective-tile p {
+    max-width: 330px;
+    font-size: 14px;
+  }
+}
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+  .perspective-tile {
+    transition: none;
+  }
+}

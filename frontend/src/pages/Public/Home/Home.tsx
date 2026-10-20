@@ -6,6 +6,7 @@ import { Collaboration } from "./Collaboration/Collaboration";
 import { SelectedWork } from "./SelectedWork/SelectedWork";
 import { Consultants } from "./Consultants/Consultants";
 import { ClientFeedback } from "./ClientFeedback/ClientFeedback";
+import { Perspective } from "./Perspective/Perspective";
 
 import { SectionReveal } from "./SectionReveal/SectionReveal";
 
@@ -39,6 +40,8 @@ export default function Home() {
       <Consultants />
 
       <ClientFeedback />
+
+      <Perspective />
     </>
   );
 }
