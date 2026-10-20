@@ -38,26 +38,6 @@ export default function Home() {
       </SectionReveal>
 
       <SectionReveal>
-        <Outcomes />
-      </SectionReveal>
-
-      <SectionReveal>
-        <Intelligence />
-      </SectionReveal>
-
-      <SectionReveal>
-        <Insights />
-      </SectionReveal>
-
-      <SectionReveal>
-        <SelectedWork />
-      </SectionReveal>
-
-      <SectionReveal>
-        <EngagementSection />
-      </SectionReveal>
-
-      <SectionReveal>
         <Closing />
       </SectionReveal>
     </>
