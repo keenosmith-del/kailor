@@ -39,6 +39,7 @@ const Contact = lazy(() => import("./pages/Public/Contact/Contact"));
 const Workspace = lazy(() =>
   import("./pages/Workspace/Workspace").then((m) => ({ default: m.Workspace })),
 );
+const Work = lazy(() => import("./pages/Public/Work/Work"));
 function Protected({
   account,
   children,
@@ -68,6 +69,7 @@ export function App() {
     "/about",
     "/pricing",
     "/contact",
+    "/work",
   ].includes(publicPath);
   const [account, setAccount] = useState<Account | null>();
   useEffect(() => {
@@ -106,6 +108,7 @@ export function App() {
             <Route path="/about" element={<About />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/work" element={<Work />} />
           </Route>
           <Route path="/sign-in" element={<Auth onLogin={setAccount} />} />
           <Route

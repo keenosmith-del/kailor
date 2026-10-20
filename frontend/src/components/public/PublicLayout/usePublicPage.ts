@@ -25,6 +25,10 @@ const meta: Record<string, [string, string]> = {
     "Let's talk",
     "Contact kailor about an idea, an existing business or a specific technical project.",
   ],
+  "/work": [
+    "Our work",
+    "Explore kailor's technology project concepts and selected work across software engineering, AI, automation and business intelligence.",
+  ],
 };
 export function usePublicPage() {
   const location = useLocation();
