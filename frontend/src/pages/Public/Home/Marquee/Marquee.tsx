@@ -44,12 +44,114 @@ const marqueeItems: MarqueeItem[] = [
   { name: "Solution architecture", icon: Blocks },
   { name: "Discovery & analysis", icon: SearchCheck },
   { name: "Client collaboration", icon: MessageSquareText },
-  { name: "React", technology: true },
-  { name: "TypeScript", technology: true },
-  { name: "Python", technology: true },
-  { name: "n8n", technology: true },
-  { name: "Ollama", technology: true },
-  { name: "Azure", technology: true },
+  // Languages and frameworks
+  {
+    name: "React",
+    logo: "/technology/react.svg",
+    technology: true,
+  },
+  {
+    name: "TypeScript",
+    logo: "/technology/typescript.svg",
+    technology: true,
+  },
+  {
+    name: "JavaScript",
+    logo: "/technology/javascript.svg",
+    technology: true,
+  },
+  {
+    name: "Python",
+    logo: "/technology/python.svg",
+    technology: true,
+  },
+
+  // Artificial intelligence
+  {
+    name: "Claude",
+    logo: "/technology/claude.svg",
+    technology: true,
+  },
+  {
+    name: "Anthropic",
+    logo: "/technology/anthropic.svg",
+    technology: true,
+  },
+  {
+    name: "Claude Code",
+    logo: "/technology/claudecode.svg",
+    technology: true,
+  },
+  {
+    name: "DeepSeek",
+    logo: "/technology/deepseek.svg",
+    technology: true,
+  },
+  {
+    name: "Google Gemini",
+    logo: "/technology/googlegemini.svg",
+    technology: true,
+  },
+  {
+    name: "Hugging Face",
+    logo: "/technology/huggingface.svg",
+    technology: true,
+  },
+  {
+    name: "Ollama",
+    logo: "/technology/ollama.svg",
+    technology: true,
+  },
+
+  // Automation and APIs
+  {
+    name: "n8n",
+    logo: "/technology/n8n.svg",
+    technology: true,
+  },
+  {
+    name: "Postman",
+    logo: "/technology/postman.svg",
+    technology: true,
+  },
+  {
+    name: "JSON Web Tokens",
+    logo: "/technology/jsonwebtokens.svg",
+    technology: true,
+  },
+
+  // Databases
+  {
+    name: "PostgreSQL",
+    logo: "/technology/postgresql.svg",
+    technology: true,
+  },
+  {
+    name: "SQLite",
+    logo: "/technology/sqlite.svg",
+    technology: true,
+  },
+
+  // Cloud and deployment
+  {
+    name: "Google Cloud",
+    logo: "/technology/googlecloud.svg",
+    technology: true,
+  },
+  {
+    name: "Render",
+    logo: "/technology/render.svg",
+    technology: true,
+  },
+  {
+    name: "Vercel",
+    logo: "/technology/vercel.svg",
+    technology: true,
+  },
+  {
+    name: "Azure",
+    technology: true,
+  },
 ];
 
 function MarqueeGroup({ duplicate = false }: { duplicate?: boolean }) {

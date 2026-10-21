@@ -145,21 +145,38 @@
   z-index: 0;
 
   left: 50%;
-  bottom: 10%;
+  bottom: 2%;
 
-  width: 68%;
-  height: 26px;
+  width: min(78%, 500px);
+  height: 48px;
 
   transform: translateX(-50%);
 
+  border-radius: 50%;
+
   background: radial-gradient(
-    ellipse,
-    rgba(30, 30, 30, 0.12) 0%,
-    rgba(30, 30, 30, 0.04) 48%,
+    ellipse at center,
+    rgba(22, 22, 22, 0.22) 0%,
+    rgba(22, 22, 22, 0.11) 30%,
+    rgba(22, 22, 22, 0.045) 56%,
     transparent 76%
   );
 
-  filter: blur(12px);
+  filter: blur(11px);
+
+  pointer-events: none;
+}
+
+.kailor-hero__ground::after {
+  content: "";
+
+  position: absolute;
+  inset: 10px 17%;
+
+  border-radius: 50%;
+
+  background: rgba(20, 20, 20, 0.09);
+  filter: blur(9px);
 }
 
 /* Transparent mascot artwork */
@@ -169,12 +186,13 @@
   z-index: 1;
 
   left: 50%;
-  bottom: 0%;
+  bottom: 0;
 
   display: block;
 
-  width: 500px;
-  height: 500px;
+  width: min(112%, clamp(500px, 43vw, 620px));
+  height: auto;
+  max-height: 110%;
 
   object-fit: contain;
   object-position: center bottom;
@@ -203,7 +221,7 @@
   gap: 9px;
 
   min-height: 49px;
-  max-width: min(305px, 78%);
+  max-width: min(245px, 46%);
   padding: 7px 15px 7px 7px;
 
   border-radius: 999px;
@@ -221,7 +239,7 @@
   --enter-x: 25px;
   --enter-y: 20px;
 
-  animation: kailor-request-cycle 8.5s ease-in-out infinite both;
+  animation: kailor-request-cycle 14s ease-in-out infinite both;
 
   will-change: opacity, transform;
 }
@@ -266,52 +284,52 @@
 /* Radial positions above and around kailor */
 
 .kailor-hero__request--1 {
-  top: 5%;
-  left: 1%;
+  top: 2%;
+  left: 0;
 }
 
 .kailor-hero__request--2 {
   top: 5%;
-  right: 1%;
+  right: 0;
 }
 
 .kailor-hero__request--3 {
-  top: 19%;
-  left: 4%;
+  top: 21%;
+  left: 0;
 }
 
 .kailor-hero__request--4 {
-  top: 24%;
+  top: 23%;
   right: 0;
 }
 
 .kailor-hero__request--5 {
-  top: 35%;
-  left: -2%;
+  top: 40%;
+  left: 0;
 }
 
 .kailor-hero__request--6 {
-  top: 40%;
-  right: 2%;
+  top: 42%;
+  right: 0;
 }
 
 .kailor-hero__request--7 {
-  top: 12%;
-  right: 12%;
+  top: 11%;
+  left: 2%;
 }
 
 .kailor-hero__request--8 {
-  top: 29%;
-  left: 17%;
+  top: 13%;
+  right: 2%;
 }
 
 .kailor-hero__request--9 {
-  top: 48%;
+  top: 58%;
   left: 0;
 }
 
 .kailor-hero__request--10 {
-  top: 47%;
+  top: 58%;
   right: 0;
 }
 
@@ -320,27 +338,27 @@
 @keyframes kailor-request-cycle {
   0% {
     opacity: 0;
-    transform: translate3d(var(--enter-x), var(--enter-y), 0) scale(0.83);
+    transform: translate3d(var(--enter-x), var(--enter-y), 0) scale(0.86);
   }
 
-  6% {
+  9% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
   }
 
-  19% {
+  24% {
     opacity: 1;
-    transform: translate3d(0, -2px, 0) scale(1);
+    transform: translate3d(0, -3px, 0) scale(1);
   }
 
-  28% {
+  36% {
     opacity: 0;
-    transform: translate3d(7px, -22px, 0) scale(0.95);
+    transform: translate3d(5px, -18px, 0) scale(0.96);
   }
 
   100% {
     opacity: 0;
-    transform: translate3d(7px, -22px, 0) scale(0.95);
+    transform: translate3d(5px, -18px, 0) scale(0.96);
   }
 }
 
@@ -353,10 +371,6 @@
 
   .kailor-hero__scene {
     height: clamp(380px, 52svh, 540px);
-  }
-
-  .kailor-hero__mascot {
-    width: min(110%, 560px);
   }
 
   .kailor-hero__request {
@@ -423,9 +437,10 @@
   }
 
   .kailor-hero__mascot {
-    width: min(108%, 520px);
-    height: 84%;
-    bottom: 11%;
+    width: min(112%, 560px);
+    height: auto;
+    max-height: 110%;
+    bottom: 0;
   }
 }
 
@@ -463,13 +478,18 @@
   }
 
   .kailor-hero__mascot {
-    width: 110%;
-    height: 84%;
-    bottom: 8%;
+    width: min(112%, 440px);
+    height: auto;
+    max-height: 110%;
+    bottom: 0;
   }
 
   .kailor-hero__ground {
-    bottom: 5%;
+    bottom: 2%;
+    width: 73%;
+    height: 30px;
+
+    filter: blur(8px);
   }
 
   .kailor-hero__request {
@@ -506,11 +526,13 @@
   }
 
   .kailor-hero__request--7 {
-    right: 4%;
+    left: 0;
+    right: auto;
   }
 
   .kailor-hero__request--8 {
-    left: 5%;
+    right: 0;
+    left: auto;
   }
 }
 

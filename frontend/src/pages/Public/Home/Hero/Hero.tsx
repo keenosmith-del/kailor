@@ -143,7 +143,7 @@ export function Hero() {
                   key={request.message}
                   className={`kailor-hero__request kailor-hero__request--${index + 1}`}
                   style={{
-                    animationDelay: `${index * -0.85}s`,
+                    animationDelay: `${index * -1.4}s`,
                   }}
                 >
                   <span className="kailor-hero__avatar">
