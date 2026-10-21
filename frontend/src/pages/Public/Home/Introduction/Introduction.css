@@ -54,6 +54,104 @@
   max-width: 330px;
 }
 
+/* Stacked client portraits */
+
+.introduction-avatars {
+  display: flex;
+  align-items: center;
+  isolation: isolate;
+
+  width: fit-content;
+  margin: 0 0 22px;
+  padding: 9px 10px 9px 0;
+}
+
+.introduction-avatar {
+  position: relative;
+  display: block;
+  flex: 0 0 46px;
+
+  width: 46px;
+  height: 46px;
+  margin-left: -13px;
+
+  overflow: hidden;
+  border: none;
+  border-radius: 50%;
+
+  background: #e9e9e9;
+  box-shadow: none;
+
+  transform: translate3d(0, 0, 0) scale(1);
+  transform-origin: center center;
+  backface-visibility: hidden;
+
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s ease;
+}
+
+.introduction-avatar:first-child {
+  margin-left: 0;
+}
+
+/* Consistent stacking order */
+
+.introduction-avatar:nth-child(1) {
+  z-index: 1;
+}
+.introduction-avatar:nth-child(2) {
+  z-index: 2;
+}
+.introduction-avatar:nth-child(3) {
+  z-index: 3;
+}
+.introduction-avatar:nth-child(4) {
+  z-index: 4;
+}
+.introduction-avatar:nth-child(5) {
+  z-index: 5;
+}
+.introduction-avatar:nth-child(6) {
+  z-index: 6;
+}
+
+/* Smooth portrait transformation */
+
+.introduction-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Restrained hover */
+
+@media (hover: hover) and (pointer: fine) {
+  .introduction-avatars .introduction-avatar:hover {
+    transform: translate3d(0, -2px, 0) scale(1.06);
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  }
+}
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+  .introduction-avatar {
+    transition: none;
+  }
+
+  .introduction-avatars .introduction-avatar:hover {
+    transform: none;
+  }
+}
+
 .introduction-left-bottom p {
   margin: 0 0 20px;
   font-size: 14px;

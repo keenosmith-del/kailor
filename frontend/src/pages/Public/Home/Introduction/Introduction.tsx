@@ -1,7 +1,9 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import {
+  animate,
   motion,
+  useInView,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -32,6 +34,8 @@ const statistics = [
 
 type Statistic = (typeof statistics)[number];
 
+const introductionAvatars = [11, 12, 13, 14, 15, 16] as const;
+
 function StatisticCard({
   statistic,
   featured,
@@ -41,6 +45,12 @@ function StatisticCard({
 }) {
   const ref = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
+  const isInView = useInView(ref, {
+    once: true,
+    amount: 0.35,
+  });
+
+  const [displayedCount, setDisplayedCount] = useState(0);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -50,6 +60,33 @@ function StatisticCard({
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   const y = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [32, 0, 0, -20]);
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    const target = Number.parseInt(statistic.value, 10);
+
+    if (reducedMotion) {
+      setDisplayedCount(target);
+      return;
+    }
+
+    const animation = animate(0, target, {
+      duration: 1.6,
+      ease: [0.22, 1, 0.36, 1],
+      onUpdate: (value) => {
+        setDisplayedCount(Math.round(value));
+      },
+    });
+
+    return () => animation.stop();
+  }, [isInView, reducedMotion, statistic.value]);
+
+  const formattedCount =
+    String(displayedCount).padStart(
+      statistic.value.startsWith("0") ? statistic.value.length : 1,
+      "0",
+    ) + (statistic.value.endsWith("+") ? "+" : "");
 
   return (
     <motion.article
@@ -65,7 +102,13 @@ function StatisticCard({
       <span className="introduction-stat-label">{statistic.label}</span>
 
       <div className="introduction-stat-bottom">
-        <strong className="introduction-stat-value">{statistic.value}</strong>
+        <strong
+          className="introduction-stat-value"
+          aria-label={statistic.value}
+        >
+          {formattedCount}
+        </strong>
+
         <p>{statistic.description}</p>
       </div>
     </motion.article>
@@ -82,9 +125,7 @@ export function Introduction() {
       <div className="introduction-layout">
         <div className="introduction-left">
           <div>
-            <p className="introduction-eyebrow">
-          
-            </p>
+            <p className="introduction-eyebrow"></p>
 
             <h2 id="introduction-title">
               Why
@@ -102,20 +143,37 @@ export function Introduction() {
           </div>
 
           <div className="introduction-left-bottom">
+            <div className="introduction-avatars" aria-hidden="true">
+              {introductionAvatars.map((number) => (
+                <span className="introduction-avatar" key={number}>
+                  <img
+                    src={`/clients/${number}.jpeg`}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              ))}
+            </div>
+
             <p>
-              One place to understand the challenge, identify the opportunity
-              and build something that makes a difference.
+              Not every problem needs an app. Not every process needs AI.
+              Sometimes the answer is a simpler workflow, two systems finally
+              talking to each other, or an idea built properly from the start.
+              We help work out which one it is.
             </p>
 
             <Link className="introduction-link" to="/about">
-              Discover
+              See how we got here
             </Link>
           </div>
         </div>
 
         <div className="introduction-right">
           <div className="introduction-statement">
-            <h3>Technology should move your business forward.</h3>
+            <h3>
+              We'd rather ask another question than build the wrong thing.
+            </h3>
 
             <p>
               kailor combines practical business consultancy with hands-on
