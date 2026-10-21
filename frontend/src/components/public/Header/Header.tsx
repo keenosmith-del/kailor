@@ -1,13 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router";
 import { Menu, X } from "lucide-react";
-import { links } from "../navigation";
+
+import { sidebarPages, sidebarSections, upcomingPages } from "../navigation";
+
+import { useConversation } from "../ConversationModal/ConversationModal";
+
 import "./Header.css";
 
 export function Header() {
   const location = useLocation();
-  const [open, setOpen] = useState(false);
 
+  const { openConversation } = useConversation();
+
+  const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
 
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -20,8 +26,9 @@ export function Header() {
   useEffect(() => {
     if (!open) return;
 
-    // Move keyboard focus into the opened navigation.
-    menuRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    menuRef.current
+      ?.querySelector<HTMLAnchorElement>("a")
+      ?.focus({ preventScroll: true });
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -60,6 +67,7 @@ export function Header() {
     const handleScroll = () => {
       const currentY = Math.max(0, window.scrollY);
       const delta = currentY - previousY;
+
       previousY = currentY;
 
       if (open || currentY < 90) {
@@ -80,13 +88,11 @@ export function Header() {
 
       direction = nextDirection;
 
-      // Scrolling down: hide after a short movement.
       if (direction === 1 && distance >= 24) {
         setHidden(true);
         distance = 0;
       }
 
-      // Scrolling up: reveal more quickly.
       if (direction === -1 && distance >= 10) {
         setHidden(false);
         distance = 0;
@@ -104,6 +110,12 @@ export function Header() {
     };
   }, [open]);
 
+  const openFromSidebar = () => {
+    setOpen(false);
+    toggleRef.current?.focus({ preventScroll: true });
+    openConversation();
+  };
+
   return (
     <>
       <header className={`public-header${hidden && !open ? " is-hidden" : ""}`}>
@@ -119,7 +131,7 @@ export function Header() {
             aria-controls="public-mobile-menu"
             onClick={() => setOpen((previous) => !previous)}
           >
-            <Menu size={15} />
+              <Menu size={17} strokeWidth={1.5} />
           </button>
 
           <Link
@@ -151,11 +163,53 @@ export function Header() {
         aria-hidden={!open}
         inert={!open}
       >
-        {links.map(([to, label]) => (
-          <NavLink key={to} to={to} onClick={() => setOpen(false)}>
-            {label}
-          </NavLink>
-        ))}
+
+        <div className="public-mobile-nav__group">
+          <h2>Pages</h2>
+
+          {sidebarPages.map(([to, label]) => (
+            <NavLink key={to} to={to} end onClick={() => setOpen(false)}>
+              {label}
+            </NavLink>
+          ))}
+        </div>
+
+        <div className="public-mobile-nav__group">
+          <h2>On the homepage</h2>
+
+          {sidebarSections.map(([id, label]) => (
+            <Link
+              key={id}
+              to={`/#${id}`}
+              onClick={() => {
+                setOpen(false);
+
+                if (location.pathname === "/" && location.hash === `#${id}`) {
+                  document.getElementById(id)?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }
+              }}
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+
+        <div className="public-mobile-nav__group public-mobile-nav__upcoming">
+          <h2>Coming later</h2>
+
+          {upcomingPages.map((label) => (
+            <span key={label}>{label}</span>
+          ))}
+        </div>
+
+        <div className="public-mobile-nav__bottom">
+          <button type="button" onClick={openFromSidebar}>
+            Start a conversation
+          </button>
+        </div>
       </nav>
     </>
   );

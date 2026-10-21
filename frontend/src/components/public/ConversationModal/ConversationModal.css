@@ -1,0 +1,412 @@
+/* Conversation modal */
+
+.kailor-conversation-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 800;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(28, 30, 31, 0.28);
+
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+}
+
+/* Modal surface */
+
+.kailor-conversation-dialog {
+  position: relative;
+
+  width: min(100%, 680px);
+  max-height: min(90dvh, 850px);
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  padding: clamp(34px, 5vw, 65px);
+
+  background: #fafafa;
+  color: #1a1a1a;
+
+  border: none;
+  border-radius: 34px;
+
+  box-shadow:
+    0 32px 110px rgba(0, 0, 0, 0.13),
+    0 4px 24px rgba(0, 0, 0, 0.035);
+}
+
+/* Close */
+
+.kailor-conversation-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+
+  display: grid;
+  place-items: center;
+
+  width: 39px;
+  height: 39px;
+  padding: 0;
+
+  color: #1a1a1a;
+  background: transparent;
+
+  border: none;
+  border-radius: 50%;
+  box-shadow: none;
+
+  cursor: pointer;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.kailor-conversation-close:hover {
+  opacity: 0.6;
+  transform: scale(1.06);
+}
+
+/* Heading */
+
+.kailor-conversation-heading {
+  max-width: 540px;
+  margin-bottom: clamp(40px, 5vw, 60px);
+}
+
+.kailor-conversation-heading h2 {
+  max-width: 500px;
+  margin: 0 0 21px;
+
+  font-size: clamp(39px, 4.5vw, 57px);
+  font-weight: 450;
+  letter-spacing: -0.07em;
+  line-height: 1.02;
+
+  color: #1a1a1a;
+}
+
+.kailor-conversation-heading p {
+  max-width: 420px;
+  margin: 0;
+
+  color: #686868;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* Form */
+
+.kailor-conversation-form {
+  width: 100%;
+}
+
+.kailor-conversation-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  column-gap: clamp(25px, 4vw, 55px);
+  row-gap: 34px;
+}
+
+.kailor-conversation-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.kailor-conversation-field--full {
+  grid-column: 1 / -1;
+}
+
+/* Labels */
+
+.kailor-conversation-field label {
+  display: block;
+
+  margin: 0 0 9px;
+
+  color: #777777;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0;
+
+  transition: color 0.2s ease;
+}
+
+.kailor-conversation-field:focus-within label {
+  color: #1a1a1a;
+}
+
+/*
+  Flat, transparent inputs.
+  These overrides also defeat the global input styles.
+*/
+
+.kailor-conversation-dialog input,
+.kailor-conversation-dialog textarea,
+.kailor-conversation-dialog input:hover,
+.kailor-conversation-dialog textarea:hover,
+.kailor-conversation-dialog input:focus,
+.kailor-conversation-dialog textarea:focus,
+.kailor-conversation-dialog input:focus-visible,
+.kailor-conversation-dialog textarea:focus-visible {
+  display: block;
+
+  width: 100%;
+  margin: 0 !important;
+  padding: 6px 0 8px !important;
+
+  background: transparent !important;
+  color: #1a1a1a !important;
+
+  border: none !important;
+  border-radius: 0 !important;
+
+  outline: none !important;
+  box-shadow: none !important;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.kailor-conversation-dialog input::placeholder,
+.kailor-conversation-dialog textarea::placeholder {
+  color: #a0a0a0;
+  opacity: 1;
+}
+
+.kailor-conversation-dialog textarea {
+  min-height: 135px;
+  resize: vertical;
+}
+
+.kailor-conversation-dialog textarea:focus {
+  background: transparent !important;
+}
+
+/* Submit area */
+
+.kailor-conversation-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 25px;
+  margin-top: 37px;
+}
+
+.kailor-conversation-footer > p {
+  max-width: 260px;
+  margin: 0;
+
+  color: #929292;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.kailor-conversation-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 47px;
+  padding: 13px 25px;
+
+  color: #ffffff;
+  background: #222526;
+
+  border: none;
+  border-radius: 999px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.kailor-conversation-submit:hover {
+  background: #101213;
+  transform: scale(1.035);
+}
+
+.kailor-conversation-preview-note {
+  margin: 18px 0 0;
+
+  color: #929292;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* Centred glass toast */
+
+.kailor-conversation-toast-position {
+  position: fixed;
+  top: 87px;
+  left: 50%;
+  z-index: 1000;
+
+  width: max-content;
+  max-width: calc(100vw - 30px);
+
+  transform: translateX(-50%);
+
+  pointer-events: none;
+}
+
+.kailor-conversation-toast {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  min-height: 49px;
+  max-width: 100%;
+
+  padding: 11px 16px 11px 19px;
+
+  background: rgba(255, 255, 255, 0.265);
+  color: #222526;
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border: none;
+  border-radius: 999px;
+
+  box-shadow:
+    0 9px 32px rgba(0, 0, 0, 0.065),
+    0 2px 9px rgba(0, 0, 0, 0.025);
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 450;
+  line-height: 1.4;
+
+  pointer-events: auto;
+}
+
+.kailor-conversation-toast > svg {
+  flex-shrink: 0;
+}
+
+.kailor-conversation-toast > span {
+  min-width: 0;
+}
+
+.kailor-conversation-toast button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+
+  width: 25px;
+  height: 25px;
+  padding: 0;
+
+  background: transparent;
+  color: #555555;
+
+  border: none;
+  border-radius: 50%;
+
+  cursor: pointer;
+}
+
+.kailor-conversation-toast button:hover {
+  opacity: 0.6;
+  background: transparent;
+}
+
+/* Tablet and mobile */
+
+@media (max-width: 760px) {
+  .kailor-conversation-backdrop {
+    padding: 15px;
+  }
+
+  .kailor-conversation-dialog {
+    max-height: calc(100dvh - 30px);
+    padding: 49px 27px 32px;
+    border-radius: 27px;
+  }
+
+  .kailor-conversation-heading {
+    margin-bottom: 35px;
+  }
+
+  .kailor-conversation-heading h2 {
+    max-width: 390px;
+    font-size: clamp(37px, 8.5vw, 49px);
+  }
+
+  .kailor-conversation-close {
+    top: 12px;
+    right: 14px;
+  }
+
+  .kailor-conversation-fields {
+    grid-template-columns: 1fr;
+    row-gap: 24px;
+  }
+
+  .kailor-conversation-field--full {
+    grid-column: auto;
+  }
+
+  .kailor-conversation-dialog textarea {
+    min-height: 110px;
+  }
+
+  .kailor-conversation-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 22px;
+    margin-top: 30px;
+  }
+
+  .kailor-conversation-footer > p {
+    max-width: 100%;
+  }
+
+  .kailor-conversation-toast-position {
+    top: 82px;
+  }
+
+  .kailor-conversation-toast {
+    font-size: 11px;
+    padding: 10px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kailor-conversation-close,
+  .kailor-conversation-field label,
+  .kailor-conversation-submit {
+    transition: none;
+  }
+
+  .kailor-conversation-close:hover,
+  .kailor-conversation-submit:hover {
+    transform: none;
+  }
+}

@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { Link } from "react-router";
+import { useConversation } from "../../../../components/public/ConversationModal/ConversationModal";
 import {
   motion,
   useReducedMotion,
@@ -61,6 +62,8 @@ const clientRequests: ClientRequest[] = [
 export function Hero() {
   const heroRef = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
+
+  const { openConversation } = useConversation();
 
   const { scrollYProgress } = useScroll({
     target: heroRef,

@@ -219,6 +219,7 @@ export function Marquee() {
     <motion.section
       ref={sectionRef}
       className="home-marquee"
+      id="technologies"
       aria-labelledby="home-marquee-title"
       style={{
         opacity: reducedMotion ? 1 : opacity,

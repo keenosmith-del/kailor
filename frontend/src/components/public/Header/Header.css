@@ -1,4 +1,4 @@
-/* Header */
+/* Public header */
 
 .public-site .public-header {
   position: fixed;
@@ -7,14 +7,14 @@
   right: 0;
   z-index: 200;
 
-  width: 100%;
-  height: 70px;
-  padding: 0 clamp(24px, 6vw, 100px);
-
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+
+  width: 100%;
+  height: 70px;
+  padding: 0 clamp(24px, 6vw, 100px);
 
   background: rgba(255, 255, 255, 0.265);
   backdrop-filter: blur(16px);
@@ -24,6 +24,15 @@
   border-radius: 0;
 
   box-shadow: 0 2px 18px rgba(0, 0, 0, 0.035);
+
+  transition:
+    transform 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.25s ease;
+}
+
+.public-site .public-header.is-hidden {
+  transform: translate3d(0, -105%, 0);
+  pointer-events: none;
 }
 
 /* Branding */
@@ -41,74 +50,76 @@
   line-height: 1;
 }
 
-.public-site .public-brand img {
+.public-site .public-brand > img {
   display: block;
   width: 28px;
   height: 28px;
   object-fit: contain;
-  flex-shrink: 0;
 }
-
-.public-site .public-brand span {
-  display: block;
-}
-
-/* Wordmark */
 
 .public-site .public-brand-wordmark {
   display: inline-flex;
   align-items: baseline;
+  margin-left: -8px;
+
   color: #1a1a1a;
   white-space: nowrap;
-  text-decoration: none;
 
-  margin-left: -8px;
   transform-origin: left center;
-}
 
-/* Perfectly round period after kailor */
+  transition: transform 0.22s ease;
+}
 
 .public-site .public-brand-wordmark::after {
   content: "";
   display: inline-block;
+
   width: 4px;
   height: 4px;
   margin-left: 2px;
+
   border-radius: 50%;
   background: currentColor;
 }
 
-/* Centre navigation */
+/* Menu toggle */
 
-.public-site .public-desktop-nav {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+.public-site .public-menu-toggle {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
 
-  display: flex;
-  align-items: center;
-  gap: 40px;
-}
+  width: 43px;
+  height: 43px;
 
-.public-site .public-desktop-nav a {
+  padding: 0;
+  margin: 0;
+
   color: #1a1a1a;
-  font-size: 13px;
-  font-weight: 400;
-  padding: 12px 0;
-  white-space: nowrap;
+  background: transparent !important;
+
+  border: none;
+  border-radius: 50%;
+  box-shadow: none;
+
+  cursor: pointer;
+
+  transition: transform 0.22s ease;
 }
 
-.public-site .public-desktop-nav a:hover {
-  opacity: 0.6;
+.public-site .public-menu-toggle:hover {
+  background: transparent !important;
+  transform: scale(1.06);
 }
 
-/* Account buttons */
+/* Account controls */
 
 .public-site .public-header-actions {
-  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 8px;
+
+  margin-left: auto;
 }
 
 .public-site .public-header-actions .pub-pill {
@@ -129,28 +140,14 @@
   white-space: nowrap;
 
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
+    transform 0.22s ease,
+    background-color 0.22s ease;
 }
-
-/* Sign in — soft neutral pill */
-
-.public-site .header-sign-in {
-  background: #fbfbfb;
-  color: #1a1a1a;
-}
-
-.public-site .public-header-actions .header-sign-in:hover {
-  background: #ffffff;
-  color: #080808;
-  transform: scale(1.04);
-}
-
-/* Sign in profile icon */
 
 .public-site .header-sign-in {
   gap: 9px;
+  color: #1a1a1a;
+  background: #fbfbfb;
 }
 
 .public-site .header-sign-in img {
@@ -158,99 +155,60 @@
   width: 17px;
   height: 17px;
   object-fit: contain;
-  flex-shrink: 0;
 }
-
-/* Create account — charcoal pill */
 
 .public-site .header-create-account {
   background: #222526;
   color: #ffffff;
 }
 
+.public-site .header-sign-in:hover {
+  background: #ffffff;
+  transform: scale(1.035);
+}
+
 .public-site .header-create-account:hover {
-  background: #353a3e;
+  background: #141718;
   color: #ffffff;
+  transform: scale(1.035);
 }
 
-/* Menu button */
-
-.public-site .public-menu-toggle {
-  display: inline-grid;
-  place-items: center;
-
-  width: 43px;
-  height: 43px;
-  flex-shrink: 0;
-
-  padding: 0;
-  margin-left: 0;
-
-  border: none;
-  border-radius: 50%;
-  box-shadow: none;
-
-  background: transparent !important;
-  color: #1a1a1a;
-  cursor: pointer;
-
-  transition:
-    color 0.22s ease,
-    transform 0.22s ease;
-}
-
-.public-site .public-menu-toggle:hover {
-  background: transparent !important;
-  box-shadow: none;
-  color: #080808;
-  transform: scale(1.06);
-}
-
-/* Dropdown */
-
-/* Full-height sliding navigation */
+/* Compact glass sidebar */
 
 .public-site .public-mobile-nav {
   position: fixed;
   top: 70px;
   bottom: 0;
   left: 0;
-  right: auto;
-
   z-index: 199;
 
-  width: min(390px, 100%);
-  padding: 44px clamp(24px, 6vw, 100px) 32px;
+  width: min(370px, 100%);
+  padding: 29px 30px 35px;
 
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: flex-start;
-  gap: 12px;
 
   overflow-y: auto;
   overscroll-behavior: contain;
+  scrollbar-width: thin;
 
-  /* Same glass styling as the header */
-  background: rgba(255, 255, 255, 0.265);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.64);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 
   border: none;
   border-radius: 0;
-  box-shadow: none;
+  box-shadow: 12px 14px 34px rgba(0, 0, 0, 0.035);
 
-  /* Initially off-screen to the left */
-  transform: translate3d(-102%, 0, 0);
+  transform: translate3d(-104%, 0, 0);
   visibility: hidden;
   pointer-events: none;
 
   transition:
-    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
-    visibility 0s linear 0.38s;
+    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0.42s;
 }
-
-/* Open state */
 
 .public-site .public-mobile-nav.is-open {
   transform: translate3d(0, 0, 0);
@@ -258,78 +216,120 @@
   pointer-events: auto;
 
   transition:
-    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
     visibility 0s;
 }
 
-/* Navigation links */
+.public-site .public-mobile-nav__title {
+  margin: 0 0 30px;
 
-.public-site .public-mobile-nav a {
+  color: #1a1a1a;
+  font-size: 24px;
+  font-weight: 450;
+  letter-spacing: -0.06em;
+  line-height: 1.15;
+}
+
+/* Sidebar groups */
+
+.public-mobile-nav__group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  margin-bottom: 24px;
+}
+
+.public-site .public-mobile-nav__group h2 {
+  margin: 0 0 9px;
+
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0;
+
+  color: #818181;
+}
+
+.public-site .public-mobile-nav__group a,
+.public-site .public-mobile-nav__group > span {
   display: flex;
   align-items: center;
 
   width: 100%;
-  min-height: 56px;
-  padding: 10px 0;
+  min-height: 31px;
+  padding: 5px 0;
 
-  font-size: clamp(21px, 2vw, 26px);
-  font-weight: 400;
-  letter-spacing: -0.04em;
-  line-height: 1.2;
-
-  color: #1a1a1a;
-  background: transparent;
+  color: #343434;
+  background: transparent !important;
 
   border: none;
   border-radius: 0;
+  box-shadow: none;
 
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+
+  text-decoration: none;
   transform-origin: left center;
 
   transition:
-    color 0.22s ease,
-    transform 0.22s ease;
+    color 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .public-site .public-mobile-nav a:hover {
-    color: #080808;
-    background: transparent;
-    transform: scale(1.035);
-  }
+.public-site .public-mobile-nav__group a:hover {
+  color: #080808;
+  background: transparent !important;
+  transform: translateX(3px);
 }
 
-/* Active page */
-
-.public-site .public-mobile-nav a[aria-current="page"] {
+.public-site .public-mobile-nav__group a[aria-current="page"] {
   font-weight: 550;
+  color: #1a1a1a;
 }
 
-/* Mobile viewport */
-
-@media (max-width: 760px) {
-  .public-site .public-mobile-nav {
-    top: 72px;
-    width: min(390px, 100%);
-    padding: 36px 24px 28px;
-  }
+.public-site .public-mobile-nav__upcoming > span {
+  color: #929292;
 }
 
-/* Reduced motion */
+/* Sidebar contact action */
 
-@media (prefers-reduced-motion: reduce) {
-  .public-site .public-mobile-nav,
-  .public-site .public-mobile-nav a {
-    transition: none;
-  }
+.public-mobile-nav__bottom {
+  margin-top: 6px;
+  padding-bottom: 5px;
 }
 
-/* Tablet and mobile */
+.public-site .public-mobile-nav__bottom button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-@media (max-width: 900px) {
-  .public-site .public-desktop-nav {
-    display: none;
-  }
+  min-height: 42px;
+  padding: 12px 21px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: #222526;
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
+
+.public-site .public-mobile-nav__bottom button:hover {
+  background: #111111;
+  transform: scale(1.025);
+}
+
+/* Responsive header */
 
 @media (max-width: 760px) {
   .public-site .public-header {
@@ -343,9 +343,14 @@
     font-size: 21px;
   }
 
-  .public-site .public-brand img {
+  .public-site .public-brand > img {
     width: 27px;
     height: 27px;
+  }
+
+  .public-site .public-menu-toggle {
+    width: 40px;
+    height: 40px;
   }
 
   .public-site .public-header-actions {
@@ -358,15 +363,10 @@
     font-size: 11px;
   }
 
-  .public-site .public-menu-toggle {
-    width: 40px;
-    height: 40px;
-    margin-left: 0;
-  }
-
   .public-site .public-mobile-nav {
-    left: 18px;
-    right: auto;
+    top: 72px;
+    width: min(370px, 100%);
+    padding: 26px 24px 35px;
   }
 }
 
@@ -381,140 +381,35 @@
     font-size: 19px;
   }
 
-  .public-site .public-brand img {
+  .public-site .public-brand > img {
     width: 24px;
     height: 24px;
-  }
-
-  .public-site .public-header-actions {
-    gap: 5px;
-  }
-
-  .public-site .public-header-actions .pub-pill {
-    padding: 9px 10px;
-    font-size: 10px;
-    min-height: 36px;
   }
 
   .public-site .public-menu-toggle {
     width: 35px;
     height: 35px;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
   .public-site .public-header-actions .pub-pill {
-    transition: none;
+    min-height: 36px;
+    padding: 9px 10px;
+    font-size: 10px;
   }
 }
-
-/* Header interactive refinements */
-
-.public-site .public-brand-wordmark {
-  margin-left: -8px;
-  transform-origin: left center;
-  transition:
-    transform 0.22s ease,
-    color 0.22s ease;
-}
-
-.public-site .public-menu-toggle {
-  transition:
-    transform 0.22s ease,
-    color 0.22s ease,
-    background-color 0.22s ease;
-}
-
-.public-site .public-mobile-nav a {
-  transform-origin: left center;
-  transition:
-    transform 0.22s ease,
-    color 0.22s ease,
-    background-color 0.22s ease;
-}
-
-.public-site .header-sign-in img {
-  transition: filter 0.22s ease;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  /* kailor wordmark and its rounded dot */
-
-  .public-site .public-brand-wordmark:hover {
-    transform: scale(1.04);
-    color: #080808;
-  }
-
-  /* Menu icon */
-
-  .public-site .public-menu-toggle:hover {
-    transform: scale(1.06);
-    color: #080808;
-    background: rgba(0, 0, 0, 0.055);
-  }
-
-  /* All header account buttons */
-
-  .public-site .public-header-actions .pub-pill:hover {
-    transform: scale(1.04);
-  }
-
-  /* Sign in */
-
-  .public-site .header-sign-in:hover img {
-    filter: brightness(0.82);
-  }
-
-  /* Create account */
-
-  .public-site .public-header-actions .header-create-account:hover {
-    background: #141718;
-    color: #ffffff;
-  }
-
-  /* Dropdown navigation items */
-
-  .public-site .public-mobile-nav a:hover {
-    transform: scale(1.025);
-    background: #ededed;
-    color: #080808;
-  }
-}
-
-/* Keep motion comfortable for users who request it */
 
 @media (prefers-reduced-motion: reduce) {
-  .public-site .public-brand-wordmark,
+  .public-site .public-header,
+  .public-site .public-mobile-nav,
   .public-site .public-menu-toggle,
-  .public-site .public-header-actions .pub-pill,
-  .public-site .public-mobile-nav a {
+  .public-site .public-brand-wordmark,
+  .public-site .public-mobile-nav__group a,
+  .public-site .public-mobile-nav__bottom button {
     transition: none;
   }
 
-  .public-site .public-brand-wordmark:hover,
-  .public-site .public-menu-toggle:hover,
-  .public-site .public-header-actions .pub-pill:hover,
-  .public-site .public-mobile-nav a:hover {
+  .public-site .public-mobile-nav__group a:hover,
+  .public-site .public-mobile-nav__bottom button:hover {
     transform: none;
-  }
-}
-
-/* Hide on scroll down, reveal on scroll up */
-
-.public-site .public-header {
-  transition:
-    transform 0.36s cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-.public-site .public-header.is-hidden {
-  transform: translate3d(0, -105%, 0);
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .public-site .public-header {
-    transition: none;
   }
 }
