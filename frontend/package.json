@@ -9,6 +9,7 @@
     "test": "vitest run --config vitest.config.ts"
   },
   "dependencies": {
+    "@emailjs/browser": "^5.0.3",
     "@kailor/shared": "*",
     "lucide-react": "0.554.0",
     "motion": "12.23.24",
