@@ -1,0 +1,193 @@
+/* Activity — floating development bubbles above the site footer */
+.public-site .home-activity {
+  min-height: 680px;
+  display: flex;
+  align-items: center;
+  padding: clamp(95px, 10vw, 160px) var(--pub-space) clamp(100px, 9vw, 145px);
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.home-activity__inner {
+  width: 100%;
+  max-width: 1450px;
+  margin: 0 auto;
+}
+
+.home-activity__intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 45px;
+  margin-bottom: clamp(65px, 7vw, 110px);
+}
+
+.public-site .home-activity__intro h2 {
+  max-width: 800px;
+  margin: 0;
+  font-size: clamp(48px, 6vw, 90px);
+  font-weight: 450;
+  line-height: 1.02;
+  letter-spacing: -0.07em;
+  color: #1a1a1a;
+}
+
+.home-activity__dot {
+  display: inline-block;
+  width: 0.09em;
+  height: 0.09em;
+  margin-left: 0.025em;
+  vertical-align: 0.01em;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.public-site .home-activity__intro p {
+  max-width: 335px;
+  margin: 0 0 7px;
+  color: #555555;
+  font-size: clamp(14px, 1.15vw, 17px);
+  line-height: 1.7;
+}
+
+/* Loose three-row composition inspired by message bubbles */
+.home-activity__bubbles {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(9px, 1.15vw, 18px);
+  row-gap: clamp(20px, 2.5vw, 35px);
+  align-items: center;
+  padding: 14px 0 24px;
+}
+
+.home-activity__bubble {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(7px, 0.8vw, 13px);
+  padding: 13px clamp(14px, 1.4vw, 24px);
+  border-radius: 999px;
+  background: #f1f1f1;
+  color: #1a1a1a;
+  box-shadow: 0 11px 32px rgba(0, 0, 0, 0.038);
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+.home-activity__bubble::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 68%;
+  bottom: -6px;
+  width: 14px;
+  height: 14px;
+  transform: rotate(45deg);
+  border-radius: 0 0 4px 0;
+  background: inherit;
+}
+
+.home-activity__bubble.is-dark {
+  background: #222526;
+  color: #ffffff;
+}
+
+.home-activity__icon {
+  flex: none;
+}
+
+.home-activity__name {
+  min-width: 0;
+  font-size: clamp(11px, 1.05vw, 15px);
+  font-weight: 450;
+  letter-spacing: -0.025em;
+}
+
+.home-activity__status {
+  flex: none;
+  padding: 8px 11px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font-size: clamp(9px, 0.78vw, 11px);
+  font-weight: 550;
+}
+
+.home-activity__bubble.is-dark .home-activity__status {
+  background: #414548;
+  color: #ffffff;
+}
+
+.home-activity__bubble--1 { grid-column: 5 / span 4; grid-row: 1; }
+.home-activity__bubble--2 { grid-column: 1 / span 4; grid-row: 2; }
+.home-activity__bubble--3 { grid-column: 5 / span 4; grid-row: 2; }
+.home-activity__bubble--4 { grid-column: 9 / span 4; grid-row: 2; }
+.home-activity__bubble--5 { grid-column: 3 / span 4; grid-row: 3; }
+.home-activity__bubble--6 { grid-column: 7 / span 5; grid-row: 3; }
+
+@media (max-width: 1120px) {
+  .home-activity__bubbles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 18px;
+  }
+  .home-activity__bubble {
+    grid-column: auto;
+    grid-row: auto;
+    justify-content: flex-start;
+    white-space: normal;
+    border-radius: 30px;
+  }
+  .home-activity__name { flex: 1; }
+}
+
+@media (max-width: 760px) {
+  .public-site .home-activity {
+    min-height: auto;
+    padding: 95px 24px 110px;
+  }
+  .home-activity__intro {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 25px;
+    margin-bottom: 60px;
+  }
+  .public-site .home-activity__intro h2 {
+    font-size: clamp(44px, 9vw, 67px);
+  }
+  .home-activity__bubbles {
+    gap: 18px 12px;
+  }
+  .home-activity__bubble {
+    flex-wrap: wrap;
+    min-height: 75px;
+    padding: 14px;
+    gap: 8px;
+  }
+  .home-activity__name { font-size: 12px; }
+  .home-activity__status { padding: 7px 9px; font-size: 10px; }
+}
+
+@media (max-width: 530px) {
+  .home-activity__bubbles {
+    grid-template-columns: 1fr;
+    gap: 19px;
+  }
+  .home-activity__bubble {
+    justify-self: start;
+    width: fit-content;
+    max-width: 100%;
+    min-height: 55px;
+    border-radius: 999px;
+    padding: 12px 15px;
+  }
+  .home-activity__bubble:nth-child(even) { justify-self: end; }
+  .home-activity__name { flex: initial; font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-activity__bubble { will-change: auto; }
+}

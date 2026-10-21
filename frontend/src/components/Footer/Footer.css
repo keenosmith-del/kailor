@@ -1,15 +1,249 @@
-/* Match kai's Home/Home.css .kai-footer and inherited .kai-app typography. */
-.kailor-footer {
-  background: var(--page-background);
+/* Public site footer — keeps the original oversized kailor wordmark */
+.public-site .public-footer {
+  padding: clamp(75px, 8vw, 125px) var(--pub-space) 27px;
+  background: #f1f1f1;
+  color: #1a1a1a;
+  border: none;
+}
+
+.public-footer__main {
+  display: grid;
+  grid-template-columns: minmax(245px, 0.9fr) minmax(265px, 0.85fr) minmax(0, 1.5fr);
+  align-items: stretch;
+  gap: clamp(40px, 4vw, 75px);
+  max-width: 1750px;
+  margin: 0 auto;
+  padding-bottom: clamp(80px, 9vw, 140px);
+}
+
+/* Very minimal message form */
+.public-footer__enquiry { min-width: 0; }
+.public-site .public-footer__enquiry h2 {
+  margin: 0 0 14px;
+  font-size: clamp(25px, 2.6vw, 39px);
+  font-weight: 450;
+  line-height: 1.1;
+  letter-spacing: -0.055em;
+  color: #1a1a1a;
+}
+.public-site .public-footer__enquiry > p {
+  max-width: 275px;
+  margin: 0 0 40px;
+  color: #656565;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.public-footer__form {
   display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 25px clamp(22px, 5.5vw, 92px);
-  color: #737373;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  max-width: 365px;
+}
+.public-footer__form label {
+  margin-top: 10px;
+  color: #515151;
   font-size: 11px;
-  font-weight: 400;
-  line-height: normal;
-  letter-spacing: normal;
-  -webkit-font-smoothing: antialiased;
+}
+.public-footer__form input {
+  display: block;
+  width: 100%;
+  height: 47px;
+  padding: 12px 17px;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: none;
+  background: #ffffff;
+  color: #1a1a1a;
+  font: inherit;
+  font-size: 13px;
+  outline-offset: 3px;
+}
+.public-footer__form input::placeholder { color: #8b8b8b; }
+.public-footer__form input:focus-visible { outline: 2px solid #353a3e; }
+.public-footer__form button {
+  min-height: 44px;
+  margin-top: 15px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 999px;
+  background: #222526;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.public-footer__form button:hover {
+  background: #0f1112;
+  transform: scale(1.04);
+}
+.public-site .public-footer__form-note {
+  max-width: 260px;
+  margin: 8px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #777777;
+}
+
+/* Page and homepage links */
+.public-footer__directory {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(22px, 3vw, 52px);
+  align-content: start;
+}
+.public-footer__directory nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.public-site .public-footer__directory h2 {
+  margin: 0 0 18px;
+  color: #858585;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+.public-footer__directory a {
+  display: block;
+  width: fit-content;
+  padding: 4px 0;
+  color: #1a1a1a;
+  font-size: 12px;
+  text-decoration: none;
+  line-height: 1.45;
+  transform-origin: left center;
+  transition: color 0.22s ease, transform 0.22s ease;
+}
+.public-footer__directory a:hover {
+  color: #080808;
+  transform: scale(1.045);
+}
+
+/* Keep original wordmark sizing, weight, spacing and line-height */
+.public-footer__identity {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 75px;
+}
+.public-site .public-footer__tagline {
+  align-self: flex-end;
+  margin: 0;
+  color: #555555;
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: right;
+}
+.public-footer__signature {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  min-width: 0;
+  width: 100%;
+  white-space: nowrap;
+}
+.public-footer__mascot {
+  position: relative;
+  z-index: 1;
+  display: block;
+  flex: 0 0 auto;
+  width: clamp(66px, 7.5vw, 125px);
+  height: clamp(80px, 10vw, 160px);
+  object-fit: contain;
+  object-position: bottom right;
+  margin-right: -0.07em;
+  pointer-events: none;
+}
+.public-site .footer-wordmark {
+  flex: none;
+  display: block;
+  font-size: clamp(80px, 15vw, 220px);
+  letter-spacing: -0.09em;
+  font-weight: 500;
+  line-height: 0.85;
+  color: #1a1a1a;
+  text-decoration: none;
+}
+.public-site .footer-wordmark:hover { color: #080808; }
+
+/* Bottom details */
+.public-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px 32px;
+  max-width: 1750px;
+  margin: 0 auto;
+  padding-top: 24px;
+  border-top: 1px solid #dcdcdc;
+  color: #777777;
+  font-size: 11px;
+}
+.public-footer__bottom a {
+  color: #555555;
+  text-decoration: none;
+}
+.public-footer__bottom a:hover { color: #111111; }
+
+@media (max-width: 1450px) {
+  .public-footer__main {
+    grid-template-columns: minmax(220px, 1fr) minmax(290px, 1.25fr);
+    gap: 75px 80px;
+  }
+  .public-footer__identity {
+    grid-column: 1 / -1;
+    gap: 35px;
+    align-items: flex-end;
+  }
+  .public-footer__signature { justify-content: flex-end; }
+}
+
+@media (max-width: 760px) {
+  .public-site .public-footer {
+    padding: 78px 24px 26px;
+  }
+  .public-footer__main {
+    grid-template-columns: 1fr;
+    gap: 65px;
+    padding-bottom: 65px;
+  }
+  .public-footer__directory {
+    gap: 30px;
+    max-width: 530px;
+  }
+  .public-footer__identity {
+    grid-column: auto;
+    align-items: flex-end;
+    gap: 42px;
+  }
+  .public-footer__form { max-width: 470px; }
+  .public-site .footer-wordmark {
+    font-size: clamp(76px, 18vw, 120px);
+  }
+  .public-footer__mascot {
+    width: clamp(45px, 11vw, 80px);
+    height: clamp(62px, 13vw, 100px);
+  }
+  .public-footer__bottom { align-items: flex-start; }
+}
+
+@media (max-width: 390px) {
+  .public-footer__directory { gap: 17px; }
+  .public-footer__directory a { font-size: 11px; }
+  .public-site .footer-wordmark { font-size: clamp(68px, 18vw, 94px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-footer__form button,
+  .public-footer__directory a { transition: none; }
+  .public-footer__form button:hover,
+  .public-footer__directory a:hover { transform: none; }
 }
