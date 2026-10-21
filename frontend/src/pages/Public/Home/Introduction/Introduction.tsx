@@ -83,7 +83,7 @@ export function Introduction() {
         <div className="introduction-left">
           <div>
             <p className="introduction-eyebrow">
-              Independent thinking. Connected expertise.
+          
             </p>
 
             <h2 id="introduction-title">

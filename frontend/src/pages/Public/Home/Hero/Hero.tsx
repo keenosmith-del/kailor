@@ -20,42 +20,52 @@ const clientRequests: ClientRequest[] = [
   {
     initials: "AM",
     message: "Can we automate our bookings?",
+    avatar: "/clients/1.jpeg",
   },
   {
     initials: "JL",
     message: "We need a better website.",
+    avatar: "/clients/2.jpeg",
   },
   {
     initials: "TR",
     message: "Could AI help our team?",
+    avatar: "/clients/3.jpeg",
   },
   {
     initials: "SK",
     message: "Our systems need to connect.",
+    avatar: "/clients/4.jpeg",
   },
   {
     initials: "NB",
     message: "We need a custom platform.",
+    avatar: "/clients/5.jpeg",
   },
   {
     initials: "CP",
     message: "Can we simplify our workflow?",
+    avatar: "/clients/6.jpeg",
   },
   {
     initials: "MJ",
     message: "We want to move to the cloud.",
+    avatar: "/clients/7.jpeg",
   },
   {
     initials: "LH",
     message: "Our reporting takes too long.",
+    avatar: "/clients/8.jpeg",
   },
   {
     initials: "DW",
     message: "Where should we start with AI?",
+    avatar: "/clients/9.jpeg",
   },
   {
     initials: "RS",
     message: "Can our tools work together?",
+    avatar: "/clients/10.jpeg",
   },
 ];
 
@@ -189,7 +199,6 @@ export function Hero() {
               policy. Promise, we're friendly 🥰
             </span>
           </p>
-
         </div>
       </motion.section>
     </motion.div>
