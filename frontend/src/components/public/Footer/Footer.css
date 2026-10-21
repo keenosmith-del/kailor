@@ -1,70 +1,274 @@
-.public-footer {
-  padding: 70px var(--pub-space) 28px;
-  background: var(--background-secondary);
-  border-top: 1px solid var(--border-subtle);
+/* Public site footer — keeps the original oversized kailor wordmark */
+.public-site .public-footer {
+  padding: clamp(75px, 8vw, 125px) var(--pub-space) 27px;
+  background: #ffffff;
+  color: #1a1a1a;
+  border: none;
 }
-.footer-top {
+
+.public-footer__main {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+
+  align-items: end;
+  column-gap: clamp(30px, 4vw, 65px);
+
+  width: 100%;
+  max-width: 1190px;
+  margin: 0;
+
+  padding-bottom: clamp(55px, 6vw, 90px);
+}
+
+/* Page and homepage links */
+.public-footer__directory {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+
+  justify-content: start;
+  align-content: start;
+
+  column-gap: clamp(35px, 3.5vw, 65px);
+  padding-top: 4px;
+}
+
+.public-footer__directory nav {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-  padding-bottom: 70px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
 }
-.footer-wordmark {
-  font-size: clamp(80px, 15vw, 220px);
+.public-site .public-footer__directory h2 {
+  margin: 0 0 18px;
+  color: #858585;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+.public-footer__directory a {
+  display: block;
+  width: fit-content;
+  padding: 4px 0;
+  color: #1a1a1a;
+  font-size: 12px;
+  text-decoration: none;
+  line-height: 1.45;
+  transform-origin: left center;
+  transition:
+    color 0.22s ease,
+    transform 0.22s ease;
+}
+.public-footer__directory a:hover {
+  color: #080808;
+  transform: scale(1.045);
+}
+
+/* Keep original wordmark sizing, weight, spacing and line-height */
+.public-footer__identity {
+  min-width: 0;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  justify-self: end;
+  align-self: end;
+}
+
+.public-site .public-footer__tagline {
+  align-self: flex-end;
+  margin: 0;
+  color: #555555;
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: right;
+}
+.public-footer__signature {
+  position: relative;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  width: max-content;
+  white-space: nowrap;
+}
+
+.public-footer__mascot {
+  position: relative;
+  z-index: 5;
+
+  display: block;
+  flex: 0 0 auto;
+
+  width: 200px;
+  height: 200px;
+
+  object-fit: contain;
+  object-position: bottom right;
+
+  margin-right: -25px;
+
+  transform: translateY(-10px);
+
+  pointer-events: none;
+  user-select: none;
+}
+
+.public-site .footer-wordmark {
+  position: relative;
+  z-index: 2;
+
+  flex: none;
+  display: block;
+
+  font-size: 250px;
   letter-spacing: -0.09em;
   font-weight: 500;
   line-height: 0.85;
+
+  color: #1a1a1a;
+  text-decoration: none;
 }
-.footer-top p {
-  font-size: 17px;
-  line-height: 1.6;
-  margin: 0 7% 0 0;
+
+.public-site .footer-wordmark:hover {
+  color: #080808;
 }
-.footer-bottom {
-  border-top: 1px solid #d5d5d5;
-  padding-top: 25px;
-  display: flex;
-  justify-content: space-between;
+
+/* Bottom details */
+.public-footer__bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  gap: 30px;
+
+  column-gap: 16px;
+  row-gap: 12px;
+
+  width: 100%;
+  max-width: 1750px;
+  margin: 0 auto;
+
+  padding-top: 24px;
+
+  border: none;
+
+  color: #777777;
   font-size: 11px;
-  color: #626262;
 }
-.footer-bottom a {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-  min-height: 44px;
+
+.public-footer__bottom span:first-child {
+  grid-column: 1;
+  justify-self: start;
 }
-.footer-bottom nav {
-  display: flex;
-  gap: 22px;
+
+.public-footer__bottom span:last-child {
+  grid-column: 2;
+  justify-self: center;
+  white-space: nowrap;
 }
-@media (max-width: 1050px) {
-  .footer-bottom {
-    flex-wrap: wrap;
+
+.public-footer__bottom a {
+  color: #555555;
+  text-decoration: none;
+}
+.public-footer__bottom a:hover {
+  color: #111111;
+}
+
+@media (max-width: 1180px) {
+  .public-footer__main {
+    column-gap: 26px;
+  }
+
+  .public-site .footer-wordmark {
+    font-size: clamp(145px, 18vw, 225px);
+  }
+
+  .public-footer__mascot {
+    width: clamp(110px, 15vw, 175px);
+    height: clamp(110px, 15vw, 175px);
+
+    margin-right: -22px;
+    transform: translateY(-10px);
+  }
+
+  .public-footer__directory {
+    column-gap: 28px;
   }
 }
+
+@media (max-width: 900px) {
+  .public-footer__main {
+    grid-template-columns: 1fr;
+    row-gap: 48px;
+  }
+
+  .public-footer__identity {
+    justify-self: end;
+    width: 100%;
+  }
+
+  .public-footer__signature {
+    max-width: 100%;
+  }
+}
+
 @media (max-width: 760px) {
-  .footer-top {
+  .public-site .public-footer {
+    padding: 78px 24px 26px;
+  }
+  .public-footer__main {
+    grid-template-columns: 1fr;
+    gap: 65px;
+    padding-bottom: 65px;
+  }
+  .public-footer__directory {
+    gap: 30px;
+    max-width: 530px;
+  }
+  .public-footer__identity {
+    grid-column: auto;
+    align-items: flex-end;
+    gap: 42px;
+  }
+  .public-footer__form {
+    max-width: 470px;
+  }
+  .public-site .footer-wordmark {
+    font-size: clamp(76px, 18vw, 120px);
+  }
+  .public-footer__mascot {
+    width: clamp(45px, 11vw, 80px);
+    height: clamp(62px, 13vw, 100px);
+
+    margin-right: -12px;
+    transform: translateY(-7px);
+  }
+  .public-footer__bottom {
     align-items: flex-start;
-    flex-direction: column;
-    gap: 40px;
-    padding-bottom: 40px;
   }
-  .footer-top p {
-    font-size: 15px;
+}
+
+@media (max-width: 390px) {
+  .public-footer__directory {
+    gap: 17px;
   }
-  .footer-bottom {
-    display: grid;
-    gap: 15px;
+  .public-footer__directory a {
+    font-size: 11px;
   }
-  .footer-bottom nav {
-    flex-wrap: wrap;
-    gap: 6px 20px;
+  .public-site .footer-wordmark {
+    font-size: clamp(68px, 18vw, 94px);
   }
-  .footer-wordmark {
-    font-size: 120px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-footer__form button,
+  .public-footer__directory a {
+    transition: none;
+  }
+  .public-footer__form button:hover,
+  .public-footer__directory a:hover {
+    transform: none;
   }
 }
