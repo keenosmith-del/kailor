@@ -1,0 +1,344 @@
+/* Standalone horizontal marquee */
+
+.public-site .home-marquee {
+  position: relative;
+  isolation: isolate;
+
+  width: 100%;
+  overflow: hidden;
+
+  padding: 12px 0 48px;
+
+  background: transparent;
+  color: #222526;
+}
+
+.home-marquee__body {
+  width: 100%;
+}
+
+/* Minimal editorial label */
+
+.home-marquee__intro {
+  margin-bottom: 18px;
+  padding: 0 var(--pub-space);
+  text-align: center;
+}
+
+.public-site .home-marquee__intro h2 {
+  margin: 0;
+
+  color: #777777;
+
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+
+/* Softly dissolved edges */
+
+.home-marquee__viewport {
+  position: relative;
+
+  width: 100%;
+  overflow: hidden;
+
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.35) 7%,
+    #000000 15%,
+    #000000 85%,
+    rgba(0, 0, 0, 0.35) 93%,
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.35) 7%,
+    #000000 15%,
+    #000000 85%,
+    rgba(0, 0, 0, 0.35) 93%,
+    transparent 100%
+  );
+}
+
+/* Seamless, permanently moving strip */
+
+.home-marquee__track {
+  display: flex;
+  align-items: stretch;
+
+  width: max-content;
+
+  animation: kailor-marquee-scroll 58s linear infinite;
+
+  will-change: transform;
+}
+
+.home-marquee__group {
+  display: flex;
+  align-items: flex-start;
+  flex: 0 0 auto;
+
+  gap: clamp(12px, 1.8vw, 26px);
+  padding-right: clamp(12px, 1.8vw, 26px);
+}
+
+/* Individual emblem */
+
+.home-marquee__item {
+  flex: 0 0 140px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 140px;
+  gap: 7px;
+
+  padding: 0 0 4px;
+
+  color: #222526;
+  text-align: center;
+}
+
+/* Laurel artwork */
+
+.home-marquee__emblem {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  width: 116px;
+  height: 111px;
+
+  flex: 0 0 auto;
+}
+
+.home-marquee__wreath {
+  position: absolute;
+  inset: 0;
+
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  filter: grayscale(1) contrast(1.2);
+  opacity: 0.82;
+
+  transform: scale(1.055);
+
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Technology logo / capability icon */
+
+.home-marquee__symbol {
+  position: relative;
+  z-index: 1;
+
+  display: grid;
+  place-items: center;
+
+  width: 70px;
+  height: 58px;
+
+  color: #252829;
+}
+
+.home-marquee__symbol svg {
+  display: block;
+}
+
+.home-marquee__logo {
+  display: block;
+
+  width: 35px;
+  height: 35px;
+
+  object-fit: contain;
+  filter: grayscale(1);
+}
+
+/* Fallback until real brand SVGs are supplied */
+
+.home-marquee__wordmark {
+  display: block;
+
+  max-width: 70px;
+
+  color: #252829;
+
+  font-size: 14px;
+  font-weight: 550;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.home-marquee__wordmark.is-technology {
+  font-size: 15px;
+  font-weight: 550;
+}
+
+/* Labels */
+
+.home-marquee__name {
+  display: block;
+
+  max-width: 136px;
+
+  color: #555555;
+
+  font-size: 11px;
+  font-weight: 450;
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+}
+
+/* Conventional infinite marquee */
+
+@keyframes kailor-marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+  .public-site .home-marquee {
+    padding: 10px 0 38px;
+  }
+
+  .home-marquee__intro {
+    margin-bottom: 14px;
+  }
+
+  .home-marquee__item {
+    flex-basis: 130px;
+    width: 130px;
+  }
+
+  .home-marquee__emblem {
+    width: 108px;
+    height: 104px;
+  }
+
+  .home-marquee__group {
+    gap: 13px;
+    padding-right: 13px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .public-site .home-marquee {
+    padding: 8px 0 30px;
+  }
+
+  .home-marquee__intro {
+    padding: 0 25px;
+    margin-bottom: 14px;
+  }
+
+  .public-site .home-marquee__intro h2 {
+    font-size: 11px;
+  }
+
+  .home-marquee__group {
+    gap: 9px;
+    padding-right: 9px;
+  }
+
+  .home-marquee__item {
+    flex-basis: 115px;
+    width: 115px;
+    gap: 4px;
+  }
+
+  .home-marquee__emblem {
+    width: 97px;
+    height: 94px;
+  }
+
+  .home-marquee__symbol {
+    width: 58px;
+    height: 50px;
+  }
+
+  .home-marquee__symbol svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .home-marquee__logo {
+    width: 29px;
+    height: 29px;
+  }
+
+  .home-marquee__wordmark,
+  .home-marquee__wordmark.is-technology {
+    font-size: 12px;
+  }
+
+  .home-marquee__name {
+    max-width: 112px;
+    font-size: 10px;
+  }
+
+  .home-marquee__viewport {
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000000 9%,
+      #000000 91%,
+      transparent
+    );
+
+    mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000000 9%,
+      #000000 91%,
+      transparent
+    );
+  }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .home-marquee__viewport {
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .home-marquee__track {
+    animation: none;
+    will-change: auto;
+  }
+
+  .home-marquee__group[aria-hidden="true"] {
+    display: none;
+  }
+
+  .home-marquee__viewport::-webkit-scrollbar {
+    display: none;
+  }
+}

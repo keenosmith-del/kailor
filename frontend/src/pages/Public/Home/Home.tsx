@@ -1,4 +1,5 @@
 import { Hero } from "./Hero/Hero";
+import { Marquee } from "./Marquee/Marquee";
 import { Introduction } from "./Introduction/Introduction";
 import { ServicesSection } from "./ServicesSection/ServicesSection";
 import { Conversation } from "./Conversation/Conversation";
@@ -16,9 +17,9 @@ import "./Home.css";
 export default function Home() {
   return (
     <>
-      <SectionReveal>
-        <Hero />
-      </SectionReveal>
+      <Hero />
+
+      <Marquee />
 
       <SectionReveal>
         <Introduction />
