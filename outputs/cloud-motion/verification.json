@@ -1,0 +1,15 @@
+{
+  "frames": 238,
+  "duration_seconds": 9.916666666666666,
+  "background_corner_rgb": [
+    [
+      26,
+      26,
+      26
+    ]
+  ],
+  "maximum_background_border_error": 0,
+  "fixed_prefix_maximum_decoded_variation": 2,
+  "loop_boundary_maximum_rgb_difference": 37,
+  "loop_boundary_mean_rgb_difference": 0.01158275462962963
+}
