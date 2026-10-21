@@ -116,9 +116,13 @@ export function Hero() {
             </p>
 
             <div className="kailor-hero__actions">
-              <Link className="kailor-hero__primary" to="/contact">
+              <button
+                type="button"
+                className="kailor-hero__primary"
+                onClick={openConversation}
+              >
                 Start a conversation
-              </Link>
+              </button>
 
               <Link className="kailor-hero__secondary" to="/services">
                 Explore what we do
@@ -174,6 +178,18 @@ export function Hero() {
               draggable={false}
             />
           </motion.div>
+
+          <p className="kailor-hero__mascot-note">
+            <span className="kailor-hero__mascot-note-label">
+              Mascot fine print
+            </span>
+
+            <span>
+              The crossed arms are a design choice, not our customer-service
+              policy. Promise, we're friendly 🥰
+            </span>
+          </p>
+
         </div>
       </motion.section>
     </motion.div>

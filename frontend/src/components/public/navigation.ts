@@ -17,18 +17,17 @@ export const sidebarPages = [
 ] as const;
 
 export const sidebarSections = [
-  ["hero", "Hero"],
-  ["technologies", "Technology & expertise"],
-  ["introduction", "Why kailor"],
-  ["services-overview", "What we do"],
-  ["conversation", "Conversation"],
-  ["collaboration", "Collaboration"],
-  ["work", "Selected work"],
-  ["consultants", "Our consultants"],
-  ["client-feedback", "Client perspectives"],
-  ["perspective", "Our approach"],
-  ["activity", "What's happening"],
-  ["footer", "Footer"],
+  ["hero", "Back to the beginning"],
+  ["technologies", "Tools, platforms & expertise"],
+  ["introduction", "Our experience & thinking"],
+  ["services-overview", "Problems we help solve"],
+  ["conversation", "From challenge to solution"],
+  ["collaboration", "Inside your project workspace"],
+  ["work", "Project examples"],
+  ["consultants", "Meet the specialists"],
+  ["client-feedback", "What clients have to say"],
+  ["perspective", "How we choose solutions"],
+  ["activity", "What we're building next"],
 ] as const;
 
 export const upcomingPages = [
