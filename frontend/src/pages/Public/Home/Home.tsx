@@ -6,6 +6,7 @@ import { Conversation } from "./Conversation/Conversation";
 import { Collaboration } from "./Collaboration/Collaboration";
 import { SelectedWork } from "./SelectedWork/SelectedWork";
 import { Consultants } from "./Consultants/Consultants";
+import { Testimonials } from "./Testimonials/Testimonials";
 import { ClientFeedback } from "./ClientFeedback/ClientFeedback";
 import { Perspective } from "./Perspective/Perspective";
 import { Activity } from "./Activity/Activity";
@@ -37,11 +38,7 @@ export default function Home() {
         <Collaboration />
       </SectionReveal>
 
-      <SelectedWork />
-
-      <Consultants />
-
-      <ClientFeedback />
+      <Testimonials />
 
       <Perspective />
 

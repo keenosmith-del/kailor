@@ -96,11 +96,7 @@ export function SelectedWork() {
     [0, 0.13, 0.84, 1],
     [0, 1, 1, 0],
   );
-  const y = useTransform(
-    scrollYProgress,
-    [0, 0.16, 0.84, 1],
-    [26, 0, 0, -22],
-  );
+  const y = useTransform(scrollYProgress, [0, 0.16, 0.84, 1], [26, 0, 0, -22]);
 
   const goTo = (index: number) => {
     const next = Math.max(0, Math.min(projects.length - 1, index));
@@ -173,8 +169,8 @@ export function SelectedWork() {
             <span className="kailor-round-dot" aria-hidden="true" />
           </h2>
           <p>
-            Different kinds of challenges. Each approached with its own thinking,
-            requirements and technical decisions.
+            Different kinds of challenges. Each approached with its own
+            thinking, requirements and technical decisions.
           </p>
         </motion.header>
 
@@ -205,9 +201,7 @@ export function SelectedWork() {
                 aria-roledescription="slide"
                 aria-label={project.name}
                 initial={
-                  reducedMotion
-                    ? false
-                    : { opacity: 0, y: 38, scale: 0.985 }
+                  reducedMotion ? false : { opacity: 0, y: 38, scale: 0.985 }
                 }
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, amount: 0.28 }}
@@ -269,7 +263,11 @@ export function SelectedWork() {
                       aria-label={`View ${project.name} project scope PDF in a new tab`}
                     >
                       View project scope
-                      <ExternalLink size={14} strokeWidth={1.5} aria-hidden="true" />
+                      <ExternalLink
+                        size={14}
+                        strokeWidth={1.5}
+                        aria-hidden="true"
+                      />
                     </a>
                   </div>
                 </div>
@@ -319,7 +317,11 @@ export function SelectedWork() {
           </div>
         </div>
 
-        <p className="selected-work__sr-only" aria-live="polite" aria-atomic="true">
+        <p
+          className="selected-work__sr-only"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           Showing {projects[activeIndex].name}
         </p>
 
@@ -330,7 +332,10 @@ export function SelectedWork() {
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: reducedMotion ? 0 : 0.8, ease: easing }}
         >
-          <Link className="selected-work__cta selected-work__cta--outline" to="/work">
+          <Link
+            className="pub-pill header-sign-in selected-work__cta selected-work__cta--outline"
+            to="/work"
+          >
             Explore all projects
           </Link>
           <button

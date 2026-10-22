@@ -1,7 +1,9 @@
-import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router";
 import {
+  AnimatePresence,
   motion,
+  useInView,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -9,254 +11,183 @@ import {
 
 import "./ClientFeedback.css";
 
-type Feedback = {
-  name: string;
-  initials: string;
+type ClientNote = {
+  id: string;
   role: string;
-  portrait: string;
-  opening: string;
-  highlight: string;
-  ending: string;
+  avatar: string;
+  message: string;
 };
 
-const feedback: Feedback[] = [
+// Demonstration content, NOT customer endorsements.
+// Replace every entry with approved, attributable client feedback before launch.
+const notes: ClientNote[] = [
   {
-    name: "Nadia Jacobs",
-    initials: "NJ",
-    role: "Operations Director",
-    portrait: "",
-    opening: "We had plenty of ideas, but ",
-    highlight: "no clear way to connect the pieces.",
-    ending:
-      " The process brought structure to our thinking and helped us understand what actually needed to change.",
+    id: "01",
+    role: "Business owner",
+    avatar: "/clients/1.jpeg",
+    message:
+      "We thought we needed another platform. It turned out we could fix most of the problem by connecting what we already used.",
   },
   {
-    name: "Thabo Mokoena",
-    initials: "TM",
-    role: "Business Founder",
-    portrait: "",
-    opening:
-      "What stood out was the attention given to understanding our business. ",
-    highlight: "We weren't pushed towards technology we didn't need.",
-    ending: " Every recommendation had a purpose.",
+    id: "02",
+    role: "Operations lead",
+    avatar: "/clients/2.jpeg",
+    message:
+      "The best part was having the technical options explained without the jargon. Our team could actually make a decision.",
   },
   {
-    name: "Leah Petersen",
-    initials: "LP",
-    role: "Project Lead",
-    portrait: "",
-    opening: "Our systems had grown in different directions. ",
-    highlight: "kailor helped us see the bigger picture",
-    ending: " and gave us a more considered way to approach the next phase.",
+    id: "03",
+    role: "Founder",
+    avatar: "/clients/3.jpeg",
+    message:
+      "There wasn't any pressure to build more than we needed. We started with the bit that was slowing everyone down.",
+  },
+  {
+    id: "04",
+    role: "Project lead",
+    avatar: "/clients/4.jpeg",
+    message:
+      "We could see what was being proposed, why it mattered and what still needed a decision. That made the next steps easier.",
+  },
+  {
+    id: "05",
+    role: "Business director",
+    avatar: "/clients/5.jpeg",
+    message:
+      "It felt like someone was looking at how our business really works, not trying to fit us into a ready-made solution.",
   },
 ];
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 export function ClientFeedback() {
   const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-
   const reducedMotion = useReducedMotion();
+  const isVisible = useInView(sectionRef, { amount: 0.28 });
   const [activeIndex, setActiveIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  // Rotate only while the section is visible; no hidden background animation.
+  useEffect(() => {
+    if (!isVisible || reducedMotion || paused) return;
+
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === "visible") {
+        setActiveIndex((current) => (current + 1) % notes.length);
+      }
+    }, 6300);
+
+    return () => window.clearInterval(timer);
+  }, [isVisible, paused, reducedMotion]);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
 
-  const opacity = useTransform(
+  const sectionOpacity = useTransform(
     scrollYProgress,
-    [0, 0.16, 0.8, 1],
+    [0, 0.2, 0.78, 1],
     [0, 1, 1, 0],
   );
 
-  const y = useTransform(scrollYProgress, [0, 0.16, 0.8, 1], [30, 0, 0, -30]);
+  const sectionY = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.78, 1],
+    [28, 0, 0, -18],
+  );
 
-  const goTo = (index: number) => {
-    const next = Math.max(0, Math.min(feedback.length - 1, index));
-
-    const track = trackRef.current;
-    const card = track?.children[next] as HTMLElement | undefined;
-
-    if (track && card) {
-      const cardLeft =
-        card.getBoundingClientRect().left -
-        track.getBoundingClientRect().left +
-        track.scrollLeft;
-
-      track.scrollTo({
-        left: cardLeft,
-        behavior: reducedMotion ? "instant" : "smooth",
-      });
-    }
-
-    setActiveIndex(next);
-  };
-
-  const updateActive = () => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    const trackLeft = track.getBoundingClientRect().left;
-    let nearest = 0;
-    let distance = Number.POSITIVE_INFINITY;
-
-    Array.from(track.children).forEach((child, index) => {
-      const currentDistance = Math.abs(
-        child.getBoundingClientRect().left - trackLeft,
-      );
-
-      if (currentDistance < distance) {
-        distance = currentDistance;
-        nearest = index;
-      }
-    });
-
-    setActiveIndex(nearest);
-  };
+  const active = notes[activeIndex];
 
   return (
-    <section
+    <motion.section
       ref={sectionRef}
       id="client-feedback"
-      className="public-section home-client-feedback"
-      aria-labelledby="client-feedback-title"
+      className="public-section home-client-notes"
+      aria-labelledby="client-notes-title"
+      style={{
+        opacity: reducedMotion ? 1 : sectionOpacity,
+        y: reducedMotion ? 0 : sectionY,
+      }}
     >
-      <motion.div
-        className="client-feedback-layout"
-        style={{
-          opacity: reducedMotion ? 1 : opacity,
-          y: reducedMotion ? 0 : y,
-        }}
-      >
+      <div className="client-notes-layout">
         <motion.div
-          className="client-feedback-intro"
-          initial={reducedMotion ? false : { opacity: 0, y: 32 }}
+          className="client-notes-copy"
+          initial={reducedMotion ? false : { opacity: 0, y: 36 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{
-            duration: 0.95,
-            ease: [0.22, 1, 0.36, 1],
-          }}
+          transition={{ duration: reducedMotion ? 0 : 0.9, ease }}
         >
-          <h2 id="client-feedback-title">
-            In their
-            <br />
-            own words
-            <span className="client-feedback-dot" aria-hidden="true" />
-          </h2>
+          <h2 id="client-notes-title">In their words</h2>
 
           <p>
-            Behind every technical challenge is a business, a team and a
-            different way of working. Meaningful progress starts with listening,
-            understanding and finding the right way forward.
+            Different businesses. Different challenges. A few perspectives on
+            what changed, what helped, and what mattered along the way.
           </p>
+
+          <Link className="client-notes-cta" to="/create-account">
+            Get started
+          </Link>
         </motion.div>
 
-        <div className="client-feedback-showcase">
-          <div
-            ref={trackRef}
-            className="client-feedback-track"
-            role="region"
-            aria-roledescription="carousel"
-            aria-label="Client perspectives"
-            tabIndex={0}
-            onScroll={updateActive}
-            onKeyDown={(event) => {
-              if (event.key === "ArrowLeft") {
-                event.preventDefault();
-                goTo(activeIndex - 1);
-              }
+        <motion.div
+          className="client-notes-scene"
+          initial={reducedMotion ? false : { opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{
+            duration: reducedMotion ? 0 : 0.9,
+            delay: reducedMotion ? 0 : 0.16,
+            ease,
+          }}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocusCapture={() => setPaused(true)}
+          onBlurCapture={() => setPaused(false)}
+          aria-label="Client perspectives"
+        >
+          <div className="client-notes-message-area">
+            <article className="client-notes-bubble">
+              <AnimatePresence initial={false} mode="sync">
+                <motion.div
+                  key={active.id}
+                  className="client-notes-content"
+                  initial={reducedMotion ? false : { opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={reducedMotion ? undefined : { opacity: 0, y: -6 }}
+                  transition={{
+                    opacity: {
+                      duration: reducedMotion ? 0 : 0.9,
+                      ease: "easeInOut",
+                    },
+                    y: {
+                      duration: reducedMotion ? 0 : 0.9,
+                      ease: [0.22, 1, 0.36, 1],
+                    },
+                  }}
+                >
+                  <div className="client-notes-person">
+                    <img
+                      src={active.avatar}
+                      alt=""
+                      width={43}
+                      height={43}
+                      loading="lazy"
+                      decoding="async"
+                    />
 
-              if (event.key === "ArrowRight") {
-                event.preventDefault();
-                goTo(activeIndex + 1);
-              }
-            }}
-          >
-            {feedback.map((item, index) => (
-              <motion.article
-                key={item.name}
-                className="client-feedback-card"
-                role="group"
-                aria-roledescription="slide"
-                aria-label={item.name}
-                initial={reducedMotion ? false : { opacity: 0, y: 26 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{
-                  duration: 0.8,
-                  delay: reducedMotion ? 0 : index * 0.08,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                <div className="client-feedback-card-top">
-                  <Quote size={34} strokeWidth={1.5} aria-hidden="true" />
-
-                  <div className="client-feedback-avatar">
-                    {item.portrait ? (
-                      <img src={item.portrait} alt="" loading="lazy" />
-                    ) : (
-                      <span>{item.initials}</span>
-                    )}
+                    <div className="client-notes-person-text">
+                      <strong>{active.role}</strong>
+                    </div>
                   </div>
-                </div>
 
-                <blockquote>
-                  <span>{item.opening}</span>
-                  <strong>{item.highlight}</strong>
-                  <span>{item.ending}</span>
-                </blockquote>
-
-                <div className="client-feedback-person">
-                  <strong>{item.name}</strong>
-                  <span>{item.role}</span>
-                </div>
-              </motion.article>
-            ))}
+                  <p className="client-notes-message">{active.message}</p>
+                </motion.div>
+              </AnimatePresence>
+            </article>
           </div>
-
-          <div className="client-feedback-navigation">
-            <div className="client-feedback-progress">
-              {feedback.map((item, index) => (
-                <button
-                  type="button"
-                  key={item.name}
-                  className={`client-feedback-progress-dot${
-                    index === activeIndex ? " is-active" : ""
-                  }`}
-                  aria-label={`Show feedback from ${item.name}`}
-                  aria-current={index === activeIndex ? "true" : undefined}
-                  onClick={() => goTo(index)}
-                />
-              ))}
-            </div>
-
-            <div className="client-feedback-arrows">
-              <button
-                type="button"
-                aria-label="Previous feedback"
-                disabled={activeIndex === 0}
-                onClick={() => goTo(activeIndex - 1)}
-              >
-                <ChevronLeft size={20} strokeWidth={1.5} />
-              </button>
-
-              <button
-                type="button"
-                aria-label="Next feedback"
-                disabled={activeIndex === feedback.length - 1}
-                onClick={() => goTo(activeIndex + 1)}
-              >
-                <ChevronRight size={20} strokeWidth={1.5} />
-              </button>
-            </div>
-          </div>
-
-          <p className="client-feedback-sr-only" aria-live="polite">
-            Showing feedback from {feedback[activeIndex].name}
-          </p>
-        </div>
-      </motion.div>
-    </section>
+        </motion.div>
+      </div>
+    </motion.section>
   );
 }
