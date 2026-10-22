@@ -1,6 +1,6 @@
+import { ModalClose } from "../../components/ModalClose/ModalClose";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
 export function SolutionModal({
   title,
   description,
@@ -106,15 +106,13 @@ export function SolutionModal({
         }
       }}
     >
-      <button
+      <ModalClose
         className="solution-close"
         aria-label="Close solution dialog"
         disabled={busy}
         onClick={close}
         autoFocus
-      >
-        <X size={19} />
-      </button>
+      />
       <div className="solution-modal-body">
         {hero}
         <h2 id={titleId}>{title}</h2>

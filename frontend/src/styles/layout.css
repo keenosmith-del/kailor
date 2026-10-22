@@ -31,32 +31,21 @@
   min-height: 0;
 }
 
-/* Authentication owns the full viewport background. The single shared footer
-   shares its bottom-left grid area instead of shortening the right panel. */
+/* Authentication and its footer share one continuous full-width surface. */
 .app-shell:has(> .auth-page) {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: minmax(0, 1fr) auto;
-}
-.app-shell > .auth-page {
-  grid-column: 1 / -1;
-  grid-row: 1 / -1;
+  display: flex;
+  flex-direction: column;
   min-height: 100svh;
+  background: #fff;
+}
+.app-shell:has(> .auth-page) > .auth-page {
+  flex: 1;
+  min-height: 0;
 }
 .app-shell:has(> .auth-page) > .kailor-footer {
-  grid-column: 1;
-  grid-row: 2;
-  align-self: end;
-  z-index: 1;
-}
-@media (max-width: 900px) {
-  .app-shell:has(> .auth-page) {
-    grid-template-columns: 1fr;
-  }
-  .app-shell > .auth-page {
-    grid-row: 1;
-    min-height: 0;
-  }
+  width: 100%;
+  background: #fff;
+  margin-top: 0;
 }
 
 .session-shell {

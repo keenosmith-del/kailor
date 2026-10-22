@@ -6,7 +6,8 @@ import {
   render,
   screen,
 } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter, Route, Routes } from "react-router";
+import { InternalNavigation } from "../src/components/public/PageBack/PageBack";
 import { Auth } from "../src/pages/Auth/Auth";
 import { api } from "../src/services/api";
 vi.mock("../src/services/api", () => ({ api: vi.fn() }));
@@ -36,7 +37,11 @@ it("keeps a restricted create-account route accessible without presenting a regi
   expect(
     screen.queryByRole("button", { name: "Create account", exact: true }),
   ).toBeNull();
-  expect(screen.queryByText("Continue without account")).toBeNull();
+  expect(
+    screen
+      .getByRole("button", { name: "Continue without account" })
+      .hasAttribute("disabled"),
+  ).toBe(true);
   expect(
     screen.getByRole("button", { name: "Back", exact: true }),
   ).toBeTruthy();
@@ -93,9 +98,84 @@ it("prevents duplicate sign-in requests and preserves only safe return destinati
   ).toHaveLength(1);
   expect(
     screen
-      .getByRole("link", { name: "Create account", exact: true })
+      .getByRole("link", { name: "Create an account", exact: true })
       .getAttribute("href"),
   ).toContain("returnTo=%2Fapp%2Fchat");
   await act(async () => reject!(new Error("Please try again.")));
   expect(screen.getByText("Please try again.")).toBeTruthy();
 });
+
+it("restores the profile and GitHub icons and matching mascot wordmark", async () => {
+  render(
+    <MemoryRouter>
+      <Auth onLogin={vi.fn()} />
+    </MemoryRouter>,
+  );
+  await screen.findByRole("heading", { name: "Welcome back" });
+  expect(
+    screen
+      .getByRole("button", { name: "Sign in", exact: true })
+      .querySelector("img")
+      ?.getAttribute("src"),
+  ).toBe("/svgs/profile.svg");
+  const github = screen.getByRole("button", { name: "Continue with GitHub" });
+  expect(github.querySelector("img")?.getAttribute("src")).toBe(
+    "/technology/github.svg",
+  );
+  expect(github.hasAttribute("disabled")).toBe(true);
+  expect(
+    screen
+      .getByRole("link", { name: "kailor home" })
+      .querySelector("img")
+      ?.getAttribute("src"),
+  ).toBe("/mascot-head.png");
+});
+
+it("keeps guest entry disabled even when the API reports guest access enabled", async () => {
+  vi.mocked(api).mockResolvedValue({
+    registration: "public",
+    guestAccess: true,
+  });
+  render(
+    <MemoryRouter>
+      <Auth onLogin={vi.fn()} />
+    </MemoryRouter>,
+  );
+  await act(async () => {});
+  const guest = screen.getByRole("button", {
+    name: "Continue without account",
+  });
+  expect(guest.hasAttribute("disabled")).toBe(true);
+  fireEvent.click(guest);
+  expect(
+    vi.mocked(api).mock.calls.some(([, method]) => method === "POST"),
+  ).toBe(false);
+  expect(screen.getByText("New here?")).toBeTruthy();
+});
+it.each(["/sign-in", "/create-account"])(
+  "returns Home after switching forms from %s",
+  async (path) => {
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <InternalNavigation>
+          <Routes>
+            <Route path="/" element={<h1>Home</h1>} />
+            <Route path="/sign-in" element={<Auth onLogin={vi.fn()} />} />
+            <Route
+              path="/create-account"
+              element={<Auth signup onLogin={vi.fn()} />}
+            />
+          </Routes>
+        </InternalNavigation>
+      </MemoryRouter>,
+    );
+    fireEvent.click(
+      screen.getByRole("link", {
+        name: path === "/sign-in" ? "Create an account" : "Sign in",
+        exact: true,
+      }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Back", exact: true }));
+    expect(screen.getByRole("heading", { name: "Home" })).toBeTruthy();
+  },
+);

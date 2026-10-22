@@ -1,0 +1,55 @@
+.common-questions-list {
+  max-width: 720px;
+}
+.common-questions-list details {
+  margin: 0 0 18px;
+}
+.common-questions-list summary {
+  padding: 10px 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.public-site .common-questions-list p {
+  margin: 8px 0 20px;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.75;
+}
+.common-questions-list a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.public-site .common-questions-more h2 {
+  margin: 36px 0 18px;
+  font-size: 26px;
+  letter-spacing: -0.04em;
+}
+.common-questions-chat {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 999px;
+  background: #222526;
+  color: #fff;
+  font-size: 13px;
+  transition:
+    background-color 0.22s ease,
+    transform 0.22s ease;
+}
+.common-questions-chat:hover {
+  background: #141718;
+  color: #fff;
+  transform: scale(1.025);
+}
+@media (prefers-reduced-motion: reduce) {
+  .common-questions-chat {
+    transition: none;
+  }
+  .common-questions-chat:hover {
+    transform: none;
+  }
+}

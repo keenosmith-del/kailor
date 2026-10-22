@@ -1,3 +1,4 @@
+import CommonQuestions from "../src/pages/Public/Questions/CommonQuestions";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import {
   cleanup,
@@ -21,7 +22,11 @@ import {
   COOKIE_PREFERENCE_KEY,
 } from "../src/components/public/CookiePreferences/CookiePreferences";
 import { within } from "@testing-library/react";
-import { sidebarSections } from "../src/components/public/navigation";
+import { ConversationProvider } from "../src/components/public/ConversationModal/ConversationModal";
+import {
+  sidebarPages,
+  sidebarSections,
+} from "../src/components/public/navigation";
 import Contact from "../src/pages/Public/Contact/Contact";
 import { ConversationVisual } from "../src/components/public/ConversationVisual/ConversationVisual";
 import { MediaSection } from "../src/components/public/MediaSection/MediaSection";
@@ -80,6 +85,7 @@ function site(path = "/") {
           <Route element={<PublicLayout />}>
             <Route index element={<Home />} />
             <Route path="/timeline" element={<Timeline />} />
+            <Route path="/faqs" element={<CommonQuestions />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/services" element={<Services />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
@@ -127,6 +133,7 @@ it("provides the exact Pages list, genuinely disabled items and collapsible iner
     "Our Team",
     "Timeline",
     "Pricing",
+    "FAQs",
     "Careers",
     "Contact",
   ]);
@@ -207,7 +214,9 @@ it("loads initial section hashes after the page commits", async () => {
 it("persists versioned essential-only cookie preferences and restores focus", () => {
   render(
     <MemoryRouter>
-      <CookiePreferences />
+      <ConversationProvider>
+        <CookiePreferences />
+      </ConversationProvider>
     </MemoryRouter>,
   );
   const trigger = screen.getByRole("button", { name: "Cookies", exact: true });
@@ -222,18 +231,21 @@ it("persists versioned essential-only cookie preferences and restores focus", ()
     JSON.parse(localStorage.getItem(COOKIE_PREFERENCE_KEY)!),
   ).toMatchObject({ version: 1, essential: true, optional: false });
   expect(document.activeElement).toBe(trigger);
+  expect(
+    screen
+      .getByText("Cookie preferences saved.")
+      .closest(".kailor-conversation-toast"),
+  ).toBeTruthy();
+  expect(document.querySelector("dialog[open]")).toBeNull();
   fireEvent.click(trigger);
   expect(
     screen.getByText(/Your essential-only preference is saved/),
   ).toBeTruthy();
 });
-it("keeps content visible and disables video autoplay in reduced motion", () => {
+it("keeps content visible and uses static cloud typography in reduced motion", () => {
   state.reduced = true;
   site();
-  expect(
-    document.querySelector<HTMLVideoElement>(".service-art--cloud video")
-      ?.autoplay,
-  ).toBe(false);
+  expect(document.querySelector(".service-art--cloud video")).toBeNull();
   expect(
     document.querySelectorAll(".kailor-chat__message").length,
   ).toBeGreaterThan(0);
@@ -247,4 +259,93 @@ it("keeps media fallbacks for broken files", () => {
   fireEvent.error(document.querySelector("video")!);
   expect(screen.getByText("Fallback")).toBeTruthy();
   expect(document.querySelector("video")).toBeNull();
+});
+
+it("includes all newly requested local technology logos once per marquee group", () => {
+  site();
+  const group = document.querySelector(".home-marquee__group")!;
+  const names = Array.from(group.querySelectorAll(".home-marquee__name")).map(
+    (item) => item.textContent,
+  );
+  for (const name of [
+    "Angular",
+    "Flutter",
+    "Spring Boot",
+    "Grunt",
+    "Gulp",
+    "MongoDB",
+    "Mongoose",
+    "Apache Kafka",
+    "RabbitMQ",
+    "Git",
+    "GitHub",
+  ])
+    expect(names.filter((value) => value === name)).toHaveLength(1);
+  const logos = Array.from(
+    group.querySelectorAll<HTMLImageElement>(".home-marquee__logo"),
+  ).map((image) => image.getAttribute("src"));
+  expect(new Set(logos).size).toBe(logos.length);
+  expect(logos).toContain("/technology/mongodb.svg");
+});
+
+it("uses the shared compact close icon for public dialogs", () => {
+  site();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Start a conversation", exact: true }),
+  );
+  const conversation = screen.getByRole("button", {
+    name: "Close conversation form",
+  });
+  expect(conversation.classList.contains("modal-close")).toBe(true);
+  expect(conversation.querySelector("svg")?.getAttribute("width")).toBe("14");
+  expect(
+    document.querySelector(".cookie-close")?.classList.contains("modal-close"),
+  ).toBe(true);
+  expect(
+    document.querySelector(".cookie-close svg")?.getAttribute("width"),
+  ).toBe("14");
+});
+
+it("mirrors every sidebar destination in the footer, including disabled pages", () => {
+  site();
+  const pages = screen.getByRole("navigation", { name: "Explore kailor" });
+  expect(
+    Array.from(pages.querySelectorAll("a, span")).map(
+      (item) => item.textContent,
+    ),
+  ).toEqual(sidebarPages.map(([, label]) => label));
+  expect(pages.querySelectorAll("span[aria-disabled=true]")).toHaveLength(2);
+  const sections = screen.getByRole("navigation", {
+    name: "Homepage sections",
+  });
+  expect(
+    Array.from(sections.querySelectorAll("a")).map((item) =>
+      item.getAttribute("href"),
+    ),
+  ).toEqual(sidebarSections.map(([id]) => `/#${id}`));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Start conversation from footer" }),
+  );
+  expect(screen.getByRole("dialog", { name: "Let's chat" })).toBeTruthy();
+  expect(
+    document.querySelector(".introduction-link")?.getAttribute("href"),
+  ).toBe("/timeline");
+});
+
+it("opens FAQs from the shared navigation and uses the existing chat modal", () => {
+  site();
+  fireEvent.click(
+    screen
+      .getByRole("navigation", { name: "Explore kailor" })
+      .querySelector('a[href="/faqs"]')!,
+  );
+  expect(
+    screen.getByRole("heading", { name: "Common questions" }),
+  ).toBeTruthy();
+  expect(document.title).toBe("FAQs | kailor");
+  expect(
+    screen.getByRole("button", { name: "Back", exact: true }),
+  ).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "Ask us a question" }));
+  expect(screen.getByRole("dialog", { name: "Let's chat" })).toBeTruthy();
 });

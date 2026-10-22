@@ -352,16 +352,8 @@
   top: 16px;
   margin: 16px 16px -48px 0;
   z-index: 2;
-  border: 0;
-  border-radius: 50%;
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  background: #ffffff;
-  color: #757575;
-  cursor: pointer;
 }
+
 .solution-detail-actions {
   display: flex;
   align-items: center;
@@ -482,9 +474,6 @@
   .solution-modal .button,
   .solution-modal .text-link {
     min-height: 44px;
-  }
-  .solution-close {
-    min-height: 36px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

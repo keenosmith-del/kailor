@@ -1,3 +1,4 @@
+import { BrandWordmark } from "../../BrandWordmark/BrandWordmark";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router";
 import { Menu, ChevronDown } from "lucide-react";
@@ -135,13 +136,7 @@ export function Header() {
             <Menu size={17} strokeWidth={1.5} />
           </button>
 
-          <Link
-            to="/"
-            className="public-brand-wordmark"
-            aria-label="kailor home"
-          >
-            kailor
-          </Link>
+          <BrandWordmark className="public-brand-wordmark" />
         </div>
 
         <div className="public-header-actions">

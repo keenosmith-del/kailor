@@ -41,6 +41,9 @@ const Workspace = lazy(() =>
   import("./pages/Workspace/Workspace").then((m) => ({ default: m.Workspace })),
 );
 const Timeline = lazy(() => import("./pages/Public/Timeline/Timeline"));
+const CommonQuestions = lazy(
+  () => import("./pages/Public/Questions/CommonQuestions"),
+);
 const Careers = lazy(() => import("./pages/Public/Careers/Careers"));
 const Privacy = lazy(() => import("./pages/Public/Privacy/Privacy"));
 const Terms = lazy(() => import("./pages/Public/Terms/Terms"));
@@ -92,6 +95,7 @@ export function App() {
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/timeline" element={<Timeline />} />
+              <Route path="/faqs" element={<CommonQuestions />} />
               <Route path="/careers" element={<Careers />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />

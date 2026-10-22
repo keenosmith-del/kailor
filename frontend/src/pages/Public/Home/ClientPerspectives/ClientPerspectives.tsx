@@ -17,6 +17,7 @@ type ClientNote = {
   id: string;
   role: string;
   avatar: string;
+  date: string;
   message: string;
 };
 
@@ -27,6 +28,7 @@ const notes: ClientNote[] = [
     id: "01",
     role: "Business owner",
     avatar: "/clients/21.jpeg",
+    date: "2025-04-18",
     message:
       "We thought we needed another platform. It turned out we could fix most of the problem by connecting what we already used.",
   },
@@ -34,6 +36,7 @@ const notes: ClientNote[] = [
     id: "02",
     role: "Operations lead",
     avatar: "/clients/22.jpeg",
+    date: "2025-06-04",
     message:
       "The best part was having the technical options explained without the jargon. Our team could actually make a decision.",
   },
@@ -41,6 +44,7 @@ const notes: ClientNote[] = [
     id: "03",
     role: "Founder",
     avatar: "/clients/23.jpeg",
+    date: "2025-08-22",
     message:
       "There wasn't any pressure to build more than we needed. We started with the bit that was slowing everyone down.",
   },
@@ -48,45 +52,52 @@ const notes: ClientNote[] = [
     id: "04",
     role: "Project lead",
     avatar: "/clients/24.jpeg",
+    date: "2025-10-10",
     message:
       "We could see what was being proposed, why it mattered and what still needed a decision. That made the next steps easier.",
   },
   {
     id: "05",
     role: "Business director",
-    avatar: "",
+    avatar: "/clients/25.jpeg",
+    date: "2025-12-02",
     message:
       "It felt like someone was looking at how our business really works, not trying to fit us into a ready-made solution.",
   },
   {
     id: "06",
     role: "Studio owner",
-    avatar: "",
+    avatar: "/clients/26.jpeg",
+    date: "2026-02-16",
     message: "Having a clear scope helped us choose a sensible first step.",
   },
   {
     id: "07",
     role: "Team lead",
-    avatar: "",
+    avatar: "/clients/27.jpeg",
+    date: "2026-04-08",
     message: "We needed something our team could maintain and understand.",
   },
   {
     id: "08",
     role: "Practice manager",
-    avatar: "",
+    avatar: "/clients/28.jpeg",
+    date: "2026-06-19",
     message: "Connecting our existing tools made the work easier to follow.",
   },
   {
     id: "09",
     role: "Independent professional",
-    avatar: "",
+    avatar: "/clients/29.jpeg",
+    date: "2026-08-07",
     message:
       "The discussion helped us separate the immediate need from the longer-term idea.",
   },
   {
     id: "10",
     role: "Operations manager",
-    avatar: "",
+    avatar: "/clients/30.jpeg",
+    date: "2026-10-05",
     message:
       "The decisions and next steps were documented so everyone could refer back to them.",
   },
@@ -202,30 +213,26 @@ function LocalClientPerspectives() {
                   }}
                 >
                   <div className="client-notes-person">
-                    {active.avatar ? (
-                      <img
-                        src={active.avatar}
-                        alt=""
-                        width={43}
-                        height={43}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    ) : (
-                      <span
-                        className="client-notes-initials"
-                        aria-hidden="true"
-                      >
-                        {active.role
-                          .split(" ")
-                          .map((word) => word[0])
-                          .join("")}
-                      </span>
-                    )}
+                    <img
+                      src={active.avatar}
+                      alt=""
+                      width={43}
+                      height={43}
+                      loading="lazy"
+                      decoding="async"
+                    />
 
                     <div className="client-notes-person-text">
                       <strong>{active.role}</strong>
-                      <small>October 2026</small>
+                      <small>
+                        <time dateTime={active.date}>
+                          {new Intl.DateTimeFormat("en", {
+                            month: "long",
+                            year: "numeric",
+                            timeZone: "UTC",
+                          }).format(new Date(active.date))}
+                        </time>
+                      </small>
                     </div>
                   </div>
 

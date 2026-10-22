@@ -1,8 +1,9 @@
+import { ModalClose } from "../../components/ModalClose/ModalClose";
 import { ConfirmDialog } from "../../components/ConfirmDialog/ConfirmDialog";
 import "./ApplicationWorkspace.css";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import type { Session } from "../../../../shared/src/index";
 import type { Account } from "../../types/account";
 import { ApplicationSidebar } from "../../components/ApplicationSidebar/ApplicationSidebar";
@@ -364,13 +365,11 @@ export function ApplicationWorkspace({ account }: { account: Account | null }) {
               }
             }}
           >
-            <button
-              className="application-icon dialog-close"
+            <ModalClose
+              className="dialog-close"
               aria-label="Close new project"
               onClick={() => setCreating(false)}
-            >
-              <X size={18} />
-            </button>
+            />
             <h2 id="new-project-title">A little room for your idea.</h2>
             <p>Give it a name. You can work out the details together.</p>
             <form

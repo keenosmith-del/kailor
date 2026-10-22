@@ -47,32 +47,6 @@
   position: absolute;
   top: 17px;
   right: 18px;
-
-  display: grid;
-  place-items: center;
-
-  width: 31px;
-  height: 31px;
-  padding: 0;
-
-  background: transparent;
-  color: #333333;
-
-  border: none;
-  border-radius: 50%;
-  box-shadow: none;
-
-  cursor: pointer;
-
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-}
-
-.kailor-conversation-close:hover {
-  background: transparent;
-  opacity: 0.65;
-  transform: scale(1.05);
 }
 
 /* Header */

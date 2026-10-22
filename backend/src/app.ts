@@ -168,9 +168,7 @@ app.post(
 app.get("/api/auth/policy", (_req, res) =>
   res.json({
     registration: config.REGISTRATION_POLICY,
-    guestAccess:
-      config.GUEST_ACCESS === "enabled" ||
-      (!config.GUEST_ACCESS && config.NODE_ENV !== "production"),
+    guestAccess: config.GUEST_ACCESS === "enabled",
   }),
 );
 app.post(

@@ -39,6 +39,31 @@ for (const [path, page] of Object.entries(routes)) {
   }
   if (path === "/") {
     assert.ok(!document.querySelector("#client-feedback, #work, #consultants"));
+    const expectedLogos = (await readdir(resolve(root, "technology")))
+      .filter((file) => file.endsWith(".svg"))
+      .sort();
+    const renderedLogos = Array.from(
+      document.querySelectorAll(
+        ".home-marquee__group:first-child .home-marquee__logo",
+      ),
+    )
+      .map((image) => image.getAttribute("src").split("/").at(-1))
+      .sort();
+    assert.deepEqual(
+      renderedLogos,
+      expectedLogos,
+      "Each local technology SVG must appear once in the marquee",
+    );
+    assert.ok(
+      document.querySelector(".service-art__changing-word"),
+      "Original cloud typography required",
+    );
+    assert.ok(
+      !document.querySelector(
+        ".service-art--cloud video, .service-art__video-poster",
+      ),
+      "Do not replace cloud typography with the MP4 or poster",
+    );
     assert.ok(!html.includes("We thought we needed another platform"));
     for (const a of document.querySelectorAll('a[href^="/#"]'))
       assert.ok(

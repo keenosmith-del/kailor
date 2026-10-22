@@ -1,8 +1,11 @@
+import { useConversation } from "../ConversationModal/ConversationModal";
+import { ModalClose } from "../../ModalClose/ModalClose";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import "./CookiePreferences.css";
 export const COOKIE_PREFERENCE_KEY = "kailor.cookie-preferences.v1";
 export function CookiePreferences() {
+  const { showToast } = useConversation();
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const [saved, setSaved] = useState(false);
@@ -38,6 +41,7 @@ export function CookiePreferences() {
       );
       setSaved(true);
       close();
+      showToast("Cookie preferences saved.");
     } catch {
       setError(
         "Your browser could not save preferences. Only essential storage is used.",
@@ -50,7 +54,10 @@ export function CookiePreferences() {
         ref={trigger}
         className="footer-cookies"
         type="button"
-        onClick={() => dialog.current?.showModal()}
+        onClick={() => {
+          setError("");
+          dialog.current?.showModal();
+        }}
       >
         <img src="/svgs/cookie-cutter.svg" width={16} height={16} alt="" />
         Cookies
@@ -74,14 +81,12 @@ export function CookiePreferences() {
           }
         }}
       >
-        <button
+        <ModalClose
           className="cookie-close"
           type="button"
           aria-label="Close cookie preferences"
           onClick={close}
-        >
-          ×
-        </button>
+        />
         <h2 id="cookie-title">Cookie preferences</h2>
         <p id="cookie-description">
           We use essential storage to keep accounts secure and remember your

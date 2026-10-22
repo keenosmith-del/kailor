@@ -119,7 +119,10 @@ it("production guest and preview API paths cannot allocate principals by default
     .set("Origin", config.APP_ORIGIN)
     .send({})
     .expect(403);
-  config.GUEST_ACCESS = "disabled";
+  config.GUEST_ACCESS = undefined;
   config.NODE_ENV = "development";
+  expect((await request(app).get("/api/auth/policy")).body.guestAccess).toBe(
+    false,
+  );
   await request(app).get("/api/guest/journeys").expect(403);
 });

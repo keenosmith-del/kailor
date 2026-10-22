@@ -540,15 +540,15 @@
 /* Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
-  .kailor-hero__request {
+  .public-site .kailor-hero .kailor-hero__request {
     animation: none;
     will-change: auto;
-    opacity: 0;
+    opacity: 0 !important;
   }
 
-  .kailor-hero__request--1,
-  .kailor-hero__request--4 {
-    opacity: 1;
+  .public-site .kailor-hero .kailor-hero__request--1,
+  .public-site .kailor-hero .kailor-hero__request--4 {
+    opacity: 1 !important;
   }
 
   .kailor-hero__primary,
@@ -610,15 +610,4 @@
   .kailor-hero__mascot-note-label {
     font-size: 9px;
   }
-}
-
-/* Keep the approved first three illustrative requests still and legible. */
-.kailor-hero__request {
-  animation: none;
-  opacity: 1;
-  transform: none;
-  will-change: auto;
-}
-.kailor-hero__request:nth-child(n + 4) {
-  display: none;
 }

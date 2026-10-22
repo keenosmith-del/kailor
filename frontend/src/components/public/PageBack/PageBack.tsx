@@ -17,8 +17,9 @@ export function InternalNavigation({ children }: { children: ReactNode }) {
     </Previous.Provider>
   );
 }
-export function PageBack() {
+export function PageBack({ to }: { to?: string } = {}) {
   const previous = useContext(Previous);
+  const destination = to ?? previous;
   const navigate = useNavigate();
   return (
     <button
@@ -26,9 +27,10 @@ export function PageBack() {
       type="button"
       onClick={() =>
         navigate(
-          previous.startsWith("/") && !previous.startsWith("//")
-            ? previous
+          destination.startsWith("/") && !destination.startsWith("//")
+            ? destination
             : "/",
+          { replace: Boolean(to) },
         )
       }
     >

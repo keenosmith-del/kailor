@@ -370,3 +370,13 @@ button {
 :root button:not([class*="public"]):not(.pub-icon) {
   border-radius: var(--control-radius);
 }
+
+/* Form fields keep the owner's quiet focus treatment without an outline. */
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none !important;
+}

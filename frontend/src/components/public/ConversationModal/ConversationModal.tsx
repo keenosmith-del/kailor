@@ -1,3 +1,4 @@
+import { ModalClose } from "../../ModalClose/ModalClose";
 import emailjs from "@emailjs/browser";
 
 import {
@@ -21,6 +22,7 @@ import "./ConversationModal.css";
 
 type ConversationContextValue = {
   openConversation: () => void;
+  showToast: (message: string) => void;
 };
 
 type FieldName = "name" | "email" | "message";
@@ -263,14 +265,12 @@ function ConversationDialog({
           ease: [0.22, 1, 0.36, 1],
         }}
       >
-        <button
+        <ModalClose
           className="kailor-conversation-close"
           type="button"
           aria-label="Close conversation form"
           onClick={onClose}
-        >
-          <X size={14} strokeWidth={1.7} />
-        </button>
+        />
 
         <div className="kailor-conversation-heading">
           <h2 id="kailor-conversation-title">Let's chat</h2>
@@ -423,7 +423,13 @@ function ConversationDialog({
 
 export function ConversationProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; id: number } | null>(
+    null,
+  );
+  const toastId = useRef(0);
+  const showToast = useCallback((message: string) => {
+    setToast({ message, id: ++toastId.current });
+  }, []);
 
   const pendingToastRef = useRef(false);
   const reducedMotion = useReducedMotion();
@@ -481,7 +487,7 @@ export function ConversationProvider({ children }: { children: ReactNode }) {
   }, [toast]);
 
   return (
-    <ConversationContext.Provider value={{ openConversation }}>
+    <ConversationContext.Provider value={{ openConversation, showToast }}>
       {children}
 
       {typeof document !== "undefined" &&
@@ -491,7 +497,7 @@ export function ConversationProvider({ children }: { children: ReactNode }) {
               onExitComplete={() => {
                 if (pendingToastRef.current) {
                   pendingToastRef.current = false;
-                  setToast("Your message has been sent.");
+                  showToast("Your message has been sent.");
                 }
               }}
             >
@@ -508,7 +514,7 @@ export function ConversationProvider({ children }: { children: ReactNode }) {
               <AnimatePresence>
                 {toast && (
                   <motion.div
-                    key={toast}
+                    key={toast.id}
                     className="kailor-conversation-toast"
                     role="status"
                     aria-live="polite"
@@ -534,7 +540,7 @@ export function ConversationProvider({ children }: { children: ReactNode }) {
                   >
                     <Info size={16} strokeWidth={1.5} aria-hidden="true" />
 
-                    <span>{toast}</span>
+                    <span>{toast.message}</span>
 
                     <button
                       type="button"

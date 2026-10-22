@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import type { Account } from "../../types/account";
 import { api } from "../../services/api";
-import { useDiscoveryEntry } from "../../services/useDiscoveryEntry";
 import { errorMessage } from "../../utils/errorMessage";
 
 export function useAuthentication(
@@ -30,7 +29,6 @@ export function useAuthentication(
     "closed",
   );
   const [policyReady, setPolicyReady] = useState(false);
-  const [guestEnabled, setGuestEnabled] = useState(false);
   const [invite, setInvite] = useState("");
   useEffect(() => {
     let active = true;
@@ -45,7 +43,6 @@ export function useAuthentication(
             ? value.registration
             : "closed",
         );
-        setGuestEnabled(value.guestAccess === true);
         setPolicyReady(true);
       })
       .catch(() => {
@@ -55,7 +52,6 @@ export function useAuthentication(
       active = false;
     };
   }, []);
-  const guest = useDiscoveryEntry({ guestOnly: true });
   useEffect(() => {
     setPassword("");
     setConfirmation("");
@@ -64,11 +60,7 @@ export function useAuthentication(
   }, [signup]);
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (
-      pending.current ||
-      guest.busy ||
-      (signup && (!policyReady || policy === "closed"))
-    )
+    if (pending.current || (signup && (!policyReady || policy === "closed")))
       return;
     setError("");
     if (signup && password !== confirmation) {
@@ -106,7 +98,6 @@ export function useAuthentication(
   return {
     policy,
     policyReady,
-    guestEnabled,
     invite,
     setInvite,
     name,
@@ -121,7 +112,6 @@ export function useAuthentication(
     setShowPassword,
     error,
     busy,
-    guest,
     submit,
     switchHref: `${signup ? "/sign-in" : "/create-account"}?returnTo=${encodeURIComponent(returnTo)}`,
   };

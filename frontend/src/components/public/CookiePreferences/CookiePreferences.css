@@ -52,13 +52,6 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 44px;
-  height: 44px;
-  border: 0;
-  background: transparent;
-  color: #555;
-  font-size: 24px;
-  cursor: pointer;
 }
 .cookie-save {
   width: 100%;
@@ -74,4 +67,23 @@
 .cookie-preferences :focus-visible {
   outline: 2px solid #555;
   outline-offset: 4px;
+}
+
+.cookie-save {
+  transition:
+    transform 0.22s ease,
+    background-color 0.22s ease;
+}
+.cookie-save:hover {
+  background: #141718;
+  color: #fff;
+  transform: scale(1.025);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cookie-save {
+    transition: none;
+  }
+  .cookie-save:hover {
+    transform: none;
+  }
 }

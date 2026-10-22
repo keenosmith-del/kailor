@@ -67,14 +67,12 @@
 .service-art__step-indicator { position:absolute; right:0; top:10px; bottom:10px; width:2px; background:#dedede; border-radius:99px; }
 .service-art__flow-caption { display:flex; align-items:center; gap:8px; color:#9f9f9f; font-size:11px; }
 
-/* Cloud: cinematic typography / seamless charcoal video, no extra UI furniture. */
+/* Cloud: original in-page typography animation. */
 .service-art--cloud { max-width:none; height:clamp(290px,43svh,460px); display:grid; place-items:center; overflow:hidden; background:#1a1a1a; }
 .service-art__word-preview { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; width:100%; max-width:520px; min-height:190px; padding:16px; }
 .service-art__word-prefix { color:#bdbdbd; font-size:clamp(24px,2.8vw,40px); font-weight:400; letter-spacing:-.045em; line-height:1.12; }
 .service-art__changing-word { position:relative; display:flex; align-items:center; min-height:90px; width:100%; }
 .service-art__changing-word strong { display:block; white-space:nowrap; color:#f4f4f4; font-size:clamp(40px,5vw,78px); font-weight:450; line-height:1.08; letter-spacing:-.065em; }
-.service-art__video { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:0; pointer-events:none; background:#1a1a1a; transition:opacity .7s ease; }
-.service-art__video.is-ready { opacity:1; }
 
 @keyframes service-gentle-drift { 0%,100% { transform:translate3d(0,0,0); } 50% { transform:translate3d(0,-5px,0); } }
 @keyframes service-gentle-drift-alt { 0%,100% { transform:translate3d(0,0,0); } 50% { transform:translate3d(0,4px,0); } }
@@ -124,5 +122,5 @@
   .service-panel-inner { min-height:500px; transform:none !important; }
   .service-art__discovery, .service-art__direction, .service-art__workspace-pill { animation:none !important; }
   .service-art__window-status > span { animation:none !important; }
-  .service-art__step, .service-art__step-icon, .service-art__mini-rail span, .service-art__tabs span, .service-art__video { transition:none !important; }
+  .service-art__step, .service-art__step-icon, .service-art__mini-rail span, .service-art__tabs span { transition:none !important; }
 }

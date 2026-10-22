@@ -1,6 +1,6 @@
 ## Controlled launch update — 22 October 2026
 
-Source defaults now use `REGISTRATION_POLICY=closed`. Set `invite` explicitly for server-enforced email-bound invitation testing, or `public` only for deliberate local public-registration tests. Existing private `.env` values override source defaults and were not rewritten. `GUEST_ACCESS` unset preserves local guest development and disables guest APIs in production; use an explicit value to test either state. Both remote AI flags default false. Production requires explicit database and HTTPS origin configuration.
+Source defaults now use `REGISTRATION_POLICY=closed`. Set `invite` explicitly for server-enforced email-bound invitation testing, or `public` only for deliberate local public-registration tests. Existing private `.env` values override source defaults and were not rewritten. `GUEST_ACCESS` unset or `disabled` denies guest APIs in all environments. Auth guest buttons are disabled throughout controlled testing. Use `GUEST_ACCESS=enabled` only for deliberate isolated guest-API tests. Both remote AI flags default false. Production requires explicit database and HTTPS origin configuration.
 
 Use [CONTROLLED_LAUNCH_READINESS.md](CONTROLLED_LAUNCH_READINESS.md) for the current route map, checked test results and deployment steps. Earlier iteration notes below describe historical behaviour: invite no longer permits signup without a code. No schema migration is added by the controlled-launch iteration.
 

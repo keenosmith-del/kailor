@@ -1,3 +1,4 @@
+import { BrandWordmark } from "../../components/BrandWordmark/BrandWordmark";
 import { useEffect } from "react";
 import { ErrorBox } from "../../components/ErrorBox/ErrorBox";
 import "./Auth.css";
@@ -20,14 +21,14 @@ export function Auth({
   }, []);
   const reducedMotion = useReducedMotion();
   const restricted = signup && (!auth.policyReady || auth.policy === "closed");
-  const disabled = auth.busy || auth.guest.busy;
+  const disabled = auth.busy;
   return (
-    <main className="auth-page">
+    <main
+      className={`auth-page ${signup ? "auth-page--signup" : "auth-page--signin"}`}
+    >
       <div className="auth-back-position">
-        <PageBack />
-        <Link to="/" className="auth-wordmark">
-          kailor
-        </Link>
+        <PageBack to="/" />
+        <BrandWordmark withHead />
       </div>
       <section className="auth-panel">
         <motion.div
@@ -152,11 +153,8 @@ export function Auth({
                   />
                 </div>
               )}
-              {(auth.error || auth.guest.error) && (
-                <ErrorBox
-                  className="auth-status"
-                  error={auth.error || auth.guest.error}
-                />
+              {auth.error && (
+                <ErrorBox className="auth-status" error={auth.error} />
               )}
               {signup && auth.policy === "invite" && (
                 <div className="auth-field">
@@ -174,30 +172,45 @@ export function Auth({
                 </div>
               )}
               <button type="submit" className="auth-submit" disabled={disabled}>
+                {!signup && (
+                  <img src="/svgs/profile.svg" alt="" width={17} height={17} />
+                )}
                 {auth.busy
                   ? "Please wait…"
                   : signup
                     ? "Create account"
                     : "Sign in"}
               </button>
-              {auth.guestEnabled && (
-                <button
-                  type="button"
-                  className="auth-secondary"
-                  disabled={disabled}
-                  onClick={() => void auth.guest.start()}
-                >
-                  {auth.guest.busy
-                    ? "Opening discovery…"
-                    : "Continue without account"}
-                </button>
-              )}
             </form>
           )}
-          <div className="auth-auth-switch">
-            <span>
-              {signup ? "Already have an account?" : "New to kailor?"}
+          <div className="auth-secondary-actions">
+            <button
+              type="button"
+              className="auth-secondary"
+              disabled
+              aria-describedby="auth-github-availability"
+              title="GitHub sign-in is not available yet."
+            >
+              <img src="/technology/github.svg" alt="" width={17} height={17} />
+              Continue with GitHub
+            </button>
+            <span id="auth-github-availability" className="sr-only">
+              GitHub sign-in is not available yet.
             </span>
+            <button
+              type="button"
+              className="auth-secondary"
+              disabled
+              aria-describedby="auth-guest-availability"
+            >
+              Continue without account
+            </button>
+            <span id="auth-guest-availability" className="sr-only">
+              Guest access is unavailable during controlled testing.
+            </span>
+          </div>
+          <div className="auth-auth-switch">
+            <span>{signup ? "Already have an account?" : "New here?"}</span>
             <Link
               to={auth.switchHref}
               aria-disabled={disabled}
@@ -205,7 +218,7 @@ export function Auth({
                 if (disabled) event.preventDefault();
               }}
             >
-              {signup ? "Sign in" : "Create account"}
+              {signup ? "Sign in" : "Create an account"}
             </Link>
           </div>
         </motion.div>

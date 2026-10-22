@@ -1,3 +1,4 @@
+import CommonQuestions from "./pages/Public/Questions/CommonQuestions";
 import { renderToString } from "react-dom/server";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { PublicLayout } from "./components/public/PublicLayout/PublicLayout";
@@ -18,6 +19,7 @@ const pages = {
   "/timeline": Timeline,
   "/pricing": Pricing,
   "/careers": Careers,
+  "/faqs": CommonQuestions,
   "/contact": Contact,
   "/privacy": Privacy,
   "/terms": Terms,

@@ -66,6 +66,10 @@ const marqueeItems: MarqueeItem[] = [
     technology: true,
   },
 
+  { name: "Angular", logo: "/technology/angular.svg", technology: true },
+  { name: "Flutter", logo: "/technology/flutter.svg", technology: true },
+  { name: "Spring Boot", logo: "/technology/springboot.svg", technology: true },
+
   // Artificial intelligence
   {
     name: "Claude",
@@ -120,17 +124,32 @@ const marqueeItems: MarqueeItem[] = [
     technology: true,
   },
 
+  { name: "Grunt", logo: "/technology/grunt.svg", technology: true },
+  { name: "Gulp", logo: "/technology/gulp.svg", technology: true },
+
   // Databases
   {
     name: "PostgreSQL",
     logo: "/technology/postgresql.svg",
     technology: true,
   },
+  { name: "MongoDB", logo: "/technology/mongodb.svg", technology: true },
+  { name: "Mongoose", logo: "/technology/mongoose.svg", technology: true },
   {
     name: "SQLite",
     logo: "/technology/sqlite.svg",
     technology: true,
   },
+
+  // Messaging and version control
+  {
+    name: "Apache Kafka",
+    logo: "/technology/apachekafka.svg",
+    technology: true,
+  },
+  { name: "RabbitMQ", logo: "/technology/rabbitmq.svg", technology: true },
+  { name: "Git", logo: "/technology/git.svg", technology: true },
+  { name: "GitHub", logo: "/technology/github.svg", technology: true },
 
   // Cloud and deployment
   {

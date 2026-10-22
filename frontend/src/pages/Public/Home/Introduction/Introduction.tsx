@@ -164,7 +164,7 @@ export function Introduction() {
               We help work out which one it is.
             </p>
 
-            <Link className="introduction-link" to="/how-it-works">
+            <Link className="introduction-link" to="/timeline">
               See how we got here
             </Link>
           </div>

@@ -191,7 +191,7 @@ export function Hero() {
 
           <p className="kailor-hero__mascot-note">
             <span className="kailor-hero__mascot-note-label">
-              Mascot fine print
+              
             </span>
 
             <span>

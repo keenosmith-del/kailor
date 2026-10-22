@@ -308,8 +308,7 @@ function AutomationVisual() {
   );
 }
 
-// Local asset; readable charcoal fallback stays mounted under the video.
-const CLOUD_VIDEO_SRC = "/videos/kailor-built-for-loop.mp4";
+// The original in-page typography animation is the only cloud visual.
 const cloudWords = [
   "clarity",
   "growth",
@@ -321,7 +320,6 @@ const cloudWords = [
 
 export function CloudVisual() {
   const { ref, index, reducedMotion } = useVisualCycle(cloudWords.length, 1650);
-  const [videoReady, setVideoReady] = useState(false);
 
   return (
     <div
@@ -329,7 +327,7 @@ export function CloudVisual() {
       className="service-art service-art--cloud"
       aria-label="Built for clarity, growth, momentum, automation, scale and change"
     >
-      <div className="service-art__word-preview" aria-hidden={videoReady}>
+      <div className="service-art__word-preview">
         <span className="service-art__word-prefix">Built for</span>
         <div className="service-art__changing-word" aria-live="off">
           <AnimatePresence mode="wait" initial={false}>
@@ -356,18 +354,6 @@ export function CloudVisual() {
           </AnimatePresence>
         </div>
       </div>
-      <video
-        className={`service-art__video${videoReady ? " is-ready" : ""}`}
-        src={CLOUD_VIDEO_SRC}
-        autoPlay={!reducedMotion}
-        loop
-        muted
-        playsInline
-        preload="metadata"
-        aria-hidden="true"
-        onLoadedData={() => setVideoReady(true)}
-        onError={() => setVideoReady(false)}
-      />
     </div>
   );
 }
