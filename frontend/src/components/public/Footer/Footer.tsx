@@ -40,6 +40,7 @@ export function Footer() {
             <h2>Get started</h2>
             <Link to="/create-account">Create account</Link>
             <Link to="/sign-in">Sign in</Link>
+            <Link to="/questions">Common questions</Link>
             <button
               type="button"
               aria-label="Start conversation from footer"

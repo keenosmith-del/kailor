@@ -95,7 +95,11 @@ export function App() {
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/timeline" element={<Timeline />} />
-              <Route path="/faqs" element={<CommonQuestions />} />
+              <Route path="/questions" element={<CommonQuestions />} />
+              <Route
+                path="/faqs"
+                element={<Navigate to="/questions" replace />}
+              />
               <Route path="/careers" element={<Careers />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />

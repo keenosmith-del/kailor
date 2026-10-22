@@ -85,7 +85,7 @@ function site(path = "/") {
           <Route element={<PublicLayout />}>
             <Route index element={<Home />} />
             <Route path="/timeline" element={<Timeline />} />
-            <Route path="/faqs" element={<CommonQuestions />} />
+            <Route path="/questions" element={<CommonQuestions />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/services" element={<Services />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
@@ -133,7 +133,6 @@ it("provides the exact Pages list, genuinely disabled items and collapsible iner
     "Our Team",
     "Timeline",
     "Pricing",
-    "FAQs",
     "Careers",
     "Contact",
   ]);
@@ -332,20 +331,72 @@ it("mirrors every sidebar destination in the footer, including disabled pages", 
   ).toBe("/timeline");
 });
 
-it("opens FAQs from the shared navigation and uses the existing chat modal", () => {
+it("opens Common questions from the footer and uses the existing chat modal", () => {
   site();
   fireEvent.click(
     screen
-      .getByRole("navigation", { name: "Explore kailor" })
-      .querySelector('a[href="/faqs"]')!,
+      .getByRole("navigation", { name: "Get started" })
+      .querySelector('a[href="/questions"]')!,
   );
   expect(
     screen.getByRole("heading", { name: "Common questions" }),
   ).toBeTruthy();
-  expect(document.title).toBe("FAQs | kailor");
+  expect(document.title).toBe("Common questions | kailor");
   expect(
     screen.getByRole("button", { name: "Back", exact: true }),
   ).toBeTruthy();
-  fireEvent.click(screen.getByRole("button", { name: "Ask us a question" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: "Let's chat", exact: true }),
+  );
   expect(screen.getByRole("dialog", { name: "Let's chat" })).toBeTruthy();
+});
+
+it("keeps all nine accordion controls semantic, with only one accessible answer", () => {
+  state.reduced = true;
+  site("/questions");
+  const triggers = Array.from(
+    document.querySelectorAll<HTMLButtonElement>(".common-questions-trigger"),
+  );
+  expect(triggers).toHaveLength(9);
+  expect(screen.queryAllByRole("region")).toHaveLength(0);
+  triggers.forEach((trigger) => {
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+    const region = document.getElementById(
+      trigger.getAttribute("aria-controls")!,
+    )!;
+    expect(region.getAttribute("aria-labelledby")).toBe(trigger.id);
+    expect(region.hasAttribute("inert")).toBe(true);
+    expect(trigger.closest("h2")).toBeTruthy();
+    expect(trigger.querySelector(".lucide-plus")).toBeTruthy();
+  });
+  fireEvent.click(triggers[0]);
+  expect(triggers[0].getAttribute("aria-expanded")).toBe("true");
+  expect(triggers[0].querySelector(".lucide-minus")).toBeTruthy();
+  expect(
+    screen.getByRole("region", { name: "What does kailor actually do?" })
+      .textContent,
+  ).toContain("technology consultancy");
+  fireEvent.click(triggers[1]);
+  expect(triggers[0].getAttribute("aria-expanded")).toBe("false");
+  expect(triggers[1].getAttribute("aria-expanded")).toBe("true");
+  expect(screen.getAllByRole("region")).toHaveLength(1);
+  fireEvent.click(triggers[1]);
+  expect(screen.queryAllByRole("region")).toHaveLength(0);
+  expect(triggers[1].querySelector(".lucide-plus")).toBeTruthy();
+});
+
+it("keeps the latest question open after rapid switching and returns Home from direct entry", () => {
+  site("/questions");
+  const triggers = Array.from(
+    document.querySelectorAll<HTMLButtonElement>(".common-questions-trigger"),
+  );
+  for (const index of [0, 1, 2, 1, 8, 0, 8]) fireEvent.click(triggers[index]);
+  expect(
+    triggers.filter(
+      (trigger) => trigger.getAttribute("aria-expanded") === "true",
+    ),
+  ).toEqual([triggers[8]]);
+  expect(screen.getAllByRole("region")).toHaveLength(1);
+  fireEvent.click(screen.getByRole("button", { name: "Back", exact: true }));
+  expect(document.getElementById("hero")).toBeTruthy();
 });

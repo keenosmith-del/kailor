@@ -54,9 +54,9 @@
     "description": "Account registration information for the controlled kailor testing programme.",
     "index": false
   },
-  "/faqs": {
-    "title": "FAQs | kailor",
-    "description": "Common questions about kailor, project enquiries and controlled testing. Start a conversation if you have another question.",
+  "/questions": {
+    "title": "Common questions | kailor",
+    "description": "Answers to common questions about kailor's technology consultancy, software engineering, AI, automation and project process.",
     "index": false
   }
 }

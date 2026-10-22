@@ -6,7 +6,6 @@ export const sidebarPages = [
   [null, "Our Team"],
   ["/timeline", "Timeline"],
   ["/pricing", "Pricing"],
-  ["/faqs", "FAQs"],
   ["/careers", "Careers"],
   ["/contact", "Contact"],
 ] as const;
@@ -30,6 +29,7 @@ export const publicPaths = [
   "/how-it-works",
   "/timeline",
   "/pricing",
+  "/questions",
   "/faqs",
   "/careers",
   "/contact",

@@ -19,7 +19,7 @@ const pages = {
   "/timeline": Timeline,
   "/pricing": Pricing,
   "/careers": Careers,
-  "/faqs": CommonQuestions,
+  "/questions": CommonQuestions,
   "/contact": Contact,
   "/privacy": Privacy,
   "/terms": Terms,
