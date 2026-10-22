@@ -1,9 +1,119 @@
-/* Responsive layout shared by this page’s sections. */
-
-@media (max-width: 760px) {
-  .process-editorial,
-  .human-ai {
-    grid-template-columns: 1fr;
-    gap: 40px;
+.how-it-works-page {
+  background: #f7f7f7;
+}
+.hiw-back {
+  padding: 100px var(--pub-space) 0;
+}
+.hiw-opening {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: clamp(40px, 6vw, 100px);
+  min-height: calc(100svh - 144px);
+  max-width: 1700px;
+  margin: auto;
+  padding: 55px var(--pub-space) 90px;
+}
+.public-site .hiw-opening h1 {
+  max-width: 620px;
+  margin: 0 0 30px;
+  font-size: clamp(50px, 5.3vw, 84px);
+  font-weight: 450;
+  letter-spacing: -0.065em;
+  line-height: 1.02;
+}
+.hiw-opening-copy p {
+  max-width: 440px;
+  margin: 0;
+  font-size: 16px;
+  color: #555;
+  line-height: 1.7;
+}
+.hiw-editorial-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(48px, 7vw, 110px);
+  padding: clamp(90px, 10vw, 150px) var(--pub-space);
+}
+.public-site .hiw-editorial-copy h2 {
+  margin: 0 0 30px;
+  font-size: clamp(44px, 4.8vw, 74px);
+  font-weight: 450;
+  line-height: 1.02;
+  letter-spacing: -0.065em;
+}
+.hiw-editorial-copy p {
+  max-width: 460px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #555;
+}
+.hiw-editorial-copy > div:last-child p {
+  margin-bottom: 0;
+}
+.hiw-caption {
+  margin: 0;
+  color: #777;
+  font-size: 11px;
+  line-height: 1.6;
+}
+@media (max-width: 1050px) {
+  .hiw-opening {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 32px;
   }
+  .public-site .hiw-opening h1 {
+    font-size: clamp(44px, 5.3vw, 60px);
+  }
+  .hiw-editorial-section {
+    gap: 36px;
+  }
+}
+@media (max-width: 800px) {
+  .hiw-opening,
+  .hiw-editorial-section {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .hiw-opening {
+    min-height: 0;
+    padding: 45px 24px 75px;
+  }
+  .hiw-back {
+    padding-inline: 24px;
+  }
+  .public-site .hiw-opening h1 {
+    max-width: 620px;
+    font-size: clamp(44px, 8vw, 64px);
+  }
+  .hiw-opening-copy p {
+    max-width: 560px;
+    font-size: 15px;
+  }
+  .hiw-editorial-section {
+    padding: 80px 24px;
+  }
+  .public-site .hiw-editorial-copy h2 {
+    font-size: clamp(42px, 8vw, 62px);
+  }
+}
+@media (max-width: 380px) {
+  .hiw-back {
+    padding-inline: 20px;
+  }
+  .hiw-opening,
+  .hiw-editorial-section {
+    padding-inline: 20px;
+  }
+  .public-site .hiw-opening h1 {
+    font-size: 42px;
+  }
+}
+
+.hiw-discovery-reveal {
+  width: 100%;
+  max-width: 610px;
+  justify-self: center;
+  min-width: 0;
 }

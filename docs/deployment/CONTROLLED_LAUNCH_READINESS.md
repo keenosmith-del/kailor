@@ -15,7 +15,7 @@ The established monochrome homepage, responsive composition and oversized footer
 | Route                                                         | Published experience                                                                 | Indexing                           |
 | ------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------- |
 | `/`                                                           | Approved launch homepage, unverified testimonials excluded                           | Index, sitemap                     |
-| `/how-it-works`                                               | Heading + reusable Back                                                              | Noindex                            |
+| `/how-it-works`                                               | Scripted Discovery, proposed solution details, consultant workspace and shared chat                                                              | Noindex                            |
 | `/timeline`                                                   | Heading + reusable Back                                                              | Noindex                            |
 | `/pricing`                                                    | Heading + reusable Back                                                              | Noindex                            |
 | `/questions`                                                     | Common questions, expandable answers and shared chat CTA                             | Noindex pending content review     |

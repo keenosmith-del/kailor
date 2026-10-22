@@ -1,17 +1,28 @@
 import { Link } from "react-router";
-import { ArrowUpRight } from "lucide-react";
+import { useConversation } from "../../../../components/public/ConversationModal/ConversationModal";
+import { ProcessReveal } from "../ProcessReveal";
 import "./ProcessClosing.css";
 export function ProcessClosing() {
+  const { openConversation } = useConversation();
   return (
-    <section className="public-page-closing">
-      <h2>
-        Bring the question.
-        <br />
-        We'll start there.
-      </h2>
-      <Link className="pub-pill pub-pill-dark" to="/contact">
-        Start a conversation <ArrowUpRight size={16} />
-      </Link>
+    <section
+      className="hiw-process-closing"
+      aria-labelledby="hiw-closing-title"
+    >
+      <ProcessReveal>
+        <h2 id="hiw-closing-title">Tell us what you're working on</h2>
+      </ProcessReveal>
+      <ProcessReveal>
+        <p>You don't need to have the answer before getting in touch</p>
+      </ProcessReveal>
+      <ProcessReveal>
+        <div className="hiw-closing-actions">
+          <button type="button" onClick={openConversation}>
+            Start a conversation
+          </button>
+          <Link to="/questions">Common questions</Link>
+        </div>
+      </ProcessReveal>
     </section>
   );
 }

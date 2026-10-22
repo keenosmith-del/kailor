@@ -180,7 +180,11 @@ it("routes to minimal shells, sets noindex and provides safe Back navigation", (
     fireEvent.click(
       document.querySelector(`.public-footer a[href="/${path}"]`)!,
     );
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(title);
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
+      path === "how-it-works"
+        ? "The right solution starts with the right understanding"
+        : title,
+    );
     expect(document.title).toBe(`${title} | kailor`);
     expect(
       document.querySelector('meta[name="robots"]')?.getAttribute("content"),
@@ -399,4 +403,57 @@ it("keeps the latest question open after rapid switching and returns Home from d
   expect(screen.getAllByRole("region")).toHaveLength(1);
   fireEvent.click(screen.getByRole("button", { name: "Back", exact: true }));
   expect(document.getElementById("hero")).toBeTruthy();
+});
+
+it("routes all three How it works actions and keeps the new page public", () => {
+  state.reduced = true;
+  site();
+  fireEvent.click(screen.getByRole("link", { name: "Explore what we do" }));
+  expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
+    "right understanding",
+  );
+  expect(document.title).toBe("How it works | kailor");
+  fireEvent.click(screen.getByRole("button", { name: "Back", exact: true }));
+  fireEvent.click(
+    document.querySelector('.public-footer a[href="/how-it-works"]')!,
+  );
+  expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
+    "right understanding",
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Back", exact: true }));
+  fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+  fireEvent.click(
+    within(
+      screen.getByRole("navigation", { name: "Main navigation" }),
+    ).getByRole("link", { name: "How it works", exact: true }),
+  );
+  expect(
+    screen.getByText("Illustrative workspace · After scope agreement"),
+  ).toBeTruthy();
+});
+
+it("opens proposed direction details, restores focus and shares the conversation modal", () => {
+  state.reduced = true;
+  site("/how-it-works");
+  const tile = screen.getByRole("button", {
+    name: "View Connected orders and inventory proposed solution",
+  });
+  tile.focus();
+  fireEvent.click(tile);
+  const dialog = screen.getByRole("dialog", {
+    name: "Connected orders & inventory",
+  });
+  expect(within(dialog).getByText("Still to confirm")).toBeTruthy();
+  fireEvent(dialog, new Event("cancel", { bubbles: true, cancelable: true }));
+  expect(
+    screen.queryByRole("dialog", { name: "Connected orders & inventory" }),
+  ).toBeNull();
+  expect(document.activeElement).toBe(tile);
+  fireEvent.click(
+    screen.getByRole("button", { name: "Start a conversation", exact: true }),
+  );
+  expect(screen.getByRole("dialog", { name: "Let's chat" })).toBeTruthy();
+  expect(
+    document.querySelector(".hiw-closing-actions a")?.getAttribute("href"),
+  ).toBe("/questions");
 });

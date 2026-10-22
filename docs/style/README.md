@@ -1,3 +1,5 @@
+23 October 2026 preference: omit ArrowUpRight icons from new builds and new actions. The How it works page uses reversible homepage-style scroll fades for individual text and visual blocks, and its large headings have no trailing periods. Its scripted Discovery loops automatically after a readable recommendation hold, with no playback controls; reduced motion remains a static completed example.
+
 22 October 2026 update: controlled-launch changes preserve the strict monochrome identity. Shared Back/page shells, monochrome authentication, footer cookie preferences and repeatable public motion are documented in [PUBLIC_WEBSITE.md](PUBLIC_WEBSITE.md). No cream legacy treatment is restored. The current source and the new guide section supersede historical composition notes below.
 
 # Current visual identity — public website redesign, 19 October 2026
