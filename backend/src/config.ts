@@ -14,14 +14,15 @@ const envSchema = z.object({
     .default("postgresql://kailor:kailor_local@localhost:5432/kailor"),
   PORT: z.coerce.number().int().default(5050),
   HOST: z.string().default("127.0.0.1"),
+  TRUST_PROXY: z.enum(["none", "loopback"]).default("none"),
   APP_ORIGIN: z.string().url().default("http://127.0.0.1:5173"),
   NODE_ENV: z.string().default("development"),
-  // "invite" remains a compatible legacy value; self-registration is public.
-  REGISTRATION_POLICY: z.enum(["invite", "closed", "public"]).default("public"),
+  REGISTRATION_POLICY: z.enum(["invite", "closed", "public"]).default("closed"),
+  GUEST_ACCESS: z.enum(["enabled", "disabled"]).optional(),
   ADMIN_EMAIL: z.email().default("founder@kailor.local"),
   ADMIN_PASSWORD: z.string().default(""),
   AI_PROVIDER: z.enum(["mock", "cloudflare"]).default("mock"),
-  AI_ALLOW_GUEST_REMOTE: z.enum(["true", "false"]).default("true"),
+  AI_ALLOW_GUEST_REMOTE: z.enum(["true", "false"]).default("false"),
   AI_ALLOW_REMOTE: z.enum(["true", "false"]).default("false"),
   CLOUDFLARE_ACCOUNT_ID: z.string().default(""),
   CLOUDFLARE_API_TOKEN: z.string().default(""),
@@ -54,6 +55,17 @@ const envSchema = z.object({
   ),
 });
 export const config = envSchema.parse(process.env);
+if (config.NODE_ENV === "production") {
+  if (
+    !process.env.DATABASE_URL ||
+    !process.env.APP_ORIGIN ||
+    new URL(config.APP_ORIGIN).protocol !== "https:"
+  )
+    throw new Error(
+      "Production requires an explicit DATABASE_URL and HTTPS APP_ORIGIN.",
+    );
+}
+
 export const logger = {
   info: (event: string, data: Record<string, unknown> = {}) =>
     console.log(JSON.stringify({ level: "info", event, ...data })),

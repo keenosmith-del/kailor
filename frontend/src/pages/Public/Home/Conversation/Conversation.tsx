@@ -11,9 +11,7 @@ export function Conversation() {
       <div className="conversation-intro">
         <h2 id="conversation-title">
           It starts with
-          <br />
-          a conversation
-          <span className="kailor-round-dot" aria-hidden="true" />
+          <br />a conversation
         </h2>
 
         <p>

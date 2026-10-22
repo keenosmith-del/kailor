@@ -1,17 +1,5 @@
-import { ProcessHero } from "./ProcessHero/ProcessHero";
-import { ProcessOverview } from "./ProcessOverview/ProcessOverview";
-import { ProcessEditorial } from "./ProcessEditorial/ProcessEditorial";
-import { HumanAI } from "./HumanAI/HumanAI";
-import { ProcessClosing } from "./ProcessClosing/ProcessClosing";
+import { PageShell } from "../../../components/public/PageShell/PageShell";
 import "./HowItWorks.css";
 export default function HowItWorks() {
-  return (
-    <>
-      <ProcessHero />
-      <ProcessOverview />
-      <ProcessEditorial />
-      <HumanAI />
-      <ProcessClosing />
-    </>
-  );
+  return <PageShell title="How it works"></PageShell>;
 }

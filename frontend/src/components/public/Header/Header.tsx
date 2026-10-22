@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router";
-import { Menu, X } from "lucide-react";
+import { Menu, ChevronDown } from "lucide-react";
 
-import { sidebarPages, sidebarSections, upcomingPages } from "../navigation";
+import { sidebarPages, sidebarSections } from "../navigation";
 
 import { useConversation } from "../ConversationModal/ConversationModal";
 
@@ -14,6 +14,7 @@ export function Header() {
   const { openConversation } = useConversation();
 
   const [open, setOpen] = useState(false);
+  const [sectionsOpen, setSectionsOpen] = useState(true);
   const [hidden, setHidden] = useState(false);
 
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -131,7 +132,7 @@ export function Header() {
             aria-controls="public-mobile-menu"
             onClick={() => setOpen((previous) => !previous)}
           >
-              <Menu size={17} strokeWidth={1.5} />
+            <Menu size={17} strokeWidth={1.5} />
           </button>
 
           <Link
@@ -163,52 +164,93 @@ export function Header() {
         aria-hidden={!open}
         inert={!open}
       >
-
         <div className="public-mobile-nav__group">
           <h2>Pages</h2>
 
-          {sidebarPages.map(([to, label]) => (
-            <NavLink key={to} to={to} end onClick={() => setOpen(false)}>
-              {label}
-            </NavLink>
-          ))}
+          {sidebarPages.map(([to, label]) =>
+            to === null ? (
+              <span key={label} aria-disabled="true">
+                {label}
+              </span>
+            ) : (
+              <NavLink key={label} to={to!} end onClick={() => setOpen(false)}>
+                {label}
+              </NavLink>
+            ),
+          )}
         </div>
 
         <div className="public-mobile-nav__group">
-          <h2>On the homepage</h2>
-
-          {sidebarSections.map(([id, label]) => (
-            <Link
-              key={id}
-              to={`/#${id}`}
-              onClick={() => {
-                setOpen(false);
-
-                if (location.pathname === "/" && location.hash === `#${id}`) {
-                  document.getElementById(id)?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                  });
-                }
-              }}
+          <h2>
+            <button
+              className="public-sections-toggle"
+              type="button"
+              aria-expanded={sectionsOpen}
+              aria-controls="homepage-section-links"
+              onClick={() => setSectionsOpen((value) => !value)}
             >
-              {label}
-            </Link>
-          ))}
-        </div>
+              On the homepage
+              <ChevronDown size={13} aria-hidden="true" />
+            </button>
+          </h2>
+          <div
+            className="public-section-links"
+            id="homepage-section-links"
+            data-expanded={sectionsOpen}
+            inert={!sectionsOpen}
+            aria-hidden={!sectionsOpen}
+          >
+            <div>
+              {sidebarSections.map(([id, label]) => (
+                <Link
+                  key={id}
+                  to={`/#${id}`}
+                  onClick={() => {
+                    setOpen(false);
 
-        <div className="public-mobile-nav__group public-mobile-nav__upcoming">
-          <h2>Coming later</h2>
-
-          {upcomingPages.map((label) => (
-            <span key={label}>{label}</span>
-          ))}
+                    if (
+                      location.pathname === "/" &&
+                      location.hash === `#${id}`
+                    ) {
+                      document.getElementById(id)?.scrollIntoView({
+                        behavior: window.matchMedia(
+                          "(prefers-reduced-motion: reduce)",
+                        ).matches
+                          ? "instant"
+                          : "smooth",
+                        block: "start",
+                      });
+                    }
+                  }}
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="public-mobile-nav__bottom">
-          <button type="button" onClick={openFromSidebar}>
-            Start a conversation
-          </button>
+          <Link
+            className="sidebar-white"
+            to="/create-account"
+            onClick={() => setOpen(false)}
+          >
+            <img src="/svgs/profile.svg" width={17} height={17} alt="" />
+            Create account
+          </Link>
+          <div className="sidebar-action-row">
+            <Link
+              className="sidebar-white"
+              to="/sign-in"
+              onClick={() => setOpen(false)}
+            >
+              Sign in
+            </Link>
+            <button type="button" onClick={openFromSidebar}>
+              Start conversation
+            </button>
+          </div>
         </div>
       </nav>
     </>

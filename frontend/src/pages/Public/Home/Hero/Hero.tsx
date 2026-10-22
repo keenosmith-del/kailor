@@ -134,7 +134,7 @@ export function Hero() {
                 Start a conversation
               </button>
 
-              <Link className="kailor-hero__secondary" to="/services">
+              <Link className="kailor-hero__secondary" to="/#services-overview">
                 Explore what we do
               </Link>
             </div>

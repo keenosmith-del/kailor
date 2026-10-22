@@ -1,21 +1,16 @@
-export const links = [
-  ["/services", "Services"],
-  ["/how-it-works", "How it works"],
-  ["/about", "About"],
-  ["/pricing", "Pricing"],
-  ["/contact", "Contact"],
-];
-
+// One publication inventory for header, footer and metadata.
 export const sidebarPages = [
   ["/", "Home"],
-  ["/services", "Services"],
-  ["/work", "Our work"],
   ["/how-it-works", "How it works"],
-  ["/about", "About kailor"],
+  [null, "Our Work"],
+  [null, "Our Team"],
+  ["/timeline", "Timeline"],
   ["/pricing", "Pricing"],
+  ["/careers", "Careers"],
   ["/contact", "Contact"],
 ] as const;
-
+export const links = sidebarPages.filter(([to]) => to !== null);
+export const showClientPerspectives = import.meta.env.DEV;
 export const sidebarSections = [
   ["hero", "Back to the beginning"],
   ["technologies", "Tools, platforms & expertise"],
@@ -23,17 +18,20 @@ export const sidebarSections = [
   ["services-overview", "Problems we help solve"],
   ["conversation", "From challenge to solution"],
   ["collaboration", "Inside your project workspace"],
-  ["work", "Project examples"],
-  ["consultants", "Meet the specialists"],
-  ["client-feedback", "What clients have to say"],
+  ...(showClientPerspectives
+    ? [["client-feedback", "Client perspectives"]]
+    : []),
   ["perspective", "How we choose solutions"],
   ["activity", "What we're building next"],
-] as const;
-
-export const upcomingPages = [
-  "Our team",
-  "Client stories",
-  "Platform",
-  "Frequently asked questions",
-  "Careers",
-] as const;
+];
+export const publicPaths = [
+  "/",
+  "/how-it-works",
+  "/timeline",
+  "/pricing",
+  "/careers",
+  "/contact",
+  "/privacy",
+  "/terms",
+  "/cookies",
+];

@@ -150,6 +150,7 @@ const marqueeItems: MarqueeItem[] = [
   },
   {
     name: "Azure",
+    logo: "/technology/azure.svg",
     technology: true,
   },
 ];
@@ -230,7 +231,7 @@ export function Marquee() {
         initial={reducedMotion ? false : { opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{
-          once: true,
+          once: false,
           amount: 0.12,
         }}
         transition={{

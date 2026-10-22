@@ -1,3 +1,4 @@
+import { useDocumentVisible } from "../useDocumentVisible";
 import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "motion/react";
 import { UserRound } from "lucide-react";
@@ -67,12 +68,13 @@ export function ConversationVisual() {
   });
 
   const reducedMotion = useReducedMotion();
+  const documentVisible = useDocumentVisible();
 
   const [step, setStep] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (!visible || paused || reducedMotion) return;
+    if (!visible || !documentVisible || paused || reducedMotion) return;
 
     const timeout = window.setTimeout(() => {
       setStep((current) => (current + 1) % sequence.length);
@@ -81,7 +83,7 @@ export function ConversationVisual() {
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [visible, paused, reducedMotion, step]);
+  }, [visible, documentVisible, paused, reducedMotion, step]);
 
   const events = reducedMotion ? sequence : sequence.slice(0, step + 1);
 
@@ -95,7 +97,6 @@ export function ConversationVisual() {
 
   return (
     <div className="kailor-chat" ref={ref}>
-
       <p className="sr-only">
         A scripted preview of a conversation about business enquiries and
         follow-up processes.

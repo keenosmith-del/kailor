@@ -611,3 +611,14 @@
     font-size: 9px;
   }
 }
+
+/* Keep the approved first three illustrative requests still and legible. */
+.kailor-hero__request {
+  animation: none;
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+.kailor-hero__request:nth-child(n + 4) {
+  display: none;
+}

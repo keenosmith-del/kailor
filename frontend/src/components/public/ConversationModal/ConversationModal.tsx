@@ -212,9 +212,12 @@ function ConversationDialog({
         message: fields.message.trim(),
       });
     } catch (error) {
-      console.error("kailor contact delivery failed:", error);
+      if (import.meta.env.DEV)
+        console.error("kailor contact delivery failed:", error);
 
-      setSendError("Your message couldn't be sent. Please try again.");
+      setSendError(
+        "Your message couldn't be sent. Please email keenosmith@kailor.co.za.",
+      );
     } finally {
       setSending(false);
     }
@@ -481,69 +484,72 @@ export function ConversationProvider({ children }: { children: ReactNode }) {
     <ConversationContext.Provider value={{ openConversation }}>
       {children}
 
-      {createPortal(
-        <>
-          <AnimatePresence
-            onExitComplete={() => {
-              if (pendingToastRef.current) {
-                pendingToastRef.current = false;
-                setToast("Your message has been sent.");
-              }
-            }}
-          >
-            {open && (
-              <ConversationDialog
-                key="conversation-dialog"
-                onClose={closeConversation}
-                onComplete={completeConversation}
-              />
-            )}
-          </AnimatePresence>
-
-          <div className="kailor-conversation-toast-position">
-            <AnimatePresence>
-              {toast && (
-                <motion.div
-                  key={toast}
-                  className="kailor-conversation-toast"
-                  role="status"
-                  aria-live="polite"
-                  initial={
-                    reducedMotion ? false : { opacity: 0, y: -12, scale: 0.97 }
-                  }
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    y: -9,
-                    scale: 0.97,
-                  }}
-                  transition={{
-                    duration: reducedMotion ? 0 : 0.3,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                >
-                  <Info size={16} strokeWidth={1.5} aria-hidden="true" />
-
-                  <span>{toast}</span>
-
-                  <button
-                    type="button"
-                    aria-label="Dismiss notification"
-                    onClick={() => setToast(null)}
-                  >
-                    <X size={13} strokeWidth={1.7} />
-                  </button>
-                </motion.div>
+      {typeof document !== "undefined" &&
+        createPortal(
+          <>
+            <AnimatePresence
+              onExitComplete={() => {
+                if (pendingToastRef.current) {
+                  pendingToastRef.current = false;
+                  setToast("Your message has been sent.");
+                }
+              }}
+            >
+              {open && (
+                <ConversationDialog
+                  key="conversation-dialog"
+                  onClose={closeConversation}
+                  onComplete={completeConversation}
+                />
               )}
             </AnimatePresence>
-          </div>
-        </>,
-        document.body,
-      )}
+
+            <div className="kailor-conversation-toast-position">
+              <AnimatePresence>
+                {toast && (
+                  <motion.div
+                    key={toast}
+                    className="kailor-conversation-toast"
+                    role="status"
+                    aria-live="polite"
+                    initial={
+                      reducedMotion
+                        ? false
+                        : { opacity: 0, y: -12, scale: 0.97 }
+                    }
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: -9,
+                      scale: 0.97,
+                    }}
+                    transition={{
+                      duration: reducedMotion ? 0 : 0.3,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                  >
+                    <Info size={16} strokeWidth={1.5} aria-hidden="true" />
+
+                    <span>{toast}</span>
+
+                    <button
+                      type="button"
+                      aria-label="Dismiss notification"
+                      onClick={() => setToast(null)}
+                    >
+                      <X size={13} strokeWidth={1.7} />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </>,
+          document.body,
+        )}
     </ConversationContext.Provider>
   );
 }

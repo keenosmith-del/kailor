@@ -26,6 +26,35 @@ export function useAuthentication(
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const pending = useRef(false);
+  const [policy, setPolicy] = useState<"closed" | "invite" | "public">(
+    "closed",
+  );
+  const [policyReady, setPolicyReady] = useState(false);
+  const [guestEnabled, setGuestEnabled] = useState(false);
+  const [invite, setInvite] = useState("");
+  useEffect(() => {
+    let active = true;
+    void api<{
+      registration: "closed" | "invite" | "public";
+      guestAccess: boolean;
+    }>("/auth/policy")
+      .then((value) => {
+        if (!active) return;
+        setPolicy(
+          ["closed", "invite", "public"].includes(value.registration)
+            ? value.registration
+            : "closed",
+        );
+        setGuestEnabled(value.guestAccess === true);
+        setPolicyReady(true);
+      })
+      .catch(() => {
+        if (active) setPolicyReady(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
   const guest = useDiscoveryEntry({ guestOnly: true });
   useEffect(() => {
     setPassword("");
@@ -35,7 +64,12 @@ export function useAuthentication(
   }, [signup]);
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (pending.current || guest.busy) return;
+    if (
+      pending.current ||
+      guest.busy ||
+      (signup && (!policyReady || policy === "closed"))
+    )
+      return;
     setError("");
     if (signup && password !== confirmation) {
       setError("Your passwords do not match.");
@@ -50,7 +84,12 @@ export function useAuthentication(
         {
           email: email.trim().toLowerCase(),
           password,
-          ...(signup ? { name: name.trim() } : {}),
+          ...(signup
+            ? {
+                name: name.trim(),
+                ...(policy === "invite" ? { invite: invite.trim() } : {}),
+              }
+            : {}),
         },
       );
       onLogin(account);
@@ -65,6 +104,11 @@ export function useAuthentication(
     }
   }
   return {
+    policy,
+    policyReady,
+    guestEnabled,
+    invite,
+    setInvite,
     name,
     setName,
     email,

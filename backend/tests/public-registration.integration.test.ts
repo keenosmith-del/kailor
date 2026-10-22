@@ -19,7 +19,7 @@ it("registers without an invitation, persists the full name and keeps administra
   const publicEmail = `${prefix}-public@test.local`;
   const publicClient = request.agent(app);
   try {
-    config.REGISTRATION_POLICY = "invite"; // Legacy installs also permit self-registration.
+    config.REGISTRATION_POLICY = "public"; // Explicit opt-in only.
     expect((await publicClient.get("/api/auth/policy")).body.registration).toBe(
       "public",
     );
@@ -64,7 +64,7 @@ it("registers without an invitation, persists the full name and keeps administra
         email: `${prefix}-closed@test.local`,
         password,
       })
-      .expect(400);
+      .expect(403);
     expect(
       await db.adminUser.findUnique({
         where: { email: `${prefix}-closed@test.local` },

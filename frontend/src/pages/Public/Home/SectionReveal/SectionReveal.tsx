@@ -1,61 +1,31 @@
 import { useRef, type ReactNode } from "react";
 import {
   motion,
-  useInView,
   useReducedMotion,
   useScroll,
   useTransform,
 } from "motion/react";
-
 import "./SectionReveal.css";
-
-type SectionRevealProps = {
-  children: ReactNode;
-};
-
-export function SectionReveal({ children }: SectionRevealProps) {
+export function SectionReveal({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reducedMotion = useReducedMotion();
-
-  const entered = useInView(ref, {
-    once: true,
-    amount: 0.04,
-  });
-
+  const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
-
   const opacity = useTransform(
     scrollYProgress,
-    [0, 0.15, 0.82, 1],
+    [0, 0.12, 0.88, 1],
     [0, 1, 1, 0],
   );
-
+  const y = useTransform(scrollYProgress, [0, 0.12, 0.88, 1], [20, 0, 0, -16]);
   return (
     <div ref={ref} className="section-reveal">
       <motion.div
         className="section-reveal__scroll"
-        style={{
-          opacity: reducedMotion ? 1 : opacity,
-        }}
+        style={{ opacity: reduced ? 1 : opacity, y: reduced ? 0 : y }}
       >
-        <motion.div
-          className="section-reveal__entrance"
-          initial={reducedMotion ? false : { opacity: 0, y: 34 }}
-          animate={
-            reducedMotion || entered
-              ? { opacity: 1, y: 0 }
-              : { opacity: 0, y: 34 }
-          }
-          transition={{
-            duration: 1.05,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-        >
-          {children}
-        </motion.div>
+        {children}
       </motion.div>
     </div>
   );

@@ -165,7 +165,6 @@ export function Collaboration() {
             Beyond the
             <br />
             conversation
-            <span className="kailor-round-dot" aria-hidden="true" />
           </h2>
 
           <p>

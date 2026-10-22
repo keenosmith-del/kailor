@@ -1,0 +1,25 @@
+.page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #fbfbfb;
+  color: #222526;
+  font:
+    500 13px "Helvetica Neue",
+    Helvetica,
+    Arial,
+    sans-serif;
+  cursor: pointer;
+}
+.page-back:hover {
+  background: #fff;
+  box-shadow: 0 3px 12px #0000000c;
+}
+.page-back:focus-visible {
+  outline: 2px solid #555;
+  outline-offset: 4px;
+}

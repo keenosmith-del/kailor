@@ -46,11 +46,13 @@ function StatisticCard({
   const ref = useRef<HTMLElement>(null);
   const reducedMotion = useReducedMotion();
   const isInView = useInView(ref, {
-    once: true,
+    once: false,
     amount: 0.35,
   });
 
-  const [displayedCount, setDisplayedCount] = useState(0);
+  const [displayedCount, setDisplayedCount] = useState(
+    Number.parseInt(statistic.value, 10),
+  );
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -131,7 +133,6 @@ export function Introduction() {
               Why
               <br />
               kailor
-              <span className="kailor-round-dot" aria-hidden="true" />
             </h2>
 
             <div className="introduction-disciplines">
@@ -163,7 +164,7 @@ export function Introduction() {
               We help work out which one it is.
             </p>
 
-            <Link className="introduction-link" to="/about">
+            <Link className="introduction-link" to="/how-it-works">
               See how we got here
             </Link>
           </div>

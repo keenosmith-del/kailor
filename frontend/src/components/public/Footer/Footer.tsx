@@ -4,22 +4,19 @@ import "./Footer.css";
 
 const email = "keenosmith@kailor.co.za";
 
-const siteLinks = [
-  ["/services", "Services"],
-  ["/work", "What we've built"],
-  ["/how-it-works", "How it works"],
-  ["/about", "About kailor"],
-  ["/pricing", "Pricing"],
-  ["/contact", "Contact"],
-] as const;
-
-const homepageLinks = [
-  ["/#introduction", "Why kailor"],
-  ["/#conversation", "Conversation"],
-  ["/#collaboration", "Collaboration"],
-  ["/#consultants", "Our consultants"],
-  ["/#client-feedback", "Client perspectives"],
-] as const;
+import { links, sidebarSections } from "../navigation";
+import { CookiePreferences } from "../CookiePreferences/CookiePreferences";
+const siteLinks = links.filter(([to]) => to !== "/");
+const homepageLinks = sidebarSections
+  .filter(([id]) =>
+    [
+      "introduction",
+      "conversation",
+      "collaboration",
+      "client-feedback",
+    ].includes(id),
+  )
+  .map(([id, label]) => [`/#${id}`, label]);
 
 export function Footer() {
   return (
@@ -29,7 +26,7 @@ export function Footer() {
           <nav aria-label="Explore kailor">
             <h2>Explore</h2>
             {siteLinks.map(([to, label]) => (
-              <Link key={to} to={to}>
+              <Link key={to} to={to!}>
                 {label}
               </Link>
             ))}
@@ -38,7 +35,7 @@ export function Footer() {
           <nav aria-label="Homepage sections">
             <h2>On this page</h2>
             {homepageLinks.map(([to, label]) => (
-              <Link key={to} to={to}>
+              <Link key={to} to={to!}>
                 {label}
               </Link>
             ))}
@@ -64,8 +61,20 @@ export function Footer() {
       </div>
 
       <div className="public-footer__bottom">
-        <span>© 2025 kailor</span>
-        <span>{email}</span>
+        <span>
+          © 2025
+          {new Date().getFullYear() > 2025
+            ? `–${new Date().getFullYear()}`
+            : ""}{" "}
+          kailor
+        </span>
+        <a href={`mailto:${email}`}>{email}</a>
+        <div className="public-footer__legal">
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/terms">Terms</Link>
+          <Link to="/cookies">Cookie information</Link>
+          <CookiePreferences />
+        </div>
       </div>
     </footer>
   );

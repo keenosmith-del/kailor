@@ -103,6 +103,8 @@ const patternSchema = z
   .strict();
 export const app = express();
 app.disable("x-powered-by");
+// Trust only the local reverse proxy, and only when explicitly configured.
+app.set("trust proxy", config.TRUST_PROXY === "loopback" ? "loopback" : false);
 app.use(helmet());
 app.use(express.json({ limit: "128kb" }));
 app.use((req, res, next) => {
@@ -119,6 +121,7 @@ app.use((req, res, next) => {
   next();
 });
 app.get("/api/health", async (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
   await db.$queryRaw`SELECT 1`;
   res.json({ status: "ok", service: "kailor", definitionVersion: version });
 });
@@ -164,7 +167,10 @@ app.post(
 );
 app.get("/api/auth/policy", (_req, res) =>
   res.json({
-    registration: config.REGISTRATION_POLICY === "closed" ? "closed" : "public",
+    registration: config.REGISTRATION_POLICY,
+    guestAccess:
+      config.GUEST_ACCESS === "enabled" ||
+      (!config.GUEST_ACCESS && config.NODE_ENV !== "production"),
   }),
 );
 app.post(

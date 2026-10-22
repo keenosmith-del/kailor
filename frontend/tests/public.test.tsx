@@ -13,6 +13,15 @@ import Services from "../src/pages/Public/Services/Services";
 import HowItWorks from "../src/pages/Public/HowItWorks/HowItWorks";
 import About from "../src/pages/Public/About/About";
 import Pricing from "../src/pages/Public/Pricing/Pricing";
+import Timeline from "../src/pages/Public/Timeline/Timeline";
+import Careers from "../src/pages/Public/Careers/Careers";
+import { InternalNavigation } from "../src/components/public/PageBack/PageBack";
+import {
+  CookiePreferences,
+  COOKIE_PREFERENCE_KEY,
+} from "../src/components/public/CookiePreferences/CookiePreferences";
+import { within } from "@testing-library/react";
+import { sidebarSections } from "../src/components/public/navigation";
 import Contact from "../src/pages/Public/Contact/Contact";
 import { ConversationVisual } from "../src/components/public/ConversationVisual/ConversationVisual";
 import { MediaSection } from "../src/components/public/MediaSection/MediaSection";
@@ -28,6 +37,15 @@ vi.mock("motion/react", async (importOriginal) => {
 });
 beforeEach(() => {
   state.reduced = false;
+  localStorage.clear();
+  HTMLDialogElement.prototype.showModal = function () {
+    this.setAttribute("open", "");
+  };
+  HTMLDialogElement.prototype.close = function () {
+    this.removeAttribute("open");
+  };
+  vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
   vi.stubGlobal(
     "IntersectionObserver",
     class {
@@ -57,196 +75,176 @@ afterEach(() => {
 function site(path = "/") {
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <Routes>
-        <Route element={<PublicLayout />}>
-          <Route index element={<Home />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/how-it-works" element={<HowItWorks />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/contact" element={<Contact />} />
-        </Route>
-      </Routes>
+      <InternalNavigation>
+        <Routes>
+          <Route element={<PublicLayout />}>
+            <Route index element={<Home />} />
+            <Route path="/timeline" element={<Timeline />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/contact" element={<Contact />} />
+          </Route>
+        </Routes>
+      </InternalNavigation>
     </MemoryRouter>,
   );
 }
-it("provides six substantive routes and updates page metadata through navigation", () => {
+it("renders the launch homepage, unique portraits and only real section destinations", () => {
   site();
   expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
     "Technology that",
   );
-  for (const [name, heading] of [
-    ["Services", "Practical expertise."],
-    ["How it works", "Understand first."],
-    ["About", "Good questions."],
-    ["Pricing", "Start where you are."],
-    ["Contact", "What's"],
-  ]) {
-    fireEvent.click(
-      screen
-        .getByRole("navigation", { name: "Footer pages" })
-        .querySelector(
-          `a[href="${name === "Services" ? "/services" : name === "How it works" ? "/how-it-works" : "/" + name.toLowerCase()}"]`,
-        )!,
-    );
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
-      heading,
-    );
-    expect(
-      document
-        .querySelector('meta[name="description"]')
-        ?.getAttribute("content")?.length,
-    ).toBeGreaterThan(30);
-    expect(document.title).toBe("kailor");
-    expect(
-      document
-        .querySelector('meta[property="og:title"]')
-        ?.getAttribute("content"),
-    ).toBe("kailor");
-  }
-  expect(
-    document.querySelector('link[rel="canonical"]')?.getAttribute("href"),
-  ).toBe("https://kailor.co.za/contact");
-});
-it("closes the mobile navigation on Escape and restores focus", () => {
-  site("/about");
-  const toggle = screen.getByRole("button", { name: "Open menu" });
-  fireEvent.click(toggle);
-  expect(toggle.getAttribute("aria-expanded")).toBe("true");
-  fireEvent.keyDown(document, { key: "Escape" });
-  expect(toggle.getAttribute("aria-expanded")).toBe("false");
-  expect(document.activeElement).toBe(toggle);
-  fireEvent.click(toggle);
-  fireEvent.click(
-    screen
-      .getByRole("navigation", { name: "Mobile public pages" })
-      .querySelector('a[href="/services"]')!,
-  );
-  expect(toggle.getAttribute("aria-expanded")).toBe("false");
-});
-it("has exactly three expandable journeys and five service destinations", () => {
-  site();
-  const journeys = document.querySelectorAll(".journey-tile");
-  expect(journeys.length).toBe(3);
-  for (const tile of journeys) {
-    const summary = tile.querySelector("summary")!;
-    fireEvent.click(summary);
-    expect(tile.querySelector("details")?.open).toBe(true);
-  }
-  const panels = document.querySelectorAll(".service-panel");
-  expect(panels.length).toBe(5);
-  for (const panel of panels)
-    expect(panel.querySelector("a")?.getAttribute("href")).toMatch(
-      /^\/services#/,
-    );
-});
-it("renders all anchor destinations on the Services page", () => {
-  site("/services");
-  for (const id of ["software", "ai", "automation", "cloud", "consulting"])
+  expect(document.getElementById("work")).toBeNull();
+  expect(document.getElementById("consultants")).toBeNull();
+  expect(document.getElementById("client-feedback")).toBeTruthy();
+  for (const [id] of sidebarSections)
     expect(document.getElementById(id)).toBeTruthy();
-});
-it("sequences, pauses and restarts the scripted conversation without network calls", () => {
-  vi.useFakeTimers();
-  render(<ConversationVisual />);
-  expect(document.querySelectorAll(".demo-message.is-visible").length).toBe(1);
-  act(() => vi.advanceTimersByTime(2800));
-  expect(document.querySelectorAll(".demo-message.is-visible").length).toBe(2);
-  fireEvent.click(screen.getByRole("button", { name: "Pause conversation" }));
-  act(() => vi.advanceTimersByTime(10000));
-  expect(document.querySelectorAll(".demo-message.is-visible").length).toBe(2);
-  fireEvent.click(screen.getByRole("button", { name: "Restart conversation" }));
-  expect(document.querySelectorAll(".demo-message.is-visible").length).toBe(1);
-});
-it("shows the complete conversation immediately with reduced motion", () => {
-  state.reduced = true;
-  render(<ConversationVisual />);
-  expect(document.querySelectorAll(".demo-message.is-visible").length).toBe(4);
+  const portraits = Array.from(
+    document.querySelectorAll<HTMLImageElement>('img[src^="/clients/"]'),
+  ).map((image) => image.src);
+  expect(new Set(portraits).size).toBe(portraits.length);
+  expect(document.querySelectorAll(".service-panel")).toHaveLength(4);
   expect(
-    screen.queryByRole("button", { name: "Pause conversation" }),
+    document.querySelector(".stacked-panels")?.closest(".section-reveal"),
   ).toBeNull();
 });
-it("uses designed fallbacks without creating source-less videos", () => {
-  const { rerender } = render(<MediaSection media={{}}>Fallback</MediaSection>);
-  expect(document.querySelector("video")).toBeNull();
-  expect(screen.getByText("Fallback")).toBeTruthy();
-  rerender(
-    <MediaSection media={{ desktopMp4: "/media/work/example.mp4" }}>
+it("provides the exact Pages list, genuinely disabled items and collapsible inert section links", () => {
+  site();
+  fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+  const nav = screen.getByRole("navigation", { name: "Main navigation" });
+  const group = nav.querySelector(".public-mobile-nav__group")!;
+  expect(
+    Array.from(group.querySelectorAll("a, span")).map(
+      (item) => item.textContent,
+    ),
+  ).toEqual([
+    "Home",
+    "How it works",
+    "Our Work",
+    "Our Team",
+    "Timeline",
+    "Pricing",
+    "Careers",
+    "Contact",
+  ]);
+  expect(group.querySelectorAll("[aria-disabled=true]")).toHaveLength(2);
+  expect(group.querySelector('[href="/work"]')).toBeNull();
+  expect(screen.queryByText("Coming later")).toBeNull();
+  const button = within(nav).getByRole("button", { name: "On the homepage" });
+  fireEvent.click(button);
+  expect(button.getAttribute("aria-expanded")).toBe("false");
+  expect(
+    document.getElementById("homepage-section-links")?.hasAttribute("inert"),
+  ).toBe(true);
+  fireEvent.click(button);
+  expect(button.getAttribute("aria-expanded")).toBe("true");
+});
+it("dismisses with Escape, restores focus and opens the shared conversation from the sidebar", () => {
+  site();
+  const toggle = screen.getByRole("button", { name: "Open menu" });
+  fireEvent.click(toggle);
+  fireEvent.keyDown(document, { key: "Escape" });
+  expect(document.activeElement).toBe(toggle);
+  fireEvent.click(toggle);
+  const nav = screen.getByRole("navigation", { name: "Main navigation" });
+  expect(
+    within(nav)
+      .getByRole("link", { name: "Create account" })
+      .querySelector("img")
+      ?.getAttribute("src"),
+  ).toBe("/svgs/profile.svg");
+  fireEvent.click(
+    within(nav).getByRole("button", { name: "Start conversation" }),
+  );
+  expect(toggle.getAttribute("aria-expanded")).toBe("false");
+  expect(screen.getByRole("dialog", { name: "Let's chat" })).toBeTruthy();
+});
+it("routes to minimal shells, sets noindex and provides safe Back navigation", () => {
+  site();
+  for (const [path, title] of [
+    ["how-it-works", "How it works"],
+    ["timeline", "Timeline"],
+    ["pricing", "Pricing"],
+    ["careers", "Careers"],
+    ["contact", "Contact"],
+  ]) {
+    fireEvent.click(
+      document.querySelector(`.public-footer a[href="/${path}"]`)!,
+    );
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(title);
+    expect(document.title).toBe(`${title} | kailor`);
+    expect(
+      document.querySelector('meta[name="robots"]')?.getAttribute("content"),
+    ).toBe("noindex, nofollow");
+    fireEvent.click(screen.getByRole("button", { name: "Back", exact: true }));
+    expect(document.getElementById("hero")).toBeTruthy();
+  }
+});
+it("Contact refresh has a functional shared conversation action and safe Home fallback", () => {
+  site("/contact");
+  fireEvent.click(
+    screen.getByRole("button", { name: "Start conversation", exact: true }),
+  );
+  expect(screen.getByRole("dialog", { name: "Let's chat" })).toBeTruthy();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Close conversation form" }),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Back", exact: true }));
+  expect(document.getElementById("hero")).toBeTruthy();
+});
+it("loads initial section hashes after the page commits", async () => {
+  site("/#collaboration");
+  await act(
+    async () => new Promise((resolve) => requestAnimationFrame(resolve)),
+  );
+  expect(
+    document.getElementById("collaboration")?.scrollIntoView,
+  ).toHaveBeenCalled();
+});
+it("persists versioned essential-only cookie preferences and restores focus", () => {
+  render(
+    <MemoryRouter>
+      <CookiePreferences />
+    </MemoryRouter>,
+  );
+  const trigger = screen.getByRole("button", { name: "Cookies", exact: true });
+  fireEvent.click(trigger);
+  expect(
+    screen.getByRole("dialog", { name: "Cookie preferences" }),
+  ).toBeTruthy();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Save essential-only preferences" }),
+  );
+  expect(
+    JSON.parse(localStorage.getItem(COOKIE_PREFERENCE_KEY)!),
+  ).toMatchObject({ version: 1, essential: true, optional: false });
+  expect(document.activeElement).toBe(trigger);
+  fireEvent.click(trigger);
+  expect(
+    screen.getByText(/Your essential-only preference is saved/),
+  ).toBeTruthy();
+});
+it("keeps content visible and disables video autoplay in reduced motion", () => {
+  state.reduced = true;
+  site();
+  expect(
+    document.querySelector<HTMLVideoElement>(".service-art--cloud video")
+      ?.autoplay,
+  ).toBe(false);
+  expect(
+    document.querySelectorAll(".kailor-chat__message").length,
+  ).toBeGreaterThan(0);
+});
+it("keeps media fallbacks for broken files", () => {
+  render(
+    <MediaSection media={{ desktopMp4: "/missing.mp4" }}>
       Fallback
     </MediaSection>,
   );
-  expect(document.querySelector("video")?.controls).toBe(true);
   fireEvent.error(document.querySelector("video")!);
   expect(screen.getByText("Fallback")).toBeTruthy();
   expect(document.querySelector("video")).toBeNull();
-});
-it("keeps the hero muted, looping and inline, and pauses it outside the viewport", () => {
-  let visibility: IntersectionObserverCallback;
-  const disconnect = vi.fn();
-  vi.stubGlobal(
-    "IntersectionObserver",
-    class {
-      constructor(callback: IntersectionObserverCallback) {
-        visibility = callback;
-      }
-      observe = vi.fn();
-      disconnect = disconnect;
-    },
-  );
-  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
-  const pause = vi
-    .spyOn(HTMLMediaElement.prototype, "pause")
-    .mockImplementation(() => {});
-  const { unmount } = site();
-  const video = document.querySelector("video")!;
-  expect(video.muted).toBe(true);
-  expect(video.loop).toBe(true);
-  expect(video.playsInline).toBe(true);
-  expect(video.querySelector("source")?.getAttribute("src")).toBe(
-    "/media/hero/kailor-hero.mp4",
-  );
-  act(() =>
-    visibility(
-      [{ isIntersecting: true } as IntersectionObserverEntry],
-      {} as IntersectionObserver,
-    ),
-  );
-  expect(play).toHaveBeenCalledOnce();
-  act(() =>
-    visibility(
-      [{ isIntersecting: false } as IntersectionObserverEntry],
-      {} as IntersectionObserver,
-    ),
-  );
-  expect(pause).toHaveBeenCalledOnce();
-  unmount();
-  expect(disconnect).toHaveBeenCalledOnce();
-});
-it("uses the current hero fallback when reduced motion is requested", () => {
-  state.reduced = true;
-  site();
-  expect(document.querySelector(".kailor-hero video")).toBeNull();
-  expect(document.querySelector(".kailor-hero__fallback")).toBeTruthy();
-});
-it("keeps engagement CTAs as enquiries and labels illustrative material", () => {
-  site();
-  expect(
-    screen.getByText("Demonstration scenarios · not client case studies"),
-  ).toBeTruthy();
-  expect(
-    screen.getByText("Illustrative process · not performance data"),
-  ).toBeTruthy();
-  for (const link of document.querySelectorAll(".engagement a"))
-    expect(link.getAttribute("href")).toMatch(
-      /^mailto:keenosmith@kailor.co.za/,
-    );
-});
-it("moves carousel controls to meaningful slides and supports expanding the details", () => {
-  site();
-  fireEvent.click(screen.getByRole("button", { name: "Next solution" }));
-  expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalled();
-  const summary = document.querySelector(".feature-slide details summary")!;
-  fireEvent.click(summary);
-  expect(
-    document.querySelector<HTMLDetailsElement>(".feature-slide details")?.open,
-  ).toBe(true);
 });

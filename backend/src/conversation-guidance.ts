@@ -385,13 +385,18 @@ export function containsSensitiveData(text: string) {
 // System reference identifiers are not phone numbers. User message strings and
 // evidence quotes remain untouched, including any contact details inside them.
 export function privacyScanText(value: unknown) {
-  return JSON.stringify(value, (key, item) =>
-    /^(?:id|\w+Id|from|to|source)$/.test(key) &&
+  const reference = (item: unknown) =>
     typeof item === "string" &&
-    /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(item)
+    /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(item);
+  return JSON.stringify(value, (key, item) => {
+    // Only typed system-reference arrays are exempt. Free-text arrays, user
+    // messages and source content still undergo the full sensitive-data scan.
+    if (["evidenceIds", "caseIds"].includes(key) && Array.isArray(item))
+      return item.map((entry) => (reference(entry) ? "[reference]" : entry));
+    return /^(?:id|\w+Id|from|to|source)$/.test(key) && reference(item)
       ? "[reference]"
-      : item,
-  );
+      : item;
+  });
 }
 
 function briefOperational(

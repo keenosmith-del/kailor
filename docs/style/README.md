@@ -1,3 +1,5 @@
+22 October 2026 update: controlled-launch changes preserve the strict monochrome identity. Shared Back/page shells, monochrome authentication, footer cookie preferences and repeatable public motion are documented in [PUBLIC_WEBSITE.md](PUBLIC_WEBSITE.md). No cream legacy treatment is restored. The current source and the new guide section supersede historical composition notes below.
+
 # Current visual identity — public website redesign, 19 October 2026
 
 The complete public website and shared application baseline now use the approved **strict monochrome** identity. White dominates; soft white, platinum, ash, graphite, onyx and jet black provide hierarchy. Every button is rounded. Helvetica Neue / Helvetica / Arial remains the typeface. Old cream/beige/coloured accents are deprecated, including the exceptions described in the historical notes below.

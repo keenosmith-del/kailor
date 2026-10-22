@@ -1,3 +1,19 @@
+Owner-requested follow-up: the cloud “Built for…” MP4 uses its original native autoplay, loop and loaded-data fallback behavior again; the new viewport playback controller has been removed. Other launch changes remain.
+
+# Current controlled-launch composition — 22 October 2026
+
+This section supersedes the historical architecture/composition notes below. The approved visual identity remains unchanged.
+
+Public routes are Home; minimal How it works, Timeline, Pricing, Careers and Contact shells; and initial Privacy, Terms and Cookie information pages. Only Home is indexable. Services/About/Work remain in source and are not published routes. Every linked public/auth subpage shares `PageBack`; direct entry falls back to Home without following external history.
+
+Homepage uses Hero, Marquee, Introduction, StackedPanels (outside SectionReveal to preserve sticky positioning), Conversation, Collaboration, development-only ClientPerspectives, Perspective and Activity. SelectedWork/Consultants remain uncomposed. `ClientPerspectives/` is the sole testimonial implementation; demo material is hard-gated out of production. Hero request text is still; three approved positions remain visible. Active reveal children repeat, timed visuals pause offscreen/hidden, video readiness recovers on route return, and reduced motion remains static.
+
+`components/public/navigation.ts` is the shared sidebar/footer publication inventory. `PublicLayout/routes.json` drives route metadata and build-time prerendering. `CookiePreferences/`, `PageBack/` and `PageShell/` have colocated TSX/CSS. Auth remains one shared shell/hook with monochrome form styling and content transitions. Unfinished page sections retain source/CSS in place.
+
+See [asset allocation](ASSET_ALLOCATION.md) and [controlled launch verification/deployment](../deployment/CONTROLLED_LAUNCH_READINESS.md). Footer composition and oversized wordmark remain; the bottom row adds legal links and the Cookies preference control.
+
+---
+
 # Public website — implementation and editing guide
 
 19 October 2026. Local implementation in the existing React/TypeScript/Vite application. Uses the installed Motion, Lucide and React Router libraries; no new dependencies, repository, native mobile application, inference provider or deployment.

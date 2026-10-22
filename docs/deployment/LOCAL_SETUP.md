@@ -1,3 +1,9 @@
+## Controlled launch update — 22 October 2026
+
+Source defaults now use `REGISTRATION_POLICY=closed`. Set `invite` explicitly for server-enforced email-bound invitation testing, or `public` only for deliberate local public-registration tests. Existing private `.env` values override source defaults and were not rewritten. `GUEST_ACCESS` unset preserves local guest development and disables guest APIs in production; use an explicit value to test either state. Both remote AI flags default false. Production requires explicit database and HTTPS origin configuration.
+
+Use [CONTROLLED_LAUNCH_READINESS.md](CONTROLLED_LAUNCH_READINESS.md) for the current route map, checked test results and deployment steps. Earlier iteration notes below describe historical behaviour: invite no longer permits signup without a code. No schema migration is added by the controlled-launch iteration.
+
 # Local setup
 
 Requires Node 22.12+ (tested on Node 24.21.0), npm and Docker Compose with the Docker daemon running. Commands below run from the existing project root. No Git operations are required.

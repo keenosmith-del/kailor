@@ -1,0 +1,57 @@
+{
+  "/": {
+    "title": "Technology, thoughtfully tailored. | kailor",
+    "description": "Founder-led technology consulting, software engineering, AI and automation. Practical decisions and considered solutions with kailor.",
+    "index": true
+  },
+  "/how-it-works": {
+    "title": "How it works | kailor",
+    "description": "How it works at kailor. This page is being prepared for publication.",
+    "index": false
+  },
+  "/timeline": {
+    "title": "Timeline | kailor",
+    "description": "The kailor timeline. This page is being prepared for publication.",
+    "index": false
+  },
+  "/pricing": {
+    "title": "Pricing | kailor",
+    "description": "Pricing at kailor. Contact us to discuss the scope of your project.",
+    "index": false
+  },
+  "/careers": {
+    "title": "Careers | kailor",
+    "description": "Careers at kailor. This page is being prepared for publication.",
+    "index": false
+  },
+  "/contact": {
+    "title": "Contact | kailor",
+    "description": "Contact kailor at keenosmith@kailor.co.za or start a conversation about your project.",
+    "index": false
+  },
+  "/privacy": {
+    "title": "Privacy | kailor",
+    "description": "How kailor handles enquiries, accounts, project information and technical records.",
+    "index": false
+  },
+  "/terms": {
+    "title": "Terms of use | kailor",
+    "description": "Initial terms for using the kailor website and restricted testing services.",
+    "index": false
+  },
+  "/cookies": {
+    "title": "Cookie information | kailor",
+    "description": "Essential kailor session cookies and browser storage. Review your cookie preferences.",
+    "index": false
+  },
+  "/sign-in": {
+    "title": "Sign in | kailor",
+    "description": "Sign in to your approved kailor testing account.",
+    "index": false
+  },
+  "/create-account": {
+    "title": "Create account | kailor",
+    "description": "Account registration information for the controlled kailor testing programme.",
+    "index": false
+  }
+}

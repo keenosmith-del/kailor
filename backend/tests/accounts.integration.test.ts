@@ -18,6 +18,7 @@ import {
 import { readPersonalMemory } from "../src/personal-memory.js";
 if (!new URL(config.DATABASE_URL).pathname.endsWith("_test"))
   throw Error("Use _test database");
+const originalPolicy = config.REGISTRATION_POLICY;
 const prefix = `accounts-${randomUUID()}`;
 const email = `${prefix}@test.local`,
   password = "synthetic-password-only";
@@ -27,6 +28,7 @@ let founderId: string, memberId: string, invite: string;
 const origin = config.APP_ORIGIN;
 const owners: string[] = [];
 beforeAll(async () => {
+  config.REGISTRATION_POLICY = "invite";
   const a = await db.adminUser.create({
     data: {
       email: `${prefix}-founder@test.local`,
@@ -43,6 +45,7 @@ beforeAll(async () => {
     .expect(200);
 });
 afterAll(async () => {
+  config.REGISTRATION_POLICY = originalPolicy;
   const rows = await db.discoverySession.findMany({
     where: { adminId: { in: owners } },
     select: { subjectId: true },

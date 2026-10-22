@@ -20,6 +20,15 @@ import {
 import { renderPdf } from "./pdf.js";
 export const guestRouter = Router();
 guestRouter.use((_req, res, next) => {
+  if (
+    config.GUEST_ACCESS === "disabled" ||
+    (!config.GUEST_ACCESS && config.NODE_ENV === "production")
+  )
+    throw new AppError(
+      403,
+      "guest_unavailable",
+      "Guest exploration is unavailable during testing. Please sign in.",
+    );
   res.setHeader("Cache-Control", "no-store");
   next();
 });

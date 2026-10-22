@@ -1,13 +1,10 @@
+import { ClientPerspectives } from "./ClientPerspectives/ClientPerspectives";
 import { Hero } from "./Hero/Hero";
 import { Marquee } from "./Marquee/Marquee";
 import { Introduction } from "./Introduction/Introduction";
 import { ServicesSection } from "./ServicesSection/ServicesSection";
 import { Conversation } from "./Conversation/Conversation";
 import { Collaboration } from "./Collaboration/Collaboration";
-import { SelectedWork } from "./SelectedWork/SelectedWork";
-import { Consultants } from "./Consultants/Consultants";
-import { Testimonials } from "./Testimonials/Testimonials";
-import { ClientFeedback } from "./ClientFeedback/ClientFeedback";
 import { Perspective } from "./Perspective/Perspective";
 import { Activity } from "./Activity/Activity";
 
@@ -26,9 +23,7 @@ export default function Home() {
         <Introduction />
       </SectionReveal>
 
-      <SectionReveal>
-        <ServicesSection />
-      </SectionReveal>
+      <ServicesSection />
 
       <SectionReveal>
         <Conversation />
@@ -38,7 +33,7 @@ export default function Home() {
         <Collaboration />
       </SectionReveal>
 
-      <Testimonials />
+      <ClientPerspectives />
 
       <Perspective />
 

@@ -20,6 +20,7 @@ import {
 } from "motion/react";
 
 import "./StackedPanels.css";
+import { useDocumentVisible } from "../useDocumentVisible";
 
 type ServiceKind = "consultancy" | "software" | "automation" | "cloud";
 
@@ -94,7 +95,9 @@ const changeTransition = {
 // automatically disabled for people who prefer reduced motion.
 function useVisualCycle(length: number, delay: number) {
   const ref = useRef<HTMLDivElement>(null);
-  const visible = useInView(ref, { amount: 0.3 });
+  const inView = useInView(ref, { amount: 0.15 });
+  const documentVisible = useDocumentVisible();
+  const visible = inView && documentVisible;
   const reducedMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
 
@@ -106,7 +109,7 @@ function useVisualCycle(length: number, delay: number) {
     return () => window.clearInterval(timer);
   }, [delay, length, reducedMotion, visible]);
 
-  return { ref, index, reducedMotion };
+  return { ref, index, reducedMotion, visible };
 }
 
 const challenges = [
@@ -119,21 +122,41 @@ function ConsultancyVisual() {
   const { ref, index, reducedMotion } = useVisualCycle(challenges.length, 3600);
 
   return (
-    <div ref={ref} className="service-art service-art--consultancy" aria-label="Illustrative discovery conversation">
-      <motion.div className="service-art__layer service-art__discovery" variants={layerReveal}>
-        <div className="service-art__label"><Compass size={15} strokeWidth={1.6} /> A good place to begin</div>
+    <div
+      ref={ref}
+      className="service-art service-art--consultancy"
+      aria-label="Illustrative discovery conversation"
+    >
+      <motion.div
+        className="service-art__layer service-art__discovery"
+        variants={layerReveal}
+      >
+        <div className="service-art__label">
+          <Compass size={15} strokeWidth={1.6} /> A good place to begin
+        </div>
         <div className="service-art__large-quote">
           <AnimatePresence mode="wait" initial={false}>
-            <motion.p key={index} initial={reducedMotion ? false : { opacity: 0, y: 9 }} animate={{ opacity: 1, y: 0 }} exit={reducedMotion ? undefined : { opacity: 0, y: -9 }} transition={changeTransition}>
+            <motion.p
+              key={index}
+              initial={reducedMotion ? false : { opacity: 0, y: 9 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reducedMotion ? undefined : { opacity: 0, y: -9 }}
+              transition={changeTransition}
+            >
               “{challenges[index]}”
             </motion.p>
           </AnimatePresence>
         </div>
         <div className="service-art__mini-rail" aria-hidden="true">
-          {challenges.map((_, i) => <span className={i === index ? "is-active" : ""} key={i} />)}
+          {challenges.map((_, i) => (
+            <span className={i === index ? "is-active" : ""} key={i} />
+          ))}
         </div>
       </motion.div>
-      <motion.div className="service-art__layer service-art__direction" variants={layerReveal}>
+      <motion.div
+        className="service-art__layer service-art__direction"
+        variants={layerReveal}
+      >
         <span className="service-art__eyebrow">Our first priority</span>
         <strong>Understand the real problem.</strong>
         <ArrowRight size={18} strokeWidth={1.4} />
@@ -143,9 +166,24 @@ function ConsultancyVisual() {
 }
 
 const workspaces = [
-  { tab: "Overview", headline: "Everything, connected.", detail: "Projects, information and people in one place.", progress: "72%" },
-  { tab: "Projects", headline: "Work you can follow.", detail: "Clear progress, decisions and next steps.", progress: "48%" },
-  { tab: "Activity", headline: "Nothing gets lost.", detail: "The right updates at the right time.", progress: "88%" },
+  {
+    tab: "Overview",
+    headline: "Everything, connected.",
+    detail: "Projects, information and people in one place.",
+    progress: "72%",
+  },
+  {
+    tab: "Projects",
+    headline: "Work you can follow.",
+    detail: "Clear progress, decisions and next steps.",
+    progress: "48%",
+  },
+  {
+    tab: "Activity",
+    headline: "Nothing gets lost.",
+    detail: "The right updates at the right time.",
+    progress: "88%",
+  },
 ];
 
 function SoftwareVisual() {
@@ -153,33 +191,65 @@ function SoftwareVisual() {
   const current = workspaces[index];
 
   return (
-    <div ref={ref} className="service-art service-art--software" aria-label="Illustrative application interface">
-      <motion.div className="service-art__layer service-art__workspace" variants={layerReveal}>
+    <div
+      ref={ref}
+      className="service-art service-art--software"
+      aria-label="Illustrative application interface"
+    >
+      <motion.div
+        className="service-art__layer service-art__workspace"
+        variants={layerReveal}
+      >
         <div className="service-art__window-top">
-          <span><Code2 size={14} strokeWidth={1.5} /> workspace</span>
-          <span className="service-art__window-status"><span /> Interactive preview</span>
+          <span>
+            <Code2 size={14} strokeWidth={1.5} /> workspace
+          </span>
+          <span className="service-art__window-status">
+            <span /> Interactive preview
+          </span>
         </div>
         <div className="service-art__workspace-body">
           <div className="service-art__tabs">
             {workspaces.map((item, i) => (
-              <span className={index === i ? "is-active" : ""} key={item.tab}>{item.tab}</span>
+              <span className={index === i ? "is-active" : ""} key={item.tab}>
+                {item.tab}
+              </span>
             ))}
           </div>
           <div className="service-art__workspace-content">
             <AnimatePresence mode="wait" initial={false}>
-              <motion.div key={current.tab} className="service-art__workspace-copy" initial={reducedMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={reducedMotion ? undefined : { opacity: 0, y: -8 }} transition={changeTransition}>
-                <span className="service-art__eyebrow">Designed around your work</span>
+              <motion.div
+                key={current.tab}
+                className="service-art__workspace-copy"
+                initial={reducedMotion ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reducedMotion ? undefined : { opacity: 0, y: -8 }}
+                transition={changeTransition}
+              >
+                <span className="service-art__eyebrow">
+                  Designed around your work
+                </span>
                 <strong>{current.headline}</strong>
                 <p>{current.detail}</p>
               </motion.div>
             </AnimatePresence>
             <div className="service-art__progress-track" aria-hidden="true">
-              <motion.span initial={false} animate={{ width: current.progress }} transition={{ duration: reducedMotion ? 0 : 0.9, ease: [0.22, 1, 0.36, 1] }} />
+              <motion.span
+                initial={false}
+                animate={{ width: current.progress }}
+                transition={{
+                  duration: reducedMotion ? 0 : 0.9,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              />
             </div>
           </div>
         </div>
       </motion.div>
-      <motion.div className="service-art__layer service-art__workspace-pill" variants={layerReveal}>
+      <motion.div
+        className="service-art__layer service-art__workspace-pill"
+        variants={layerReveal}
+      >
         <Check size={15} strokeWidth={1.5} /> Thoughtfully engineered
       </motion.div>
     </div>
@@ -196,41 +266,91 @@ function AutomationVisual() {
   const { ref, index } = useVisualCycle(workflowSteps.length, 1500);
 
   return (
-    <div ref={ref} className="service-art service-art--automation" aria-label="Illustrative automated workflow">
-      <motion.div className="service-art__layer service-art__automation-shell" variants={layerReveal}>
-        <div className="service-art__label"><Workflow size={15} strokeWidth={1.6} /> Workflows that move</div>
+    <div
+      ref={ref}
+      className="service-art service-art--automation"
+      aria-label="Illustrative automated workflow"
+    >
+      <motion.div
+        className="service-art__layer service-art__automation-shell"
+        variants={layerReveal}
+      >
+        <div className="service-art__label">
+          <Workflow size={15} strokeWidth={1.6} /> Workflows that move
+        </div>
         <div className="service-art__steps">
           {workflowSteps.map(({ icon: Icon, name, detail }, i) => (
-            <div key={name} className={`service-art__step${index === i ? " is-active" : ""}`}>
-              <span className="service-art__step-icon"><Icon size={17} strokeWidth={1.5} /></span>
+            <div
+              key={name}
+              className={`service-art__step${index === i ? " is-active" : ""}`}
+            >
+              <span className="service-art__step-icon">
+                <Icon size={17} strokeWidth={1.5} />
+              </span>
               <span className="service-art__step-name">{name}</span>
               <span className="service-art__step-detail">{detail}</span>
-              {index === i && <motion.span layoutId="active-workflow-step" className="service-art__step-indicator" transition={{ type: "spring", stiffness: 170, damping: 25 }} />}
+              {index === i && (
+                <motion.span
+                  layoutId="active-workflow-step"
+                  className="service-art__step-indicator"
+                  transition={{ type: "spring", stiffness: 170, damping: 25 }}
+                />
+              )}
             </div>
           ))}
         </div>
-        <div className="service-art__flow-caption"><ShieldCheck size={15} strokeWidth={1.5} /> Oversight stays part of the process</div>
+        <div className="service-art__flow-caption">
+          <ShieldCheck size={15} strokeWidth={1.5} /> Oversight stays part of
+          the process
+        </div>
       </motion.div>
     </div>
   );
 }
 
-// After generating the Astra video, place it at this public URL.
-// Until then the final panel is a real, animated in-browser preview.
+// Local asset; readable charcoal fallback stays mounted under the video.
 const CLOUD_VIDEO_SRC = "/videos/kailor-built-for-loop.mp4";
-const cloudWords = ["clarity", "growth", "momentum", "automation", "scale", "change"];
+const cloudWords = [
+  "clarity",
+  "growth",
+  "momentum",
+  "automation",
+  "scale",
+  "change",
+];
 
-function CloudVisual() {
+export function CloudVisual() {
   const { ref, index, reducedMotion } = useVisualCycle(cloudWords.length, 1650);
   const [videoReady, setVideoReady] = useState(false);
 
   return (
-    <div ref={ref} className="service-art service-art--cloud" aria-label="Built for clarity, growth, momentum, automation, scale and change">
+    <div
+      ref={ref}
+      className="service-art service-art--cloud"
+      aria-label="Built for clarity, growth, momentum, automation, scale and change"
+    >
       <div className="service-art__word-preview" aria-hidden={videoReady}>
         <span className="service-art__word-prefix">Built for</span>
         <div className="service-art__changing-word" aria-live="off">
           <AnimatePresence mode="wait" initial={false}>
-            <motion.strong key={index} initial={reducedMotion ? false : { opacity: 0, y: 14, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={reducedMotion ? undefined : { opacity: 0, y: -14, filter: "blur(4px)" }} transition={{ duration: reducedMotion ? 0 : 0.43, ease: [0.22, 1, 0.36, 1] }}>
+            <motion.strong
+              key={index}
+              initial={
+                reducedMotion
+                  ? false
+                  : { opacity: 0, y: 14, filter: "blur(4px)" }
+              }
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={
+                reducedMotion
+                  ? undefined
+                  : { opacity: 0, y: -14, filter: "blur(4px)" }
+              }
+              transition={{
+                duration: reducedMotion ? 0 : 0.43,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
               {cloudWords[index]}.
             </motion.strong>
           </AnimatePresence>
@@ -261,7 +381,7 @@ function ServiceVisual({ kind }: { kind: ServiceKind }) {
       variants={panelReveal}
       initial={reducedMotion ? false : "hidden"}
       whileInView="visible"
-      viewport={{ once: true, amount: 0.24 }}
+      viewport={{ once: kind === "cloud", amount: 0.24 }}
     >
       {kind === "consultancy" && <ConsultancyVisual />}
       {kind === "software" && <SoftwareVisual />}
@@ -271,7 +391,15 @@ function ServiceVisual({ kind }: { kind: ServiceKind }) {
   );
 }
 
-function ServicePanel({ service, index, progress }: { service: Service; index: number; progress: MotionValue<number> }) {
+function ServicePanel({
+  service,
+  index,
+  progress,
+}: {
+  service: Service;
+  index: number;
+  progress: MotionValue<number>;
+}) {
   const reducedMotion = useReducedMotion();
   const scale = useTransform(
     progress,
@@ -280,13 +408,35 @@ function ServicePanel({ service, index, progress }: { service: Service; index: n
   );
 
   return (
-    <article className={`service-panel service-panel--${service.kind}`} style={{ top: `${96 + index * 15}px`, zIndex: index + 1 }}>
-      <motion.div className="service-panel-inner" style={{ scale: reducedMotion ? 1 : scale }}>
+    <article
+      className={`service-panel service-panel--${service.kind}`}
+      style={{ top: `${96 + index * 15}px`, zIndex: index + 1 }}
+    >
+      <motion.div
+        className="service-panel-inner"
+        style={{ scale: reducedMotion ? 1 : scale }}
+      >
         <div className="service-panel-copy">
-          <motion.div className="service-panel-heading" initial={reducedMotion ? false : { opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}>
+          <motion.div
+            className="service-panel-heading"
+            initial={reducedMotion ? false : { opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          >
             <h3>{service.title}</h3>
           </motion.div>
-          <motion.div className="service-panel-description" initial={reducedMotion ? false : { opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}>
+          <motion.div
+            className="service-panel-description"
+            initial={reducedMotion ? false : { opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.25 }}
+            transition={{
+              duration: 0.75,
+              delay: 0.12,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
             <p className="service-panel-lead">{service.lead}</p>
             <p>{service.description}</p>
           </motion.div>
@@ -299,11 +449,21 @@ function ServicePanel({ service, index, progress }: { service: Service; index: n
 
 export function StackedPanels() {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end end"],
+  });
 
   return (
     <div ref={ref} className="stacked-panels">
-      {services.map((service, index) => <ServicePanel key={service.kind} service={service} index={index} progress={scrollYProgress} />)}
+      {services.map((service, index) => (
+        <ServicePanel
+          key={service.kind}
+          service={service}
+          index={index}
+          progress={scrollYProgress}
+        />
+      ))}
     </div>
   );
 }

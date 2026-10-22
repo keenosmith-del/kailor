@@ -13,3 +13,25 @@
 .public-skip:focus {
   top: 90px;
 }
+
+html.no-js .public-site [style] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+html.no-js .public-site .service-art__video {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-site [style] {
+    opacity: 1 !important;
+  }
+  .public-site *,
+  .public-site *::before,
+  .public-site *::after {
+    animation: none !important;
+    transition-duration: 0s !important;
+  }
+}
+.public-site [id] {
+  scroll-margin-top: 92px;
+}

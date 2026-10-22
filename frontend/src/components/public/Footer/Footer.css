@@ -272,3 +272,28 @@
     transform: none;
   }
 }
+
+.public-footer__legal {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.public-footer__bottom > a {
+  justify-self: center;
+}
+@media (max-width: 760px) {
+  .public-footer__bottom {
+    grid-template-columns: 1fr;
+  }
+  .public-footer__bottom > a {
+    justify-self: start;
+  }
+  .public-footer__legal {
+    justify-content: space-between;
+  }
+  .footer-cookies {
+    margin-left: auto;
+  }
+}

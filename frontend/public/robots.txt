@@ -1,12 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /app/
-Disallow: /preview/
 Disallow: /api/
-Disallow: /founder
-Disallow: /sign-in
-Disallow: /create-account
-Disallow: /plans
-Disallow: /workspace
-Disallow: /sessions/
 Sitemap: https://kailor.co.za/sitemap.xml

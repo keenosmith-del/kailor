@@ -116,6 +116,18 @@ export function requireAdmin(_req: Request, res: Response, next: NextFunction) {
     throw new AppError(403, "forbidden", "Founder access is required");
   next();
 }
+export function assertRegistrationAllowed(
+  policy: "closed" | "invite" | "public",
+  invite: string,
+) {
+  if (policy === "closed" || (policy === "invite" && !invite.trim()))
+    throw new AppError(
+      403,
+      "registration_unavailable",
+      "Account creation is restricted during testing. Contact keenosmith@kailor.co.za.",
+    );
+}
+
 export async function register(
   email: string,
   password: string,
@@ -123,13 +135,14 @@ export async function register(
   res: Response,
   name?: string,
 ) {
+  assertRegistrationAllowed(config.REGISTRATION_POLICY, invite);
   const normalized = email.trim().toLowerCase();
   const passwordHash = await hashPassword(password);
   try {
     await db.$transaction(async (tx) => {
       if (config.REGISTRATION_POLICY === "closed") throw new Error("closed");
-      // Public self-registration never requires an invitation. Continue to
-      // validate explicitly supplied codes for existing invitation clients.
+      // Email ownership, expiry and single use are checked atomically. A failed
+      // account creation rolls back consumption; concurrent redemption has one winner.
       if (invite) {
         const result = await tx.accountInvite.updateMany({
           where: {

@@ -1,0 +1,56 @@
+# Install inside nginx's http {} context; replace paths after provisioning TLS.
+map $uri $kailor_robots { default "noindex, nofollow"; / "index, follow"; /index.html "index, follow"; }
+map $uri $kailor_cache {
+    default "public, max-age=3600";
+    ~^/assets/ "public, max-age=31536000, immutable";
+    ~^/api/ "no-store";
+    ~\.html$ "no-cache";
+    ~^/(?:$|how-it-works/?$|timeline/?$|pricing/?$|careers/?$|contact/?$|privacy/?$|terms/?$|cookies/?$|sign-in/?$|create-account/?$) "no-cache";
+}
+server {
+    listen 80;
+    server_name kailor.co.za www.kailor.co.za;
+    return 301 https://kailor.co.za$request_uri;
+}
+server {
+    listen 443 ssl;
+    server_name www.kailor.co.za;
+    ssl_certificate /etc/letsencrypt/live/kailor.co.za/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/kailor.co.za/privkey.pem;
+    return 301 https://kailor.co.za$request_uri;
+}
+server {
+    listen 443 ssl;
+    server_name kailor.co.za;
+    ssl_certificate /etc/letsencrypt/live/kailor.co.za/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/kailor.co.za/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    root /srv/kailor/current/frontend/dist;
+    index index.html;
+    server_tokens off;
+    client_max_body_size 128k;
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy strict-origin-when-cross-origin always;
+    add_header X-Frame-Options DENY always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+    add_header Strict-Transport-Security "max-age=31536000" always;
+    add_header X-Robots-Tag $kailor_robots always;
+    add_header Cache-Control $kailor_cache always;
+    # EmailJS endpoint required only if approved/configured. No inline executable JS.
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://api.emailjs.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" always;
+    location ^~ /api/ {
+        proxy_pass http://127.0.0.1:5050;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Replace rather than append user-controlled forwarding headers.
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_hide_header Cache-Control;
+    }
+    location ~* \.(?:js|css|map|png|jpe?g|svg|ico|webp|mp4|pdf|xml|txt|woff2?)$ {
+        try_files $uri =404;
+    }
+    location / { try_files $uri $uri/index.html /spa.html; }
+    location ~ /\. { deny all; }
+}

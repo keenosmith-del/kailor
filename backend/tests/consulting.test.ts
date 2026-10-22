@@ -396,6 +396,23 @@ it("does not mistake system UUIDs for phone numbers while preserving sensitive u
   const reference = "aaaaaaaa-aaaa-aaaa-aaaa-123456789012";
   expect(
     containsSensitiveData(
+      privacyScanText({ evidenceIds: [reference], caseIds: [reference] }),
+    ),
+  ).toBe(false);
+  expect(containsSensitiveData(privacyScanText({ content: reference }))).toBe(
+    true,
+  );
+  expect(
+    containsSensitiveData(privacyScanText({ notes: ["Call +27 82 123 4567"] })),
+  ).toBe(true);
+  expect(
+    containsSensitiveData(
+      privacyScanText({ evidenceIds: ["Call +27 82 123 4567"] }),
+    ),
+  ).toBe(true);
+
+  expect(
+    containsSensitiveData(
       privacyScanText({
         sourceMessageId: reference,
         summary: { excerpts: [{ source: reference }] },

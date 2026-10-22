@@ -71,7 +71,7 @@ export function Perspective() {
           initial={reducedMotion ? false : { opacity: 0, y: 35 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{
-            once: true,
+            once: false,
             amount: 0.15,
           }}
           transition={{
@@ -83,7 +83,6 @@ export function Perspective() {
             Built around
             <br />
             what matters
-            <span className="perspective-dot" aria-hidden="true" />
           </h2>
 
           <div className="perspective-description">
@@ -112,7 +111,7 @@ export function Perspective() {
               initial={reducedMotion ? false : { opacity: 0, y: 38 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{
-                once: true,
+                once: false,
                 amount: 0.15,
               }}
               transition={{
