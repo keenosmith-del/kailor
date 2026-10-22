@@ -1,0 +1,210 @@
+.timeline-chronology {
+  padding-top: 90px;
+  padding-bottom: 75px;
+  background: #fff;
+}
+.company-milestones-scene {
+  position: relative;
+  height: 660px;
+  margin: 50px 0 0;
+}
+.company-milestones {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  height: 660px;
+  margin: 0;
+  padding: 0 100px;
+  list-style: none;
+}
+.company-timeline-line {
+  position: absolute;
+  top: 50%;
+  left: 100px;
+  right: 100px;
+  height: 1px;
+  background: #e5e5e5;
+}
+.company-timeline-line > span {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: #222526;
+  transform-origin: left center;
+}
+.company-timeline-line-vertical {
+  display: none !important;
+}
+.company-milestone {
+  position: relative;
+  min-width: 0;
+}
+.company-milestone-marker {
+  position: absolute;
+  top: calc(50% - 2px);
+  left: calc(50% - 2px);
+  z-index: 1;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #222526;
+}
+.company-milestone-connector {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1px;
+  height: 40px;
+  background: #ddd;
+}
+.is-above .company-milestone-connector {
+  top: calc(50% - 40px);
+}
+.company-milestone-content {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: clamp(190px, 17vw, 260px);
+  margin-left: calc(clamp(190px, 17vw, 260px) / -2);
+  text-align: center;
+}
+.is-above .company-milestone-content {
+  bottom: calc(50% + 40px);
+}
+.is-below .company-milestone-content {
+  top: calc(50% + 40px);
+}
+.company-milestone-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  margin: 0 0 16px;
+  border: 0;
+  border-radius: 50%;
+  background: #f7f7f7;
+  color: #353a3e;
+  transition:
+    background-color 0.22s ease,
+    transform 0.22s ease;
+}
+.company-milestone-icon:hover {
+  background: #eee;
+  transform: translateY(-3px);
+}
+.is-above .company-milestone-icon {
+  order: 4;
+  margin: 16px 0 0;
+}
+.company-milestone-date {
+  margin: 0 0 10px;
+  color: #777;
+  font-size: 11px;
+}
+.public-site .company-milestone-content h3 {
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 450;
+  letter-spacing: -0.035em;
+  line-height: 1.25;
+}
+.company-milestone-description {
+  max-width: 240px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.75;
+  color: #656565;
+}
+@media (max-width: 1100px) {
+  .company-milestones-scene {
+    height: auto;
+    margin-top: 55px;
+  }
+  .company-milestones {
+    display: block;
+    height: auto;
+    margin-top: 0;
+    padding: 0;
+  }
+  .company-timeline-line {
+    top: 22px;
+    bottom: 22px;
+    left: 21px;
+    right: auto;
+    width: 1px;
+    height: auto;
+  }
+  .company-timeline-line-horizontal {
+    display: none !important;
+  }
+  .company-timeline-line-vertical {
+    display: block !important;
+    transform-origin: center top !important;
+  }
+  .company-milestone {
+    padding: 0 0 44px 76px;
+    min-height: 175px;
+  }
+  .company-milestone:last-child {
+    padding-bottom: 0;
+  }
+  .company-milestone-marker {
+    top: 20px;
+    left: 19px;
+  }
+  .company-milestone-connector,
+  .is-above .company-milestone-connector {
+    top: 22px;
+    left: 21px;
+    width: 35px;
+    height: 1px;
+  }
+  .company-milestone-content,
+  .is-above .company-milestone-content,
+  .is-below .company-milestone-content {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    width: auto;
+    max-width: 620px;
+    margin: 0;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .company-milestone-icon,
+  .is-above .company-milestone-icon {
+    order: 0;
+    margin: 0 0 14px;
+  }
+  .company-milestone-description {
+    max-width: 520px;
+    font-size: 13px;
+  }
+}
+@media (max-width: 760px) {
+  .timeline-chronology {
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+  .company-milestone {
+    padding-left: 65px;
+  }
+  .public-site .company-milestone-content h3 {
+    font-size: 20px;
+  }
+  .company-milestone-description {
+    font-size: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .company-milestone-icon:hover {
+    transform: none;
+  }
+}
+html.no-js .company-timeline-line > span {
+  transform: none !important;
+}

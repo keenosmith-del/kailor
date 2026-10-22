@@ -1,0 +1,68 @@
+.timeline-experience {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: 70px;
+  background: #222526;
+  color: #fff;
+}
+.public-site .timeline-experience .timeline-section-heading {
+  color: #fff;
+}
+.timeline-experience > div:first-child p {
+  max-width: 530px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #bfbfbf;
+}
+.timeline-experience-figure {
+  justify-self: center;
+}
+.timeline-years {
+  display: block;
+  font-size: clamp(150px, 17vw, 260px);
+  font-weight: 450;
+  letter-spacing: -0.085em;
+  line-height: 1;
+}
+.timeline-experience-figure p {
+  margin: 20px 0 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #e0e0e0;
+}
+.timeline-experience-figure p span {
+  display: block;
+  margin-top: 9px;
+  font-size: 11px;
+  color: #999;
+}
+.timeline-disciplines {
+  grid-column: 1 / -1;
+}
+.timeline-disciplines .timeline-reveal-content > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px 55px;
+  font-size: 12px;
+  color: #bfbfbf;
+}
+@media (max-width: 760px) {
+  .timeline-experience {
+    grid-template-columns: 1fr;
+    gap: 45px;
+  }
+  .timeline-experience-figure {
+    justify-self: start;
+  }
+  .timeline-years {
+    font-size: 155px;
+  }
+  .timeline-disciplines .timeline-reveal-content > div {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    line-height: 1.6;
+  }
+}

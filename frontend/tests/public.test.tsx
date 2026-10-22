@@ -183,9 +183,13 @@ it("routes to minimal shells, sets noindex and provides safe Back navigation", (
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
       path === "how-it-works"
         ? "The right solution starts with the right understanding"
-        : title,
+        : path === "timeline"
+          ? "The storyso far"
+          : title,
     );
-    expect(document.title).toBe(`${title} | kailor`);
+    expect(document.title).toBe(
+      path === "timeline" ? "Our timeline | kailor" : `${title} | kailor`,
+    );
     expect(
       document.querySelector('meta[name="robots"]')?.getAttribute("content"),
     ).toBe("noindex, nofollow");
@@ -456,4 +460,94 @@ it("opens proposed direction details, restores focus and shares the conversation
   expect(
     document.querySelector(".hiw-closing-actions a")?.getAttribute("href"),
   ).toBe("/questions");
+});
+
+it("tells the company history in order and distinguishes experience from founding", () => {
+  state.reduced = true;
+  site("/timeline");
+  expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
+    "The storyso far",
+  );
+  expect(
+    Array.from(document.querySelectorAll(".company-milestone")).map((item) =>
+      item.getAttribute("data-milestone"),
+    ),
+  ).toEqual([
+    "foundations",
+    "founded",
+    "approach",
+    "discovery",
+    "canvas",
+    "workspaces",
+    "experience",
+    "present",
+  ]);
+  expect(screen.getByText("6+")).toBeTruthy();
+  expect(
+    screen.getByText("Experience that predates kailor, founded in 2025"),
+  ).toBeTruthy();
+  expect(
+    screen.getByText(
+      /The public website and authenticated customer application are built/,
+    ),
+  ).toBeTruthy();
+  expect(document.title).toBe("Our timeline | kailor");
+  expect(
+    document.querySelector('link[rel="canonical"]')?.getAttribute("href"),
+  ).toBe("https://kailor.co.za/timeline");
+  expect(
+    document.querySelector('meta[name="robots"]')?.getAttribute("content"),
+  ).toBe("noindex, nofollow");
+});
+
+it("opens milestone and archive details, supports keyboard dismissal and restores focus", () => {
+  state.reduced = true;
+  site("/timeline");
+  const milestone = screen.getByRole("button", {
+    name: "Read about Solution Canvas",
+  });
+  milestone.focus();
+  fireEvent.click(milestone);
+  const dialog = screen.getByRole("dialog", { name: "Solution Canvas" });
+  expect(
+    within(dialog).getByText(/does not automatically commission/),
+  ).toBeTruthy();
+  fireEvent(dialog, new Event("cancel", { bubbles: true, cancelable: true }));
+  expect(screen.queryByRole("dialog")).toBeNull();
+  expect(document.activeElement).toBe(milestone);
+  const archive = screen.getByRole("button", {
+    name: "Explore Project workspaces",
+  });
+  archive.focus();
+  fireEvent.click(archive);
+  expect(
+    screen.getByRole("dialog", { name: "Project workspaces" }),
+  ).toBeTruthy();
+  fireEvent.click(
+    screen.getByRole("button", { name: "Close timeline detail" }),
+  );
+  expect(document.activeElement).toBe(archive);
+});
+
+it("keeps the homepage history action and Timeline entry links, with shared closing chat", () => {
+  state.reduced = true;
+  site();
+  fireEvent.click(screen.getByRole("link", { name: /See how we got here/ }));
+  expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
+    "The storyso far",
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Back", exact: true }));
+  fireEvent.click(
+    document.querySelector('.public-footer a[href="/timeline"]')!,
+  );
+  expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
+    "The storyso far",
+  );
+  fireEvent.click(
+    screen.getByRole("button", { name: "Start a conversation", exact: true }),
+  );
+  expect(screen.getByRole("dialog", { name: "Let's chat" })).toBeTruthy();
+  expect(
+    document.querySelector(".timeline-closing-actions a")?.getAttribute("href"),
+  ).toBe("/how-it-works");
 });
