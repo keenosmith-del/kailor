@@ -2,11 +2,9 @@
 export const sidebarPages = [
   ["/", "Home"],
   ["/how-it-works", "How it works"],
-  ["/try-kailor", "Try kailor"],
+  ["/try-kailor", "Try it out"],
   [null, "Our Work"],
   [null, "Our Team"],
-  ["/timeline", "Timeline"],
-  ["/pricing", "Pricing"],
   ["/careers", "Careers"],
   ["/contact", "Contact"],
 ] as const;
@@ -19,6 +17,7 @@ export const sidebarSections = [
   ["services-overview", "Problems we help solve"],
   ["conversation", "From challenge to solution"],
   ["collaboration", "Inside your project workspace"],
+  ["what-weve-built", "What we've built"],
   ...(showClientPerspectives
     ? [["client-feedback", "Client perspectives"]]
     : []),
@@ -29,8 +28,6 @@ export const publicPaths = [
   "/",
   "/how-it-works",
   "/try-kailor",
-  "/timeline",
-  "/pricing",
   "/questions",
   "/faqs",
   "/careers",
@@ -39,3 +36,6 @@ export const publicPaths = [
   "/terms",
   "/cookies",
 ];
+
+// Retired URLs redirect without becoming published pages or triggering account lookup.
+export const retiredPublicPaths = ["/timeline", "/pricing"];

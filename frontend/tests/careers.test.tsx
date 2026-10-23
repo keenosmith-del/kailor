@@ -113,7 +113,7 @@ it("renders the careers route, useful actions, copy email and Home fallback with
   ).toBeTruthy();
   for (const [name, to] of [
     ["How it works", "/how-it-works"],
-    ["Our timeline", "/timeline"],
+    ["What we've built", "/#what-weve-built"],
     ["Contact us", "/contact"],
   ])
     expect(screen.getByRole("link", { name }).getAttribute("href")).toBe(to);

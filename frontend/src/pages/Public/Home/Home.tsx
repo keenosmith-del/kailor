@@ -6,6 +6,7 @@ import { ServicesSection } from "./ServicesSection/ServicesSection";
 import { Conversation } from "./Conversation/Conversation";
 import { Collaboration } from "./Collaboration/Collaboration";
 import { Perspective } from "./Perspective/Perspective";
+import { WhatWeveBuilt } from "./WhatWeveBuilt/WhatWeveBuilt";
 import { Activity } from "./Activity/Activity";
 
 import { SectionReveal } from "./SectionReveal/SectionReveal";
@@ -32,6 +33,8 @@ export default function Home() {
       <SectionReveal>
         <Collaboration />
       </SectionReveal>
+
+      <WhatWeveBuilt />
 
       <ClientPerspectives />
 

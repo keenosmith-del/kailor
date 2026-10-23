@@ -11,6 +11,7 @@ import {
 import {
   motion,
   useReducedMotion,
+  useInView,
   useScroll,
   useTransform,
 } from "motion/react";
@@ -41,6 +42,59 @@ const developments: Development[] = [
     dark: true,
   },
 ];
+
+function ActivityPill({
+  development: { name, status, icon: Icon, dark },
+  index,
+}: {
+  development: Development;
+  index: number;
+}) {
+  // Observe a stationary grid slot. The latched entrance cannot be retriggered
+  // by the parent's scroll transform or by hovering the separate inner surface.
+  const ref = useRef<HTMLDivElement>(null);
+  const entered = useInView(ref, { once: true, amount: 0.4 });
+  const reduced = useReducedMotion();
+  return (
+    <div
+      ref={ref}
+      className={`home-activity__bubble-slot home-activity__bubble--${index + 1}`}
+    >
+      <motion.div
+        className="home-activity__bubble-reveal"
+        initial={reduced ? false : { opacity: 0, y: 35, scale: 0.94 }}
+        animate={{
+          opacity: reduced || entered ? 1 : 0,
+          y: reduced || entered ? 0 : 35,
+          scale: reduced || entered ? 1 : 0.94,
+        }}
+        transition={{
+          duration: reduced ? 0 : 0.75,
+          delay: reduced ? 0 : index * 0.095,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+      >
+        <motion.div
+          className={`home-activity__bubble${dark ? " is-dark" : ""}`}
+          whileHover={reduced ? undefined : { scale: 1.035, y: -4 }}
+          transition={{
+            duration: reduced ? 0 : 0.25,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
+          <Icon
+            className="home-activity__icon"
+            size={17}
+            strokeWidth={1.7}
+            aria-hidden="true"
+          />
+          <span className="home-activity__name">{name}</span>
+          <span className="home-activity__status">{status}</span>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
 
 export function Activity() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -89,31 +143,12 @@ export function Activity() {
           className="home-activity__bubbles"
           aria-label="Areas of ongoing development"
         >
-          {developments.map(({ name, status, icon: Icon, dark }, index) => (
-            <motion.div
-              key={name}
-              className={`home-activity__bubble home-activity__bubble--${index + 1}${dark ? " is-dark" : ""}`}
-              initial={
-                reducedMotion ? false : { opacity: 0, y: 35, scale: 0.94 }
-              }
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              whileHover={reducedMotion ? undefined : { scale: 1.035, y: -4 }}
-              viewport={{ once: false, amount: 0.4 }}
-              transition={{
-                duration: reducedMotion ? 0 : 0.75,
-                delay: reducedMotion ? 0 : index * 0.095,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              <Icon
-                className="home-activity__icon"
-                size={17}
-                strokeWidth={1.7}
-                aria-hidden="true"
-              />
-              <span className="home-activity__name">{name}</span>
-              <span className="home-activity__status">{status}</span>
-            </motion.div>
+          {developments.map((development, index) => (
+            <ActivityPill
+              key={development.name}
+              development={development}
+              index={index}
+            />
           ))}
         </div>
       </motion.div>

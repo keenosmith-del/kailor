@@ -7,13 +7,12 @@ import {
   screen,
   act,
 } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router";
+import { MemoryRouter, Navigate, Route, Routes } from "react-router";
 import { PublicLayout } from "../src/components/public/PublicLayout/PublicLayout";
 import Home from "../src/pages/Public/Home/Home";
 import Services from "../src/pages/Public/Services/Services";
 import HowItWorks from "../src/pages/Public/HowItWorks/HowItWorks";
 import About from "../src/pages/Public/About/About";
-import Pricing from "../src/pages/Public/Pricing/Pricing";
 import Timeline from "../src/pages/Public/Timeline/Timeline";
 import Careers from "../src/pages/Public/Careers/Careers";
 import { InternalNavigation } from "../src/components/public/PageBack/PageBack";
@@ -84,13 +83,13 @@ function site(path = "/") {
         <Routes>
           <Route element={<PublicLayout />}>
             <Route index element={<Home />} />
-            <Route path="/timeline" element={<Timeline />} />
+            <Route path="/timeline" element={<Navigate to="/" replace />} />
             <Route path="/questions" element={<CommonQuestions />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/services" element={<Services />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/about" element={<About />} />
-            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/pricing" element={<Navigate to="/" replace />} />
             <Route path="/contact" element={<Contact />} />
           </Route>
         </Routes>
@@ -129,11 +128,9 @@ it("provides the exact Pages list, genuinely disabled items and collapsible iner
   ).toEqual([
     "Home",
     "How it works",
-    "Try kailor",
+    "Try it out",
     "Our Work",
     "Our Team",
-    "Timeline",
-    "Pricing",
     "Careers",
     "Contact",
   ]);
@@ -173,8 +170,6 @@ it("routes to minimal shells, sets noindex and provides safe Back navigation", (
   site();
   for (const [path, title] of [
     ["how-it-works", "How it works"],
-    ["timeline", "Timeline"],
-    ["pricing", "Pricing"],
     ["careers", "Careers"],
     ["contact", "Contact"],
   ]) {
@@ -184,17 +179,13 @@ it("routes to minimal shells, sets noindex and provides safe Back navigation", (
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
       path === "how-it-works"
         ? "The right solution starts with the right understanding"
-        : path === "timeline"
-          ? "The storyso far"
-          : path === "careers"
-            ? "Work with kailor"
-            : path === "contact"
-              ? "Get in touch"
-              : title,
+        : path === "careers"
+          ? "Work with kailor"
+          : path === "contact"
+            ? "Get in touch"
+            : title,
     );
-    expect(document.title).toBe(
-      path === "timeline" ? "Our timeline | kailor" : `${title} | kailor`,
-    );
+    expect(document.title).toBe(`${title} | kailor`);
     expect(
       document.querySelector('meta[name="robots"]')?.getAttribute("content"),
     ).toBe("noindex, nofollow");
@@ -341,7 +332,7 @@ it("mirrors every sidebar destination in the footer, including disabled pages", 
   expect(screen.getByRole("dialog", { name: "Let's chat" })).toBeTruthy();
   expect(
     document.querySelector(".introduction-link")?.getAttribute("href"),
-  ).toBe("/timeline");
+  ).toBe("/#what-weve-built");
 });
 
 it("opens Common questions from the footer and uses the existing chat modal", () => {
@@ -469,7 +460,13 @@ it("opens proposed direction details, restores focus and shares the conversation
 
 it("tells the company history in order and distinguishes experience from founding", () => {
   state.reduced = true;
-  site("/timeline");
+  render(
+    <MemoryRouter>
+      <ConversationProvider>
+        <Timeline />
+      </ConversationProvider>
+    </MemoryRouter>,
+  );
   expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
     "The storyso far",
   );
@@ -496,18 +493,17 @@ it("tells the company history in order and distinguishes experience from foundin
       /The public website and authenticated customer application are built/,
     ),
   ).toBeTruthy();
-  expect(document.title).toBe("Our timeline | kailor");
-  expect(
-    document.querySelector('link[rel="canonical"]')?.getAttribute("href"),
-  ).toBe("https://kailor.co.za/timeline");
-  expect(
-    document.querySelector('meta[name="robots"]')?.getAttribute("content"),
-  ).toBe("noindex, nofollow");
 });
 
 it("opens milestone and archive details, supports keyboard dismissal and restores focus", () => {
   state.reduced = true;
-  site("/timeline");
+  render(
+    <MemoryRouter>
+      <ConversationProvider>
+        <Timeline />
+      </ConversationProvider>
+    </MemoryRouter>,
+  );
   const milestone = screen.getByRole("button", {
     name: "Read about Solution Canvas",
   });
@@ -534,27 +530,18 @@ it("opens milestone and archive details, supports keyboard dismissal and restore
   expect(document.activeElement).toBe(archive);
 });
 
-it("keeps the homepage history action and Timeline entry links, with shared closing chat", () => {
+it("replaces Timeline discovery with the permanent homepage capability destination", () => {
   state.reduced = true;
   site();
-  fireEvent.click(screen.getByRole("link", { name: /See how we got here/ }));
-  expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
-    "The storyso far",
-  );
-  fireEvent.click(screen.getByRole("button", { name: "Back", exact: true }));
-  fireEvent.click(
-    document.querySelector('.public-footer a[href="/timeline"]')!,
-  );
-  expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(
-    "The storyso far",
-  );
-  fireEvent.click(
-    screen.getByRole("button", { name: "Start a conversation", exact: true }),
-  );
-  expect(screen.getByRole("dialog", { name: "Let's chat" })).toBeTruthy();
+  const section = document.getElementById("what-weve-built")!;
+  expect(section).toBeTruthy();
   expect(
-    document.querySelector(".timeline-closing-actions a")?.getAttribute("href"),
-  ).toBe("/how-it-works");
+    section.previousElementSibling?.querySelector("#collaboration"),
+  ).toBeTruthy();
+  expect(document.querySelectorAll("#what-weve-built")).toHaveLength(1);
+  const link = screen.getByRole("link", { name: "Explore what we've built" });
+  expect(link.getAttribute("href")).toBe("/#what-weve-built");
+  expect(document.querySelector('a[href="/timeline"]')).toBeNull();
 });
 
 it("places the new entry links around the existing homepage visuals without wrapping the sticky stack", () => {

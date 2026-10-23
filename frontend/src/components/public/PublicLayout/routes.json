@@ -9,16 +9,6 @@
     "description": "See how kailor approaches discovery, assessment, solution recommendations, consultancy and implementation.",
     "index": false
   },
-  "/timeline": {
-    "title": "Our timeline | kailor",
-    "description": "Explore the story of kailor, founded in 2025, and the engineering experience, technology and ideas behind its development.",
-    "index": false
-  },
-  "/pricing": {
-    "title": "Pricing | kailor",
-    "description": "Pricing at kailor. Contact us to discuss the scope of your project.",
-    "index": false
-  },
   "/careers": {
     "title": "Careers | kailor",
     "description": "Interested in working with kailor? Share your experience, professional interests and CV.",

@@ -11,28 +11,10 @@ import {
 
 import "./Introduction.css";
 
-const statistics = [
-  {
-    label: "Engineering experience",
-    value: "6+",
-    description:
-      "Years of experience spanning software development, cloud technology and intelligent systems.",
-  },
-  {
-    label: "Technical disciplines",
-    value: "05",
-    description:
-      "Connected areas of expertise, from consultancy and software to AI, automation and cloud.",
-  },
-  {
-    label: "Starting points",
-    value: "03",
-    description:
-      "Whether you're starting, improving or building, there's a way to begin.",
-  },
-];
-
-type Statistic = (typeof statistics)[number];
+import {
+  introductionMetrics as statistics,
+  type HomeMetric as Statistic,
+} from "../homeMetrics";
 
 const introductionAvatars = [11, 12, 13, 14, 15, 16] as const;
 
@@ -64,7 +46,7 @@ function StatisticCard({
   const y = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [32, 0, 0, -20]);
 
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView || !statistic.animateCount) return;
 
     const target = Number.parseInt(statistic.value, 10);
 
@@ -82,7 +64,7 @@ function StatisticCard({
     });
 
     return () => animation.stop();
-  }, [isInView, reducedMotion, statistic.value]);
+  }, [isInView, reducedMotion, statistic.value, statistic.animateCount]);
 
   const formattedCount =
     String(displayedCount).padStart(
@@ -93,7 +75,7 @@ function StatisticCard({
   return (
     <motion.article
       ref={ref}
-      className={`introduction-stat${
+      className={`introduction-stat${statistic.kind === "year" ? " introduction-stat--year" : ""}${
         featured ? " introduction-stat--featured" : ""
       }`}
       style={{
@@ -164,8 +146,8 @@ export function Introduction() {
               We help work out which one it is.
             </p>
 
-            <Link className="introduction-link" to="/timeline">
-              See how we got here
+            <Link className="introduction-link" to="/#what-weve-built">
+              Explore what we've built
             </Link>
           </div>
         </div>

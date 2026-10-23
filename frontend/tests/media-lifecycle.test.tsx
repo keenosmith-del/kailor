@@ -22,7 +22,7 @@ it("renders the original Built for word animation with no MP4 or poster layer", 
   );
   expect(
     document.querySelector(".service-art__changing-word")?.textContent,
-  ).toBe("clarity.");
+  ).toBe("clarity");
   expect(document.querySelector("video, img")).toBeNull();
 });
 it("cycles on the original cadence while visible and cleans up on exit", () => {
@@ -41,7 +41,7 @@ it("returns to the same typography implementation after a route remount", () => 
   render(<CloudVisual />);
   expect(
     document.querySelector(".service-art__changing-word")?.textContent,
-  ).toBe("clarity.");
+  ).toBe("clarity");
   expect(document.querySelector("video, img")).toBeNull();
 });
 it("uses a static word without a cycling timer in reduced motion", () => {
@@ -51,5 +51,5 @@ it("uses a static word without a cycling timer in reduced motion", () => {
   expect(interval).not.toHaveBeenCalled();
   expect(
     document.querySelector(".service-art__changing-word")?.textContent,
-  ).toBe("clarity.");
+  ).toBe("clarity");
 });

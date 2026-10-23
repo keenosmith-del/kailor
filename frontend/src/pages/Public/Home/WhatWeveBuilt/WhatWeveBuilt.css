@@ -1,0 +1,234 @@
+.what-weve-built {
+  padding: clamp(85px, 8vw, 125px) var(--pub-space);
+  background: #f7f7f7;
+}
+.built-archive-caption {
+  margin-top: 24px;
+}
+.built-archive-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 45px;
+  max-width: 1200px;
+  margin: 65px auto 0;
+  align-items: start;
+}
+.built-position-analysis {
+  margin-top: 80px;
+}
+.built-position-workspace {
+  margin-top: 50px;
+}
+.public-site .what-weve-built .built-archive-grid button.built-archive-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  padding: clamp(28px, 3.5vw, 50px);
+  border: 0;
+  border-radius: 32px;
+  background: #fff;
+  color: #222526;
+  text-align: left;
+  box-shadow: 0 12px 45px #00000004;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.public-site
+  .what-weve-built
+  .built-archive-grid
+  button.built-archive-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 45px #00000009;
+}
+.built-archive-card-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 45px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.built-archive-discovery,
+.built-archive-analysis,
+.built-archive-canvas,
+.built-archive-workspace {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.built-preview-question {
+  display: block;
+  margin-bottom: 30px;
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 450;
+  letter-spacing: -0.065em;
+  line-height: 1.04;
+}
+.built-preview-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+.built-preview-pills > span {
+  padding: 10px 15px;
+  border-radius: 999px;
+  background: #f7f7f7;
+  color: #656565;
+  font-size: 12px;
+}
+.built-preview-pills > span:first-child {
+  background: #222526;
+  color: #fff;
+}
+.built-preview-note {
+  display: block;
+  color: #858585;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.built-preview-title {
+  display: block;
+  margin-bottom: 24px;
+  font-size: clamp(30px, 3vw, 42px);
+  font-weight: 450;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+}
+.built-archive-analysis > span:not([class]) {
+  display: block;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  width: 100%;
+  border-radius: 15px;
+  background: #f7f7f7;
+  font-size: 12px;
+  color: #656565;
+}
+.built-archive-analysis .built-preview-note {
+  margin-top: 6px;
+}
+.built-archive-canvas {
+  padding: 26px;
+  border-radius: 24px;
+  background: #f7f7f7;
+}
+.built-archive-canvas .built-preview-note {
+  margin-bottom: 22px;
+}
+.built-preview-status {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 11px;
+  color: #656565;
+}
+.built-workspace-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 5px 0 26px;
+  color: #777;
+  font-size: 11px;
+}
+.built-workspace-request {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 20px;
+  background: #f7f7f7;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.built-workspace-request img {
+  flex: none;
+  object-fit: contain;
+}
+.built-workspace-request small {
+  margin-top: 5px;
+  color: #777;
+  font-size: 11px;
+}
+.built-archive-card-footer {
+  display: block;
+  margin-top: 40px;
+  color: #777;
+  font-size: 11px;
+  line-height: 1.6;
+}
+@media (max-width: 760px) {
+  .built-archive-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .built-position-analysis,
+  .built-position-workspace {
+    margin-top: 0;
+  }
+  .built-archive-card-label {
+    margin-bottom: 32px;
+  }
+  .built-archive-card-footer {
+    margin-top: 30px;
+  }
+  .built-preview-question {
+    font-size: 42px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-site
+    .what-weve-built
+    .built-archive-grid
+    button.built-archive-card:hover {
+    transform: none;
+  }
+}
+
+.public-site .what-weve-built .built-heading {
+  max-width: 900px;
+  margin: 0 0 28px;
+  font-size: clamp(48px, 6vw, 90px);
+  font-weight: 450;
+  line-height: 1.02;
+  letter-spacing: -0.07em;
+}
+.public-site .what-weve-built .built-intro {
+  max-width: 530px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #656565;
+}
+.public-site .what-weve-built .built-caption {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #777;
+}
+.built-archive-position {
+  min-width: 0;
+}
+@media (max-width: 760px) {
+  .what-weve-built {
+    padding: 80px 24px;
+  }
+  .public-site .what-weve-built .built-heading {
+    font-size: clamp(42px, 9vw, 62px);
+  }
+}
+@media (max-width: 380px) {
+  .what-weve-built {
+    padding-inline: 20px;
+  }
+  .built-workspace-request {
+    padding: 16px;
+    gap: 9px;
+  }
+  .built-preview-question {
+    font-size: 38px;
+  }
+}

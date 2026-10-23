@@ -20,6 +20,15 @@ http
       const path = decodeURIComponent(
         new URL(req.url, "http://localhost").pathname,
       );
+      if (["/timeline", "/timeline/", "/pricing", "/pricing/"].includes(path)) {
+        res.writeHead(308, {
+          Location: "/",
+          "X-Robots-Tag": "noindex, nofollow",
+          "Cache-Control": "no-store",
+        });
+        res.end();
+        return;
+      }
       if (path.startsWith("/api/")) {
         const upstream = http.request(
           new URL(

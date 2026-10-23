@@ -6,8 +6,6 @@ import { PublicLayout } from "./components/public/PublicLayout/PublicLayout";
 import { InternalNavigation } from "./components/public/PageBack/PageBack";
 import Home from "./pages/Public/Home/Home";
 import HowItWorks from "./pages/Public/HowItWorks/HowItWorks";
-import Timeline from "./pages/Public/Timeline/Timeline";
-import Pricing from "./pages/Public/Pricing/Pricing";
 import Careers from "./pages/Public/Careers/Careers";
 import Contact from "./pages/Public/Contact/Contact";
 import Privacy from "./pages/Public/Privacy/Privacy";
@@ -18,8 +16,6 @@ const pages = {
   "/": Home,
   "/how-it-works": HowItWorks,
   "/try-kailor": TryKailor,
-  "/timeline": Timeline,
-  "/pricing": Pricing,
   "/careers": Careers,
   "/questions": CommonQuestions,
   "/contact": Contact,

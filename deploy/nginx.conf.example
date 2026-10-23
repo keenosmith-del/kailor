@@ -5,7 +5,7 @@ map $uri $kailor_cache {
     ~^/assets/ "public, max-age=31536000, immutable";
     ~^/api/ "no-store";
     ~\.html$ "no-cache";
-    ~^/(?:$|how-it-works/?$|try-kailor/?$|timeline/?$|pricing/?$|careers/?$|contact/?$|privacy/?$|terms/?$|cookies/?$|sign-in/?$|create-account/?$) "no-cache";
+    ~^/(?:$|how-it-works/?$|try-kailor/?$|careers/?$|contact/?$|privacy/?$|terms/?$|cookies/?$|sign-in/?$|create-account/?$) "no-cache";
 }
 server {
     listen 80;
@@ -51,6 +51,11 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_hide_header Cache-Control;
     }
+    # Retired public page. Preserve bookmarks without serving its implementation.
+    location = /timeline { return 308 /; }
+    location = /timeline/ { return 308 /; }
+    location = /pricing { return 308 /; }
+    location = /pricing/ { return 308 /; }
     location ^~ /api/ {
         proxy_pass http://127.0.0.1:5050;
         proxy_http_version 1.1;

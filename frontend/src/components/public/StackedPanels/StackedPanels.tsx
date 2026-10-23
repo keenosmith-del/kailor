@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  ArrowRight,
   Check,
   Code2,
   Compass,
@@ -159,7 +158,13 @@ function ConsultancyVisual() {
       >
         <span className="service-art__eyebrow">Our first priority</span>
         <strong>Understand the real problem.</strong>
-        <ArrowRight size={18} strokeWidth={1.4} />
+        <img
+          className="service-art__mascot"
+          src="/kailor-head.png"
+          alt=""
+          width={29}
+          height={29}
+        />
       </motion.div>
     </div>
   );
@@ -349,7 +354,7 @@ export function CloudVisual() {
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              {cloudWords[index]}.
+              {cloudWords[index]}
             </motion.strong>
           </AnimatePresence>
         </div>

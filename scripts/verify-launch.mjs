@@ -12,6 +12,34 @@ const routes = JSON.parse(
     "utf8",
   ),
 );
+assert.ok(
+  !routes["/timeline"] && !routes["/pricing"],
+  "Retired pages must stay outside the published route inventory",
+);
+for (const file of [
+  "Timeline.tsx",
+  "Timeline.css",
+  "TimelineDetail.tsx",
+  "TimelineReveal.tsx",
+  "timelineData.ts",
+  "TimelineHero/TimelineHero.tsx",
+  "MilestoneTimeline/MilestoneTimeline.tsx",
+  "ExperienceFoundation/ExperienceFoundation.tsx",
+  "EvolutionArchive/EvolutionArchive.tsx",
+  "PresentAndBeyond/PresentAndBeyond.tsx",
+  "TimelineClosing/TimelineClosing.tsx",
+])
+  await stat(
+    resolve(import.meta.dirname, "../frontend/src/pages/Public/Timeline", file),
+  );
+assert.ok(
+  !(await readdir(resolve(root, "assets"))).some((file) =>
+    /^(?:Timeline|TimelineHero|MilestoneTimeline|ExperienceFoundation|EvolutionArchive|PresentAndBeyond|TimelineClosing|Pricing|EngagementCards)-/.test(
+      file,
+    ),
+  ),
+  "Retired public pages must not enter production assets",
+);
 let assets = 0;
 for (const [path, page] of Object.entries(routes)) {
   const html = await readFile(
@@ -37,7 +65,24 @@ for (const [path, page] of Object.entries(routes)) {
       assets++;
     }
   }
+  assert.ok(
+    !document.querySelector(
+      'a[href="/timeline"], a[href="/timeline/"],a[href="/pricing"],a[href="/pricing/"]',
+    ),
+    "No active retired public-page links",
+  );
   if (path === "/") {
+    const gallery = document.getElementById("what-weve-built");
+    assert.ok(gallery);
+    assert.ok(gallery.previousElementSibling.querySelector("#collaboration"));
+    assert.ok(
+      gallery.nextElementSibling.classList.contains("home-perspective"),
+    );
+    assert.equal(gallery.querySelectorAll(".built-archive-card").length, 4);
+    assert.equal(
+      document.querySelector(".introduction-link").getAttribute("href"),
+      "/#what-weve-built",
+    );
     assert.ok(!document.querySelector("#client-feedback, #work, #consultants"));
     const expectedLogos = (await readdir(resolve(root, "technology")))
       .filter((file) => file.endsWith(".svg"))
@@ -65,6 +110,29 @@ for (const [path, page] of Object.entries(routes)) {
       "Do not replace cloud typography with the MP4 or poster",
     );
     assert.ok(!html.includes("We thought we needed another platform"));
+    assert.ok(
+      !document.querySelector(
+        '.home-marquee__wreath,[src="/laurel-wreath.png"]',
+      ),
+    );
+    assert.equal(
+      document
+        .querySelector(".service-art__changing-word strong")
+        .textContent.trim(),
+      "clarity",
+    );
+    assert.equal(
+      document
+        .querySelector(".introduction-stat--year strong")
+        .textContent.trim(),
+      "2025",
+    );
+    assert.deepEqual(
+      Array.from(document.querySelectorAll(".perspective-value")).map((e) =>
+        e.textContent.trim(),
+      ),
+      [`${expectedLogos.length}+`, "5", "1:1", "PDF"],
+    );
     for (const a of document.querySelectorAll('a[href^="/#"]'))
       assert.ok(
         document.getElementById(a.hash.slice(1)),

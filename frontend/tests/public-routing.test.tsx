@@ -79,3 +79,21 @@ it("treats trailing-slash public paths as public with one footer", async () => {
     document.querySelector('link[rel="canonical"]')?.getAttribute("href"),
   ).toBe("https://kailor.co.za/contact");
 });
+
+it.each(["/timeline", "/timeline/", "/pricing", "/pricing/"])(
+  "redirects retired %s to Home without account lookup or Timeline content",
+  async (path) => {
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(await screen.findByRole("heading", { level: 1 })).toBeTruthy();
+    expect(document.getElementById("hero")).toBeTruthy();
+    expect(document.querySelector(".company-timeline-page")).toBeNull();
+    expect(
+      document.querySelector('a[href="/timeline"],a[href="/pricing"]'),
+    ).toBeNull();
+    expect(api).not.toHaveBeenCalled();
+  },
+);

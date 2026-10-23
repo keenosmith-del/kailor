@@ -335,3 +335,9 @@
     transform: none;
   }
 }
+
+/* A date stays literal and fits the supporting card without changing the count scale. */
+.introduction-stat--year .introduction-stat-value {
+  font-size: clamp(36px, 4vw, 72px);
+  letter-spacing: -0.06em;
+}

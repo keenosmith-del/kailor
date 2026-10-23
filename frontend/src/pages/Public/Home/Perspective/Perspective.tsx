@@ -8,32 +8,7 @@ import {
 
 import "./Perspective.css";
 
-const insights = [
-  {
-    label: "Connected expertise",
-    value: "4",
-    description:
-      "Consultancy, software engineering, AI and automation, and cloud expertise brought together around your requirements.",
-  },
-  {
-    label: "Project continuity",
-    value: "1",
-    description:
-      "A connected workspace for conversations, assessments, recommendations and the work that follows.",
-  },
-  {
-    label: "Technology choices",
-    value: "3",
-    description:
-      "Adopt an established platform, integrate existing systems or engineer something tailored to the problem.",
-  },
-  {
-    label: "Documented decisions",
-    value: "PDF",
-    description:
-      "Structured assessments and recommendations that can be reviewed, shared and carried into the next stage.",
-  },
-];
+import { perspectiveMetrics as insights } from "../homeMetrics";
 
 export function Perspective() {
   const sectionRef = useRef<HTMLElement>(null);

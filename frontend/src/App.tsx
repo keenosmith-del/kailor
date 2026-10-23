@@ -4,7 +4,10 @@ import { api } from "./services/api";
 import type { Account } from "./types/account";
 import { Footer } from "./components/Footer/Footer";
 import { InternalNavigation } from "./components/public/PageBack/PageBack";
-import { publicPaths } from "./components/public/navigation";
+import {
+  publicPaths,
+  retiredPublicPaths,
+} from "./components/public/navigation";
 import { applyPageMetadata } from "./components/public/PublicLayout/metadata";
 import { PageTransition } from "./components/PageTransition/PageTransition";
 const GuestJourneyEntry = lazy(() =>
@@ -36,12 +39,10 @@ const PublicLayout = lazy(() =>
 const Home = lazy(() => import("./pages/Public/Home/Home"));
 const TryKailor = lazy(() => import("./pages/Public/TryKailor/TryKailor"));
 const HowItWorks = lazy(() => import("./pages/Public/HowItWorks/HowItWorks"));
-const Pricing = lazy(() => import("./pages/Public/Pricing/Pricing"));
 const Contact = lazy(() => import("./pages/Public/Contact/Contact"));
 const Workspace = lazy(() =>
   import("./pages/Workspace/Workspace").then((m) => ({ default: m.Workspace })),
 );
-const Timeline = lazy(() => import("./pages/Public/Timeline/Timeline"));
 const CommonQuestions = lazy(
   () => import("./pages/Public/Questions/CommonQuestions"),
 );
@@ -71,7 +72,8 @@ function Protected({
 export function App() {
   const { pathname } = useLocation();
   const publicPath = pathname.replace(/\/+$/, "") || "/";
-  const isPublic = publicPaths.includes(publicPath);
+  const isPublic =
+    publicPaths.includes(publicPath) || retiredPublicPaths.includes(publicPath);
   const [account, setAccount] = useState<Account | null>();
   useEffect(() => {
     if (isPublic) return;
@@ -95,8 +97,8 @@ export function App() {
               <Route index element={<Home />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/try-kailor" element={<TryKailor />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/timeline" element={<Timeline />} />
+              <Route path="/pricing" element={<Navigate to="/" replace />} />
+              <Route path="/timeline" element={<Navigate to="/" replace />} />
               <Route path="/questions" element={<CommonQuestions />} />
               <Route
                 path="/faqs"

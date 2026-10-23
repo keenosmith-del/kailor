@@ -7,8 +7,8 @@ export function EngagementSection() {
     <section className="public-section home-engagements" id="engagements">
       <div className="section-prelude">
         <span>Ways to work with kailor</span>
-        <Link className="pub-text-link" to="/pricing">
-          Engagement details <ArrowUpRight size={17} />
+        <Link className="pub-text-link" to="/contact">
+          Discuss your needs <ArrowUpRight size={17} />
         </Link>
       </div>
       <h2>

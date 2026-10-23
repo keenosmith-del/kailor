@@ -16,7 +16,7 @@ export function ContactLinks() {
         <Link to="/how-it-works">
           Understand the process <ArrowUpRight size={20} />
         </Link>
-        <Link to="/pricing">
+        <Link to="/contact">
           Ways to work together <ArrowUpRight size={20} />
         </Link>
       </div>

@@ -116,7 +116,7 @@ export default function Careers() {
       <ProcessReveal className="careers-actions">
         <nav aria-label="Helpful information">
           <Link to="/how-it-works">How it works</Link>
-          <Link to="/timeline">Our timeline</Link>
+          <Link to="/#what-weve-built">What we've built</Link>
           <Link to="/contact">Contact us</Link>
           <button type="button" onClick={openConversation}>
             Start a conversation
