@@ -179,3 +179,50 @@ it.each(["/sign-in", "/create-account"])(
     expect(screen.getByRole("heading", { name: "Home" })).toBeTruthy();
   },
 );
+
+it.each([false, true])(
+  "uses inline validation without native prompts (signup=%s)",
+  async (signup) => {
+    vi.mocked(api).mockResolvedValue({
+      registration: "invite",
+      guestAccess: false,
+    });
+    render(
+      <MemoryRouter>
+        <Auth signup={signup} onLogin={vi.fn()} />
+      </MemoryRouter>,
+    );
+    await screen.findByLabelText(signup ? "Full name" : "Email");
+    const form = document.querySelector("form")!;
+    expect(form.noValidate).toBe(true);
+    expect(form.querySelectorAll("[required]")).toHaveLength(0);
+    fireEvent.submit(form);
+    expect(screen.getByText("Please enter your email address.")).toBeTruthy();
+    expect(screen.getByText("Please enter your password.")).toBeTruthy();
+    expect(document.activeElement).toBe(
+      screen.getByLabelText(signup ? "Full name" : "Email"),
+    );
+    expect(
+      vi.mocked(api).mock.calls.filter(([, method]) => method === "POST"),
+    ).toHaveLength(0);
+    if (signup) {
+      expect(screen.getByText("Please enter your full name.")).toBeTruthy();
+      expect(screen.getByText("Please confirm your password.")).toBeTruthy();
+      expect(
+        screen.getByText("Please enter your invitation code."),
+      ).toBeTruthy();
+      fireEvent.change(screen.getByLabelText("Password", { exact: true }), {
+        target: { value: "short" },
+      });
+      fireEvent.submit(form);
+      expect(
+        screen.getByText("Use at least 12 characters for your password."),
+      ).toBeTruthy();
+    }
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "invalid-email" },
+    });
+    fireEvent.submit(form);
+    expect(screen.getByText("Enter a valid email address.")).toBeTruthy();
+  },
+);

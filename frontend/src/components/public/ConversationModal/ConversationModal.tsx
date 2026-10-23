@@ -1,5 +1,7 @@
 import { ModalClose } from "../../ModalClose/ModalClose";
-import emailjs from "@emailjs/browser";
+import { CONTACT_EMAIL, ENQUIRY_LIMITS } from "../../../services/enquiries";
+import { useEnquiry } from "../../../services/useEnquiry";
+import { useEmailCopy } from "../../../services/useEmailCopy";
 
 import {
   createContext,
@@ -8,32 +10,20 @@ import {
   useEffect,
   useRef,
   useState,
-  type ChangeEvent,
-  type FormEvent,
   type ReactNode,
 } from "react";
 
-import { Info, X, ArrowRight, Copy, Check } from "lucide-react";
+import { Info, X, Copy, Check } from "lucide-react";
 
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
+import { EnquiryComposer } from "../EnquiryComposer/EnquiryComposer";
 import "./ConversationModal.css";
 
 type ConversationContextValue = {
   openConversation: () => void;
   showToast: (message: string) => void;
-};
-
-type FieldName = "name" | "email" | "message";
-
-type ConversationFields = Record<FieldName, string>;
-type FieldErrors = Partial<Record<FieldName, string>>;
-
-const initialFields: ConversationFields = {
-  name: "",
-  email: "",
-  message: "",
 };
 
 const ConversationContext = createContext<ConversationContextValue | null>(
@@ -48,28 +38,6 @@ export function useConversation() {
   }
 
   return context;
-}
-
-function validate(fields: ConversationFields): FieldErrors {
-  const errors: FieldErrors = {};
-
-  if (!fields.name.trim()) {
-    errors.name = "Please enter your name.";
-  }
-
-  if (!fields.email.trim()) {
-    errors.email = "Please enter your email address.";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email.trim())) {
-    errors.email = "Enter a valid email address.";
-  }
-
-  if (!fields.message.trim()) {
-    errors.message = "Please enter a message.";
-  } else if (fields.message.trim().length < 10) {
-    errors.message = "Please add a little more detail.";
-  }
-
-  return errors;
 }
 
 function FieldError({ id, message }: { id: string; message?: string }) {
@@ -87,22 +55,26 @@ function ConversationDialog({
   onComplete,
 }: {
   onClose: () => void;
-  onComplete: (fields: ConversationFields) => Promise<void>;
+  onComplete: () => void;
 }) {
   const reducedMotion = useReducedMotion();
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
 
-  const [emailCopied, setEmailCopied] = useState(false);
-
-  const [sending, setSending] = useState(false);
-  const [sendError, setSendError] = useState("");
-
-  const [fields, setFields] = useState<ConversationFields>(initialFields);
-  const [errors, setErrors] = useState<FieldErrors>({});
-
-  const [messageExpanded, setMessageExpanded] = useState(false);
+  const {
+    copied: emailCopied,
+    copyError,
+    copying,
+    copyEmail: handleCopyEmail,
+  } = useEmailCopy();
+  const { fields, errors, sending, sendError, updateField, handleSubmit } =
+    useEnquiry({
+      onSent: onComplete,
+      resetOnSent: false,
+      onInvalid: (field) =>
+        document.getElementById(`conversation-${field}`)?.focus(),
+    });
 
   useEffect(() => {
     const previouslyFocused =
@@ -128,7 +100,7 @@ function ConversationDialog({
 
       const focusable = Array.from(
         dialogRef.current?.querySelectorAll<HTMLElement>(
-          "button:not(:disabled), input:not(:disabled), textarea:not(:disabled)",
+          "button:not(:disabled), input:not(:disabled), textarea:not(:disabled), a[href]",
         ) ?? [],
       );
 
@@ -155,89 +127,6 @@ function ConversationDialog({
       previouslyFocused?.focus({ preventScroll: true });
     };
   }, [onClose]);
-
-  const updateField = (field: FieldName, value: string) => {
-    setFields((previous) => ({
-      ...previous,
-      [field]: value,
-    }));
-
-    setErrors((previous) => ({
-      ...previous,
-      [field]: undefined,
-    }));
-  };
-
-  const handleMessageChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const textarea = event.currentTarget;
-
-    updateField("message", textarea.value);
-
-    // Reset first so the textarea can shrink as well as grow.
-    textarea.style.height = "54px";
-
-    const naturalHeight = textarea.scrollHeight;
-
-    const nextHeight = Math.min(Math.max(naturalHeight, 54), 210);
-
-    textarea.style.height = `${nextHeight}px`;
-    textarea.style.overflowY = naturalHeight > 210 ? "auto" : "hidden";
-
-    setMessageExpanded(nextHeight > 66);
-  };
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (sending) return;
-
-    const nextErrors = validate(fields);
-    setErrors(nextErrors);
-
-    const firstInvalid = (["name", "email", "message"] as FieldName[]).find(
-      (field) => nextErrors[field],
-    );
-
-    if (firstInvalid) {
-      document.getElementById(`conversation-${firstInvalid}`)?.focus();
-
-      return;
-    }
-
-    setSending(true);
-    setSendError("");
-
-    try {
-      await onComplete({
-        name: fields.name.trim(),
-        email: fields.email.trim(),
-        message: fields.message.trim(),
-      });
-    } catch (error) {
-      if (import.meta.env.DEV)
-        console.error("kailor contact delivery failed:", error);
-
-      setSendError(
-        "Your message couldn't be sent. Please email keenosmith@kailor.co.za.",
-      );
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const handleCopyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText("keenosmith@kailor.co.za");
-
-      setEmailCopied(true);
-
-      window.setTimeout(() => {
-        setEmailCopied(false);
-      }, 2200);
-    } catch (error) {
-      console.error("Failed to copy email address:", error);
-    }
-  };
 
   return (
     <motion.div
@@ -297,7 +186,9 @@ function ConversationDialog({
                 type="text"
                 autoComplete="name"
                 placeholder="Your name"
-                maxLength={100}
+                maxLength={ENQUIRY_LIMITS.name}
+                aria-required="true"
+                disabled={sending}
                 value={fields.name}
                 onChange={(event) => updateField("name", event.target.value)}
                 aria-invalid={Boolean(errors.name)}
@@ -316,6 +207,9 @@ function ConversationDialog({
                 id="conversation-email"
                 name="email"
                 type="email"
+                aria-required="true"
+                disabled={sending}
+                maxLength={ENQUIRY_LIMITS.email}
                 autoComplete="email"
                 placeholder="you@company.com"
                 value={fields.email}
@@ -335,51 +229,16 @@ function ConversationDialog({
             <div className="kailor-conversation-field kailor-conversation-field--full">
               <label htmlFor="conversation-message">Your message</label>
 
-              <div
-                className={`kailor-conversation-composer${
-                  messageExpanded ? " is-expanded" : ""
-                }`}
-              >
-                <textarea
-                  id="conversation-message"
-                  name="message"
-                  rows={1}
-                  placeholder="Tell us a little about your project..."
-                  maxLength={3000}
-                  value={fields.message}
-                  onChange={handleMessageChange}
-                  aria-invalid={Boolean(errors.message)}
-                  aria-describedby={
-                    errors.message ? "conversation-message-error" : undefined
-                  }
-                />
-
-                <button
-                  type="submit"
-                  className="kailor-conversation-send"
-                  disabled={sending}
-                  aria-label={sending ? "Sending message" : "Send message"}
-                  aria-busy={sending}
-                  title={sending ? "Sending message" : "Send message"}
-                >
-                  {sending ? (
-                    <span
-                      className="kailor-conversation-loading"
-                      aria-hidden="true"
-                    >
-                      <span />
-                      <span />
-                      <span />
-                    </span>
-                  ) : (
-                    <ArrowRight
-                      size={18}
-                      strokeWidth={1.7}
-                      aria-hidden="true"
-                    />
-                  )}
-                </button>
-              </div>
+              <EnquiryComposer
+                id="conversation-message"
+                value={fields.message}
+                onChange={(value) => updateField("message", value)}
+                sending={sending}
+                invalid={Boolean(errors.message)}
+                describedBy={
+                  errors.message ? "conversation-message-error" : undefined
+                }
+              />
 
               {sendError && (
                 <p className="kailor-conversation-send-error" role="alert">
@@ -396,12 +255,13 @@ function ConversationDialog({
         </form>
 
         <div className="kailor-conversation-email">
-          <span>keenosmith@kailor.co.za</span>
+          <span>{CONTACT_EMAIL}</span>
 
           <button
             type="button"
             className="kailor-conversation-copy"
             onClick={handleCopyEmail}
+            disabled={copying}
             aria-label={emailCopied ? "Email copied" : "Copy email address"}
             title={emailCopied ? "Copied" : "Copy email address"}
           >
@@ -416,6 +276,11 @@ function ConversationDialog({
             {emailCopied ? "Email address copied to clipboard" : ""}
           </span>
         </div>
+        {copyError && (
+          <p className="kailor-conversation-send-error" role="status">
+            {copyError} <a href={`mailto:${CONTACT_EMAIL}`}>Send an email</a>
+          </p>
+        )}
       </motion.div>
     </motion.div>
   );
@@ -444,37 +309,10 @@ export function ConversationProvider({ children }: { children: ReactNode }) {
     setOpen(false);
   }, []);
 
-  const completeConversation = useCallback(
-    async (fields: ConversationFields) => {
-      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-
-      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-
-      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-
-      if (!serviceId || !templateId || !publicKey) {
-        throw new Error("EmailJS configuration is missing.");
-      }
-
-      await emailjs.send(
-        serviceId,
-        templateId,
-        {
-          from_name: fields.name,
-          reply_to: fields.email,
-          subject: "Website enquiry",
-          message: fields.message,
-        },
-        {
-          publicKey,
-        },
-      );
-
-      pendingToastRef.current = true;
-      setOpen(false);
-    },
-    [],
-  );
+  const completeConversation = useCallback(() => {
+    pendingToastRef.current = true;
+    setOpen(false);
+  }, []);
 
   useEffect(() => {
     if (!toast) return;

@@ -160,109 +160,12 @@
   opacity: 1;
 }
 
+/* Keep field metrics stable when public typography is loaded after the modal. */
+.kailor-conversation-dialog .kailor-conversation-field input {
+  line-height: 1.5 !important;
+}
+
 /* Expanding message composer */
-
-.kailor-conversation-composer {
-  position: relative;
-
-  width: 100%;
-  min-height: 54px;
-
-  background: #f0f0f0;
-  border: none;
-  border-radius: 999px;
-
-  overflow: hidden;
-
-  transition: border-radius 0.25s ease;
-}
-
-.kailor-conversation-composer.is-expanded {
-  border-radius: 26px;
-}
-
-/* Textarea sits inside the composer */
-
-.kailor-conversation-dialog .kailor-conversation-composer textarea,
-.kailor-conversation-dialog .kailor-conversation-composer textarea:hover,
-.kailor-conversation-dialog .kailor-conversation-composer textarea:focus,
-.kailor-conversation-dialog
-  .kailor-conversation-composer
-  textarea:focus-visible {
-  display: block;
-
-  width: 100%;
-  height: 54px;
-  min-height: 54px;
-  max-height: 210px;
-
-  margin: 0 !important;
-
-  /* Leave space on the right for the send button */
-  padding: 16px 65px 14px 20px !important;
-
-  background: transparent !important;
-  color: #1a1a1a !important;
-
-  border: none !important;
-  border-radius: 0 !important;
-
-  outline: none !important;
-  box-shadow: none !important;
-
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 24px;
-
-  resize: none;
-  overflow-y: hidden;
-
-  caret-color: #222526;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-/* Circular send action, anchored at the bottom */
-
-.kailor-conversation-send {
-  position: absolute;
-
-  right: 7px;
-  bottom: 7px;
-
-  z-index: 2;
-
-  display: grid;
-  place-items: center;
-
-  width: 40px;
-  height: 40px;
-  padding: 0;
-
-  background: #222526;
-  color: #ffffff;
-
-  border: none;
-  border-radius: 50%;
-
-  box-shadow: none;
-  cursor: pointer;
-
-  transition:
-    background-color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.kailor-conversation-send:hover {
-  background: #111111;
-  color: #ffffff;
-  transform: scale(1.045);
-}
-
-.kailor-conversation-send svg {
-  display: block;
-}
 
 /* Custom inline validation */
 
@@ -409,65 +312,6 @@
   color: #a34c4c;
   font-size: 11px;
   line-height: 1.5;
-}
-
-/* Sending state */
-
-.kailor-conversation-send:disabled {
-  opacity: 1;
-  cursor: default;
-  transform: none;
-  background: #222526;
-}
-
-/* Three animated dots */
-
-.kailor-conversation-loading {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-}
-
-.kailor-conversation-loading span {
-  display: block;
-
-  width: 4px;
-  height: 4px;
-
-  border-radius: 50%;
-  background: #ffffff;
-
-  animation: kailor-loading-dot 1.1s ease-in-out infinite;
-}
-
-.kailor-conversation-loading span:nth-child(2) {
-  animation-delay: 0.15s;
-}
-
-.kailor-conversation-loading span:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-@keyframes kailor-loading-dot {
-  0%,
-  60%,
-  100% {
-    opacity: 0.35;
-    transform: translateY(0) scale(0.85);
-  }
-
-  30% {
-    opacity: 1;
-    transform: translateY(-3px) scale(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .kailor-conversation-loading span {
-    animation: none;
-    opacity: 1;
-  }
 }
 
 /* Short desktop viewports */

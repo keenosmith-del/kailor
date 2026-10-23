@@ -8,6 +8,13 @@ import { Link } from "react-router";
 import type { Account } from "../../types/account";
 import { useAuthentication } from "./useAuthentication";
 
+function AuthFieldError({ id, message }: { id: string; message?: string }) {
+  return message ? (
+    <span id={id} className="auth-field-error" role="alert">
+      {message}
+    </span>
+  ) : null;
+}
 export function Auth({
   signup = false,
   onLogin,
@@ -60,6 +67,7 @@ export function Auth({
           ) : (
             <form
               className="auth-form"
+              noValidate
               onSubmit={auth.submit}
               aria-busy={auth.busy}
             >
@@ -68,16 +76,23 @@ export function Auth({
                   <label htmlFor="full-name">Full name</label>
                   <input
                     id="full-name"
+                    aria-required="true"
+                    aria-invalid={Boolean(auth.fieldErrors.name)}
+                    aria-describedby={
+                      auth.fieldErrors.name ? "auth-name-error" : undefined
+                    }
                     name="name"
                     type="text"
                     placeholder="Your name"
                     autoComplete="name"
-                    minLength={2}
                     maxLength={150}
-                    required
                     disabled={disabled}
                     value={auth.name}
                     onChange={(e) => auth.setName(e.target.value)}
+                  />
+                  <AuthFieldError
+                    id="auth-name-error"
+                    message={auth.fieldErrors.name}
                   />
                 </div>
               )}
@@ -85,15 +100,23 @@ export function Auth({
                 <label htmlFor="email">Email</label>
                 <input
                   id="email"
+                  aria-required="true"
+                  aria-invalid={Boolean(auth.fieldErrors.email)}
+                  aria-describedby={
+                    auth.fieldErrors.email ? "auth-email-error" : undefined
+                  }
                   name="email"
                   type="email"
                   placeholder="you@example.com"
                   autoComplete="username"
                   maxLength={254}
-                  required
                   disabled={disabled}
                   value={auth.email}
                   onChange={(e) => auth.setEmail(e.target.value)}
+                />
+                <AuthFieldError
+                  id="auth-email-error"
+                  message={auth.fieldErrors.email}
                 />
               </div>
               <div className="auth-field">
@@ -101,20 +124,25 @@ export function Auth({
                 <div className="auth-password">
                   <input
                     id="password"
+                    aria-required="true"
+                    aria-invalid={Boolean(auth.fieldErrors.password)}
                     name="password"
                     type={auth.showPassword ? "text" : "password"}
                     placeholder={
                       signup ? "Create a password" : "Enter your password"
                     }
                     autoComplete={signup ? "new-password" : "current-password"}
-                    minLength={signup ? 12 : 1}
-                    maxLength={128}
-                    required
+                    maxLength={signup ? 128 : 256}
                     disabled={disabled}
                     value={auth.password}
                     onChange={(e) => auth.setPassword(e.target.value)}
                     aria-describedby={
-                      signup ? "password-requirements" : undefined
+                      [
+                        signup ? "password-requirements" : "",
+                        auth.fieldErrors.password ? "auth-password-error" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ") || undefined
                     }
                   />
                   <button
@@ -129,6 +157,10 @@ export function Auth({
                     {auth.showPassword ? "Hide" : "Show"}
                   </button>
                 </div>
+                <AuthFieldError
+                  id="auth-password-error"
+                  message={auth.fieldErrors.password}
+                />
                 {signup && (
                   <span id="password-requirements" className="sr-only">
                     Use at least 12 characters.
@@ -140,16 +172,25 @@ export function Auth({
                   <label htmlFor="confirm-password">Confirm password</label>
                   <input
                     id="confirm-password"
+                    aria-required="true"
+                    aria-invalid={Boolean(auth.fieldErrors.confirmation)}
+                    aria-describedby={
+                      auth.fieldErrors.confirmation
+                        ? "auth-confirmation-error"
+                        : undefined
+                    }
                     name="confirmPassword"
                     type={auth.showPassword ? "text" : "password"}
                     placeholder="Confirm your password"
                     autoComplete="new-password"
-                    minLength={12}
                     maxLength={128}
-                    required
                     disabled={disabled}
                     value={auth.confirmation}
                     onChange={(e) => auth.setConfirmation(e.target.value)}
+                  />
+                  <AuthFieldError
+                    id="auth-confirmation-error"
+                    message={auth.fieldErrors.confirmation}
                   />
                 </div>
               )}
@@ -161,12 +202,20 @@ export function Auth({
                   <label htmlFor="invite">Invitation code</label>
                   <input
                     id="invite"
+                    aria-required="true"
+                    aria-invalid={Boolean(auth.fieldErrors.invite)}
+                    aria-describedby={
+                      auth.fieldErrors.invite ? "auth-invite-error" : undefined
+                    }
                     autoComplete="off"
                     type="text"
-                    required
                     value={auth.invite}
                     onChange={(event) => auth.setInvite(event.target.value)}
                     disabled={disabled}
+                  />
+                  <AuthFieldError
+                    id="auth-invite-error"
+                    message={auth.fieldErrors.invite}
                   />
                   <p>Use the invitation sent for your email address.</p>
                 </div>

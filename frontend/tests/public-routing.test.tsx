@@ -8,6 +8,14 @@ vi.mock("../src/services/api", () => ({
   sessionHref: (id: string, view: string) => `/app/${id}/${view}`,
 }));
 beforeEach(() => {
+  vi.stubGlobal(
+    "IntersectionObserver",
+    class {
+      observe = vi.fn();
+      unobserve = vi.fn();
+      disconnect = vi.fn();
+    },
+  );
   vi.mocked(api).mockRejectedValue(new Error("Unauthenticated"));
   vi.stubGlobal("matchMedia", () => ({
     matches: false,

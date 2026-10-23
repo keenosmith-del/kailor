@@ -20,7 +20,7 @@ The established monochrome homepage, responsive composition and oversized footer
 | `/pricing`                                                    | Heading + reusable Back                                                              | Noindex                            |
 | `/questions`                                                     | Common questions, expandable answers and shared chat CTA                             | Noindex pending content review     |
 | `/careers`                                                    | Heading + reusable Back                                                              | Noindex                            |
-| `/contact`                                                    | Heading + Back + shared conversation action + official email                         | Noindex                            |
+| `/contact`                                                    | Standalone enquiry form + optional topics + copyable email + shared conversation                         | Noindex                            |
 | `/privacy`, `/terms`, `/cookies`                              | Fact-based initial policy pages + Back                                               | Noindex pending owner/legal review |
 | `/sign-in`, `/create-account`                                 | Shared monochrome authentication form, Back and switch links                         | Noindex                            |
 | `/app/*`, `/plans/*`, `/sessions/*`, `/workspace`, `/founder` | Existing protected application, founder role checks remain                           | Noindex                            |
