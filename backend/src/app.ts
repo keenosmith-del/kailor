@@ -1,3 +1,4 @@
+import { createCareerRouter } from "./career-routes.js";
 import { planRouter } from "./plan-routes.js";
 import { evidenceReviewInput } from "../../shared/src/index.js";
 import { containsSensitiveData } from "./conversation-guidance.js";
@@ -145,6 +146,7 @@ app.use(
     },
   }),
 );
+app.use("/api/careers", createCareerRouter());
 app.post(
   "/api/auth/login",
   rateLimit({

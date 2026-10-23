@@ -36,6 +36,35 @@ export default function Privacy() {
           provider. The public website demonstrations do not make AI requests.
           No analytics or advertising trackers are integrated.
         </p>
+        <h2 id="applicant-information">Applicant information</h2>
+        <p>
+          Careers introductions can include your name, email, optional phone,
+          location and professional links, interests, background and an optional
+          PDF or DOCX CV. We use them to review your introduction and contact
+          you about relevant opportunities. We do not send applicant documents
+          to AI services or add you to marketing lists.
+        </p>
+        <p>
+          Online introductions are disabled by default. Before enabling them,
+          kailor must review its private processor, processing location, access
+          controls and deletion schedule. When available, the form names that
+          processor and location and states the configured retention period
+          before you acknowledge processing and submit. The configured processor
+          receives the introduction and any document over an authenticated
+          connection, quarantines and scans attachments before acceptance, and
+          must confirm private receipt and scheduled deletion. The website does
+          not store CVs in public files or browser storage. Its server processes
+          uploads temporarily in memory.
+        </p>
+        <p>
+          Processing outside South Africa may involve international transfers;
+          the destination and appropriate safeguards must be reviewed before
+          enabling the form. Direct email uses our mailbox and its service
+          providers; the online form's automatic deletion schedule does not
+          apply to correspondence in that mailbox. Please ask about handling
+          before emailing sensitive documents. Contact keenosmith@kailor.co.za
+          to request access, correction or deletion of an introduction or CV.
+        </p>
         <h2>Retention and requests</h2>
         <p>
           Account sessions expire after eight hours. Guest sessions expire after

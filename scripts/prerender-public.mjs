@@ -28,7 +28,7 @@ await clean(resolve(root, "dist"));
 const template = await readFile(resolve(root, "dist/index.html"), "utf8");
 const css = (await readdir(resolve(root, "dist/assets")))
   .filter((file) =>
-    /^(?:index|Home|PublicLayout|PageShell|Auth|ConversationModal|Contact|ContactForm|EnquiryComposer|HowItWorks|CommonQuestions|DiscoverySequence|SolutionDirection|ConsultancyProgress|ProcessClosing|BrandWordmark|ModalClose|Timeline|TimelineHero|MilestoneTimeline|ExperienceFoundation|EvolutionArchive|PresentAndBeyond|TimelineClosing)-.*\.css$/.test(
+    /^(?:index|Home|PublicLayout|PageShell|Auth|ConversationModal|Contact|ContactForm|Careers|ApplicationForm|CVAttachment|EnquiryComposer|HowItWorks|CommonQuestions|DiscoverySequence|SolutionDirection|ConsultancyProgress|ProcessClosing|BrandWordmark|ModalClose|Timeline|TimelineHero|MilestoneTimeline|ExperienceFoundation|EvolutionArchive|PresentAndBeyond|TimelineClosing)-.*\.css$/.test(
       file,
     ),
   )

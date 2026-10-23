@@ -1,1 +1,203 @@
-/* Page layout is shared by PageShell. Dedicated styling belongs here. */
+.careers-page {
+  padding: 100px var(--pub-space) 60px;
+  background: #f7f7f7;
+}
+.careers-composition {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: start;
+  gap: clamp(45px, 6vw, 90px);
+  max-width: 1250px;
+  margin: 36px auto 0;
+}
+.careers-editorial {
+  min-width: 0;
+  padding-top: 26px;
+}
+.public-site .careers-editorial h1 {
+  max-width: 500px;
+  margin: 0 0 28px;
+  font-size: clamp(62px, 7.2vw, 108px);
+  font-weight: 450;
+  line-height: 1.02;
+  letter-spacing: -0.065em;
+}
+.public-site .careers-intro {
+  max-width: 370px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #656565;
+}
+.careers-availability {
+  max-width: 360px;
+  margin-top: 30px;
+}
+.public-site .careers-availability h2 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+}
+.public-site .careers-availability p {
+  margin: 0 0 10px;
+  color: #858585;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.careers-email {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+.careers-email > a {
+  font-size: 14px;
+  color: #353a3e;
+  user-select: text;
+}
+.careers-page .careers-email button {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  color: #656565;
+}
+.careers-page .careers-email button:hover {
+  background: #fff;
+  color: #222526;
+}
+.public-site .careers-copy-status {
+  min-height: 20px;
+  max-width: 330px;
+  margin: 0;
+  font-size: 11px;
+  color: #777;
+}
+.careers-copy-status a {
+  text-decoration: underline;
+}
+.careers-interests {
+  margin-top: 35px;
+}
+.public-site .careers-interests h2 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 450;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+.public-site .careers-interests p {
+  margin: 0 0 16px;
+  font-size: 11px;
+  color: #858585;
+}
+.careers-interests > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.careers-page .careers-interests button {
+  min-height: 42px;
+  padding: 10px 16px;
+  background: #efefef;
+  color: #353a3e;
+  font-size: 11px;
+  line-height: 1.5;
+  transition:
+    background-color 0.22s,
+    color 0.22s,
+    box-shadow 0.22s;
+}
+.careers-page .careers-interests button:hover:not(:disabled) {
+  background: #fff;
+  box-shadow: 0 3px 12px #00000008;
+}
+.careers-page .careers-interests button[aria-pressed="true"] {
+  background: #222526;
+  color: white;
+}
+.careers-actions {
+  max-width: 1250px;
+  margin: 40px auto 0;
+}
+.careers-actions nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+}
+.careers-actions a,
+.careers-page .careers-actions button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  font-size: 12px;
+  background: transparent;
+  color: #777;
+}
+.careers-actions a:hover,
+.careers-page .careers-actions button:hover {
+  color: #222526;
+}
+.public-site .careers-page button:focus-visible,
+.public-site .careers-page a:focus-visible {
+  outline: 1px solid #656565;
+  outline-offset: 4px;
+}
+@media (max-width: 1100px) {
+  .careers-composition {
+    gap: 36px;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+  .public-site .careers-editorial h1 {
+    font-size: 66px;
+  }
+}
+@media (max-width: 800px) {
+  .careers-page {
+    padding: 100px 24px 55px;
+  }
+  .careers-composition {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    max-width: 610px;
+    margin-top: 40px;
+  }
+  .careers-editorial {
+    padding-top: 0;
+  }
+  .public-site .careers-editorial h1 {
+    max-width: 540px;
+    font-size: clamp(58px, 10vw, 78px);
+  }
+  .public-site .careers-intro {
+    max-width: 470px;
+  }
+  .careers-availability {
+    max-width: 470px;
+    margin-top: 24px;
+  }
+  .careers-interests {
+    margin-top: 24px;
+  }
+}
+@media (max-width: 380px) {
+  .careers-page {
+    padding-inline: 20px;
+  }
+  .public-site .careers-editorial h1 {
+    font-size: 54px;
+  }
+  .careers-email > a {
+    font-size: 13px;
+  }
+  .careers-page .careers-interests button {
+    padding-inline: 14px;
+  }
+}

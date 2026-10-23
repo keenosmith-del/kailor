@@ -185,9 +185,11 @@ it("routes to minimal shells, sets noindex and provides safe Back navigation", (
         ? "The right solution starts with the right understanding"
         : path === "timeline"
           ? "The storyso far"
-          : path === "contact"
-            ? "Get in touch"
-            : title,
+          : path === "careers"
+            ? "Work with kailor"
+            : path === "contact"
+              ? "Get in touch"
+              : title,
     );
     expect(document.title).toBe(
       path === "timeline" ? "Our timeline | kailor" : `${title} | kailor`,
