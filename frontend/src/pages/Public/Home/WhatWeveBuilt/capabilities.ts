@@ -6,30 +6,30 @@ export type CapabilityDetailContent = {
 export const capabilities = [
   {
     id: "discovery",
-    title: "Discovery",
+    title: "Start wherever you are.",
     label: "Understanding the situation",
     detail:
-      "Guided questions and conversation gather circumstances, goals and existing tools. Confirmed context and open questions remain distinct, giving the assessment a grounded starting point.",
+      "Have an idea, an existing business challenge or something you need built? You don't need to arrive with all the answers.",
   },
   {
     id: "analysis",
-    title: "Analysis",
+    title: "Explore what's possible.",
     label: "Reasoning that can be reviewed",
     detail:
-      "Structured assessments organise findings, options, constraints and questions that still need attention. Saved report history and PDF exports let that reasoning be revisited and shared.",
+      "Discover software, automation and technology solutions recommended around your particular needs, budget and circumstances.",
   },
   {
     id: "canvas",
-    title: "Solution Canvas",
+    title: "Choose what works for you.",
     label: "Consider the possibilities",
     detail:
-      "The Canvas turns supported recommendations into approachable solution tiles. Details, refinements and selections help customers decide what to discuss with a consultant before scope is agreed.",
+      "Compare your options, explore the considerations and decide which solutions you'd like to pursue.",
   },
   {
     id: "workspace",
-    title: "Project workspaces",
+    title: "Watch it come together.",
     label: "Keep the context together",
     detail:
-      "Each project keeps its own conversations, sources, discoveries and report history. Consultancy requests connect selected solutions with the relevant project context for review.",
+      "Work with a consultant to bring your chosen solutions to life, with clear progress, decisions and updates along the way.",
   },
 ] as const satisfies readonly (CapabilityDetailContent & { id: string })[];

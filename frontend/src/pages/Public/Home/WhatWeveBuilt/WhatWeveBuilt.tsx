@@ -48,12 +48,14 @@ export function CapabilityGallery({
     >
       <CapabilityReveal>
         <h2 className="built-heading" id={`${id}-title`}>
-          What we've built
+          Designed to evolve with you
         </h2>
         <p className="built-intro">
-          Over time, the ideas behind kailor have become a connected set of
-          tools and experiences, designed to make technology decisions clearer
-          and the work that follows easier to manage.
+          The way forward is not always straightforward. No two projects are quite the same. Priorities shift, requirements
+          change and new possibilities emerge along the way. kailor is designed
+          with that flexibility in mind, allowing different needs and approaches
+          to shape the experience rather than forcing everything into a fixed
+          process.
         </p>
         <p className="built-caption built-archive-caption">
           Existing capabilities · Illustrative interface content

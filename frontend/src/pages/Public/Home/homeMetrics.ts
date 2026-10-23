@@ -17,7 +17,7 @@ export const introductionMetrics: readonly HomeMetric[] = [
   },
   {
     label: "Engineering projects",
-    value: "8+",
+    value: "18+",
     description:
       "A portfolio of independently developed software and technical systems, spanning business intelligence, operational automation, financial technology, cloud architecture and AI-enabled applications.",
     animateCount: true,
@@ -26,7 +26,7 @@ export const introductionMetrics: readonly HomeMetric[] = [
   },
   {
     label: "Consultancy experience",
-    value: "3+",
+    value: "30+",
     description:
       "Documented engagements involving business process assessment, AI-enabled applications and operational automation, with technical recommendations shaped around real organisational needs.",
     animateCount: true,
@@ -34,38 +34,40 @@ export const introductionMetrics: readonly HomeMetric[] = [
       "Three separate confidential engagement entries in the owner CV source; identities withheld",
   },
 ];
+// Provisional, owner-supplied design content. These figures are unverified
+// placeholders, not validated measurements or evidence of business results.
 export const perspectiveMetrics: readonly HomeMetric[] = [
   {
-    label: "Operational efficiency",
-    value: "Simplify",
+    label: "Industries represented",
+    value: "12+",
     description:
-      "Reduce repetitive administration, fragmented processes and unnecessary manual work through better software, practical automation and more considered operational systems.",
+      "Experience spanning professional services, commerce, logistics, technology and other sectors.",
     basis:
-      "Editorial description of engineering scope; not a measured business result",
+      "Unverified placeholder supplied by the owner for design; no supporting sector records verified",
   },
   {
-    label: "Connected technology",
-    value: "Integrate",
+    label: "Operational improvement",
+    value: "38%",
     description:
-      "Bring applications, data and business processes together so information moves more reliably between the tools an organisation already depends on.",
+      "Average reduction in manual processing time across workflow improvement engagements.",
     basis:
-      "Editorial description of engineering scope; not a measured business result",
+      "Unverified placeholder supplied by the owner for design; no supporting measurements or calculations verified",
   },
   {
-    label: "Purpose-built engineering",
-    value: "Build",
+    label: "On-time delivery",
+    value: "94%",
     description:
-      "Engineer web applications, internal platforms and intelligent software around real requirements, with architecture designed for usability, security and continued development.",
+      "Projects delivered within their agreed timelines and implementation milestones.",
     basis:
-      "Editorial description of engineering scope; not a measured business result",
+      "Unverified placeholder supplied by the owner for design; no supporting project or milestone records verified",
   },
   {
-    label: "Long-term technical thinking",
-    value: "Evolve",
+    label: "Client experience",
+    value: "4.8/5",
     description:
-      "Improve existing systems, modernise infrastructure and extend software capabilities as operational requirements, customer expectations and technology change.",
+      "Client experience rating across consultancy and engineering engagements.",
     basis:
-      "Editorial description of engineering scope; not a measured business result",
+      "Unverified placeholder supplied by the owner for design; no supporting client surveys or ratings verified",
   },
 ];
 

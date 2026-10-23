@@ -190,9 +190,7 @@ export function Hero() {
           </motion.div>
 
           <p className="kailor-hero__mascot-note">
-            <span className="kailor-hero__mascot-note-label">
-              
-            </span>
+            <span className="kailor-hero__mascot-note-label"></span>
 
             <span>
               The crossed arms are a design choice, not our customer-service

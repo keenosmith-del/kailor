@@ -4,7 +4,7 @@ import "./Footer.css";
 
 const email = "keenosmith@kailor.co.za";
 
-import { sidebarPages, sidebarSections } from "../navigation";
+import { links, footerSections, upcomingPages } from "../navigation";
 import { CookiePreferences } from "../CookiePreferences/CookiePreferences";
 import { useConversation } from "../ConversationModal/ConversationModal";
 
@@ -16,21 +16,15 @@ export function Footer() {
         <div className="public-footer__directory">
           <nav aria-label="Explore kailor">
             <h2>Pages</h2>
-            {sidebarPages.map(([to, label]) =>
-              to === null ? (
-                <span key={label} aria-disabled="true">
-                  {label}
-                </span>
-              ) : (
-                <Link key={label} to={to}>
-                  {label}
-                </Link>
-              ),
-            )}
+            {links.map(([to, label]) => (
+              <Link key={label} to={to}>
+                {label}
+              </Link>
+            ))}
           </nav>
           <nav aria-label="Homepage sections">
             <h2>On the homepage</h2>
-            {sidebarSections.map(([id, label]) => (
+            {footerSections.map(([id, label]) => (
               <Link key={id} to={`/#${id}`}>
                 {label}
               </Link>
@@ -48,6 +42,14 @@ export function Footer() {
             >
               Start conversation
             </button>
+          </nav>
+          <nav aria-label="More from kailor">
+            <h2>More from kailor</h2>
+            {upcomingPages.map(([, label]) => (
+              <span key={label} aria-disabled="true">
+                {label}
+              </span>
+            ))}
           </nav>
         </div>
 

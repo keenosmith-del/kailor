@@ -161,9 +161,9 @@ export function Introduction() {
             <p>
               kailor combines practical business consultancy with hands-on
               software, AI and cloud engineering. We help individuals,
-              entrepreneurs and established organisations turn ideas,
-              operational challenges and technical requirements into considered
-              solutions.
+              entrepreneurs and established organisations understand their
+              challenges, explore the right technologies and turn considered
+              recommendations into working solutions.
             </p>
           </div>
 

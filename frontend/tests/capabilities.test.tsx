@@ -53,7 +53,7 @@ it("shares the canonical capability copy with the recoverable Timeline and prese
   for (const cls of ["discovery", "analysis", "canvas", "workspace"])
     expect(document.querySelector(`.built-archive-${cls}`)).toBeTruthy();
   expect(
-    screen.getByRole("heading", { name: "What we've built" }),
+    screen.getByRole("heading", { name: "Designed to evolve with you" }),
   ).toBeTruthy();
   expect(
     document.querySelector(".built-workspace-request img")?.getAttribute("src"),

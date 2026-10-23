@@ -23,8 +23,10 @@ import {
 import { within } from "@testing-library/react";
 import { ConversationProvider } from "../src/components/public/ConversationModal/ConversationModal";
 import {
-  sidebarPages,
   sidebarSections,
+  links,
+  footerSections,
+  upcomingPages,
 } from "../src/components/public/navigation";
 import Contact from "../src/pages/Public/Contact/Contact";
 import { ConversationVisual } from "../src/components/public/ConversationVisual/ConversationVisual";
@@ -104,7 +106,13 @@ it("renders the launch homepage, unique portraits and only real section destinat
   );
   expect(document.getElementById("work")).toBeNull();
   expect(document.getElementById("consultants")).toBeNull();
-  expect(document.getElementById("client-feedback")).toBeTruthy();
+  for (const id of [
+    "technologies",
+    "what-weve-built",
+    "client-feedback",
+    "activity",
+  ])
+    expect(document.getElementById(id)).toBeTruthy();
   for (const [id] of sidebarSections)
     expect(document.getElementById(id)).toBeTruthy();
   const portraits = Array.from(
@@ -131,13 +139,27 @@ it("provides the exact Pages list, genuinely disabled items and collapsible iner
     "Try it out",
     "Our Work",
     "Our Team",
+    "kailor insider",
     "Careers",
     "Contact",
   ]);
-  expect(group.querySelectorAll("[aria-disabled=true]")).toHaveLength(2);
+  expect(group.querySelectorAll("[aria-disabled=true]")).toHaveLength(3);
+  for (const item of group.querySelectorAll("[aria-disabled=true]")) {
+    expect(item.tagName).toBe("SPAN");
+    expect(item.hasAttribute("href")).toBe(false);
+    expect(item.hasAttribute("tabindex")).toBe(false);
+  }
   expect(group.querySelector('[href="/work"]')).toBeNull();
   expect(screen.queryByText("Coming later")).toBeNull();
   const button = within(nav).getByRole("button", { name: "On the homepage" });
+  expect(button.getAttribute("aria-expanded")).toBe("true");
+  expect(button.querySelector("svg")).toBeTruthy();
+  expect(
+    Array.from(nav.querySelectorAll(".public-section-links a")).map((link) => [
+      link.getAttribute("href"),
+      link.textContent,
+    ]),
+  ).toEqual(sidebarSections.map(([id, label]) => [`/#${id}`, label]));
   fireEvent.click(button);
   expect(button.getAttribute("aria-expanded")).toBe("false");
   expect(
@@ -309,15 +331,42 @@ it("uses the shared compact close icon for public dialogs", () => {
   ).toBe("14");
 });
 
-it("mirrors every sidebar destination in the footer, including disabled pages", () => {
+it("organises shared destinations into four footer groups with disabled pages separate from enabled links", () => {
   site();
   const pages = screen.getByRole("navigation", { name: "Explore kailor" });
   expect(
     Array.from(pages.querySelectorAll("a, span")).map(
       (item) => item.textContent,
     ),
-  ).toEqual(sidebarPages.map(([, label]) => label));
-  expect(pages.querySelectorAll("span[aria-disabled=true]")).toHaveLength(2);
+  ).toEqual(links.map(([, label]) => label));
+  expect(pages.querySelectorAll("span[aria-disabled=true]")).toHaveLength(0);
+  const directory = document.querySelector(".public-footer__directory")!;
+  expect(
+    Array.from(directory.querySelectorAll("h2")).map(
+      (heading) => heading.textContent,
+    ),
+  ).toEqual(["Pages", "On the homepage", "Get started", "More from kailor"]);
+  expect(directory.querySelectorAll("nav")).toHaveLength(4);
+  const upcoming = screen.getByRole("navigation", { name: "More from kailor" });
+  expect(
+    Array.from(upcoming.querySelectorAll("span[aria-disabled=true]")).map(
+      (item) => item.textContent,
+    ),
+  ).toEqual(upcomingPages.map(([, label]) => label));
+  expect(within(upcoming).queryAllByRole("link")).toHaveLength(0);
+  for (const item of upcoming.querySelectorAll("span")) {
+    expect(item.hasAttribute("href")).toBe(false);
+    expect(item.hasAttribute("tabindex")).toBe(false);
+  }
+  const legal = document.querySelector(".public-footer__bottom")!;
+  expect(
+    legal.querySelector('[href="mailto:keenosmith@kailor.co.za"]'),
+  ).toBeTruthy();
+  for (const path of ["/privacy", "/terms", "/cookies"])
+    expect(legal.querySelector(`a[href="${path}"]`)).toBeTruthy();
+  expect(
+    within(legal as HTMLElement).getByRole("button", { name: "Cookies" }),
+  ).toBeTruthy();
   const sections = screen.getByRole("navigation", {
     name: "Homepage sections",
   });
@@ -325,12 +374,12 @@ it("mirrors every sidebar destination in the footer, including disabled pages", 
     Array.from(sections.querySelectorAll("a")).map((item) =>
       item.getAttribute("href"),
     ),
-  ).toEqual(sidebarSections.map(([id]) => `/#${id}`));
+  ).toEqual(footerSections.map(([id]) => `/#${id}`));
   expect(
     within(sections)
       .getAllByRole("link")
       .map((link) => link.textContent),
-  ).toEqual(sidebarSections.map(([, label]) => label));
+  ).toEqual(footerSections.map(([, label]) => label));
   fireEvent.click(
     screen.getByRole("button", { name: "Start conversation from footer" }),
   );
@@ -522,12 +571,12 @@ it("opens milestone and archive details, supports keyboard dismissal and restore
   expect(screen.queryByRole("dialog")).toBeNull();
   expect(document.activeElement).toBe(milestone);
   const archive = screen.getByRole("button", {
-    name: "Explore Project workspaces",
+    name: "Explore Watch it come together.",
   });
   archive.focus();
   fireEvent.click(archive);
   expect(
-    screen.getByRole("dialog", { name: "Project workspaces" }),
+    screen.getByRole("dialog", { name: "Watch it come together." }),
   ).toBeTruthy();
   fireEvent.click(
     screen.getByRole("button", { name: "Close timeline detail" }),

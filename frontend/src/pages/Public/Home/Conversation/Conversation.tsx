@@ -17,8 +17,9 @@ export function Conversation() {
 
         <p>
           Tell kailor what you're trying to achieve or what isn't working. We'll
-          help uncover the real challenge, understand your existing processes
-          and explore a practical way forward.
+          ask the right questions, understand your challenges and explore
+          solutions that make sense for you — whether that's improving what you
+          already have or building something entirely new.
         </p>
         <Link
           className="pub-pill pub-pill-dark conversation-try-action"

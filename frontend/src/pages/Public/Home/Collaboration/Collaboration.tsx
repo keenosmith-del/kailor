@@ -174,10 +174,11 @@ export function Collaboration() {
           </p>
 
           <p>
-            kailor brings your project, discussions, decisions and consultant
-            correspondence into one organised workspace. From reviewing proposed
-            solutions to discussing implementation, the context stays connected
-            to the work.
+            kailor brings everything together in one organised workspace. Each
+            project has its own conversations, discoveries, recommendations and
+            decisions. Choose the solutions you want to pursue, collaborate with
+            a consultant and follow the progress from initial planning to the
+            finished build.
           </p>
         </div>
       </div>

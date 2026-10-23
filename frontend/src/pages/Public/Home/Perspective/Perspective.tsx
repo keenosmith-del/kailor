@@ -54,26 +54,23 @@ export function Perspective() {
             ease: [0.22, 1, 0.36, 1],
           }}
         >
-          <h2 id="perspective-title">
-            Built around
-            <br />
-            what matters
-          </h2>
+          <h2 id="perspective-title">The wider picture</h2>
 
           <div className="perspective-description">
             <p>
-              The best technology decisions begin with an understanding of the
-              work itself. How people operate, where information gets lost,
-              which processes create unnecessary effort and what the business
-              needs to achieve next.
+              Our work takes us into different industries, businesses and ways
+              of working. Each brings its own challenges, expectations and
+              opportunities. From individuals developing their first ideas to
+              established organisations managing complex operations, the needs
+              and circumstances are rarely the same.
             </p>
 
             <p>
-              At kailor, we connect that understanding with practical
-              engineering. Sometimes the right answer is a better use of an
-              existing platform. Sometimes it is automation, integration or
-              something entirely new. The goal is the same: technology with a
-              clear purpose, a considered foundation and room to evolve.
+              Working across these different environments broadens our
+              perspective and influences how we approach new challenges. It
+              allows us to draw on experience from different disciplines,
+              explore alternative approaches and develop solutions that make
+              sense for each situation.
             </p>
           </div>
         </motion.div>

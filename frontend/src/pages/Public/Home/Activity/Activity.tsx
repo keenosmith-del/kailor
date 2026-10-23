@@ -134,8 +134,11 @@ export function Activity() {
         >
           <h2 id="activity-title">Always something in motion</h2>
           <p>
-            New ideas, evolving tools and considered engineering. A glimpse of
-            the work taking shape across kailor.
+            Much of our work happens behind the scenes. We're continually
+            exploring new technologies, improving existing systems and
+            experimenting with different approaches to software, AI and
+            automation. Some developments are small, while others take a little
+            longer to get right.
           </p>
         </motion.div>
 

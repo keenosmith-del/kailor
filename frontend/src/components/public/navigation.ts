@@ -5,25 +5,22 @@ export const sidebarPages = [
   ["/try-kailor", "Try it out"],
   [null, "Our Work"],
   [null, "Our Team"],
+  [null, "kailor insider"],
   ["/careers", "Careers"],
   ["/contact", "Contact"],
 ] as const;
-export const links = sidebarPages.filter(([to]) => to !== null);
+export const links = sidebarPages.filter((page) => page[0] !== null);
+export const upcomingPages = sidebarPages.filter((page) => page[0] === null);
 export const showClientPerspectives = import.meta.env.DEV;
 export const sidebarSections = [
   ["hero", "Home"],
-  ["technologies", "Technology"],
   ["introduction", "About"],
   ["services-overview", "Services"],
-  ["conversation", "Conversation"],
-  ["collaboration", "Collaboration"],
-  ["what-weve-built", "What we've built"],
-  ...(showClientPerspectives
-    ? [["client-feedback", "Client perspectives"]]
-    : []),
-  ["perspective", "Our approach"],
-  ["activity", "In motion"],
-];
+  ["conversation", "Getting started"],
+  ["collaboration", "Working together"],
+  ["perspective", "The wider picture"],
+] as const;
+export const footerSections = sidebarSections.filter(([id]) => id !== "hero");
 export const publicPaths = [
   "/",
   "/how-it-works",

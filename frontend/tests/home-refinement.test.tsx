@@ -18,7 +18,6 @@ import { StackedPanels } from "../src/components/public/StackedPanels/StackedPan
 import {
   sidebarPages,
   sidebarSections,
-  showClientPerspectives,
 } from "../src/components/public/navigation";
 const state = vi.hoisted(() => ({ reduced: true, count: vi.fn() }));
 vi.mock("motion/react", async (original) => {
@@ -92,7 +91,7 @@ it("keeps every local technology exactly once in the canonical inventory and pai
     ).toBeTruthy();
   }
 });
-it("presents experience evidence, six portraits plus the owner count, and editorial business themes", () => {
+it("presents experience evidence, six portraits plus the owner count, and owner-supplied company metrics", () => {
   state.reduced = false;
   render(
     <MemoryRouter>
@@ -102,21 +101,33 @@ it("presents experience evidence, six portraits plus the owner count, and editor
   );
   expect(introductionMetrics.map((metric) => metric.value)).toEqual([
     "6+",
-    "8+",
-    "3+",
+    "18+",
+    "30+",
   ]);
   expect(perspectiveMetrics.map((metric) => metric.value)).toEqual([
-    "Simplify",
-    "Integrate",
-    "Build",
-    "Evolve",
+    "12+",
+    "38%",
+    "94%",
+    "4.8/5",
   ]);
   expect(screen.getByRole("heading", { name: "About" })).toBeTruthy();
+  const perspective = screen.getByRole("region", {
+    name: "The wider picture",
+  });
+  expect(within(perspective).getAllByRole("article")).toHaveLength(4);
+  for (const metric of perspectiveMetrics) {
+    expect(
+      within(perspective).getByRole("heading", { name: metric.label }),
+    ).toBeTruthy();
+    expect(within(perspective).getByText(metric.value)).toBeTruthy();
+    expect(within(perspective).getByText(metric.description)).toBeTruthy();
+    expect(metric.basis).toMatch(/unverified placeholder/i);
+  }
   expect(document.querySelectorAll(".introduction-avatar img")).toHaveLength(6);
   expect(
     document.querySelector(".introduction-avatar--additional")?.textContent,
   ).toBe("+32");
-  expect(state.count.mock.calls.map((call) => call[1])).toEqual([6, 8, 3]);
+  expect(state.count.mock.calls.map((call) => call[1])).toEqual([6, 18, 30]);
   expect(introductionMetrics.every((metric) => !!metric.basis)).toBe(true);
   expect(perspectiveMetrics.map((m) => m.description).join(" ")).not.toMatch(
     /Discovery|Analysis|Solution Canvas|PDF|1:1/,
@@ -172,7 +183,7 @@ it("preserves six Activity surfaces inside stationary slots with separate reveal
     expect(slot.querySelector(".home-activity__bubble")).not.toBe(slot);
   }
 });
-it("uses the shared publication inventory for Try it out and moves the capability hash immediately after Collaboration", () => {
+it("uses the shared publication inventory for Try it out and keeps unpublished destinations disabled", () => {
   expect(sidebarPages.slice(0, 3).map(([, label]) => label)).toEqual([
     "Home",
     "How it works",
@@ -184,26 +195,20 @@ it("uses the shared publication inventory for Try it out and moves the capabilit
         href === ("/pricing" as string) || href === ("/timeline" as string),
     ),
   ).toBe(false);
-  const index = sidebarSections.findIndex(([id]) => id === "collaboration");
-  expect(sidebarSections[index + 1]).toEqual([
-    "what-weve-built",
-    "What we've built",
+  expect(sidebarPages.filter(([href]) => href === null)).toEqual([
+    [null, "Our Work"],
+    [null, "Our Team"],
+    [null, "kailor insider"],
   ]);
 });
 
-it("keeps the exact shared section labels and development-only client perspectives", () => {
+it("keeps exactly six shared homepage destinations with the approved labels", () => {
   expect(sidebarSections).toEqual([
     ["hero", "Home"],
-    ["technologies", "Technology"],
     ["introduction", "About"],
     ["services-overview", "Services"],
-    ["conversation", "Conversation"],
-    ["collaboration", "Collaboration"],
-    ["what-weve-built", "What we've built"],
-    ...(showClientPerspectives
-      ? [["client-feedback", "Client perspectives"]]
-      : []),
-    ["perspective", "Our approach"],
-    ["activity", "In motion"],
+    ["conversation", "Getting started"],
+    ["collaboration", "Working together"],
+    ["perspective", "The wider picture"],
   ]);
 });

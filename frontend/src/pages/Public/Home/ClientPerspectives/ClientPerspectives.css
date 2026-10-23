@@ -105,7 +105,8 @@
   gap: 13px;
 }
 
-.client-notes-person > img {
+.client-notes-person > img,
+.client-notes-avatar-space {
   display: block;
   flex: 0 0 43px;
   width: 43px;
@@ -257,6 +258,12 @@
   grid-area: 1 / 1;
   min-width: 0;
   align-self: start;
+}
+
+.client-notes-size-reserve {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
 }
 
 .public-site .client-notes-message {

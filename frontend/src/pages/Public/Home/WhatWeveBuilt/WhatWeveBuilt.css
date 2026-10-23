@@ -190,7 +190,7 @@
 }
 
 .public-site .what-weve-built .built-heading {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 0 28px;
   font-size: clamp(48px, 6vw, 90px);
   font-weight: 450;
@@ -198,7 +198,7 @@
   letter-spacing: -0.07em;
 }
 .public-site .what-weve-built .built-intro {
-  max-width: 530px;
+  max-width: 750px;
   margin: 0;
   font-size: 15px;
   line-height: 1.75;
