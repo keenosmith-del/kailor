@@ -122,16 +122,26 @@ for (const [path, page] of Object.entries(routes)) {
       "clarity",
     );
     assert.equal(
+      document.querySelector("#introduction-title").textContent.trim(),
+      "About",
+    );
+    assert.equal(
       document
-        .querySelector(".introduction-stat--year strong")
+        .querySelector(".introduction-avatar--additional")
         .textContent.trim(),
-      "2025",
+      "+32",
+    );
+    assert.deepEqual(
+      Array.from(document.querySelectorAll(".introduction-stat-value")).map(
+        (e) => e.getAttribute("aria-label"),
+      ),
+      ["6+", "8+", "3+"],
     );
     assert.deepEqual(
       Array.from(document.querySelectorAll(".perspective-value")).map((e) =>
         e.textContent.trim(),
       ),
-      [`${expectedLogos.length}+`, "5", "1:1", "PDF"],
+      ["Simplify", "Integrate", "Build", "Evolve"],
     );
     for (const a of document.querySelectorAll('a[href^="/#"]'))
       assert.ok(

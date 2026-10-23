@@ -18,6 +18,7 @@ import { StackedPanels } from "../src/components/public/StackedPanels/StackedPan
 import {
   sidebarPages,
   sidebarSections,
+  showClientPerspectives,
 } from "../src/components/public/navigation";
 const state = vi.hoisted(() => ({ reduced: true, count: vi.fn() }));
 vi.mock("motion/react", async (original) => {
@@ -91,7 +92,7 @@ it("keeps every local technology exactly once in the canonical inventory and pai
     ).toBeTruthy();
   }
 });
-it("grounds the technical metrics in actual capabilities, with no animated founding date", () => {
+it("presents experience evidence, six portraits plus the owner count, and editorial business themes", () => {
   state.reduced = false;
   render(
     <MemoryRouter>
@@ -101,22 +102,25 @@ it("grounds the technical metrics in actual capabilities, with no animated found
   );
   expect(introductionMetrics.map((metric) => metric.value)).toEqual([
     "6+",
-    "2025",
-    "4",
+    "8+",
+    "3+",
   ]);
   expect(perspectiveMetrics.map((metric) => metric.value)).toEqual([
-    `${technologyItems.length}+`,
-    "5",
-    "1:1",
-    "PDF",
+    "Simplify",
+    "Integrate",
+    "Build",
+    "Evolve",
   ]);
-  expect(screen.getByText("Established in")).toBeTruthy();
+  expect(screen.getByRole("heading", { name: "About" })).toBeTruthy();
+  expect(document.querySelectorAll(".introduction-avatar img")).toHaveLength(6);
   expect(
-    document.querySelector(".introduction-stat--year strong")?.textContent,
-  ).toBe("2025");
-  expect(state.count.mock.calls.map((call) => call[1])).toEqual([6, 4]);
+    document.querySelector(".introduction-avatar--additional")?.textContent,
+  ).toBe("+32");
+  expect(state.count.mock.calls.map((call) => call[1])).toEqual([6, 8, 3]);
   expect(introductionMetrics.every((metric) => !!metric.basis)).toBe(true);
-  expect(screen.getByText(/scoped and commissioned separately/)).toBeTruthy();
+  expect(perspectiveMetrics.map((m) => m.description).join(" ")).not.toMatch(
+    /Discovery|Analysis|Solution Canvas|PDF|1:1/,
+  );
 });
 it("preserves all four service panels, cloud words without a period, and the local consultancy mascot", () => {
   render(<StackedPanels />);
@@ -184,5 +188,22 @@ it("uses the shared publication inventory for Try it out and moves the capabilit
   expect(sidebarSections[index + 1]).toEqual([
     "what-weve-built",
     "What we've built",
+  ]);
+});
+
+it("keeps the exact shared section labels and development-only client perspectives", () => {
+  expect(sidebarSections).toEqual([
+    ["hero", "Home"],
+    ["technologies", "Technology"],
+    ["introduction", "About"],
+    ["services-overview", "Services"],
+    ["conversation", "Conversation"],
+    ["collaboration", "Collaboration"],
+    ["what-weve-built", "What we've built"],
+    ...(showClientPerspectives
+      ? [["client-feedback", "Client perspectives"]]
+      : []),
+    ["perspective", "Our approach"],
+    ["activity", "In motion"],
   ]);
 });

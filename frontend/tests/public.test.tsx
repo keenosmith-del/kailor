@@ -326,6 +326,11 @@ it("mirrors every sidebar destination in the footer, including disabled pages", 
       item.getAttribute("href"),
     ),
   ).toEqual(sidebarSections.map(([id]) => `/#${id}`));
+  expect(
+    within(sections)
+      .getAllByRole("link")
+      .map((link) => link.textContent),
+  ).toEqual(sidebarSections.map(([, label]) => label));
   fireEvent.click(
     screen.getByRole("button", { name: "Start conversation from footer" }),
   );

@@ -1,76 +1,73 @@
-import { technologyItems } from "./Marquee/marqueeData";
 export interface HomeMetric {
   label: string;
   value: string;
   description: string;
   animateCount?: boolean;
-  kind: "experience" | "year" | "capability" | "principle";
   basis: string;
 }
-// Add commercial figures only when verified business records support them.
-// These current figures describe the company and implemented technical capabilities.
+// Experience claims are grounded in owner CV records and the local portfolio audit.
 export const introductionMetrics: readonly HomeMetric[] = [
   {
-    label: "Engineering foundation",
+    label: "Engineering experience",
     value: "6+",
-    animateCount: true,
-    kind: "experience",
-    basis: "Owner-provided engineering experience, predating the company",
     description:
-      "Years of hands-on engineering behind kailor, spanning full-stack applications, system architecture, cloud, AI-enabled software and complex workflow automation.",
+      "Years working across software engineering, intelligent applications, systems architecture and cloud technologies, bringing practical development experience to demanding business and technical challenges.",
+    animateCount: true,
+    basis: "Owner CV baseline and professional records",
   },
   {
-    label: "Established in",
-    value: "2025",
-    kind: "year",
-    basis: "Owner-confirmed founding year",
+    label: "Engineering projects",
+    value: "8+",
     description:
-      "Founded as an independent technology consultancy, connecting technical strategy with practical engineering.",
-  },
-  {
-    label: "Built capabilities",
-    value: "4",
+      "A portfolio of independently developed software and technical systems, spanning business intelligence, operational automation, financial technology, cloud architecture and AI-enabled applications.",
     animateCount: true,
-    kind: "capability",
     basis:
-      "Implemented Discovery, Analysis, Solution Canvas and independent project workspaces",
+      "At least eight distinct source-reviewed implementations in the local portfolio audit; excludes forks, documentation-only plans and duplicate versions",
+  },
+  {
+    label: "Consultancy experience",
+    value: "3+",
     description:
-      "Discovery, Analysis, Solution Canvas and independent project workspaces connect technical decisions with the work that follows.",
+      "Documented engagements involving business process assessment, AI-enabled applications and operational automation, with technical recommendations shaped around real organisational needs.",
+    animateCount: true,
+    basis:
+      "Three separate confidential engagement entries in the owner CV source; identities withheld",
   },
 ];
 export const perspectiveMetrics: readonly HomeMetric[] = [
   {
-    label: "Technology breadth",
-    value: `${technologyItems.length}+`,
-    kind: "capability",
+    label: "Operational efficiency",
+    value: "Simplify",
+    description:
+      "Reduce repetitive administration, fragmented processes and unnecessary manual work through better software, practical automation and more considered operational systems.",
     basis:
-      "Named local technology inventory; not a count of client deployments",
-    description:
-      "A toolkit spanning application frameworks, AI, cloud, databases and integrations. We choose technology for the problem, rather than force every project into one stack.",
+      "Editorial description of engineering scope; not a measured business result",
   },
   {
-    label: "Connected project journey",
-    value: "5",
-    kind: "capability",
+    label: "Connected technology",
+    value: "Integrate",
+    description:
+      "Bring applications, data and business processes together so information moves more reliably between the tools an organisation already depends on.",
     basis:
-      "Discovery, Analysis, recommendations, consultancy and separately commissioned implementation",
-    description:
-      "Discovery, Analysis, recommendations, consultancy and implementation form a connected journey. Decisions and context carry forward; delivery is scoped and commissioned separately.",
+      "Editorial description of engineering scope; not a measured business result",
   },
   {
-    label: "Independent project context",
-    value: "1:1",
-    kind: "principle",
-    basis: "Existing per-project isolation in the customer application",
+    label: "Purpose-built engineering",
+    value: "Build",
     description:
-      "Each project has its own workspace for conversations, sources, assessments, solutions and consultancy discussions, keeping unrelated project knowledge separate.",
+      "Engineer web applications, internal platforms and intelligent software around real requirements, with architecture designed for usability, security and continued development.",
+    basis:
+      "Editorial description of engineering scope; not a measured business result",
   },
   {
-    label: "Decisions worth keeping",
-    value: "PDF",
-    kind: "capability",
-    basis: "Existing saved assessments and PDF report exports",
+    label: "Long-term technical thinking",
+    value: "Evolve",
     description:
-      "Structured assessments, technical recommendations and documented considerations can be revisited, shared and used to support informed decisions throughout the project.",
+      "Improve existing systems, modernise infrastructure and extend software capabilities as operational requirements, customer expectations and technology change.",
+    basis:
+      "Editorial description of engineering scope; not a measured business result",
   },
 ];
+
+// Owner-supplied display content; review the business claim before deployment.
+export const introductionAdditionalCount = 32;

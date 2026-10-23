@@ -13,6 +13,7 @@ import "./Introduction.css";
 
 import {
   introductionMetrics as statistics,
+  introductionAdditionalCount,
   type HomeMetric as Statistic,
 } from "../homeMetrics";
 
@@ -75,7 +76,7 @@ function StatisticCard({
   return (
     <motion.article
       ref={ref}
-      className={`introduction-stat${statistic.kind === "year" ? " introduction-stat--year" : ""}${
+      className={`introduction-stat${
         featured ? " introduction-stat--featured" : ""
       }`}
       style={{
@@ -111,11 +112,7 @@ export function Introduction() {
           <div>
             <p className="introduction-eyebrow"></p>
 
-            <h2 id="introduction-title">
-              Why
-              <br />
-              kailor
-            </h2>
+            <h2 id="introduction-title">About</h2>
 
             <div className="introduction-disciplines">
               <span>Technology consultancy</span>
@@ -137,6 +134,9 @@ export function Introduction() {
                   />
                 </span>
               ))}
+              <span className="introduction-avatar introduction-avatar--additional">
+                +{introductionAdditionalCount}
+              </span>
             </div>
 
             <p>

@@ -87,6 +87,7 @@
 .perspective-tile-reveal {
   min-width: 0;
   height: 100%;
+  container-type: inline-size;
 }
 
 .perspective-tile {
@@ -261,4 +262,10 @@
   .perspective-tile {
     transition: none;
   }
+}
+
+/* Keep editorial words prominent while fitting each existing card column. */
+.perspective-value {
+  font-size: clamp(38px, 18cqi, 80px);
+  letter-spacing: -0.065em;
 }

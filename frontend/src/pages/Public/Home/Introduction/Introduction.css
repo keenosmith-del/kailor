@@ -336,8 +336,12 @@
   }
 }
 
-/* A date stays literal and fits the supporting card without changing the count scale. */
-.introduction-stat--year .introduction-stat-value {
-  font-size: clamp(36px, 4vw, 72px);
-  letter-spacing: -0.06em;
+.introduction-avatar--additional {
+  display: grid;
+  place-items: center;
+  z-index: 7;
+  background: #eeeeee;
+  color: #1a1a1a;
+  font-size: 13px;
+  font-weight: 500;
 }

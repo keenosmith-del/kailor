@@ -11,18 +11,18 @@ export const sidebarPages = [
 export const links = sidebarPages.filter(([to]) => to !== null);
 export const showClientPerspectives = import.meta.env.DEV;
 export const sidebarSections = [
-  ["hero", "Back to the beginning"],
-  ["technologies", "Tools, platforms & expertise"],
-  ["introduction", "Our experience & thinking"],
-  ["services-overview", "Problems we help solve"],
-  ["conversation", "From challenge to solution"],
-  ["collaboration", "Inside your project workspace"],
+  ["hero", "Home"],
+  ["technologies", "Technology"],
+  ["introduction", "About"],
+  ["services-overview", "Services"],
+  ["conversation", "Conversation"],
+  ["collaboration", "Collaboration"],
   ["what-weve-built", "What we've built"],
   ...(showClientPerspectives
     ? [["client-feedback", "Client perspectives"]]
     : []),
-  ["perspective", "How we choose solutions"],
-  ["activity", "What we're building next"],
+  ["perspective", "Our approach"],
+  ["activity", "In motion"],
 ];
 export const publicPaths = [
   "/",

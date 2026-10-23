@@ -50,10 +50,10 @@ function ActivityPill({
   development: Development;
   index: number;
 }) {
-  // Observe a stationary grid slot. The latched entrance cannot be retriggered
-  // by the parent's scroll transform or by hovering the separate inner surface.
+  // Observe the stationary grid slot, independently of reveal and hover transforms.
+  // Re-entry can replay without moving the intersection target.
   const ref = useRef<HTMLDivElement>(null);
-  const entered = useInView(ref, { once: true, amount: 0.4 });
+  const entered = useInView(ref, { once: false, amount: 0.4 });
   const reduced = useReducedMotion();
   return (
     <div
@@ -70,7 +70,7 @@ function ActivityPill({
         }}
         transition={{
           duration: reduced ? 0 : 0.75,
-          delay: reduced ? 0 : index * 0.095,
+          delay: reduced || !entered ? 0 : index * 0.095,
           ease: [0.22, 1, 0.36, 1],
         }}
       >
@@ -124,20 +124,20 @@ export function Activity() {
       id="activity"
       aria-labelledby="activity-title"
     >
-      <motion.div
-        className="home-activity__inner"
-        style={{
-          opacity: reducedMotion ? 1 : opacity,
-          y: reducedMotion ? 0 : translateY,
-        }}
-      >
-        <div className="home-activity__intro">
+      <div className="home-activity__inner">
+        <motion.div
+          className="home-activity__intro"
+          style={{
+            opacity: reducedMotion ? 1 : opacity,
+            y: reducedMotion ? 0 : translateY,
+          }}
+        >
           <h2 id="activity-title">Always something in motion</h2>
           <p>
             New ideas, evolving tools and considered engineering. A glimpse of
             the work taking shape across kailor.
           </p>
-        </div>
+        </motion.div>
 
         <div
           className="home-activity__bubbles"
@@ -151,7 +151,7 @@ export function Activity() {
             />
           ))}
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
