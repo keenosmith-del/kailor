@@ -143,3 +143,9 @@ Canvas now presents visual solutions with centred details, editable requirements
 ## Discovery intelligence and solution reconciliation (requested iteration 014)
 
 Discovery now distinguishes online-presence requests from custom applications, respects exclusions and deferred features, asks relevant launch questions, and acknowledges saved assessments with the existing smiling mascot. Current solution refinements feed Analysis, Chat, reasoning exports and combined consultancy scope while historical reports remain immutable. See the [root-cause audit, behaviour, validation and limitations](docs/iterations/014-discovery-intelligence-and-solution-reconciliation.md). No additional migration is required beyond the existing iteration 018 migration.
+
+## Public website build
+
+`npm run build:public` creates the standalone company website in `frontend/dist-public`; `npm run preview:public` reviews it locally without the application backend. `netlify.toml` publishes only that directory. The existing `npm run dev` and `npm run build` commands continue to support the full application separately.
+
+See [the pre-deployment cleanup report](docs/deployment/PREDEPLOYMENT_CLEANUP.md) for asset removals, retained product features, verification and the current deployment boundary. Nothing is automatically committed, pushed or deployed by these build commands.

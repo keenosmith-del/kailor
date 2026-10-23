@@ -1,6 +1,5 @@
 .section-reveal,
-.section-reveal__scroll,
-.section-reveal__entrance {
+.section-reveal__scroll {
   position: relative;
   width: 100%;
 }
@@ -12,8 +11,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .section-reveal,
-  .section-reveal__scroll,
-  .section-reveal__entrance {
+  .section-reveal__scroll {
     opacity: 1;
     transition: none;
   }

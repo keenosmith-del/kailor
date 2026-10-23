@@ -42,18 +42,6 @@
 
 /* Circular heading punctuation */
 
-.public-site .perspective-dot {
-  display: inline-block;
-  width: 0.095em;
-  height: 0.095em;
-
-  margin-left: 0.018em;
-  vertical-align: 0.015em;
-
-  border-radius: 50%;
-  background: currentColor;
-}
-
 /* Descriptive copy */
 
 .perspective-description {

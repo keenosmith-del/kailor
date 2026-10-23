@@ -3,6 +3,8 @@ import { readFile, writeFile, mkdir, readdir, rm } from "node:fs/promises";
 import { resolve } from "node:path";
 process.env.NODE_ENV = "production";
 const root = resolve(import.meta.dirname, "../frontend");
+const publicOnly = process.env.KAILOR_PUBLIC_ONLY_BUILD === "true";
+const output = publicOnly ? "dist-public" : "dist";
 const routes = JSON.parse(
   await readFile(
     resolve(root, "src/components/public/PublicLayout/routes.json"),
@@ -11,8 +13,11 @@ const routes = JSON.parse(
 );
 const server = await createServer({
   root,
-  configFile: resolve(root, "vite.config.ts"),
-  mode: "production",
+  configFile: resolve(
+    root,
+    publicOnly ? "vite.public.config.ts" : "vite.config.ts",
+  ),
+  mode: publicOnly ? "public" : "production",
   server: { middlewareMode: true, hmr: false, ws: false },
   appType: "custom",
 });
@@ -24,9 +29,9 @@ async function clean(directory) {
       await rm(path);
   }
 }
-await clean(resolve(root, "dist"));
-const template = await readFile(resolve(root, "dist/index.html"), "utf8");
-const css = (await readdir(resolve(root, "dist/assets")))
+await clean(resolve(root, output));
+const template = await readFile(resolve(root, output, "index.html"), "utf8");
+const css = (await readdir(resolve(root, output, "assets")))
   .filter((file) =>
     /^(?:index|Home|PublicLayout|PageShell|Auth|ConversationModal|Contact|ContactForm|TryKailor|Simulation|Recommendation|SimulationClosing|Careers|ApplicationForm|CVAttachment|EnquiryComposer|HowItWorks|CommonQuestions|DiscoverySequence|SolutionDirection|ConsultancyProgress|ProcessClosing|BrandWordmark|ModalClose|WhatWeveBuilt|CapabilityDetail)-.*\.css$/.test(
       file,
@@ -40,7 +45,9 @@ const escape = (value) =>
     .replaceAll('"', "&quot;")
     .replaceAll("<", "&lt;");
 try {
-  const { render } = await server.ssrLoadModule("/src/prerender.tsx");
+  const { render } = await server.ssrLoadModule(
+    publicOnly ? "/src/prerender.public.tsx" : "/src/prerender.tsx",
+  );
   for (const [path, page] of Object.entries(routes)) {
     const url = "https://kailor.co.za" + path;
     const image = "https://kailor.co.za/social/kailor.png";
@@ -84,25 +91,48 @@ try {
       '<div id="root"></div>',
       `<div id="root">${body}</div>`,
     );
-    const directory = resolve(root, "dist", path.slice(1));
+    const directory = resolve(root, output, path.slice(1));
     await mkdir(directory, { recursive: true });
     await writeFile(resolve(directory, "index.html"), html);
   }
-  // Unknown/private fallback must never inherit homepage metadata or indexing.
-  const fallback = template
-    .replace(/<title>[^<]*<\/title>/, "<title>Workspace | kailor</title>")
-    .replace(
-      /<meta\s+(?:name|property)="(?:description|robots|og:[^"]+|twitter:[^"]+)"[^>]*>/g,
-      "",
-    )
-    .replace(/<link rel="canonical"[^>]*>/g, "")
-    .replace(
-      "</head>",
-      '<meta name="robots" content="noindex, nofollow"></head>',
-    );
-  await writeFile(resolve(root, "dist/spa.html"), fallback);
+  if (publicOnly) {
+    // A real 404, never a catch-all application shell or API proxy.
+    const body = render("/page-unavailable");
+    const fallback = template
+      .replace(
+        /<title>[^<]*<\/title>/,
+        "<title>Page unavailable | kailor</title>",
+      )
+      .replace(
+        /<meta\s+(?:name|property)="(?:description|robots|og:[^"]+|twitter:[^"]+)"[^>]*>/g,
+        "",
+      )
+      .replace(/<link rel="canonical"[^>]*>/g, "")
+      .replace(
+        "</head>",
+        '<meta name="robots" content="noindex, nofollow">' + css + "</head>",
+      )
+      .replace('<div id="root"></div>', `<div id="root">${body}</div>`);
+    await writeFile(resolve(root, output, "404.html"), fallback);
+  } else {
+    // Unknown/private fallback must never inherit homepage metadata or indexing.
+    const fallback = template
+      .replace(/<title>[^<]*<\/title>/, "<title>Workspace | kailor</title>")
+      .replace(
+        /<meta\s+(?:name|property)="(?:description|robots|og:[^"]+|twitter:[^"]+)"[^>]*>/g,
+        "",
+      )
+      .replace(/<link rel="canonical"[^>]*>/g, "")
+      .replace(
+        "</head>",
+        '<meta name="robots" content="noindex, nofollow"></head>',
+      );
+    await writeFile(resolve(root, output, "spa.html"), fallback);
+  }
   console.log(
-    `Prerendered ${Object.keys(routes).length} public/auth routes; private fallback is noindex.`,
+    publicOnly
+      ? `Prerendered ${Object.keys(routes).length} public routes; unavailable routes use a noindex static 404.`
+      : `Prerendered ${Object.keys(routes).length} public/auth routes; private fallback is noindex.`,
   );
 } finally {
   await server.close();

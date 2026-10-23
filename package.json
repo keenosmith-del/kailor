@@ -24,7 +24,10 @@
     "evaluate": "node --import tsx scripts/evaluate.ts",
     "evaluate:live": "node --import tsx scripts/evaluate-live.ts",
     "verify:launch": "node scripts/verify-launch.mjs",
-    "preview:launch": "node scripts/preview-launch.mjs"
+    "preview:launch": "node scripts/preview-launch.mjs",
+    "build:public": "node scripts/build-public.mjs",
+    "verify:public": "KAILOR_PUBLIC_ONLY_BUILD=true node scripts/verify-launch.mjs",
+    "preview:public": "node scripts/preview-public.mjs"
   },
   "devDependencies": {
     "@types/node": "24.10.1",

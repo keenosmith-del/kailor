@@ -1,7 +1,9 @@
-# Public website controlled launch review
+# Public website launch preparation
 
-The 19 October review has been superseded by the implemented [22 October controlled-launch readiness report](CONTROLLED_LAUNCH_READINESS.md).
+The public-only build is now `npm run build:public`, with output in `frontend/dist-public`. `netlify.toml` uses this command and directory. It must not publish `frontend/dist`, which remains the full application build for independent development.
 
-Registration now defaults closed; invite is genuinely invitation-only. Guest access defaults disabled in production. The production build prerenders public/auth routes and supplies a noindex private fallback. These source defaults do not override explicit values in a private deployment environment.
+See [the current cleanup and verification report](PREDEPLOYMENT_CLEANUP.md) for exact changes and retained product features. `npm run preview:public` provides a local static review without application API proxying; `npm run verify:public` validates the public artifact.
 
-See that report for actual checks, route/sidebar maps, motion/video lifecycle, assets, cookie/policy review, exact deployment commands, infrastructure blockers and decisions requiring owner approval. No live deployment has been performed.
+The prior [controlled-launch report](CONTROLLED_LAUNCH_READINESS.md) remains a historical account. Its older hero/cloud media and full-stack deployment instructions are superseded by the public-only build and cleanup report. Its synthetic testimonial gate is still enforced.
+
+Remote Netlify setup requires account authorisation. No project, repository connection, deployment, DNS cutover or HTTPS certificate has been claimed as completed. The latest instruction requires no automatic commit, push or deployment. Domain activation remains subject to a separately reviewed public deployment and owner approval.

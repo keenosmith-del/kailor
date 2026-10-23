@@ -81,30 +81,6 @@
 .public-section {
   padding: 110px var(--pub-space);
 }
-.section-prelude {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 24px;
-  font-size: 12px;
-  margin-bottom: 45px;
-  color: #626262;
-}
-.section-prelude span + span {
-  text-align: right;
-}
-.pub-text-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 15px;
-  min-height: 44px;
-  font-size: 13px;
-  border-bottom: 1px solid #bfbfbf;
-  padding: 8px 0;
-}
-.pub-text-link:hover {
-  color: #777;
-}
 .public-page-hero {
   padding: 180px var(--pub-space) 80px;
 }
@@ -159,14 +135,6 @@
     margin-bottom: 38px;
     font-size: clamp(39px, 8vw, 61px);
   }
-  .section-prelude {
-    margin-bottom: 32px;
-    align-items: flex-start;
-    font-size: 11px;
-  }
-  .section-prelude span + span {
-    max-width: 44%;
-  }
   .public-page-hero {
     padding-top: 145px;
     padding-bottom: 55px;
@@ -213,14 +181,4 @@
 }
 .public-site :is(h1, h2, h3) > span {
   color: inherit !important;
-}
-.pub-pill-outline {
-  background: transparent;
-  border-color: #ffffff50;
-  color: var(--white);
-  min-height: 44px;
-  font-size: 12px;
-}
-.pub-pill-outline:hover {
-  background: #ffffff15;
 }

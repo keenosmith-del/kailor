@@ -7,8 +7,14 @@ export function applyPageMetadata(path: string) {
       { title: string; description: string; index: boolean }
     >
   )[path] || {
-    title: "Workspace | kailor",
-    description: "Private kailor workspace.",
+    title:
+      import.meta.env.MODE === "public"
+        ? "Page unavailable | kailor"
+        : "Workspace | kailor",
+    description:
+      import.meta.env.MODE === "public"
+        ? "This page is not available on the kailor public website."
+        : "Private kailor workspace.",
     index: false,
   };
   document.title = page.title;
@@ -38,6 +44,10 @@ export function applyPageMetadata(path: string) {
       document.head.append(element);
     }
     element.content = content;
+  }
+  if (import.meta.env.MODE === "public" && !(path in routes)) {
+    document.head.querySelector('link[rel="canonical"]')?.remove();
+    return;
   }
   let canonical = document.head.querySelector<HTMLLinkElement>(
     'link[rel="canonical"]',

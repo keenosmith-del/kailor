@@ -214,10 +214,6 @@
     margin-top: 21px;
     font-size: 15px;
   }
-
-  .client-notes-tail {
-    left: 27px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

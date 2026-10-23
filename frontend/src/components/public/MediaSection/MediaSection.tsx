@@ -1,7 +1,14 @@
 import "./MediaSection.css";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useReducedMotion } from "motion/react";
-import type { PublicMedia } from "../../../pages/Public/media";
+// Kept with the tested reusable component; the retired hero configuration is gone.
+export type PublicMedia = {
+  desktopMp4?: string;
+  mobileMp4?: string;
+  poster?: string;
+  image?: string;
+  description?: string;
+};
 export function MediaSection({
   media,
   background = false,

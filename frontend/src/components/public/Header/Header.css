@@ -208,16 +208,6 @@
     visibility 0s;
 }
 
-.public-site .public-mobile-nav__title {
-  margin: 0 0 30px;
-
-  color: #1a1a1a;
-  font-size: 24px;
-  font-weight: 450;
-  letter-spacing: -0.06em;
-  line-height: 1.15;
-}
-
 /* Sidebar groups */
 
 .public-mobile-nav__group {
@@ -277,10 +267,6 @@
 .public-site .public-mobile-nav__group a[aria-current="page"] {
   font-weight: 550;
   color: #1a1a1a;
-}
-
-.public-site .public-mobile-nav__upcoming > span {
-  color: #929292;
 }
 
 /* Sidebar contact action */

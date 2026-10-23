@@ -14,39 +14,6 @@
 
 /* Playback control */
 
-.kailor-chat__controls {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 2;
-}
-
-.kailor-chat__control {
-  display: grid;
-  place-items: center;
-
-  width: 44px;
-  height: 44px;
-
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: #1a1a1a;
-
-  cursor: pointer;
-
-  transition:
-    transform 0.2s ease,
-    color 0.2s ease;
-}
-
-.kailor-chat__control:hover {
-  background: transparent;
-  color: #080808;
-  transform: scale(1.07);
-}
-
 /* Message layout */
 
 .kailor-chat__thread {
@@ -275,9 +242,5 @@
   .kailor-chat__message,
   .kailor-chat__thinking-bubble span {
     animation: none;
-  }
-
-  .kailor-chat__control {
-    transition: none;
   }
 }

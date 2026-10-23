@@ -32,16 +32,6 @@
   color: #1a1a1a;
 }
 
-.home-activity__dot {
-  display: inline-block;
-  width: 0.09em;
-  height: 0.09em;
-  margin-left: 0.025em;
-  vertical-align: 0.01em;
-  border-radius: 50%;
-  background: currentColor;
-}
-
 .public-site .home-activity__intro p {
   max-width: 335px;
   margin: 0 0 7px;

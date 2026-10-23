@@ -2,7 +2,11 @@ import assert from "node:assert/strict";
 import { readFile, stat, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { JSDOM } from "jsdom";
-const root = resolve(import.meta.dirname, "../frontend/dist");
+const publicOnly = process.env.KAILOR_PUBLIC_ONLY_BUILD === "true";
+const root = resolve(
+  import.meta.dirname,
+  publicOnly ? "../frontend/dist-public" : "../frontend/dist",
+);
 const routes = JSON.parse(
   await readFile(
     resolve(
@@ -135,13 +139,13 @@ for (const [path, page] of Object.entries(routes)) {
       Array.from(document.querySelectorAll(".introduction-stat-value")).map(
         (e) => e.getAttribute("aria-label"),
       ),
-      ["6+", "8+", "3+"],
+      ["6+", "18+", "30+"],
     );
     assert.deepEqual(
       Array.from(document.querySelectorAll(".perspective-value")).map((e) =>
         e.textContent.trim(),
       ),
-      ["Simplify", "Integrate", "Build", "Evolve"],
+      ["12+", "38%", "94%", "4.8/5"],
     );
     for (const a of document.querySelectorAll('a[href^="/#"]'))
       assert.ok(
@@ -154,9 +158,44 @@ for (const [path, page] of Object.entries(routes)) {
     assert.ok(routes[url.pathname], `Unpublished destination ${url.pathname}`);
   }
 }
-const fallback = await readFile(resolve(root, "spa.html"), "utf8");
+const fallback = await readFile(
+  resolve(root, publicOnly ? "404.html" : "spa.html"),
+  "utf8",
+);
 assert.ok(fallback.includes("noindex, nofollow"));
 assert.ok(!fallback.includes('rel="canonical"'));
+if (publicOnly) {
+  const manifest = JSON.parse(
+    await readFile(resolve(root, "public-build-manifest.json"), "utf8"),
+  );
+  assert.equal(manifest.publicOnly, true);
+  assert.ok(
+    !manifest.modules.some((path) =>
+      /^src\/(?:App\.tsx|pages\/(?:Auth|Application|Workspace|Discovery|Assessment|Solutions|Plans)\/|services\/api)/.test(
+        path,
+      ),
+    ),
+  );
+  assert.ok(
+    !manifest.assets.some(
+      ({ path }) =>
+        /\.(?:mp4|webm|md|txt)$/i.test(path) && path !== "robots.txt",
+    ),
+  );
+  for (const file of (await readdir(resolve(root, "assets"))).filter((file) =>
+    file.endsWith(".js"),
+  )) {
+    const source = await readFile(resolve(root, "assets", file), "utf8");
+    assert.ok(
+      !/fetch\(["']\/api\/|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(
+        source,
+      ),
+      "Application API dependency in public runtime",
+    );
+  }
+  assert.ok(!fallback.includes("We thought we needed another platform"));
+}
+
 assert.equal(
   (await readFile(resolve(root, "sitemap.xml"), "utf8")).match(/<loc>/g).length,
   1,

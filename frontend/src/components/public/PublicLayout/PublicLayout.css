@@ -18,9 +18,6 @@ html.no-js .public-site [style] {
   opacity: 1 !important;
   transform: none !important;
 }
-html.no-js .public-site .service-art__video {
-  display: none;
-}
 @media (prefers-reduced-motion: reduce) {
   .public-site [style] {
     opacity: 1 !important;

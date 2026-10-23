@@ -8,6 +8,7 @@ node_modules/
 
 # Build outputs
 dist/
+dist-public/
 build/
 coverage/
 
@@ -31,3 +32,6 @@ backend/uploads/
 
 # Owner-supplied inspiration: local review only, never production assets.
 design-references/
+
+# Local Netlify linkage and CLI state
+.netlify/

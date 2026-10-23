@@ -1,8 +1,0 @@
-.human-ai {
-  display: grid;
-  grid-template-columns: 1fr 1.15fr;
-  gap: 12%;
-}
-.human-ai p {
-  color: var(--text-secondary);
-}

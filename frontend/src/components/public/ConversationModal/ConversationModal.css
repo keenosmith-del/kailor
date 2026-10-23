@@ -337,10 +337,6 @@
   .kailor-conversation-dialog textarea {
     min-height: 82px;
   }
-
-  .kailor-conversation-footer {
-    margin-top: 16px;
-  }
 }
 
 /* Mobile */
@@ -410,10 +406,6 @@
     min-height: 90px;
   }
 
-  .kailor-conversation-footer {
-    margin-top: 18px;
-  }
-
   .kailor-conversation-toast-position {
     top: 82px;
   }
@@ -426,13 +418,11 @@
 
 @media (prefers-reduced-motion: reduce) {
   .kailor-conversation-close,
-  .kailor-conversation-submit,
   .kailor-conversation-field label {
     transition: none;
   }
 
-  .kailor-conversation-close:hover,
-  .kailor-conversation-submit:hover {
+  .kailor-conversation-close:hover {
     transform: none;
   }
 }

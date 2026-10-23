@@ -32,7 +32,7 @@ This section supersedes the historical architecture/composition notes below. The
 
 Public routes are Home, How it works, Try kailor, Contact, Careers and Common questions; Pricing and Timeline are retired, with Timeline retained in source; and initial Privacy, Terms and Cookie information pages. Only Home is indexable. Services/About/Work remain in source and are not published routes. Every linked public/auth subpage shares `PageBack`; direct entry falls back to Home without following external history.
 
-Homepage uses Hero, Marquee, Introduction, StackedPanels (outside SectionReveal to preserve sticky positioning), Conversation, Collaboration, development-only ClientPerspectives, Perspective and Activity. SelectedWork/Consultants remain uncomposed. `ClientPerspectives/` is the sole testimonial implementation; demo material is hard-gated out of production. Hero request bubbles use their restored appearing/disappearing cycle. Active reveal children repeat, timed visuals pause offscreen/hidden, video readiness recovers on route return, and reduced motion remains static.
+Homepage uses Hero, Marquee, Introduction, StackedPanels (outside SectionReveal to preserve sticky positioning), Conversation, Collaboration, development-only ClientPerspectives, Perspective and Activity. The abandoned SelectedWork and Consultants implementations have been removed. `ClientPerspectives/` is the sole testimonial implementation; demo material is hard-gated out of production. Hero request bubbles use their restored appearing/disappearing cycle. Active reveal children repeat, timed visuals pause offscreen/hidden, and reduced motion remains static. The approved homepage has no video elements.
 
 `components/public/navigation.ts` is the shared sidebar/footer publication inventory. `PublicLayout/routes.json` drives route metadata and build-time prerendering. `CookiePreferences/`, `PageBack/` and `PageShell/` have colocated TSX/CSS. Auth remains one shared shell/hook with monochrome form styling and content transitions. Unfinished page sections retain source/CSS in place.
 
@@ -58,7 +58,7 @@ Supporting components in `frontend/src/components/public/`:
 - `Visuals.tsx`: original CSS sculptures, SVG dimensional graph and process timeline.
 - `FeatureCarousel.tsx`: horizontal concept gallery, previous/next controls, touch scrolling, arrow-key controls and native detail disclosures.
 - `Engagements.tsx`: three honest enquiry options shared with Pricing.
-- `MediaSection.tsx`: configured video/image/poster handling and designed error/empty fallback.
+- `MediaSection.tsx`: tested reusable video/image/poster helper. Its type is colocated with the component; the homepage does not use it.
 - `Public.css`: scoped layout, controls and component styling. Heavy homepage composition rules are in `Home.css` and do not style the authenticated workspace.
 
 `Intro` is retired and retained only as a compatibility re-export. Its wheel/touch interception and fullscreen scene code are gone. Native page scrolling is used throughout.
@@ -77,7 +77,7 @@ Conversation advances every 2.8 seconds only while in view and unpaused. It fini
 
 ## Media
 
-See `frontend/public/media/README.md` for exact examples and paths. The central configuration is `frontend/src/pages/Public/media.ts`; meaningful media directories are `hero/`, `conversation/`, `work/`. Empty paths deliberately render original fallbacks, not broken media elements. Desktop/mobile MP4, poster, GIF/static image and accessible description fields are supported. Watched recordings retain native controls. Background playback pauses offscreen and for reduced motion. Always supply static posters for animated media and review final crops, contrast and transcripts/captions when real recordings arrive.
+The retired hero video, media configuration and empty media slots have been removed. The approved hero uses its mascot and animated request bubbles. `MediaSection` is retained for its existing tests; its media type is colocated with the helper.
 
 ## Monochrome baseline
 
