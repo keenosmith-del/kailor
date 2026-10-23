@@ -58,5 +58,10 @@
     "title": "Common questions | kailor",
     "description": "Answers to common questions about kailor's technology consultancy, software engineering, AI, automation and project process.",
     "index": false
+  },
+  "/try-kailor": {
+    "title": "Try kailor | Interactive preview",
+    "description": "Explore a short interactive preview of kailor's discovery process and see how different business challenges can lead to practical technology directions.",
+    "index": false
   }
 }

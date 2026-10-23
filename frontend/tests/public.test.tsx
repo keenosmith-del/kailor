@@ -129,6 +129,7 @@ it("provides the exact Pages list, genuinely disabled items and collapsible iner
   ).toEqual([
     "Home",
     "How it works",
+    "Try kailor",
     "Our Work",
     "Our Team",
     "Timeline",
@@ -554,4 +555,19 @@ it("keeps the homepage history action and Timeline entry links, with shared clos
   expect(
     document.querySelector(".timeline-closing-actions a")?.getAttribute("href"),
   ).toBe("/how-it-works");
+});
+
+it("places the new entry links around the existing homepage visuals without wrapping the sticky stack", () => {
+  site();
+  const stack = document.querySelector(".stacked-panels")!;
+  const action = document.querySelector(".services-questions-action")!;
+  expect(stack.nextElementSibling).toBe(action);
+  expect(action.querySelector("a")?.getAttribute("href")).toBe("/questions");
+  expect(stack.querySelector(".services-questions-action")).toBeNull();
+  expect(stack.querySelectorAll(".service-panel")).toHaveLength(4);
+  expect(
+    document
+      .querySelector(".conversation-intro .conversation-try-action")
+      ?.getAttribute("href"),
+  ).toBe("/try-kailor");
 });

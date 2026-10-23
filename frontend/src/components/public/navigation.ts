@@ -2,6 +2,7 @@
 export const sidebarPages = [
   ["/", "Home"],
   ["/how-it-works", "How it works"],
+  ["/try-kailor", "Try kailor"],
   [null, "Our Work"],
   [null, "Our Team"],
   ["/timeline", "Timeline"],
@@ -27,6 +28,7 @@ export const sidebarSections = [
 export const publicPaths = [
   "/",
   "/how-it-works",
+  "/try-kailor",
   "/timeline",
   "/pricing",
   "/questions",

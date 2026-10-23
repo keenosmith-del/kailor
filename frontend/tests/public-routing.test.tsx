@@ -34,18 +34,21 @@ afterEach(() => {
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
-it("loads the actual lazy public route without an account API request or app footer", async () => {
-  render(
-    <MemoryRouter initialEntries={["/contact"]}>
-      <App />
-    </MemoryRouter>,
-  );
-  expect(await screen.findByRole("heading", { level: 1 })).toBeTruthy();
-  expect(document.querySelector(".public-site")).toBeTruthy();
-  expect(document.querySelector(".application-workspace")).toBeNull();
-  expect(document.querySelectorAll("footer").length).toBe(1);
-  expect(api).not.toHaveBeenCalled();
-});
+it.each(["/contact", "/try-kailor"])(
+  "loads lazy %s without an account API request or app footer",
+  async (path) => {
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(await screen.findByRole("heading", { level: 1 })).toBeTruthy();
+    expect(document.querySelector(".public-site")).toBeTruthy();
+    expect(document.querySelector(".application-workspace")).toBeNull();
+    expect(document.querySelectorAll("footer").length).toBe(1);
+    expect(api).not.toHaveBeenCalled();
+  },
+);
 it("preserves protected workspace access and sign-in return path", async () => {
   render(
     <MemoryRouter initialEntries={["/app/chat"]}>

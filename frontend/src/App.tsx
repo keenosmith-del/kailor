@@ -34,6 +34,7 @@ const PublicLayout = lazy(() =>
   })),
 );
 const Home = lazy(() => import("./pages/Public/Home/Home"));
+const TryKailor = lazy(() => import("./pages/Public/TryKailor/TryKailor"));
 const HowItWorks = lazy(() => import("./pages/Public/HowItWorks/HowItWorks"));
 const Pricing = lazy(() => import("./pages/Public/Pricing/Pricing"));
 const Contact = lazy(() => import("./pages/Public/Contact/Contact"));
@@ -93,6 +94,7 @@ export function App() {
             <Route element={<PublicLayout />}>
               <Route index element={<Home />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/try-kailor" element={<TryKailor />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/timeline" element={<Timeline />} />
               <Route path="/questions" element={<CommonQuestions />} />

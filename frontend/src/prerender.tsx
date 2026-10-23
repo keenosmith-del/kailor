@@ -1,3 +1,4 @@
+import TryKailor from "./pages/Public/TryKailor/TryKailor";
 import CommonQuestions from "./pages/Public/Questions/CommonQuestions";
 import { renderToString } from "react-dom/server";
 import { MemoryRouter, Route, Routes } from "react-router";
@@ -16,6 +17,7 @@ import { Auth } from "./pages/Auth/Auth";
 const pages = {
   "/": Home,
   "/how-it-works": HowItWorks,
+  "/try-kailor": TryKailor,
   "/timeline": Timeline,
   "/pricing": Pricing,
   "/careers": Careers,

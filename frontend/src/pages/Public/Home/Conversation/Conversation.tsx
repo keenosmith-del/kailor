@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { ConversationVisual } from "../../../../components/public/ConversationVisual/ConversationVisual";
 import "./Conversation.css";
 
@@ -19,6 +20,12 @@ export function Conversation() {
           help uncover the real challenge, understand your existing processes
           and explore a practical way forward.
         </p>
+        <Link
+          className="pub-pill pub-pill-dark conversation-try-action"
+          to="/try-kailor"
+        >
+          Try it out
+        </Link>
       </div>
 
       <ConversationVisual />

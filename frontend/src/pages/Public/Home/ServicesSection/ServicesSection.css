@@ -10,3 +10,19 @@
     padding-bottom: 70px;
   }
 }
+
+.services-questions-action {
+  text-align: center;
+  padding: 44px 24px 0;
+}
+.services-questions-action .pub-pill {
+  border: 0;
+  font-size: 12px;
+  min-height: 46px;
+  padding: 13px 23px;
+}
+@media (max-width: 760px) {
+  .services-questions-action {
+    padding-top: 32px;
+  }
+}

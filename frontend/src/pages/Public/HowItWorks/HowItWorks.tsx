@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { PageBack } from "../../../components/public/PageBack/PageBack";
 import { ProcessReveal } from "./ProcessReveal";
 import { DiscoverySequence } from "./DiscoverySequence/DiscoverySequence";
@@ -25,6 +26,14 @@ export default function HowItWorks() {
               of the challenge, explore what's possible and work out what
               deserves attention
             </p>
+          </ProcessReveal>
+          <ProcessReveal>
+            <Link
+              className="pub-pill pub-pill-dark hiw-try-action"
+              to="/try-kailor"
+            >
+              Try it out
+            </Link>
           </ProcessReveal>
         </div>
         <ProcessReveal className="hiw-discovery-reveal">

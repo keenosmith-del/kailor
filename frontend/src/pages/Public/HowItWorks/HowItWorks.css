@@ -117,3 +117,11 @@
   justify-self: center;
   min-width: 0;
 }
+
+.hiw-opening-copy .hiw-try-action {
+  margin-top: 26px;
+  border: 0;
+  font-size: 12px;
+  min-height: 46px;
+  padding: 13px 23px;
+}

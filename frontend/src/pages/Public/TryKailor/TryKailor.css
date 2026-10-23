@@ -1,0 +1,108 @@
+.try-kailor-page {
+  padding: 100px var(--pub-space) 85px;
+  background: #f7f7f7;
+}
+.try-opening {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: start;
+  gap: clamp(45px, 6vw, 95px);
+  max-width: 1280px;
+  margin: 55px auto 0;
+}
+.try-editorial {
+  padding-top: 22px;
+  min-width: 0;
+}
+.public-site .try-editorial h1 {
+  margin: 0 0 30px;
+  font-size: clamp(58px, 6.3vw, 94px);
+  font-weight: 450;
+  letter-spacing: -0.065em;
+  line-height: 1.02;
+  max-width: 560px;
+}
+.public-site .try-editorial p {
+  max-width: 390px;
+  margin: 0;
+  font-size: 15px;
+  color: #656565;
+  line-height: 1.8;
+}
+.try-editorial-action {
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.try-editorial-action .pub-pill {
+  border: 0;
+  font-size: 12px;
+  padding: 13px 23px;
+  min-height: 46px;
+  background: #222526;
+  color: white;
+}
+.try-editorial-action .pub-pill:hover {
+  background: #353a3e;
+}
+.try-editorial-action > span {
+  font-size: 10px;
+  color: #858585;
+}
+.public-site .try-editorial .try-transparency {
+  margin-top: 22px;
+  font-size: 11px;
+  max-width: 330px;
+  color: #858585;
+  line-height: 1.75;
+}
+.public-site .try-kailor-page button:focus-visible,
+.public-site .try-kailor-page a:focus-visible {
+  outline: 1px solid #656565;
+  outline-offset: 4px;
+}
+.try-noscript {
+  font-size: 12px;
+  padding-top: 30px;
+  color: #656565;
+}
+@media (max-width: 1050px) {
+  .try-opening {
+    gap: 32px;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+  .public-site .try-editorial h1 {
+    font-size: 66px;
+  }
+}
+@media (max-width: 800px) {
+  .try-kailor-page {
+    padding: 100px 24px 65px;
+  }
+  .try-opening {
+    grid-template-columns: 1fr;
+    max-width: 610px;
+    gap: 36px;
+    margin-top: 40px;
+  }
+  .try-editorial {
+    padding-top: 0;
+  }
+  .public-site .try-editorial h1 {
+    font-size: clamp(54px, 9vw, 76px);
+    max-width: 560px;
+  }
+  .public-site .try-editorial p {
+    max-width: 470px;
+  }
+}
+@media (max-width: 380px) {
+  .try-kailor-page {
+    padding-inline: 20px;
+  }
+  .public-site .try-editorial h1 {
+    font-size: 52px;
+  }
+}

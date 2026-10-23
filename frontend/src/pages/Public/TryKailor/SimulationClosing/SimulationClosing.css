@@ -1,0 +1,65 @@
+.try-closing {
+  padding: 32px 8px 0;
+}
+.public-site .try-closing h2 {
+  margin: 0 0 13px;
+  font-size: 29px;
+  font-weight: 450;
+  letter-spacing: -0.045em;
+  line-height: 1.12;
+}
+.public-site .try-closing p {
+  max-width: 460px;
+  margin: 0;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.75;
+}
+.try-closing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 22px 0 16px;
+}
+.try-closing-actions .pub-pill {
+  border: 0;
+  background: #fff;
+  font-size: 12px;
+  min-height: 45px;
+  padding: 13px 22px;
+}
+.try-closing-actions .pub-pill-dark {
+  background: #222526;
+}
+.try-closing-actions .pub-pill-dark:hover {
+  background: #353a3e;
+}
+.public-site .try-closing .try-account-note {
+  font-size: 10px;
+  line-height: 1.7;
+  color: #858585;
+}
+.try-closing-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin-top: 12px;
+}
+.try-kailor-page .try-closing-secondary button {
+  min-height: 44px;
+  padding: 0;
+  font-size: 11px;
+  color: #656565;
+  background: transparent;
+}
+.try-kailor-page .try-closing-secondary button:hover {
+  color: #222526;
+}
+@media (max-width: 380px) {
+  .public-site .try-closing h2 {
+    font-size: 26px;
+  }
+  .try-closing {
+    padding-inline: 0;
+  }
+}

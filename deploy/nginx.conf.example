@@ -5,7 +5,7 @@ map $uri $kailor_cache {
     ~^/assets/ "public, max-age=31536000, immutable";
     ~^/api/ "no-store";
     ~\.html$ "no-cache";
-    ~^/(?:$|how-it-works/?$|timeline/?$|pricing/?$|careers/?$|contact/?$|privacy/?$|terms/?$|cookies/?$|sign-in/?$|create-account/?$) "no-cache";
+    ~^/(?:$|how-it-works/?$|try-kailor/?$|timeline/?$|pricing/?$|careers/?$|contact/?$|privacy/?$|terms/?$|cookies/?$|sign-in/?$|create-account/?$) "no-cache";
 }
 server {
     listen 80;

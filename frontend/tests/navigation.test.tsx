@@ -188,8 +188,10 @@ it("starts collapsed, expands projects independently, selects the correct conver
       sessionId: "session-b",
     }),
   );
-  expect(screen.getByLabelText("Location").textContent).toBe(
-    "/preview/session-b/chat",
+  await waitFor(() =>
+    expect(screen.getByLabelText("Location").textContent).toBe(
+      "/preview/session-b/chat",
+    ),
   );
   fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
   fireEvent.click(
