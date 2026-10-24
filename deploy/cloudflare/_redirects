@@ -1,0 +1,8 @@
+# Cloudflare serves the top-level 404.html for unknown URLs. Do not add an SPA
+# catch-all or an unsupported Netlify-style 404 rewrite here.
+/faqs /questions 301
+/faqs/ /questions 301
+/timeline / 301
+/timeline/ / 301
+/pricing / 301
+/pricing/ / 301

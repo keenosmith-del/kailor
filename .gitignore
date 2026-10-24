@@ -35,3 +35,6 @@ design-references/
 
 # Local Netlify linkage and CLI state
 .netlify/
+
+# Local Cloudflare CLI state
+.wrangler/

@@ -18,6 +18,7 @@ for (const [command, args] of [
     ],
   ],
   ["node", ["scripts/prerender-public.mjs"]],
+  ["node", ["scripts/prepare-pages.mjs"]],
   ["node", ["scripts/verify-launch.mjs"]],
 ]) {
   const result = spawnSync(command, args, { env, stdio: "inherit" });

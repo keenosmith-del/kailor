@@ -165,6 +165,23 @@ const fallback = await readFile(
 assert.ok(fallback.includes("noindex, nofollow"));
 assert.ok(!fallback.includes('rel="canonical"'));
 if (publicOnly) {
+  const publishedFiles = await readdir(root);
+  assert.ok(!publishedFiles.includes("_worker.js"));
+  assert.ok(!publishedFiles.includes("functions"));
+  const headers = await readFile(resolve(root, "_headers"), "utf8");
+  assert.ok(headers.includes("X-Content-Type-Options: nosniff"));
+  assert.ok(headers.includes("https://:project.pages.dev/*"));
+  assert.ok(
+    headers.includes("Cache-Control: public, max-age=31536000, immutable"),
+  );
+  const redirects = await readFile(resolve(root, "_redirects"), "utf8");
+  for (const line of redirects
+    .split("\n")
+    .filter((line) => line.trim() && !line.startsWith("#"))) {
+    const [from, to, status] = line.trim().split(/\s+/);
+    assert.ok(from.startsWith("/") && to.startsWith("/"));
+    assert.ok(["301", "302", "303", "307", "308"].includes(status));
+  }
   const manifest = JSON.parse(
     await readFile(resolve(root, "public-build-manifest.json"), "utf8"),
   );
