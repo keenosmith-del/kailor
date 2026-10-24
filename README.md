@@ -146,6 +146,6 @@ Discovery now distinguishes online-presence requests from custom applications, r
 
 ## Public website build
 
-`npm run build:public` creates the standalone company website in `frontend/dist-public`; `npm run preview:public` reviews it locally without the application backend. `netlify.toml` publishes only that directory. The existing `npm run dev` and `npm run build` commands continue to support the full application separately.
+`npm run build:public` creates the standalone company website in `frontend/dist-public`; `npm run preview:public` reviews it locally without the application backend. Cloudflare Pages publishes only that directory through native GitHub integration. See [the deployment report](docs/deployment/PUBLIC_WEBSITE_LAUNCH.md). The existing `npm run dev` and `npm run build` commands continue to support the full application separately.
 
 See [the pre-deployment cleanup report](docs/deployment/PREDEPLOYMENT_CLEANUP.md) for asset removals, retained product features, verification and the current deployment boundary. Nothing is automatically committed, pushed or deployed by these build commands.

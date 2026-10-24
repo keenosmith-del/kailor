@@ -6,7 +6,7 @@ The public website uses `components/public/PublicLayout`, the shared navigation 
 
 - `npm run dev` keeps the existing full-stack application development environment.
 - `npm run build` continues to build the application, backend and public site together for local application review.
-- `npm run build:public` creates `frontend/dist-public` from `main.public.tsx` and `PublicWebsite.tsx`. Its build boundary rejects application runtime modules and copies only referenced public assets. Netlify publishes this directory exclusively.
+- `npm run build:public` creates `frontend/dist-public` from `main.public.tsx` and `PublicWebsite.tsx`. Its build boundary rejects application runtime modules and copies only referenced public assets. Cloudflare Pages publishes this directory exclusively through native GitHub integration; see [deployment configuration](deployment/PUBLIC_WEBSITE_LAUNCH.md).
 - `npm run preview:public` runs a static local review server without an API proxy.
 - `npm run verify:public` checks prerendering, local asset references, approved statistics, production gates, metadata, links and the module boundary.
 
