@@ -24,9 +24,9 @@ No apex AAAA, CAA, DS or DNSKEY answers were observed. The published DKIM select
 
 ## Pending zone preparation
 
-Wrangler OAuth has zone read access only. Obtain the complete current provider zone export and reconcile all records before changing delegation. Preserve all MX/TXT records above, including the full DKIM public key, plus any additional subdomains, service and verification records in that export. Mail and TXT records must remain DNS-only. Do not proxy mail hostnames.
+The owner added the Cloudflare zone during setup. Verified zone ID: `dc881c3b3913a810e193edbd09c84d7a`, status `pending`; assigned nameservers: `gemma.ns.cloudflare.com`, `sevki.ns.cloudflare.com`. These are future delegation destinations, not an instruction to change them now. Wrangler OAuth has zone read access only; DNS-record listing returns HTTP 403. Obtain the complete current provider zone export and reconcile all records before changing delegation. Preserve all MX/TXT records above, including the full DKIM public key, plus any additional subdomains, service and verification records in that export. Mail and TXT records must remain DNS-only. Do not proxy mail hostnames.
 
-Create/reuse the Cloudflare Free zone `kailor.co.za` in account `f81e057fd638ae3e93a1aa192f7a49dc`, without changing registrar nameservers. Keep existing website records during preparation. Cloudflare assigns two nameservers when the zone is created; their exact values cannot be known before creation. Never substitute guessed nameservers.
+The pending zone is in account `f81e057fd638ae3e93a1aa192f7a49dc`. Keep the current registrar delegation and existing website records during preparation. Zone records, plan, automatic import completeness and pending redirect settings still need inspection through an authorised DNS interface. The Codex browser panel requires its own Cloudflare sign-in before that inspection can continue.
 
 ## After preview verification and explicit activation approval
 
@@ -36,7 +36,7 @@ Create/reuse the Cloudflare Free zone `kailor.co.za` in account `f81e057fd638ae3
 4. Reconcile the complete zone and verify every Zoho MX, SPF, DKIM, DMARC and verification record again. Change the four current registrar nameservers only to the two exact Cloudflare-assigned nameservers. No such change is authorised yet.
 5. Verify nameserver propagation, apex HTTPS, www path/query redirects, canonical metadata, and Zoho mail delivery/authentication. Enable DNSSEC only through the appropriate new Cloudflare/registrar DS flow after delegation is stable.
 
-The Pages preview remains available independently of these steps. No custom domain, certificate issuance for that domain, redirect rule, zone or nameserver cutover is claimed as completed in this document.
+The Pages preview remains available independently of these steps. The zone exists in pending state. No custom domain attachment, certificate issuance for that domain, redirect rule or nameserver cutover is claimed as completed in this document.
 
 ## Rollback
 
