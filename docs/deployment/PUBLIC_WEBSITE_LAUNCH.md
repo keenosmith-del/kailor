@@ -1,6 +1,6 @@
 # Cloudflare Pages public website
 
-Latest authorised cutover attempt: see [production cutover status](PRODUCTION_CUTOVER_STATUS.md). The owner reports the registrar change and a successful EmailJS test on the Pages hostname; registry delegation and Cloudflare activation were still pending at the latest check.
+**Production is live at https://kailor.co.za.** See [the completed cutover report](PRODUCTION_CUTOVER_STATUS.md) for current domain, certificate, redirect, EmailJS and isolation verification.
 
 The public company website deploys independently from the application. This supersedes earlier Netlify preparation. The cleanup and controlled-launch reports remain historical records; their older hosting instructions do not configure this deployment.
 
@@ -31,11 +31,11 @@ The build prerenders 11 public routes, preserves approved metadata and canonical
 
 ## Domain and mail preservation
 
-The production domain is **not attached or activated**. No registrar, nameserver, existing DNS, ownership or email settings have been changed. The owner added a pending Cloudflare zone during setup; assigned nameservers are `gemma.ns.cloudflare.com` and `sevki.ns.cloudflare.com`. Wrangler OAuth has `zone:read`, which cannot list/edit DNS records. The signed-in dashboard verified all nine imported records against the known public inventory, including all Zoho records; no DNS record edits were needed. A path/query-preserving www-to-apex 301 redirect is saved as a disabled draft, and Always Use HTTPS is enabled for the pending zone. Universal SSL is enabled but no certificate is issued yet. The owner explicitly approved TLS 1.2 minimum and Full (strict), which are now configured. DNSSEC remains disabled until the separate registrar signing/delegation flow is approved. A complete DNS-provider export is required before cutover because public queries cannot enumerate all unrelated records.
+The domain is now associated with the existing Pages project through Cloudflare's supported Custom domains flow. The custom-domain row is Active with SSL enabled. The provider replaced only the legacy apex A with proxied CNAME `kailor.pages.dev`; the zone still has nine records. The proxied www CNAME to the apex and all three Zoho MX/four TXT records are preserved. The saved www 301 rule is enabled, with live path/query preservation verified after successful apex HTTPS validation. Full (strict), minimum TLS 1.2 and HTTPS enforcement remain approved and unchanged.
 
-Final pre-cutover verification on 24 October 2026 reconfirmed the remote route/asset/SEO checks and EmailJS identifiers in the actual deployed JavaScript. Real enquiry delivery and allowed-origin settings are still unverified. The Pages custom-domain flow was initiated for `kailor.co.za`, but its **Transfer DNS management** gate prevents apex association while the zone is pending. No custom domain was added. Immediately after the zone becomes Active, repeat Pages → kailor → Custom domains → Set up a custom domain → `kailor.co.za` → Continue and complete the provider's DNS confirmation, replacing only the legacy apex A with the Pages CNAME. Wait for Pages association and certificate Active; DNS alone is insufficient.
+EmailJS accepted an authorised production-origin form test through the application's success path. Independent inbox receipt was not inspected. No application, backend, database or AI service was deployed.
 
-See [the observed DNS inventory, exact cutover sequence and rollback plan](CLOUDFLARE_DNS.md). Its sequence stages DNS-only legacy service during delegation, associates the apex through Pages immediately after zone activation, validates apex HTTPS, then moves www and enables the saved redirect only within an approved cutover window. A full current-provider export remains outstanding. Legacy HTTP responds, but apex/www HTTPS currently fail with an expired certificate, so a legacy rollback is not a healthy HTTPS fallback until that certificate is renewed. Do not migrate nameservers before reconciling the complete zone and obtaining explicit owner approval.
+See [the current report](PRODUCTION_CUTOVER_STATUS.md) and [historical DNS inventory / rollback plan](CLOUDFLARE_DNS.md). The legacy origin's expired HTTPS certificate remains a rollback risk; it no longer serves the tested production website.
 
 ## Verification and workflow
 
