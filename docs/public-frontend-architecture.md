@@ -19,3 +19,7 @@ Hero, Marquee, Introduction, StackedPanels, Conversation, Collaboration, WhatWev
 SelectedWork, Consultants and the other abandoned public iterations were removed after checking application/website entries, static and dynamic imports, tests, styles and asset references. The retired hero video, old cloud video and media configuration were removed as well. `MediaSection` remains as a tested reusable helper; its type is colocated with it.
 
 See [the cleanup report](deployment/PREDEPLOYMENT_CLEANUP.md) for exact removals, retained files, artifact sizes and verification.
+
+## Public account pages
+
+`AccountAccess` restores the original sign-in and create-account presentation using the existing `Auth.css`, with disabled fields and account actions, an availability notice and working Back/Contact/page-switch navigation. It renders no submission form and imports no authentication hook or API client. The public module boundary permits only the exact `src/pages/Auth/Auth.css` stylesheet; all authentication runtime modules remain excluded. The full application's `Auth.tsx` and authentication behaviour are unchanged. Both routes remain noindex.

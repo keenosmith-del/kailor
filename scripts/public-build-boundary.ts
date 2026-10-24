@@ -29,6 +29,7 @@ export function publicBuildBoundary(): Plugin {
         if (!id.startsWith(frontend + "/src/")) continue;
         const path = relative(frontend, id).split("?")[0];
         if (
+          path !== "src/pages/Auth/Auth.css" &&
           !/^src\/(?:PublicWebsite\.tsx$|main\.public\.tsx$|pages\/Public\/|components\/(?:public\/|BrandWordmark\/|ModalClose\/)|styles\/|services\/(?:enquiries|useEnquiry|useEmailCopy)\.ts$)/.test(
             path,
           )

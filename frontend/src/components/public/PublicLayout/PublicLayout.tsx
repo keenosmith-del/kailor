@@ -10,7 +10,7 @@ import { ConversationProvider } from "../ConversationModal/ConversationModal";
 
 import { usePublicPage } from "./usePublicPage";
 
-export function PublicLayout() {
+export function PublicLayout({ showHeader = true }: { showHeader?: boolean }) {
   const main = usePublicPage();
 
   return (
@@ -20,7 +20,7 @@ export function PublicLayout() {
           Skip to content
         </a>
 
-        <Header />
+        {showHeader && <Header />}
 
         <main ref={main} id="public-main" tabIndex={-1}>
           <Outlet />

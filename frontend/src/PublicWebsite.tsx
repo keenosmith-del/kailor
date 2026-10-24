@@ -1,4 +1,5 @@
 import { Link, Navigate, Route, Routes } from "react-router";
+import { AccountAccess } from "./components/public/AccountAccess/AccountAccess";
 import { PublicLayout } from "./components/public/PublicLayout/PublicLayout";
 import { InternalNavigation } from "./components/public/PageBack/PageBack";
 import { PageShell } from "./components/public/PageShell/PageShell";
@@ -11,20 +12,6 @@ import CommonQuestions from "./pages/Public/Questions/CommonQuestions";
 import Privacy from "./pages/Public/Privacy/Privacy";
 import Terms from "./pages/Public/Terms/Terms";
 import Cookies from "./pages/Public/Cookies/Cookies";
-
-function ApplicationAvailability({ signup = false }: { signup?: boolean }) {
-  return (
-    <PageShell title={signup ? "Create account" : "Sign in"}>
-      <p>
-        The kailor application is still in development. Account access is not
-        available on this public website yet.
-      </p>
-      <p>
-        <Link to="/contact">Contact kailor</Link> to discuss your project.
-      </p>
-    </PageShell>
-  );
-}
 
 export function PublicNotFound() {
   return (
@@ -55,11 +42,6 @@ export function PublicWebsite() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/cookies" element={<Cookies />} />
-            <Route path="/sign-in" element={<ApplicationAvailability />} />
-            <Route
-              path="/create-account"
-              element={<ApplicationAvailability signup />}
-            />
             <Route
               path="/faqs"
               element={<Navigate to="/questions" replace />}
@@ -67,6 +49,10 @@ export function PublicWebsite() {
             <Route path="/timeline" element={<Navigate to="/" replace />} />
             <Route path="/pricing" element={<Navigate to="/" replace />} />
             <Route path="*" element={<PublicNotFound />} />
+          </Route>
+          <Route element={<PublicLayout showHeader={false} />}>
+            <Route path="/sign-in" element={<AccountAccess />} />
+            <Route path="/create-account" element={<AccountAccess signup />} />
           </Route>
         </Routes>
       </div>

@@ -1,0 +1,8 @@
+.public-account-access .auth-restriction {
+  margin-bottom: 24px;
+}
+
+.public-account-access :is(a, button):focus-visible {
+  outline: 2px solid #222526;
+  outline-offset: 4px;
+}

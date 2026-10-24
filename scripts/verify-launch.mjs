@@ -153,6 +153,24 @@ for (const [path, page] of Object.entries(routes)) {
         `Missing section ${a.hash}`,
       );
   }
+  if (publicOnly && ["/sign-in", "/create-account"].includes(path)) {
+    const account = document.querySelector(".public-account-access");
+    assert.ok(account, "Original account design must be visible");
+    assert.equal(account.querySelectorAll("form").length, 0);
+    assert.equal(
+      account.querySelectorAll("input").length,
+      path === "/sign-in" ? 2 : 4,
+    );
+    for (const control of account.querySelectorAll(
+      "input, .auth-submit, .auth-secondary, .auth-password-toggle",
+    ))
+      assert.equal(
+        control.disabled,
+        true,
+        "Public account controls must remain disabled",
+      );
+    assert.ok(account.textContent.includes("Account access will open soon."));
+  }
   for (const anchor of document.querySelectorAll('a[href^="/"]')) {
     const url = new URL(anchor.getAttribute("href"), "https://kailor.co.za");
     assert.ok(routes[url.pathname], `Unpublished destination ${url.pathname}`);
@@ -187,10 +205,12 @@ if (publicOnly) {
   );
   assert.equal(manifest.publicOnly, true);
   assert.ok(
-    !manifest.modules.some((path) =>
-      /^src\/(?:App\.tsx|pages\/(?:Auth|Application|Workspace|Discovery|Assessment|Solutions|Plans)\/|services\/api)/.test(
-        path,
-      ),
+    !manifest.modules.some(
+      (path) =>
+        path !== "src/pages/Auth/Auth.css" &&
+        /^src\/(?:App\.tsx|pages\/(?:Auth|Application|Workspace|Discovery|Assessment|Solutions|Plans)\/|services\/api)/.test(
+          path,
+        ),
     ),
   );
   assert.ok(
