@@ -1,5 +1,7 @@
 # DNS inventory and pending Cloudflare cutover
 
+Latest authorised cutover attempt: see [production cutover status](PRODUCTION_CUTOVER_STATUS.md). The owner reports the registrar change and a successful EmailJS test on the Pages hostname; registry delegation and Cloudflare activation were still pending at the latest check.
+
 Observed publicly on 24 October 2026 (Africa/Johannesburg). This is a targeted public lookup, not a complete zone export. Authoritative DNS is currently domains.co.za; no existing records have been changed.
 
 ## Existing records to retain until approval

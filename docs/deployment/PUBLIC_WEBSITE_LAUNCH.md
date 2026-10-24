@@ -1,5 +1,7 @@
 # Cloudflare Pages public website
 
+Latest authorised cutover attempt: see [production cutover status](PRODUCTION_CUTOVER_STATUS.md). The owner reports the registrar change and a successful EmailJS test on the Pages hostname; registry delegation and Cloudflare activation were still pending at the latest check.
+
 The public company website deploys independently from the application. This supersedes earlier Netlify preparation. The cleanup and controlled-launch reports remain historical records; their older hosting instructions do not configure this deployment.
 
 ## Remote configuration
