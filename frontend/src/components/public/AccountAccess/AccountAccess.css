@@ -1,8 +1,125 @@
-.public-account-access .auth-restriction {
-  margin-bottom: 24px;
+.public-site--account {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
 }
-
+.public-site--account #public-main,
+.account-page-transition {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+.public-account-access {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+.public-account-access .auth-back-position {
+  min-height: 56px;
+  padding-block: 8px;
+}
+.public-account-access .auth-panel {
+  flex: 1;
+  align-items: center;
+  padding: 8px 16px;
+}
+.public-account-access .auth-container {
+  padding: 20px 32px;
+}
+.public-account-access .auth-intro {
+  margin-bottom: 16px;
+}
+.public-account-access .auth-intro h1 {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+.public-account-access .auth-intro p {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.public-account-access .auth-form {
+  gap: 10px;
+}
+.public-account-access .auth-field {
+  gap: 5px;
+}
+.public-account-access .auth-field label {
+  line-height: 1.2;
+}
+.public-account-access .auth-form .auth-field input {
+  height: 40px;
+  padding-block: 8px;
+}
+.public-account-access .auth-submit,
+.public-account-access .auth-secondary {
+  min-height: 40px;
+  padding-block: 9px;
+}
+.public-account-access .auth-auth-switch {
+  margin-top: 14px;
+}
 .public-account-access :is(a, button):focus-visible {
   outline: 2px solid #222526;
   outline-offset: 4px;
+}
+.public-site.public-site--account .public-footer--compact {
+  padding: 8px 24px;
+}
+.public-site--account .public-footer--compact .public-footer__bottom {
+  padding-top: 0;
+  gap: 6px 16px;
+}
+@media (max-width: 480px) {
+  .public-account-access .auth-container {
+    padding-inline: 24px;
+  }
+  .public-site.public-site--account .public-footer--compact {
+    padding-inline: 20px;
+  }
+  .public-site--account .public-footer--compact .public-footer__legal {
+    gap: 4px 12px;
+  }
+}
+@media (max-height: 720px) {
+  .public-account-access .auth-back-position {
+    min-height: 48px;
+    padding-block: 4px;
+  }
+  .public-account-access .auth-container {
+    padding: 14px 24px;
+  }
+  .public-account-access .auth-intro {
+    margin-bottom: 12px;
+  }
+  .public-account-access .auth-intro h1 {
+    font-size: 28px;
+  }
+  .public-account-access .auth-intro p {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .public-account-access .auth-form {
+    gap: 8px;
+  }
+  .public-account-access .auth-field {
+    gap: 4px;
+  }
+  .public-account-access .auth-form .auth-field input {
+    height: 34px;
+    padding-block: 5px;
+  }
+  .public-account-access .auth-submit,
+  .public-account-access .auth-secondary {
+    min-height: 34px;
+    padding-block: 7px;
+  }
+  .public-account-access .auth-auth-switch {
+    margin-top: 10px;
+  }
+}
+@media (max-height: 620px) {
+  .public-account-access.auth-page--signup .auth-intro p {
+    display: none;
+  }
 }

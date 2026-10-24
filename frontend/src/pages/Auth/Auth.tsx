@@ -246,17 +246,6 @@ export function Auth({
             <span id="auth-github-availability" className="sr-only">
               GitHub sign-in is not available yet.
             </span>
-            <button
-              type="button"
-              className="auth-secondary"
-              disabled
-              aria-describedby="auth-guest-availability"
-            >
-              Continue without account
-            </button>
-            <span id="auth-guest-availability" className="sr-only">
-              Guest access is unavailable during controlled testing.
-            </span>
           </div>
           <div className="auth-auth-switch">
             <span>{signup ? "Already have an account?" : "New here?"}</span>

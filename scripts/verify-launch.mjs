@@ -169,7 +169,12 @@ for (const [path, page] of Object.entries(routes)) {
         true,
         "Public account controls must remain disabled",
       );
-    assert.ok(account.textContent.includes("Account access will open soon."));
+    assert.ok(!account.textContent.includes("Account access will open soon."));
+    assert.ok(!account.textContent.includes("Continue without account"));
+    assert.ok(!document.querySelector(".public-footer__main"));
+    assert.ok(
+      document.querySelector(".public-footer--compact .footer-cookies"),
+    );
   }
   for (const anchor of document.querySelectorAll('a[href^="/"]')) {
     const url = new URL(anchor.getAttribute("href"), "https://kailor.co.za");

@@ -38,10 +38,8 @@ it("keeps a restricted create-account route accessible without presenting a regi
     screen.queryByRole("button", { name: "Create account", exact: true }),
   ).toBeNull();
   expect(
-    screen
-      .getByRole("button", { name: "Continue without account" })
-      .hasAttribute("disabled"),
-  ).toBe(true);
+    screen.queryByRole("button", { name: "Continue without account" }),
+  ).toBeNull();
   expect(
     screen.getByRole("button", { name: "Back", exact: true }),
   ).toBeTruthy();
@@ -131,7 +129,7 @@ it("restores the profile and GitHub icons and matching mascot wordmark", async (
   ).toBe("/mascot-head.png");
 });
 
-it("keeps guest entry disabled even when the API reports guest access enabled", async () => {
+it("omits guest entry even when the API reports guest access enabled", async () => {
   vi.mocked(api).mockResolvedValue({
     registration: "public",
     guestAccess: true,
@@ -142,11 +140,11 @@ it("keeps guest entry disabled even when the API reports guest access enabled", 
     </MemoryRouter>,
   );
   await act(async () => {});
-  const guest = screen.getByRole("button", {
-    name: "Continue without account",
-  });
-  expect(guest.hasAttribute("disabled")).toBe(true);
-  fireEvent.click(guest);
+  expect(
+    screen.queryByRole("button", {
+      name: "Continue without account",
+    }),
+  ).toBeNull();
   expect(
     vi.mocked(api).mock.calls.some(([, method]) => method === "POST"),
   ).toBe(false);
